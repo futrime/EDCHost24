@@ -1,0 +1,28 @@
+name: Build the Program
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build the Program
+    runs-on: windows-latest
+    steps:
+    - name: Checkout the repository
+      uses: actions/checkout@v3
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: 6.0.x
+    - name: Build the program
+      run: dotnet publish -c Release -o build
+    - name: Copy the essential files
+      run: |
+        cp -r Assets build
+        cp -r Data build
+    - name: Upload the build artifact
+      uses: actions/upload-artifact@3
+      with:
+        path: build
