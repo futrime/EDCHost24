@@ -10,7 +10,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Diagnostics;
 using Point2i = OpenCvSharp.Point;
-using Cvt = EDCHOST24.MyConvert;
+using Cvt = EDCHOST.MyConvert;
 using System.Runtime.InteropServices;
 
 namespace EDCHOST
@@ -603,7 +603,7 @@ namespace EDCHOST
             game.Start(Camp.A, GameStage.SENCOND_HALF);
         }
 
-        private void bottonStartA_SecondHalf_Click(object sender, EventArgs e)
+        private void bottonStartB_SecondHalf_Click(object sender, EventArgs e)
         {
             game.Start(Camp.b, GameStage.SENCOND_HALF);
         }
