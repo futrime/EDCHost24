@@ -9,7 +9,7 @@ using System.Text;
 using System.Windows.Forms;
 using Point2i = OpenCvSharp.Point;
 
-namespace EDCHOST22
+namespace EDCHOST
 {
     // 定位器：进行图像处理，确定位置并绘图
     public class Localiser

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using OpenCvSharp;
 using Point2i = OpenCvSharp.Point;
 
-namespace EDCHOST22
+namespace EDCHOST
 {
     //还没用上：这些全局函数可以用吗？如果能写成全局函数会比较好
     //商榷：这部分内容可能应该写在Game流程类里
