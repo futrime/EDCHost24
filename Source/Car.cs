@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
 
-namespace EDCHOST24
+namespace EDCHOST
 {
     //队名
     public enum Camp

@@ -7,15 +7,8 @@ using System.IO;
 using System.Drawing;
 using System.Security.Cryptography;
 using System.Diagnostics;
-using Dot = EDCHOST24.Dot;
-using Car = EDCHOST24.Car;
-using Package = EDCHOST24.Package;
-using PackageList = EDCHOST24.PackageList;
-using Station = EDCHOST24.Station;
-using Labyrinth = EDCHOST24.Labyrinth;
-using Boundary = EDCHOST24.Boundary;
 
-namespace EDCHOST24
+namespace EDCHOST
 {
     // Token
     // 当前游戏状态
@@ -82,7 +75,7 @@ namespace EDCHOST24
         private Camp mCamp;
 
         // obstacle
-        private Labyrinth mObstacle;
+        private Obstacle mObstacle;
 
         private Boundary mBoundary;
 
@@ -120,8 +113,8 @@ namespace EDCHOST24
             mGameTime = -1;
             mTimeRemain = 0;
 
-            mObstacle = new Labyrinth();
-            mBoundary = new Boundary(MAX_SIZE, EDGE_DISTANCE, ENTRANCE_WIDTH, LINE_WIDTH);
+            mObstacle = new Obstacle();
+            mBoundary = new Boundary();
         }
 
 
@@ -348,7 +341,7 @@ namespace EDCHOST24
 
             // Obstacle
             // Add your code here...
-            foreach(Wall item in mObstacle.mpWallList)
+            foreach(Wall item in Obstacle.mpWallList)
             {
                 MyMessage[Index++] = (byte) (item.w1.x);
                 MyMessage[Index++] = (byte) (item.w1.y);
@@ -587,7 +580,7 @@ namespace EDCHOST24
 
         private bool _IsInObstacle (Dot _CarPos)
         {
-            return Labyrinth.isCollided(_CarPos, COLLISION_RADIUS);
+            return Obstacle.isCollided(_CarPos, COLLISION_RADIUS);
         }
 
         private bool _IsInOpponentStation (Dot _CarPos)

@@ -1,6 +1,5 @@
 using System;
-using System.Math;
-namespace EDCHOST24
+namespace EDCHOST
 {
     public class Utility
     {
@@ -18,7 +17,7 @@ namespace EDCHOST24
                 if (wall.w1.x > wall.w2.x)
                 {
                     bigP = wall.w1.x;
-                    samllP = wall.w2.x;
+                    smallP = wall.w2.x;
                 }
                 else
                 {
@@ -34,7 +33,7 @@ namespace EDCHOST24
                 if (wall.w1.y > wall.w2.y)
                 {
                     bigP = wall.w1.y;
-                    samllP = wall.w2.y;
+                    smallP = wall.w2.y;
                 }
                 else
                 {
@@ -46,23 +45,23 @@ namespace EDCHOST24
             //如果小车在两个障碍点之间，计算垂直距离
             if (smallP <= diffC && diffC <= bigP)
             {
-                return Abs(sameP - sameC);
+                return Math.Abs(sameP - sameC);
             }
             // 否则计算两点距离
             else
             {
-                int d1 = Min(Abs(smallP - diffC), Abs(bigP - diffC));
-                int d2 = Abs(sameP - sameC);
-                return Sqrt(d1 ** d1 + d2 ** d2);
+                int d1 = Math.Min(Math.Abs(smallP - diffC), Math.Abs(bigP - diffC));
+                int d2 = Math.Abs(sameP - sameC);
+                return (int) Math.Sqrt(d1 * d1 + d2 * d2);
             }
         }
 
         // 计算两点之间的距离
         public static int DistanceP(Dot p1, Dot p2)
         {
-            int d1 = Abs(p1.x - p2.x);
-            int d2 = Abs(p1.y - p2.y);
-            return (int)Sqrt(d1 * d1 + d2 * d2);
+            int d1 = Math.Abs(p1.x - p2.x);
+            int d2 = Math.Abs(p1.y - p2.y);
+            return (int)Math.Sqrt(d1 * d1 + d2 * d2);
         }
     }
 }

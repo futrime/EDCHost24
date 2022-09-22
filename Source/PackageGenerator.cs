@@ -4,11 +4,8 @@ using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
-using Station = EDCHOST24.Station;
-using Labyrinth = EDCHOST24.Labyrinth;
-using Boundary = EDCHOST24.Boundary;
 
-namespace EDCHOST24
+namespace EDCHOST
 {
     // STL : Storage the Package
     public class PackageList //存储预备要用的物资信息
@@ -116,11 +113,11 @@ namespace EDCHOST24
         {
             if (_Type == 0)
             {
-                return !(Boundary.isCollided(_dot) || Labyrinth.isCollided(_dot));
+                return !(Boundary.isCollided(_dot) || Obstacle.isCollided(_dot));
             }
             else if (_Type == 1)
             {
-                return !(Boundary.isCollided(_dot) || Labyrinth.isCollided(_dot) || Station.isCollided(_dot, 0));
+                return !(Boundary.isCollided(_dot) || Obstacle.isCollided(_dot) || Station.isCollided(_dot, 0));
             }
 
             return false;
