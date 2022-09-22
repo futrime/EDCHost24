@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 //using Math; unneeded
 
-namespace EDCHOST24
+namespace EDCHOST
 {
     public class Dot
     {

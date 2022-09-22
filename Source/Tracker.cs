@@ -12,12 +12,8 @@ using System.Diagnostics;
 using Point2i = OpenCvSharp.Point;
 using Cvt = EDCHOST24.MyConvert;
 using System.Runtime.InteropServices;
-using Game = EDCHOST24.Game;
-using Camp = EDCHOST24.Camp;
-using GameStage = EDCHOST24.GameStage;
-using Dot = EDCHOST24.Dot;
 
-namespace EDCHOST24
+namespace EDCHOST
 {
     public partial class Tracker : Form
     {
