@@ -1,15 +1,6 @@
 namespace EdcHost;
 partial class Tracker
 {
-    /// <summary>
-    /// 必需的设计器变量。
-    /// </summary>
-    private System.ComponentModel.IContainer components = null;
-
-    /// <summary>
-    /// 清理所有正在使用的资源。
-    /// </summary>
-    /// <param name="disposing">如果应释放托管资源，为 true；否则为 false。</param>
     protected override void Dispose(bool disposing)
     {
         if (disposing && (components != null))
@@ -21,623 +12,247 @@ partial class Tracker
         base.Dispose(disposing);
     }
 
-    #region Windows 窗体设计器生成的代码
-
-    /// <summary>
-    /// 设计器支持所需的方法 - 不要修改
-    /// 使用代码编辑器修改此方法的内容。
-    /// </summary>
     private void InitializeComponent()
     {
             this.components = new System.ComponentModel.Container();
             this.pbCamera = new System.Windows.Forms.PictureBox();
-            this.btnReset = new System.Windows.Forms.Button();
+            this.timerMsg100ms = new System.Windows.Forms.Timer(this.components);
             this.buttonStart = new System.Windows.Forms.Button();
             this.buttonPause = new System.Windows.Forms.Button();
-            this.label_CarA = new System.Windows.Forms.Label();
-            this.label_CarB = new System.Windows.Forms.Label();
-            this.button_restart = new System.Windows.Forms.Button();
-            this.button_set = new System.Windows.Forms.Button();
-            this.labelBScore = new System.Windows.Forms.Label();
-            this.labelAScore = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
-            this.button_BFoul = new System.Windows.Forms.Button();
-            this.button_AFoul = new System.Windows.Forms.Button();
-            this.label_RedBG = new System.Windows.Forms.Label();
             this.button_Continue = new System.Windows.Forms.Button();
-            this.label_AFoulNum = new System.Windows.Forms.Label();
-            this.label_BFoulNum = new System.Windows.Forms.Label();
-            this.label_BMessage = new System.Windows.Forms.Label();
-            this.label_AMessage = new System.Windows.Forms.Label();
-            this.label_Debug = new System.Windows.Forms.Label();
-            this.timerMsg100ms = new System.Windows.Forms.Timer(this.components);
             this.label_GameCount = new System.Windows.Forms.Label();
-            this.label_GameStage = new System.Windows.Forms.Label();
-            this.time = new System.Windows.Forms.Label();
-            this.ABeacon = new System.Windows.Forms.Label();
-            this.BBeacon = new System.Windows.Forms.Label();
-            this.SetBeacon = new System.Windows.Forms.Button();
-            this.NextStage = new System.Windows.Forms.Button();
+            this.label_RedBG = new System.Windows.Forms.Label();
             this.label_BlueBG = new System.Windows.Forms.Label();
-            this.LastStage = new System.Windows.Forms.Button();
-            this.buttonOverTime = new System.Windows.Forms.Button();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
-            this.label8 = new System.Windows.Forms.Label();
-            this.label9 = new System.Windows.Forms.Label();
-            this.label10 = new System.Windows.Forms.Label();
-            this.label11 = new System.Windows.Forms.Label();
+            this.label_CarA = new System.Windows.Forms.Label();
+            this.labelAScore = new System.Windows.Forms.Label();
+            this.label_CarB = new System.Windows.Forms.Label();
+            this.labelBScore = new System.Windows.Forms.Label();
+            this.btnReset = new System.Windows.Forms.Button();
+            this.button_set = new System.Windows.Forms.Button();
+            this.buttonFoul = new System.Windows.Forms.Button();
+            this.buttonEnd = new System.Windows.Forms.Button();
+            this.buttonSetStation = new System.Windows.Forms.Button();
+            this.buttonRestart = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pbCamera)).BeginInit();
             this.SuspendLayout();
             // 
             // pbCamera
             // 
-            this.pbCamera.Location = new System.Drawing.Point(562, 250);
-            this.pbCamera.Margin = new System.Windows.Forms.Padding(2);
+            this.pbCamera.Location = new System.Drawing.Point(431, 211);
             this.pbCamera.Name = "pbCamera";
-            this.pbCamera.Size = new System.Drawing.Size(1275, 900);
-            this.pbCamera.TabIndex = 2;
+            this.pbCamera.Size = new System.Drawing.Size(358, 336);
+            this.pbCamera.TabIndex = 0;
             this.pbCamera.TabStop = false;
             this.pbCamera.MouseClick += new System.Windows.Forms.MouseEventHandler(this.pbCamera_MouseClick);
-            // 
-            // btnReset
-            // 
-            this.btnReset.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnReset.Font = new System.Drawing.Font("Microsoft YaHei Light", 28F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.btnReset.Location = new System.Drawing.Point(51, 695);
-            this.btnReset.Margin = new System.Windows.Forms.Padding(2);
-            this.btnReset.Name = "btnReset";
-            this.btnReset.Size = new System.Drawing.Size(312, 75);
-            this.btnReset.TabIndex = 7;
-            this.btnReset.Text = "重设边界点";
-            this.btnReset.UseVisualStyleBackColor = true;
-            this.btnReset.Click += new System.EventHandler(this.btnReset_Click);
-            // 
-            // buttonStart
-            // 
-            this.buttonStart.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonStart.Font = new System.Drawing.Font("Microsoft YaHei Light", 28F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.buttonStart.ForeColor = System.Drawing.Color.Green;
-            this.buttonStart.Location = new System.Drawing.Point(1929, 826);
-            this.buttonStart.Margin = new System.Windows.Forms.Padding(2);
-            this.buttonStart.Name = "buttonStart";
-            this.buttonStart.Size = new System.Drawing.Size(312, 75);
-            this.buttonStart.TabIndex = 27;
-            this.buttonStart.Text = "开始";
-            this.buttonStart.UseVisualStyleBackColor = true;
-            this.buttonStart.Click += new System.EventHandler(this.bottonStartA_FirstHalf_Click);
-            // 
-            // buttonPause
-            // 
-            this.buttonPause.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonPause.Font = new System.Drawing.Font("Microsoft YaHei Light", 28F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.buttonPause.ForeColor = System.Drawing.Color.Green;
-            this.buttonPause.Location = new System.Drawing.Point(1929, 1042);
-            this.buttonPause.Margin = new System.Windows.Forms.Padding(2);
-            this.buttonPause.Name = "buttonPause";
-            this.buttonPause.Size = new System.Drawing.Size(312, 75);
-            this.buttonPause.TabIndex = 28;
-            this.buttonPause.Text = "暂停";
-            this.buttonPause.UseVisualStyleBackColor = true;
-            this.buttonPause.Click += new System.EventHandler(this.buttonPause_Click);
-            // 
-            // label_CarA
-            // 
-            this.label_CarA.BackColor = System.Drawing.Color.Transparent;
-            this.label_CarA.Font = new System.Drawing.Font("Microsoft YaHei", 48F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label_CarA.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.label_CarA.Location = new System.Drawing.Point(375, 0);
-            this.label_CarA.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label_CarA.Name = "label_CarA";
-            this.label_CarA.Size = new System.Drawing.Size(375, 125);
-            this.label_CarA.TabIndex = 30;
-            this.label_CarA.Text = "A车";
-            this.label_CarA.TextAlign = System.Drawing.ContentAlignment.TopRight;
-            // 
-            // label_CarB
-            // 
-            this.label_CarB.BackColor = System.Drawing.Color.Transparent;
-            this.label_CarB.Font = new System.Drawing.Font("Microsoft YaHei", 48F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label_CarB.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.label_CarB.Location = new System.Drawing.Point(1650, 0);
-            this.label_CarB.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label_CarB.Name = "label_CarB";
-            this.label_CarB.Size = new System.Drawing.Size(375, 125);
-            this.label_CarB.TabIndex = 31;
-            this.label_CarB.Text = "B车";
-            // 
-            // button_restart
-            // 
-            this.button_restart.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button_restart.Font = new System.Drawing.Font("Microsoft YaHei Light", 28F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.button_restart.ForeColor = System.Drawing.Color.Green;
-            this.button_restart.Location = new System.Drawing.Point(1929, 572);
-            this.button_restart.Margin = new System.Windows.Forms.Padding(2);
-            this.button_restart.Name = "button_restart";
-            this.button_restart.Size = new System.Drawing.Size(312, 75);
-            this.button_restart.TabIndex = 56;
-            this.button_restart.Text = "新比赛";
-            this.button_restart.UseVisualStyleBackColor = true;
-            this.button_restart.Click += new System.EventHandler(this.buttonRestart_click);
-            // 
-            // button_set
-            // 
-            this.button_set.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button_set.Font = new System.Drawing.Font("Microsoft YaHei Light", 28F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.button_set.Location = new System.Drawing.Point(51, 826);
-            this.button_set.Margin = new System.Windows.Forms.Padding(2);
-            this.button_set.Name = "button_set";
-            this.button_set.Size = new System.Drawing.Size(312, 75);
-            this.button_set.TabIndex = 77;
-            this.button_set.Text = "设置";
-            this.button_set.UseVisualStyleBackColor = true;
-            this.button_set.Click += new System.EventHandler(this.button_set_Click);
-            // 
-            // labelBScore
-            // 
-            this.labelBScore.BackColor = System.Drawing.Color.Transparent;
-            this.labelBScore.Font = new System.Drawing.Font("Microsoft YaHei", 48F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.labelBScore.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.labelBScore.Location = new System.Drawing.Point(1275, 0);
-            this.labelBScore.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.labelBScore.Name = "labelBScore";
-            this.labelBScore.Size = new System.Drawing.Size(375, 125);
-            this.labelBScore.TabIndex = 52;
-            this.labelBScore.Text = "0";
-            this.labelBScore.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // labelAScore
-            // 
-            this.labelAScore.BackColor = System.Drawing.Color.Transparent;
-            this.labelAScore.Font = new System.Drawing.Font("Microsoft YaHei", 48F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.labelAScore.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.labelAScore.Location = new System.Drawing.Point(750, 0);
-            this.labelAScore.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.labelAScore.Name = "labelAScore";
-            this.labelAScore.Size = new System.Drawing.Size(375, 125);
-            this.labelAScore.TabIndex = 51;
-            this.labelAScore.Text = "0";
-            this.labelAScore.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.BackColor = System.Drawing.Color.Transparent;
-            this.label1.Font = new System.Drawing.Font("Microsoft YaHei", 30F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label1.Location = new System.Drawing.Point(1185, 32);
-            this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(40, 65);
-            this.label1.TabIndex = 79;
-            this.label1.Text = ":";
-            // 
-            // button_BFoul
-            // 
-            this.button_BFoul.FlatAppearance.MouseDownBackColor = System.Drawing.Color.PaleTurquoise;
-            this.button_BFoul.FlatAppearance.MouseOverBackColor = System.Drawing.Color.LightCyan;
-            this.button_BFoul.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button_BFoul.Font = new System.Drawing.Font("Microsoft YaHei Light", 22.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.button_BFoul.ForeColor = System.Drawing.Color.DodgerBlue;
-            this.button_BFoul.Location = new System.Drawing.Point(2051, 424);
-            this.button_BFoul.Margin = new System.Windows.Forms.Padding(2);
-            this.button_BFoul.Name = "button_BFoul";
-            this.button_BFoul.Size = new System.Drawing.Size(160, 72);
-            this.button_BFoul.TabIndex = 65;
-            this.button_BFoul.Text = "犯规";
-            this.button_BFoul.UseVisualStyleBackColor = true;
-            this.button_BFoul.Click += new System.EventHandler(this.buttonFoul_Click);
-            // 
-            // button_AFoul
-            // 
-            this.button_AFoul.FlatAppearance.BorderColor = System.Drawing.Color.Red;
-            this.button_AFoul.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Pink;
-            this.button_AFoul.FlatAppearance.MouseOverBackColor = System.Drawing.Color.LavenderBlush;
-            this.button_AFoul.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button_AFoul.Font = new System.Drawing.Font("Microsoft YaHei Light", 22.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.button_AFoul.ForeColor = System.Drawing.Color.Red;
-            this.button_AFoul.Location = new System.Drawing.Point(121, 414);
-            this.button_AFoul.Margin = new System.Windows.Forms.Padding(2);
-            this.button_AFoul.Name = "button_AFoul";
-            this.button_AFoul.Size = new System.Drawing.Size(160, 72);
-            this.button_AFoul.TabIndex = 86;
-            this.button_AFoul.Text = "犯规";
-            this.button_AFoul.UseVisualStyleBackColor = true;
-            this.button_AFoul.Click += new System.EventHandler(this.buttonFoul_Click);
-            // 
-            // label_RedBG
-            // 
-            this.label_RedBG.BackColor = System.Drawing.Color.Red;
-            this.label_RedBG.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.label_RedBG.Location = new System.Drawing.Point(0, 0);
-            this.label_RedBG.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label_RedBG.Name = "label_RedBG";
-            this.label_RedBG.Size = new System.Drawing.Size(1125, 125);
-            this.label_RedBG.TabIndex = 88;
-            // 
-            // button_Continue
-            // 
-            this.button_Continue.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button_Continue.Font = new System.Drawing.Font("Microsoft YaHei Light", 28F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.button_Continue.ForeColor = System.Drawing.Color.Green;
-            this.button_Continue.Location = new System.Drawing.Point(1929, 932);
-            this.button_Continue.Margin = new System.Windows.Forms.Padding(2);
-            this.button_Continue.Name = "button_Continue";
-            this.button_Continue.Size = new System.Drawing.Size(312, 75);
-            this.button_Continue.TabIndex = 91;
-            this.button_Continue.Text = "继续";
-            this.button_Continue.UseVisualStyleBackColor = true;
-            this.button_Continue.Click += new System.EventHandler(this.buttonContinue_Click);
-            // 
-            // label_AFoulNum
-            // 
-            this.label_AFoulNum.Font = new System.Drawing.Font("Microsoft YaHei", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label_AFoulNum.ForeColor = System.Drawing.Color.Red;
-            this.label_AFoulNum.Location = new System.Drawing.Point(384, 424);
-            this.label_AFoulNum.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label_AFoulNum.Name = "label_AFoulNum";
-            this.label_AFoulNum.Size = new System.Drawing.Size(98, 50);
-            this.label_AFoulNum.TabIndex = 95;
-            this.label_AFoulNum.Text = "0";
-            this.label_AFoulNum.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // label_BFoulNum
-            // 
-            this.label_BFoulNum.Font = new System.Drawing.Font("Microsoft YaHei", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label_BFoulNum.ForeColor = System.Drawing.Color.DodgerBlue;
-            this.label_BFoulNum.Location = new System.Drawing.Point(1905, 424);
-            this.label_BFoulNum.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label_BFoulNum.Name = "label_BFoulNum";
-            this.label_BFoulNum.Size = new System.Drawing.Size(98, 72);
-            this.label_BFoulNum.TabIndex = 98;
-            this.label_BFoulNum.Text = "0";
-            this.label_BFoulNum.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // label_BMessage
-            // 
-            this.label_BMessage.BackColor = System.Drawing.Color.DodgerBlue;
-            this.label_BMessage.Font = new System.Drawing.Font("Microsoft YaHei", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label_BMessage.ForeColor = System.Drawing.SystemColors.Window;
-            this.label_BMessage.Location = new System.Drawing.Point(2025, 0);
-            this.label_BMessage.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label_BMessage.Name = "label_BMessage";
-            this.label_BMessage.Size = new System.Drawing.Size(375, 125);
-            this.label_BMessage.TabIndex = 99;
-            this.label_BMessage.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // label_AMessage
-            // 
-            this.label_AMessage.BackColor = System.Drawing.Color.Red;
-            this.label_AMessage.Font = new System.Drawing.Font("Microsoft YaHei", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label_AMessage.ForeColor = System.Drawing.SystemColors.Window;
-            this.label_AMessage.Location = new System.Drawing.Point(0, 0);
-            this.label_AMessage.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label_AMessage.Name = "label_AMessage";
-            this.label_AMessage.Size = new System.Drawing.Size(500, 125);
-            this.label_AMessage.TabIndex = 100;
-            this.label_AMessage.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // label_Debug
-            // 
-            this.label_Debug.Font = new System.Drawing.Font("Microsoft YaHei", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label_Debug.ForeColor = System.Drawing.Color.Black;
-            this.label_Debug.Location = new System.Drawing.Point(44, 1064);
-            this.label_Debug.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label_Debug.Name = "label_Debug";
-            this.label_Debug.Size = new System.Drawing.Size(485, 185);
-            this.label_Debug.TabIndex = 102;
             // 
             // timerMsg100ms
             // 
             this.timerMsg100ms.Tick += new System.EventHandler(this.timerMsg100ms_Tick);
             // 
+            // buttonStart
+            // 
+            this.buttonStart.Location = new System.Drawing.Point(386, 144);
+            this.buttonStart.Name = "buttonStart";
+            this.buttonStart.Size = new System.Drawing.Size(94, 29);
+            this.buttonStart.TabIndex = 1;
+            this.buttonStart.Text = "Start";
+            this.buttonStart.UseVisualStyleBackColor = true;
+            // 
+            // buttonPause
+            // 
+            this.buttonPause.Location = new System.Drawing.Point(540, 135);
+            this.buttonPause.Name = "buttonPause";
+            this.buttonPause.Size = new System.Drawing.Size(94, 29);
+            this.buttonPause.TabIndex = 2;
+            this.buttonPause.Text = "Pause";
+            this.buttonPause.UseVisualStyleBackColor = true;
+            this.buttonPause.Click += new System.EventHandler(this.buttonPause_Click);
+            // 
+            // button_Continue
+            // 
+            this.button_Continue.Location = new System.Drawing.Point(686, 139);
+            this.button_Continue.Name = "button_Continue";
+            this.button_Continue.Size = new System.Drawing.Size(94, 29);
+            this.button_Continue.TabIndex = 3;
+            this.button_Continue.Text = "Continue";
+            this.button_Continue.UseVisualStyleBackColor = true;
+            this.button_Continue.Click += new System.EventHandler(this.buttonContinue_Click);
+            // 
             // label_GameCount
             // 
-            this.label_GameCount.Font = new System.Drawing.Font("SimSun", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label_GameCount.Location = new System.Drawing.Point(112, 138);
-            this.label_GameCount.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label_GameCount.AutoSize = true;
+            this.label_GameCount.Location = new System.Drawing.Point(552, 65);
             this.label_GameCount.Name = "label_GameCount";
-            this.label_GameCount.Size = new System.Drawing.Size(250, 75);
-            this.label_GameCount.TabIndex = 105;
-            this.label_GameCount.Text = "label2";
-            this.label_GameCount.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.label_GameCount.Size = new System.Drawing.Size(50, 20);
+            this.label_GameCount.TabIndex = 4;
+            this.label_GameCount.Text = "label1";
             // 
-            // label_GameStage
+            // label_RedBG
             // 
-            this.label_GameStage.AutoSize = true;
-            this.label_GameStage.Font = new System.Drawing.Font("SimSun", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label_GameStage.Location = new System.Drawing.Point(2088, 138);
-            this.label_GameStage.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label_GameStage.Name = "label_GameStage";
-            this.label_GameStage.Size = new System.Drawing.Size(151, 44);
-            this.label_GameStage.TabIndex = 106;
-            this.label_GameStage.Text = "label2";
-            // 
-            // time
-            // 
-            this.time.Font = new System.Drawing.Font("SimSun", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.time.Location = new System.Drawing.Point(831, 156);
-            this.time.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.time.Name = "time";
-            this.time.Size = new System.Drawing.Size(750, 62);
-            this.time.TabIndex = 108;
-            this.time.Text = "label2";
-            this.time.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // ABeacon
-            // 
-            this.ABeacon.Location = new System.Drawing.Point(0, 0);
-            this.ABeacon.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.ABeacon.Name = "ABeacon";
-            this.ABeacon.Size = new System.Drawing.Size(125, 29);
-            this.ABeacon.TabIndex = 133;
-            // 
-            // BBeacon
-            // 
-            this.BBeacon.Location = new System.Drawing.Point(0, 0);
-            this.BBeacon.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.BBeacon.Name = "BBeacon";
-            this.BBeacon.Size = new System.Drawing.Size(125, 29);
-            this.BBeacon.TabIndex = 132;
-            // 
-            // SetBeacon
-            // 
-            this.SetBeacon.Location = new System.Drawing.Point(0, 0);
-            this.SetBeacon.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.SetBeacon.Name = "SetBeacon";
-            this.SetBeacon.Size = new System.Drawing.Size(94, 29);
-            this.SetBeacon.TabIndex = 131;
-            // 
-            // NextStage
-            // 
-            this.NextStage.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.NextStage.Font = new System.Drawing.Font("Microsoft YaHei Light", 28F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.NextStage.Location = new System.Drawing.Point(1421, 149);
-            this.NextStage.Margin = new System.Windows.Forms.Padding(2);
-            this.NextStage.Name = "NextStage";
-            this.NextStage.Size = new System.Drawing.Size(312, 75);
-            this.NextStage.TabIndex = 118;
-            this.NextStage.Text = "下一个阶段";
-            this.NextStage.UseVisualStyleBackColor = true;
+            this.label_RedBG.AutoSize = true;
+            this.label_RedBG.Location = new System.Drawing.Point(108, 65);
+            this.label_RedBG.Name = "label_RedBG";
+            this.label_RedBG.Size = new System.Drawing.Size(50, 20);
+            this.label_RedBG.TabIndex = 5;
+            this.label_RedBG.Text = "label1";
             // 
             // label_BlueBG
             // 
-            this.label_BlueBG.BackColor = System.Drawing.Color.DodgerBlue;
-            this.label_BlueBG.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.label_BlueBG.Location = new System.Drawing.Point(1275, 0);
-            this.label_BlueBG.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label_BlueBG.AutoSize = true;
+            this.label_BlueBG.Location = new System.Drawing.Point(1007, 65);
             this.label_BlueBG.Name = "label_BlueBG";
-            this.label_BlueBG.Size = new System.Drawing.Size(1125, 125);
-            this.label_BlueBG.TabIndex = 89;
+            this.label_BlueBG.Size = new System.Drawing.Size(50, 20);
+            this.label_BlueBG.TabIndex = 6;
+            this.label_BlueBG.Text = "label1";
             // 
-            // LastStage
+            // label_CarA
             // 
-            this.LastStage.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.LastStage.Font = new System.Drawing.Font("Microsoft YaHei Light", 28F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.LastStage.Location = new System.Drawing.Point(674, 149);
-            this.LastStage.Margin = new System.Windows.Forms.Padding(2);
-            this.LastStage.Name = "LastStage";
-            this.LastStage.Size = new System.Drawing.Size(312, 75);
-            this.LastStage.TabIndex = 119;
-            this.LastStage.Text = "上一个阶段";
-            this.LastStage.UseVisualStyleBackColor = true;
+            this.label_CarA.AutoSize = true;
+            this.label_CarA.Location = new System.Drawing.Point(108, 231);
+            this.label_CarA.Name = "label_CarA";
+            this.label_CarA.Size = new System.Drawing.Size(50, 20);
+            this.label_CarA.TabIndex = 7;
+            this.label_CarA.Text = "label1";
             // 
-            // buttonOverTime
+            // labelAScore
             // 
-            this.buttonOverTime.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonOverTime.Font = new System.Drawing.Font("Microsoft YaHei Light", 28F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.buttonOverTime.ForeColor = System.Drawing.Color.Green;
-            this.buttonOverTime.Location = new System.Drawing.Point(1929, 695);
-            this.buttonOverTime.Margin = new System.Windows.Forms.Padding(2);
-            this.buttonOverTime.Name = "buttonOverTime";
-            this.buttonOverTime.Size = new System.Drawing.Size(312, 75);
-            this.buttonOverTime.TabIndex = 120;
-            this.buttonOverTime.Text = "加时赛";
-            this.buttonOverTime.UseVisualStyleBackColor = true;
+            this.labelAScore.AutoSize = true;
+            this.labelAScore.Location = new System.Drawing.Point(108, 143);
+            this.labelAScore.Name = "labelAScore";
+            this.labelAScore.Size = new System.Drawing.Size(50, 20);
+            this.labelAScore.TabIndex = 8;
+            this.labelAScore.Text = "label1";
             // 
-            // label2
+            // label_CarB
             // 
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("SimSun", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label2.Location = new System.Drawing.Point(365, 349);
-            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(164, 47);
-            this.label2.TabIndex = 121;
-            this.label2.Text = "label2";
+            this.label_CarB.AutoSize = true;
+            this.label_CarB.Location = new System.Drawing.Point(1028, 144);
+            this.label_CarB.Name = "label_CarB";
+            this.label_CarB.Size = new System.Drawing.Size(50, 20);
+            this.label_CarB.TabIndex = 9;
+            this.label_CarB.Text = "label1";
             // 
-            // label3
+            // labelBScore
             // 
-            this.label3.AutoSize = true;
-            this.label3.Font = new System.Drawing.Font("SimSun", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label3.Location = new System.Drawing.Point(2211, 349);
-            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(164, 47);
-            this.label3.TabIndex = 122;
-            this.label3.Text = "label2";
+            this.labelBScore.AutoSize = true;
+            this.labelBScore.Location = new System.Drawing.Point(1047, 241);
+            this.labelBScore.Name = "labelBScore";
+            this.labelBScore.Size = new System.Drawing.Size(50, 20);
+            this.labelBScore.TabIndex = 10;
+            this.labelBScore.Text = "label1";
             // 
-            // label4
+            // btnReset
             // 
-            this.label4.BackColor = System.Drawing.Color.Yellow;
-            this.label4.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.label4.Location = new System.Drawing.Point(302, 309);
-            this.label4.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(41, 34);
-            this.label4.TabIndex = 123;
+            this.btnReset.Location = new System.Drawing.Point(691, 100);
+            this.btnReset.Name = "btnReset";
+            this.btnReset.Size = new System.Drawing.Size(94, 29);
+            this.btnReset.TabIndex = 11;
+            this.btnReset.Text = "Reset";
+            this.btnReset.UseVisualStyleBackColor = true;
+            this.btnReset.Click += new System.EventHandler(this.btnReset_Click);
             // 
-            // label5
+            // button_set
             // 
-            this.label5.BackColor = System.Drawing.Color.Purple;
-            this.label5.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.label5.Location = new System.Drawing.Point(434, 309);
-            this.label5.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(41, 34);
-            this.label5.TabIndex = 124;
+            this.button_set.Location = new System.Drawing.Point(424, 96);
+            this.button_set.Name = "button_set";
+            this.button_set.Size = new System.Drawing.Size(94, 29);
+            this.button_set.TabIndex = 12;
+            this.button_set.Text = "Settings";
+            this.button_set.UseVisualStyleBackColor = true;
+            this.button_set.Click += new System.EventHandler(this.button_set_Click);
             // 
-            // label6
+            // buttonFoul
             // 
-            this.label6.BackColor = System.Drawing.Color.Lime;
-            this.label6.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.label6.Location = new System.Drawing.Point(302, 358);
-            this.label6.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(41, 34);
-            this.label6.TabIndex = 125;
+            this.buttonFoul.Location = new System.Drawing.Point(555, 94);
+            this.buttonFoul.Name = "buttonFoul";
+            this.buttonFoul.Size = new System.Drawing.Size(94, 29);
+            this.buttonFoul.TabIndex = 13;
+            this.buttonFoul.Text = "Foul";
+            this.buttonFoul.UseVisualStyleBackColor = true;
+            this.buttonFoul.Click += new System.EventHandler(this.buttonFoul_Click);
             // 
-            // label7
+            // buttonEnd
             // 
-            this.label7.BackColor = System.Drawing.Color.DarkOrange;
-            this.label7.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.label7.Location = new System.Drawing.Point(434, 358);
-            this.label7.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(41, 34);
-            this.label7.TabIndex = 126;
+            this.buttonEnd.Location = new System.Drawing.Point(819, 180);
+            this.buttonEnd.Name = "buttonEnd";
+            this.buttonEnd.Size = new System.Drawing.Size(94, 29);
+            this.buttonEnd.TabIndex = 14;
+            this.buttonEnd.Text = "End";
+            this.buttonEnd.UseVisualStyleBackColor = true;
+            this.buttonEnd.Click += new System.EventHandler(this.buttonEnd_Click);
             // 
-            // label8
+            // buttonSetStation
             // 
-            this.label8.BackColor = System.Drawing.Color.DarkOrange;
-            this.label8.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.label8.Location = new System.Drawing.Point(2281, 358);
-            this.label8.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(41, 34);
-            this.label8.TabIndex = 130;
+            this.buttonSetStation.Location = new System.Drawing.Point(824, 251);
+            this.buttonSetStation.Name = "buttonSetStation";
+            this.buttonSetStation.Size = new System.Drawing.Size(94, 29);
+            this.buttonSetStation.TabIndex = 15;
+            this.buttonSetStation.Text = "Set Station";
+            this.buttonSetStation.UseVisualStyleBackColor = true;
+            this.buttonSetStation.Click += new System.EventHandler(this.buttonSetStation_Click);
             // 
-            // label9
+            // buttonRestart
             // 
-            this.label9.BackColor = System.Drawing.Color.Lime;
-            this.label9.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.label9.Location = new System.Drawing.Point(2150, 358);
-            this.label9.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(41, 34);
-            this.label9.TabIndex = 129;
-            // 
-            // label10
-            // 
-            this.label10.BackColor = System.Drawing.Color.Purple;
-            this.label10.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.label10.Location = new System.Drawing.Point(2281, 309);
-            this.label10.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(41, 34);
-            this.label10.TabIndex = 128;
-            // 
-            // label11
-            // 
-            this.label11.BackColor = System.Drawing.Color.Yellow;
-            this.label11.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.label11.Location = new System.Drawing.Point(2150, 309);
-            this.label11.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(41, 34);
-            this.label11.TabIndex = 127;
+            this.buttonRestart.Location = new System.Drawing.Point(804, 296);
+            this.buttonRestart.Name = "buttonRestart";
+            this.buttonRestart.Size = new System.Drawing.Size(94, 29);
+            this.buttonRestart.TabIndex = 16;
+            this.buttonRestart.Text = "Restart";
+            this.buttonRestart.UseVisualStyleBackColor = true;
+            this.buttonRestart.Click += new System.EventHandler(this.buttonRestart_click);
             // 
             // Tracker
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.SystemColors.Window;
-            this.ClientSize = new System.Drawing.Size(1924, 1175);
-            this.Controls.Add(this.label8);
-            this.Controls.Add(this.label9);
-            this.Controls.Add(this.label10);
-            this.Controls.Add(this.label11);
-            this.Controls.Add(this.label7);
-            this.Controls.Add(this.label6);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.buttonOverTime);
-            this.Controls.Add(this.LastStage);
-            this.Controls.Add(this.NextStage);
-            this.Controls.Add(this.SetBeacon);
-            this.Controls.Add(this.BBeacon);
-            this.Controls.Add(this.ABeacon);
-            this.Controls.Add(this.time);
-            this.Controls.Add(this.label_GameStage);
-            this.Controls.Add(this.label_GameCount);
-            this.Controls.Add(this.label_Debug);
-            this.Controls.Add(this.label_AMessage);
-            this.Controls.Add(this.label_BMessage);
-            this.Controls.Add(this.label_BFoulNum);
-            this.Controls.Add(this.label_AFoulNum);
-            this.Controls.Add(this.button_Continue);
+            this.ClientSize = new System.Drawing.Size(1204, 674);
+            this.Controls.Add(this.buttonRestart);
+            this.Controls.Add(this.buttonSetStation);
+            this.Controls.Add(this.buttonEnd);
+            this.Controls.Add(this.buttonFoul);
+            this.Controls.Add(this.button_set);
+            this.Controls.Add(this.btnReset);
+            this.Controls.Add(this.labelBScore);
+            this.Controls.Add(this.label_CarB);
+            this.Controls.Add(this.labelAScore);
+            this.Controls.Add(this.label_CarA);
             this.Controls.Add(this.label_BlueBG);
             this.Controls.Add(this.label_RedBG);
-            this.Controls.Add(this.button_AFoul);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.button_set);
-            this.Controls.Add(this.button_BFoul);
-            this.Controls.Add(this.button_restart);
-            this.Controls.Add(this.labelBScore);
-            this.Controls.Add(this.labelAScore);
-            this.Controls.Add(this.label_CarB);
-            this.Controls.Add(this.label_CarA);
+            this.Controls.Add(this.label_GameCount);
+            this.Controls.Add(this.button_Continue);
             this.Controls.Add(this.buttonPause);
             this.Controls.Add(this.buttonStart);
-            this.Controls.Add(this.btnReset);
             this.Controls.Add(this.pbCamera);
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Tracker";
-            this.Text = "EDC22HOST";
-            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+            this.ShowIcon = false;
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Tracker_FormClosed);
             this.Load += new System.EventHandler(this.Tracker_Load);
+            this.Click += new System.EventHandler(this.bottonStartA_FirstHalf_Click);
             ((System.ComponentModel.ISupportInitialize)(this.pbCamera)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
     }
 
-    #endregion
+    private System.ComponentModel.IContainer components = null;
     private System.Windows.Forms.PictureBox pbCamera;
-    private System.Windows.Forms.Button btnReset;
+    private System.Windows.Forms.Timer timerMsg100ms;
     private System.Windows.Forms.Button buttonStart;
     private System.Windows.Forms.Button buttonPause;
-    private System.Windows.Forms.Label label_CarA;
-    private System.Windows.Forms.Label label_CarB;
-    private System.Windows.Forms.Button button_restart;
-    private System.Windows.Forms.Button button_set;
-    private System.Windows.Forms.Label labelBScore;
-    private System.Windows.Forms.Label labelAScore;
-    private System.Windows.Forms.Label label1;
-    private System.Windows.Forms.Button button_BFoul;
-    private System.Windows.Forms.Button button_AFoul;
-    private System.Windows.Forms.Label label_RedBG;
     private System.Windows.Forms.Button button_Continue;
-    private System.Windows.Forms.Label label_AFoulNum;
-    private System.Windows.Forms.Label label_BFoulNum;
-    private System.Windows.Forms.Label label_BMessage;
-    private System.Windows.Forms.Label label_AMessage;
-    private System.Windows.Forms.Label label_Debug;
-    private System.Windows.Forms.Timer timerMsg100ms;
     private System.Windows.Forms.Label label_GameCount;
-    private System.Windows.Forms.Label label_GameStage;
-    private System.Windows.Forms.Label time;
-    private System.Windows.Forms.Label ABeacon;
-    private System.Windows.Forms.Label BBeacon;
-    private System.Windows.Forms.Button SetBeacon;
-    private System.Windows.Forms.Button NextStage;
+    private System.Windows.Forms.Label label_RedBG;
     private System.Windows.Forms.Label label_BlueBG;
-    private System.Windows.Forms.Button LastStage;
-    private System.Windows.Forms.Button buttonOverTime;
-    private System.Windows.Forms.Label label2;
-    private System.Windows.Forms.Label label3;
-    private System.Windows.Forms.Label label4;
-    private System.Windows.Forms.Label label5;
-    private System.Windows.Forms.Label label6;
-    private System.Windows.Forms.Label label7;
-    private System.Windows.Forms.Label label8;
-    private System.Windows.Forms.Label label9;
-    private System.Windows.Forms.Label label10;
-    private System.Windows.Forms.Label label11;
+    private System.Windows.Forms.Label label_CarA;
+    private System.Windows.Forms.Label labelAScore;
+    private System.Windows.Forms.Label label_CarB;
+    private System.Windows.Forms.Label labelBScore;
+    private System.Windows.Forms.Button btnReset;
+    private System.Windows.Forms.Button button_set;
+    private System.Windows.Forms.Button buttonFoul;
+    private System.Windows.Forms.Button buttonEnd;
+    private System.Windows.Forms.Button buttonSetStation;
+    private System.Windows.Forms.Button buttonRestart;
 }

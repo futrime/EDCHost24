@@ -297,8 +297,6 @@ public partial class Tracker : Form
     {
 
         System.Drawing.Rectangle rect = System.Windows.Forms.Screen.PrimaryScreen.Bounds;
-        Debug.WriteLine(rect.Width);
-
     }
     // 在图像上绘制图案便于观察
     public void PaintPattern(Mat mat, Localiser loc)
@@ -647,34 +645,6 @@ public partial class Tracker : Form
         game.SetChargeStation();
     }
 
-
-    // 开始录像
-    private void button_video_Click(object sender, EventArgs e)
-    {
-        lock (flags)
-        {
-            if (flags.videomode == false)
-            {
-                string time = DateTime.Now.ToString("MMdd_HH_mm_ss");
-                vw = new VideoWriter("Video/" + time + ".avi",
-                    FourCC.XVID, 10.0, flags.showSize);
-                flags.videomode = true;
-                ((Button)sender).Text = "停止录像";
-                game.FoulTimeFS = new FileStream("Video/" + time + ".txt", FileMode.CreateNew);
-            }
-            else
-            {
-                game.FoulTimeFS.Flush();
-                game.FoulTimeFS.Close();
-                vw.Release();
-                vw = null;
-                flags.videomode = false;
-                ((Button)sender).Text = "开始录像";
-                game.FoulTimeFS = null;
-            }
-        }
-    }
-
     // 打开设置调试窗口
     private void button_set_Click(object sender, EventArgs e)
     {
@@ -684,9 +654,7 @@ public partial class Tracker : Form
             st.Show();
         }
     }
-
     #endregion
-
 
     #region 由定时器控制的函数
     //计时器事件，每100ms触发一次，向小车发送信息
