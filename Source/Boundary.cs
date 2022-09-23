@@ -1,7 +1,6 @@
 namespace EdcHost;
 public class Boundary
 {
-
     static private int mMap = 254;
     static private int mSize = 28;
     static private int mEntrance = 36;
