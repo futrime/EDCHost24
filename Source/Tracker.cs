@@ -304,7 +304,13 @@ public partial class Tracker : Form
         // Draw vehicle icons
         foreach (Point2i c1 in loc.GetCentres(Camp.A))
         {
-            int Tx = c1.X - 10, Ty = c1.Y - 10, Tcol = Icon_CarA.Cols, Trow = Icon_CarA.Rows;
+            // Point2f[] converted_cord = coordCvt.ShowToCamera(new Point2f[] { (Point2f)c1 });
+            int Tx = c1.X;
+            int Ty = c1.Y;
+            // int Tx = (int)converted_cord[0].X - 10;
+            // int Ty = (int)converted_cord[0].Y - 10;
+            int Tcol = Icon_CarA.Cols;
+            int Trow = Icon_CarA.Rows;
             if (Tx < 0)
             {
                 Tx = 0;
@@ -315,11 +321,11 @@ public partial class Tracker : Form
             }
             if (Tx + Tcol > mat.Cols)
             {
-                Tcol = mat.Cols - Tx;
+                Tx = mat.Cols - Tcol;
             }
             if (Ty + Trow > mat.Rows)
             {
-                Trow = mat.Rows - Ty;
+                Ty = mat.Rows - Trow;
             }
 
             Mat Pos = new Mat(mat, new Rect(Tx, Ty, Tcol, Trow));
@@ -328,7 +334,10 @@ public partial class Tracker : Form
 
         foreach (Point2i c2 in loc.GetCentres(Camp.B))
         {
-            int Tx = c2.X - 10, Ty = c2.Y - 10, Tcol = Icon_CarB.Cols, Trow = Icon_CarB.Rows;
+            int Tx = c2.X;
+            int Ty = c2.Y;
+            int Tcol = Icon_CarB.Cols;
+            int Trow = Icon_CarB.Rows;
             if (Tx < 0)
             {
                 Tx = 0;
@@ -339,11 +348,11 @@ public partial class Tracker : Form
             }
             if (Tx + Tcol > mat.Cols)
             {
-                Tcol = mat.Cols - Tx;
+                Tx = mat.Cols - Tcol;
             }
             if (Ty + Trow > mat.Rows)
             {
-                Trow = mat.Rows - Ty;
+                Ty = mat.Rows - Trow;
             }
 
             Mat Pos = new Mat(mat, new Rect(Tx, Ty, Tcol, Trow));
@@ -418,6 +427,72 @@ public partial class Tracker : Form
                         (int)showDots[1].X, (int)showDots[1].Y,
                         new Scalar(35, 35, 139), 5);
                 }
+            }
+        }
+
+        if (GameState.RUN == game.mGameState)
+        {
+            // 找到当前的车队
+            Car current_car = this.game.GetCar(this.game.GetCamp());
+            // 现在车上载有的外卖数量 
+            int package_number_on_car = current_car.GetPackageCount();
+
+            foreach (Package package in PackageList.mPackageList)
+            {
+
+                PackageStatus current_package_status = package.Status;
+
+                //判断此外卖是否在车上
+
+                int Tx, Ty, Tcol, Trow;
+                // 若小车没有接收外卖，显示起点
+                Mat target_img = null;
+                if (PackageStatus.UNPICKED == current_package_status)
+                {
+                    target_img = Icon_Package;
+                    //修正坐标
+                    Point2f[] converted_cord = coordCvt.ShowToCamera(new Point2f[] { (Point2f)MyConvert.Dot2Point(package.mDeparture) });
+                    // Tx = package.mDeparture.x - 10;
+                    // Ty = package.mDeparture.y - 10;
+                    Tx = (int)converted_cord[0].X - 10;
+                    Ty = (int)converted_cord[0].Y - 10;
+
+                }
+                // 若小车没有装载此外卖，显示终点
+                else if (PackageStatus.PICKED == current_package_status)
+                {
+                    target_img = Icon_Zone;
+                    Point2f[] converted_cord = coordCvt.ShowToCamera(new Point2f[] { (Point2f)MyConvert.Dot2Point(package.mDestination) });
+                    Tx = (int)converted_cord[0].X - 10;
+                    Ty = (int)converted_cord[0].Y - 10;
+                }
+                else
+                {
+                    break;
+                }
+                // 修正位置
+                Tcol = target_img.Cols;
+                Trow = target_img.Rows;
+                if (Tx < 0)
+                {
+                    Tx = 0;
+                }
+                if (Ty < 0)
+                {
+                    Ty = 0;
+                }
+                if (Tx + Tcol > mat.Cols)
+                {
+                    Tcol = mat.Cols - Tx;
+                }
+                if (Ty + Trow > mat.Rows)
+                {
+                    Trow = mat.Rows - Ty;
+                }
+
+                Mat Pos = new Mat(mat, new Rect(Tx, Ty, Tcol, Trow));
+                target_img.CopyTo(Pos);
+
             }
         }
     }
@@ -511,6 +586,9 @@ public partial class Tracker : Form
 
     private void buttonStart_Click(object sender, EventArgs e)
     {
+        //状态+1
+        this.game.mGameStage += 1;
+
         if (this.game.mGameStage == GameStage.FIRST_HALF)
         {
             switch (this.game.GetCamp())

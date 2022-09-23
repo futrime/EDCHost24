@@ -105,7 +105,7 @@ public class Car //选手的车
         UpdatePos(_CarPos);
         int temp_TimePenalty = 0;
         //至少获取了两个位置之后(0.1s)才有后面的操作
-        if (_GameTime > 1)
+        if (_GameTime > 2 * 100)
         {
             if (!mIsAbleToRun)
             {
@@ -166,7 +166,6 @@ public class Car //选手的车
     {
         return mPickedPackages.Count;
     }
-
     public int GetMileage()
     {
         return mMileage;
@@ -195,13 +194,15 @@ public class Car //选手的车
     {
         for (int i = 0; i < _PackagesRemain.Count; i++)
         {
-            var pkg = _PackagesRemain[i];
+            Package pkg = _PackagesRemain[i];
             if (pkg.Distance2Departure(_CarPos) <= COLLISION_RADIUS &&
                 mPickedPackages.Count <= MAX_PKG_COUNT)
             {
                 mPickedPackages.Add(new PackagesAndTime(pkg));
                 _PackagesRemain.Remove(pkg);
                 mScore += PICK_CREDIT;
+                // 拾取后改变pkg的packagestatus
+                pkg.Status = PackageStatus.PICKED;
                 break;
             }
         }
@@ -216,6 +217,9 @@ public class Car //选手的车
                 if (PkgAndTime.mFirstCollisionTime != -1 &&
                     mGameTime - PkgAndTime.mFirstCollisionTime > COLLISION_DETECTION_TIME)
                 {
+                    // 送达后改变pkg的packagestatus
+                    PkgAndTime.mPkg.Status = PackageStatus.ARRIVED;
+
                     mPickedPackages.Remove(PkgAndTime);
                     mScore += PkgAndTime.mPkg.GetPackageScore(mGameTime);
                 }

@@ -10,7 +10,7 @@ public class PackageList
 {
     private const int MaxPackageNumber = 20;
 
-    private static List<Package> mPackageList;
+    public static List<Package> mPackageList;
 
     private int X_MAX;
     private int X_MIN;

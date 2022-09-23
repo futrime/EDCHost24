@@ -159,31 +159,33 @@ public class Game
             _IsInChargeStation(_CarPos), ref mPackagesRemain, out TimePenalty);
         }
 
-        // Calculate the remaining time
-        int gameDuration = 0;
-        switch (this.mGameStage)
+        if (this.mGameState == GameState.RUN)
         {
-            case GameStage.FIRST_HALF:
-                gameDuration = Game.FIRST_HALF_TIME;
-                break;
-            case GameStage.SECOND_HALF:
-                gameDuration = Game.SECOND_HALF_TIME;
-                break;
-            default:
-                break;
-        }
+            // Calculate the remaining time
+            int gameDuration = 0;
+            switch (this.mGameStage)
+            {
+                case GameStage.FIRST_HALF:
+                    gameDuration = Game.FIRST_HALF_TIME;
+                    break;
+                case GameStage.SECOND_HALF:
+                    gameDuration = Game.SECOND_HALF_TIME;
+                    break;
+                default:
+                    break;
+            }
 
-        this._timePenaltySum += TimePenalty;
-        this.mTimeRemain = gameDuration - this._timePenaltySum - mGameTime;
+            this._timePenaltySum += TimePenalty;
+            this.mTimeRemain = gameDuration - this._timePenaltySum - mGameTime;
 
-        //judge wether to end the game automatiacally
-        if (mTimeRemain <= 0)
-        {
-            mGameState = GameState.END;
-            Debug.WriteLine("Time remaining is up to 0. The End.");
+            //judge wether to end the game automatiacally
+            if (mTimeRemain <= 0)
+            {
+                mGameState = GameState.END;
+                Debug.WriteLine("Time remaining is up to 0. The End.");
+            }
         }
     }
-
     public void SetChargeStation()
     {
         if (mCamp == Camp.A)
@@ -484,7 +486,7 @@ public class Game
 
             case Camp.B:
                 return mScoreB[(int)gs - 1];
-                
+
             default:
                 break;
         }
@@ -507,7 +509,21 @@ public class Game
             return 0;
         }
     }
-
+    public Car GetCar(Camp c)
+    {
+        if (c == Camp.A)
+        {
+            return mCarA;
+        }
+        else if (c == Camp.B)
+        {
+            return mCarB;
+        }
+        else
+        {
+            return null;
+        }
+    }
     /***********************************************************************
     Private Functions
     ***********************************************************************/

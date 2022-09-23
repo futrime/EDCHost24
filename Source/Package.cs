@@ -8,8 +8,8 @@ public class Package
 
     public const int OVER_TIME_PENALTY = 5; // per second
 
-    private Dot mDeparture;     // Departure of Package
-    private Dot mDestination;   // Destination of Package
+    public Dot mDeparture;     // Departure of Package
+    public Dot mDestination;   // Destination of Package
 
     // all times are in ms
     private int mGenerationTime;
@@ -20,6 +20,8 @@ public class Package
     private int mScheduledScore;
     private int mIndentityCode;
 
+    public PackageStatus Status;
+
     // only called when need to generate default package
     public Package()
     {
@@ -29,6 +31,7 @@ public class Package
         mScheduledDeliveryTime = 0xff;
         mPackageLevel = 0;
         mScheduledScore = 0;
+        Status = PackageStatus.UNPICKED;
     }
 
     public Package(Dot inDeparturePos, Dot inDestinationPos, int inGenerationTime, int inIndentityCode)
