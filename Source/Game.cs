@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Diagnostics;
+using System.IO;
 
 namespace EdcHost;
 
@@ -44,6 +44,11 @@ public class Game
     private int mGameTime;
     private int mTimeRemain;
 
+    /// <summary>
+    /// The sum of the time penalty
+    /// </summary>
+    private int _timePenaltySum = 0;
+
     // car and package
     private Car mCarA, mCarB;
 
@@ -65,10 +70,6 @@ public class Game
     private Obstacle mObstacle;
 
     private Boundary mBoundary;
-
-    public FileStream FoulTimeFS;
-
-    public Obstacle mLabyrinth;
 
     // flags represents whether package list has been generated
     private bool hasFirstPackageListGenerated;
@@ -158,8 +159,22 @@ public class Game
             _IsInChargeStation(_CarPos), ref mPackagesRemain, out TimePenalty);
         }
 
-        //update times remain
-        mTimeRemain = mTimeRemain - mGameTime - TimePenalty;
+        // Calculate the remaining time
+        int gameDuration = 0;
+        switch (this.mGameStage)
+        {
+            case GameStage.FIRST_HALF:
+                gameDuration = Game.FIRST_HALF_TIME;
+                break;
+            case GameStage.SECOND_HALF:
+                gameDuration = Game.SECOND_HALF_TIME;
+                break;
+            default:
+                break;
+        }
+
+        this._timePenaltySum += TimePenalty;
+        this.mTimeRemain = gameDuration - this._timePenaltySum - mGameTime;
 
         //judge wether to end the game automatiacally
         if (mTimeRemain <= 0)
