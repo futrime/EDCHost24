@@ -4,16 +4,9 @@ using System.IO;
 using System.Diagnostics;
 
 namespace EdcHost;
-// Token
-// 当前游戏状态
-public enum GameState { UNSTART = 0, RUN = 1, PAUSE = 2, END = 3 };
-// 游戏阶段
-
-public enum GameStage { NONE = 0, FIRST_HALF = 1, SECOND_HALF = 2 };
 
 public class Game
 {
-
     // size of competition area
     // 最大游戏场地
     public const int MAX_SIZE = 254;

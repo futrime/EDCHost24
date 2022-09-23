@@ -1,15 +1,9 @@
 ﻿using System.Collections.Generic;
 
 namespace EdcHost;
-//队名
-public enum Camp
-{
-    NONE = 0, A, B
-};
 
 public class Car //选手的车
 {
-
     // the object of package and picked by car and first collision time
     private class PackagesAndTime
     {
