@@ -1,4 +1,4 @@
-﻿namespace EDCHOST22
+﻿namespace EDCHOST
 {
     partial class Tracker
     {
@@ -111,7 +111,7 @@
             this.buttonStart.TabIndex = 27;
             this.buttonStart.Text = "开始";
             this.buttonStart.UseVisualStyleBackColor = true;
-            this.buttonStart.Click += new System.EventHandler(this.buttonStart_Click);
+            this.buttonStart.Click += new System.EventHandler(this.bottonStartA_FirstHalf_Click);
             // 
             // buttonPause
             // 
@@ -164,7 +164,7 @@
             this.button_restart.TabIndex = 56;
             this.button_restart.Text = "新比赛";
             this.button_restart.UseVisualStyleBackColor = true;
-            this.button_restart.Click += new System.EventHandler(this.button_restart_Click);
+            this.button_restart.Click += new System.EventHandler(this.buttonRestart_click);
             // 
             // button_video
             // 
@@ -245,7 +245,7 @@
             this.button_BFoul.TabIndex = 65;
             this.button_BFoul.Text = "犯规";
             this.button_BFoul.UseVisualStyleBackColor = true;
-            this.button_BFoul.Click += new System.EventHandler(this.button_BFoul_Click);
+            this.button_BFoul.Click += new System.EventHandler(this.buttonFoul_Click);
             // 
             // button_AFoul
             // 
@@ -262,7 +262,7 @@
             this.button_AFoul.TabIndex = 86;
             this.button_AFoul.Text = "犯规";
             this.button_AFoul.UseVisualStyleBackColor = true;
-            this.button_AFoul.Click += new System.EventHandler(this.button_AFoul_Click);
+            this.button_AFoul.Click += new System.EventHandler(this.buttonFoul_Click);
             // 
             // label_RedBG
             // 
@@ -286,7 +286,7 @@
             this.button_Continue.TabIndex = 91;
             this.button_Continue.Text = "继续";
             this.button_Continue.UseVisualStyleBackColor = true;
-            this.button_Continue.Click += new System.EventHandler(this.button_Continue_Click);
+            this.button_Continue.Click += new System.EventHandler(this.buttonContinue_Click);
             // 
             // label_AFoulNum
             // 
@@ -379,40 +379,7 @@
             this.time.TabIndex = 108;
             this.time.Text = "label2";
             this.time.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // ABeacon
-            // 
-            this.ABeacon.AutoSize = true;
-            this.ABeacon.Font = new System.Drawing.Font("宋体", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.ABeacon.Location = new System.Drawing.Point(12, 207);
-            this.ABeacon.Name = "ABeacon";
-            this.ABeacon.Size = new System.Drawing.Size(131, 37);
-            this.ABeacon.TabIndex = 115;
-            this.ABeacon.Text = "label2";
-            // 
-            // BBeacon
-            // 
-            this.BBeacon.AutoSize = true;
-            this.BBeacon.Font = new System.Drawing.Font("宋体", 27.75F);
-            this.BBeacon.Location = new System.Drawing.Point(1489, 207);
-            this.BBeacon.Name = "BBeacon";
-            this.BBeacon.Size = new System.Drawing.Size(131, 37);
-            this.BBeacon.TabIndex = 116;
-            this.BBeacon.Text = "label2";
-            // 
-            // SetBeacon
-            // 
-            this.SetBeacon.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.SetBeacon.Font = new System.Drawing.Font("微软雅黑 Light", 28F);
-            this.SetBeacon.ForeColor = System.Drawing.Color.Black;
-            this.SetBeacon.Location = new System.Drawing.Point(41, 746);
-            this.SetBeacon.Margin = new System.Windows.Forms.Padding(2);
-            this.SetBeacon.Name = "SetBeacon";
-            this.SetBeacon.Size = new System.Drawing.Size(250, 60);
-            this.SetBeacon.TabIndex = 117;
-            this.SetBeacon.Text = "设置信标";
-            this.SetBeacon.UseVisualStyleBackColor = true;
-            this.SetBeacon.Click += new System.EventHandler(this.SetBeacon_Click);
+
             // 
             // NextStage
             // 
@@ -425,7 +392,7 @@
             this.NextStage.TabIndex = 118;
             this.NextStage.Text = "下一个阶段";
             this.NextStage.UseVisualStyleBackColor = true;
-            this.NextStage.Click += new System.EventHandler(this.NextStage_Click);
+            // this.NextStage.Click += new System.EventHandler(this.NextStage_Click);
             // 
             // label_BlueBG
             // 
@@ -448,7 +415,7 @@
             this.LastStage.TabIndex = 119;
             this.LastStage.Text = "上一个阶段";
             this.LastStage.UseVisualStyleBackColor = true;
-            this.LastStage.Click += new System.EventHandler(this.LastStage_Click);
+            // this.LastStage.Click += new System.EventHandler(this.LastStage_Click);
             // 
             // buttonOverTime
             // 
@@ -462,7 +429,7 @@
             this.buttonOverTime.TabIndex = 120;
             this.buttonOverTime.Text = "加时赛";
             this.buttonOverTime.UseVisualStyleBackColor = true;
-            this.buttonOverTime.Click += new System.EventHandler(this.buttonOverTime_Click);
+            // this.buttonOverTime.Click += new System.EventHandler(this.buttonOverTime_Click);
             // 
             // label2
             // 
@@ -493,7 +460,7 @@
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(33, 27);
             this.label4.TabIndex = 123;
-            this.label4.Click += new System.EventHandler(this.label4_Click);
+            // this.label4.Click += new System.EventHandler(this.label4_Click);
             // 
             // label5
             // 
@@ -514,7 +481,7 @@
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(33, 27);
             this.label6.TabIndex = 125;
-            this.label6.Click += new System.EventHandler(this.label6_Click);
+            // this.label6.Click += new System.EventHandler(this.label6_Click);
             // 
             // label7
             // 
@@ -545,7 +512,7 @@
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(33, 27);
             this.label9.TabIndex = 129;
-            this.label9.Click += new System.EventHandler(this.label9_Click);
+            // this.label9.Click += new System.EventHandler(this.label9_Click);
             // 
             // label10
             // 
@@ -669,6 +636,8 @@
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Label label11;
+
+        private System.Windows.Forms.Label buttonStart_Click;
     }
 }
 

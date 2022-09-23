@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
 
-namespace EDCHOST24
+namespace EDCHOST
 {
     class Station //所有站点
     {

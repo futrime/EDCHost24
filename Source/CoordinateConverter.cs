@@ -10,7 +10,7 @@ using System.IO.Ports;
 using System.Windows.Forms;
 using Point2i = OpenCvSharp.Point;
 
-namespace EDCHOST22
+namespace EDCHOST
 {
     // 坐标转换器：将三种坐标（摄像头坐标、显示坐标、逻辑坐标）上的点坐标进行相互转换
     // 摄像头坐标：摄像头直接捕捉到的视频帧对应的坐标

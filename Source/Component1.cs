@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EDCHOST22
+namespace EDCHOST
 {
     public partial class Component1 : Component
     {

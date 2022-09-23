@@ -9,7 +9,7 @@ using System.Text;
 using System.Windows.Forms;
 using Point2i = OpenCvSharp.Point;
 
-namespace EDCHOST22
+namespace EDCHOST
 {
     public class MyFlags
     {
@@ -21,8 +21,8 @@ namespace EDCHOST22
         // 只有校正后才能准确实现logicMap与showMap，camMap间的坐标转换
         // camMap和showMap坐标的对应始终是准确的，但它们与logicMap的顶点不一定重合
         // 因此需要手动在showMap上选中场地的4个顶点以校正
-        public bool calibrated;  
-        
+        public bool calibrated;
+
         public bool videomode;
         public int clickCount;   // 画面被点击的次数
 
@@ -63,10 +63,11 @@ namespace EDCHOST22
 
 
             // 设置3张地图的大小
+            const int MAX_SIZE_CM = 254;
             // 以下数据待定，根据实际设备确定
             showSize = new OpenCvSharp.Size(960, 720);
             cameraSize = new OpenCvSharp.Size(1280, 960);
-            logicSize = new OpenCvSharp.Size(Court.MAX_SIZE_CM, Court.MAX_SIZE_CM);
+            logicSize = new OpenCvSharp.Size(MAX_SIZE_CM, MAX_SIZE_CM);
 
             // 点击显示画面的次数，用于校正画面
             clickCount = 0;

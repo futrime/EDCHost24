@@ -1,5 +1,5 @@
 ﻿
-namespace EDCHOST22
+namespace EDCHOST
 {
     partial class Form1
     {

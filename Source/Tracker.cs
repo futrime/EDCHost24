@@ -10,10 +10,10 @@ using System.Text;
 using System.Windows.Forms;
 using System.Diagnostics;
 using Point2i = OpenCvSharp.Point;
-using Cvt = EDCHOST22.MyConvert;
+using Cvt = EDCHOST.MyConvert;
 using System.Runtime.InteropServices;
 
-namespace EDCHOST22
+namespace EDCHOST
 {
     public partial class Tracker : Form
     {
@@ -25,7 +25,6 @@ namespace EDCHOST22
         // 比赛所用参数和场上状况
         public MyFlags flags = null;
         public VideoCapture capture = null;
-        public MineType CurrentBeaconType = MineType.B;
 
         // 设定的显示画面四角坐标
         private Point2f[] showCornerPts = null;
@@ -40,32 +39,18 @@ namespace EDCHOST22
 
         // 以下坐标均为相机坐标
         // 人员坐标
-        // private Point2i camPsgStart;
-        // private Point2i camPsgEnd;
-        // 金矿坐标
-        private Point2i[] camMine;
-        private Point2i[] camParkingPoint;
+        private Point2i camPsgStart;
+        private Point2i camPsgEnd;
         // 车A坐标
         private Point2i camCarA;
         // 车B坐标
         private Point2i camCarB;
         // 物资坐标
-        // private Point2i[] camPkgs;
+        private Point2i[] camPkgs;
 
         // 以下坐标均为逻辑坐标
-        //private Point2i logicPsgStart;
-        //private Point2i logicPsgEnd;
-        private Point2i[] logicMine;
-        private Point2i[] logicParkingPoint;
         private Point2i logicCarA;
         private Point2i logicCarB;
-        //private Point2i[] logicPkgs;
-
-        //以下为物资的坐标显示
-        //private int[] PkgsWhetherPicked;
-        //以下为金矿的坐标显示
-        private int[] MineIsInMaze;
-        
 
         // 以下均为显示坐标
         private Point2i showCarA;
@@ -103,10 +88,11 @@ namespace EDCHOST22
             newX = labelBScore.Location.X - label_BlueBG.Location.X;
             newY = labelBScore.Location.Y - label_BlueBG.Location.Y;
             labelBScore.Location = new System.Drawing.Point(newX, newY);
-            label_GameCount.Text = "第一回合";
+            label_GameCount.Text = "上半场";
 
             //flags参数类
             flags = new MyFlags();
+            // flags.Init();
             flags.Start();
 
             // 创建视频流
@@ -131,35 +117,16 @@ namespace EDCHOST22
             // 定位小车位置的类
             localiser = new Localiser();
 
-            // 记录时间
-            timeCamNow = DateTime.Now;
-            timeCamPrev = timeCamNow;
-
             // 相机坐标初始化
-            //camPsgStart = new Point2i();
-            //camPsgEnd = new Point2i();
+            camPsgStart = new Point2i();
+            camPsgEnd = new Point2i();
             camCarA = new Point2i();
             camCarB = new Point2i();
-            camMine = new Point2i[2];
-            camParkingPoint = new Point2i[Court.TOTAL_PARKING_AREA];
-            //camPkgs = new Point2i[0];
+            camPkgs = new Point2i[0];
 
             // 逻辑坐标初始化
-            //logicPsgStart = new Point2i();
-            //logicPsgEnd = new Point2i();
-            logicMine = new Point2i[2];
-            logicParkingPoint = new Point2i[Court.TOTAL_PARKING_AREA];
             logicCarA = new Point2i();
             logicCarB = new Point2i();
-            //logicPkgs = new Point2i[6];
-            //物资信息初始化
-            //PkgsWhetherPicked = new int[6];
-            MineIsInMaze = new int[2] { 1, 1 };
-            for (int i = 0; i < Court.TOTAL_PARKING_AREA; i++)
-            {
-                logicParkingPoint[i] = Cvt.Dot2Point(Court.ParkID2Dot(i));
-            }
-
 
             // 显示坐标初始化
             showCarA = new Point2i();
@@ -168,7 +135,6 @@ namespace EDCHOST22
             buttonStart.Enabled = true;
             buttonPause.Enabled = false;
             button_Continue.Enabled = false;
-            
 
             validPorts = SerialPort.GetPortNames();
             alreadySet = false;
@@ -186,11 +152,10 @@ namespace EDCHOST22
 
                 // 设置定时器的触发间隔为 100ms
                 timerMsg100ms.Interval = 100;
-                timerMsg100ms.Interval = 100;
 
                 // 启动计时器，执行给迷宫外的小车定时发信息的任务
-                timerMsg100ms.Start();                
-            }   
+                timerMsg100ms.Start();
+            }
 
             Debug.WriteLine("Tracker Initialize Finished\n");
         }
@@ -198,7 +163,6 @@ namespace EDCHOST22
         // 进行界面刷新、读取摄像头图像、与游戏逻辑交互的周期性函数
         private void Flush()
         {
-
             // 如果还未进行参数设置，则创建并打开SetWindow窗口，进行参数设置
             if (!alreadySet)
             {
@@ -210,45 +174,27 @@ namespace EDCHOST22
             // 从视频帧中读取一帧，进行图像处理、绘图和数值更新
             VideoProcess();
 
-            // 保存上一帧的小车位置，以便判断是否逆行
-            game.CarA.UpdateLastPos();
-            game.CarB.UpdateLastPos();
+            Dot CarPosA = Cvt.Point2Dot(logicCarA);
+            Dot CarPosB = Cvt.Point2Dot(logicCarB);
 
-            // 游戏逻辑端接收图像处理端信息
-            game.CarA.SetPos(Cvt.Point2Dot(logicCarA));
-            game.CarB.SetPos(Cvt.Point2Dot(logicCarB));  
-
-            // 更新比赛信息
-            game.Update();
-
-            // 图像处理端接收游戏逻辑端信息
-            //logicPsgStart = Cvt.Dot2Point(game.curPsg.Start_Dot);
-            //logicPsgEnd = Cvt.Dot2Point(game.curPsg.End_Dot);
-            //logicPkgs[0] = Cvt.Dot2Point(game.currentPkgList[0].mPos);
-            //logicPkgs[1] = Cvt.Dot2Point(game.currentPkgList[1].mPos);
-            //logicPkgs[2] = Cvt.Dot2Point(game.currentPkgList[2].mPos);
-            //logicPkgs[3] = Cvt.Dot2Point(game.currentPkgList[3].mPos);
-            //logicPkgs[4] = Cvt.Dot2Point(game.currentPkgList[4].mPos);
-            //logicPkgs[5] = Cvt.Dot2Point(game.currentPkgList[5].mPos);
-            //PkgsWhetherPicked[0] = game.currentPkgList[0].IsPicked;
-            //PkgsWhetherPicked[1] = game.currentPkgList[1].IsPicked;
-            //PkgsWhetherPicked[2] = game.currentPkgList[2].IsPicked;
-            //PkgsWhetherPicked[3] = game.currentPkgList[3].IsPicked;
-            //PkgsWhetherPicked[4] = game.currentPkgList[4].IsPicked;
-            //PkgsWhetherPicked[5] = game.currentPkgList[5].IsPicked;
-            logicMine[0] = Cvt.Dot2Point(game.mMineArray[0].Pos);
-            logicMine[1] = Cvt.Dot2Point(game.mMineArray[1].Pos);
-            MineIsInMaze[0] = game.mMineInMaze[0];
-            MineIsInMaze[1] = game.mMineInMaze[1];
+            // Update the information of car which is racing
+            if (game.GetCamp() == Camp.A)
+            {
+                game.UpdateOnEachFrame(CarPosA);
+            }
+            else if (game.GetCamp() == Camp.B)
+            {
+                game.UpdateOnEachFrame(CarPosB);
+            }
         }
 
         // 当Tracker被加载时调用此函数
         // 读取data.txt文件中存储的hue,saturation,value等的默认值
         private void Tracker_Load(object sender, EventArgs e)
         {
-            if (File.Exists(@"Data\data.txt"))
+            if (File.Exists("data.txt"))
             {
-                FileStream fsRead = new FileStream(@"Data\data.txt", FileMode.Open);
+                FileStream fsRead = new FileStream("data.txt", FileMode.Open);
                 int fsLen = (int)fsRead.Length;
                 byte[] heByte = new byte[fsLen];
                 fsRead.Read(heByte, 0, heByte.Length);
@@ -269,54 +215,20 @@ namespace EDCHOST22
         }
 
 
-        #region 与小车交互信息
-        // 给小车A发送信息
-        private void SendCarAMessage()
+        #region 向小车传送信息
+        private void SendMessage()
         {
-            // 打包好要发给A车的信息
-            byte[] Message = game.PackCarAMessage();
+            // get message from game
+            byte[] Message = game.Message();
 
-            // 从小车接收的信息
-            byte[] ByteFromCarArray = null;
-
-            // 通过串口1发送给A车
-            if (serial1 != null && serial1.IsOpen)
+            // send message to car
+            if (game.GetCamp() == Camp.A && serial1 != null && serial1.IsOpen)
             {
-                serial1.Write(Message, 0, 48);
-                ByteFromCarArray = System.Text.Encoding.Default.GetBytes(serial1.ReadExisting());
-                if (ByteFromCarArray != null)
-                {
-                    for (int i = 0; i < ByteFromCarArray.Length; i++)
-                    {
-                        CurrentBeaconType = (MineType)ByteFromCarArray[i];
-                    }
-                }
+                serial1.Write(Message, 0, 82);
             }
-            ShowMessage(Message);
-            validPorts = SerialPort.GetPortNames();
-        }
-
-        // 给小车B发送信息
-        private void SendCarBMessage()
-        {
-            // 打包好要发给B车的信息
-            byte[] Message = game.PackCarBMessage();
-
-            // 从小车接收的信息
-            byte[] ByteFromCarArray = null;
-
-            // 通过串口2发送给B车
-            if (serial2 != null && serial2.IsOpen)
+            else if (game.GetCamp() == Camp.B && serial2 != null && serial2.IsOpen)
             {
-                serial2.Write(Message, 0, 48);
-                ByteFromCarArray = System.Text.Encoding.Default.GetBytes(serial2.ReadExisting());
-                if (ByteFromCarArray != null)
-                {
-                    for (int i = 0; i < ByteFromCarArray.Length; i++)
-                    {
-                        CurrentBeaconType = (MineType)ByteFromCarArray[i];
-                    }
-                }
+                serial2.Write(Message, 0, 82);
             }
             ShowMessage(Message);
             validPorts = SerialPort.GetPortNames();
@@ -344,7 +256,7 @@ namespace EDCHOST22
                         // 调用定位器，进行图像处理，得到小车位置中心点集
                         // 第一个形参videoFrame传入的是指针，所以videoFrame已被修改（画上了红蓝圆点）
                         localiser.Locate(videoFrame, flags);
-                        
+
                         // 调用定位器，得到小车的坐标
                         localiser.GetCarLocations(out camCarA, out camCarB);
 
@@ -355,8 +267,8 @@ namespace EDCHOST22
                         // 此转换与只与showMap和camMap有关，不需要图像被校正
                         Point2f[] showCars = coordCvt.CameraToShow(camCars);
 
-                        showCarA = (OpenCvSharp.Point)showCars[0];
-                        showCarB = (OpenCvSharp.Point)showCars[1];
+                        showCarA = (Point2i)showCars[0];
+                        showCarB = (Point2i)showCars[1];
 
                         // 如果画面已经被手工校正，则可以获取小车的逻辑坐标
                         if (flags.calibrated)
@@ -364,8 +276,8 @@ namespace EDCHOST22
                             // 将小车坐标从相机坐标转化成逻辑坐标
                             Point2f[] logicCars = coordCvt.CameraToLogic(camCars);
 
-                            logicCarA = (OpenCvSharp.Point)logicCars[0];
-                            logicCarB = (OpenCvSharp.Point)logicCars[1];
+                            logicCarA = (Point2i)logicCars[0];
+                            logicCarB = (Point2i)logicCars[1];
                         }
                         else  // 否则将小车的坐标设为（-1，-1）
                         {
@@ -375,11 +287,6 @@ namespace EDCHOST22
 
                         // 在显示的画面上绘制小车，乘客，物资等对应的图案
                         PaintPattern(videoFrame, localiser);
-
-                        // 处理时间参数
-                        timeCamNow = DateTime.Now;
-                        TimeSpan timeProcess = timeCamNow - timeCamPrev;
-                        timeCamPrev = timeCamNow;
 
                         // 将摄像头视频帧缩放成显示帧
                         // Resize函数的最后一个参数是缩放函数的插值算法
@@ -408,6 +315,10 @@ namespace EDCHOST22
         public void PaintPattern(Mat mat, Localiser loc)
         {
             // 绘制边界点，在鼠标点击的场地的四个边界点上画上绿色小十字
+            // cv2: 图像绘制相关的库
+            // coordinate.ShowToCemera 坐标的透视变换
+            // cv::mat 是opencv里面的矩阵，用于存储图像数据
+            // 花了一个6*6的叉
             foreach (Point2f pt in coordCvt.ShowToCamera(showCornerPts))
             {
                 Cv2.Line(mat, (int)(pt.X - 3), (int)(pt.Y),
@@ -421,247 +332,172 @@ namespace EDCHOST22
             //Debug.WriteLine("{0}\n", loc.GetCentres(Camp.A).Count());
 
             //读取图标信息
-            //Mat Icon_CarA, Icon_CarB, Icon_Package, Icon_Person, Icon_RedCross, Icon_Zone;
-            Mat Icon_CarA, Icon_CarB, Icon_MineA, Icon_MineB, Icon_MineC, Icon_MineD,
-                Icon_BeaconAA, Icon_BeaconAB, Icon_BeaconAC, Icon_BeaconAD,
-                Icon_BeaconBA, Icon_BeaconBB, Icon_BeaconBC, Icon_BeaconBD,
-                Icon_ParkA, Icon_ParkB, Icon_ParkC, Icon_ParkD;
-            Icon_CarA = new Mat(@"Assets\Icons\CarA.png", ImreadModes.Color);
-            Icon_CarB = new Mat(@"Assets\Icons\CarB.png", ImreadModes.Color);
-            Icon_MineA = new Mat(@"Assets\Icons\MineA.png", ImreadModes.Color);
-            Icon_MineB = new Mat(@"Assets\Icons\MineB.png", ImreadModes.Color);
-            Icon_MineC = new Mat(@"Assets\Icons\MineC.png", ImreadModes.Color);
-            Icon_MineD = new Mat(@"Assets\Icons\MineD.png", ImreadModes.Color);
-            Icon_BeaconAA = new Mat(@"Assets\Icons\BeaconAA.png", ImreadModes.Color);
-            Icon_BeaconAB = new Mat(@"Assets\Icons\BeaconAB.png", ImreadModes.Color);
-            Icon_BeaconAC = new Mat(@"Assets\Icons\BeaconAC.png", ImreadModes.Color);
-            Icon_BeaconAD = new Mat(@"Assets\Icons\BeaconAD.png", ImreadModes.Color);
-            Icon_BeaconBA = new Mat(@"Assets\Icons\BeaconBA.png", ImreadModes.Color);
-            Icon_BeaconBB = new Mat(@"Assets\Icons\BeaconBB.png", ImreadModes.Color);
-            Icon_BeaconBC = new Mat(@"Assets\Icons\BeaconBC.png", ImreadModes.Color);
-            Icon_BeaconBD = new Mat(@"Assets\Icons\BeaconBD.png", ImreadModes.Color);
-            Icon_ParkA = new Mat(@"Assets\Icons\ParkingA.png", ImreadModes.Color);
-            Icon_ParkB = new Mat(@"Assets\Icons\ParkingB.png", ImreadModes.Color);
-            Icon_ParkC = new Mat(@"Assets\Icons\ParkingC.png", ImreadModes.Color);
-            Icon_ParkD = new Mat(@"Assets\Icons\ParkingD.png", ImreadModes.Color);
+            //图像的信息是由矩阵来表示的
+            Mat Icon_CarA, Icon_CarB, Icon_Package, Icon_Person, Icon_Zone;
+            Icon_CarA = new Mat("../Assets/Icons/CARA.png/", ImreadModes.Color);
+            Icon_CarB = new Mat("../Assets/Icons/CARB.png/", ImreadModes.Color);
+            Icon_Package = new Mat("../Assets/Icons/Package.png/", ImreadModes.Color);
+            Icon_Person = new Mat("../Assets/Icons/Person.png/", ImreadModes.Color);
+            // Icon_RedCross = new Mat(@"..\\Assets\\icon\\RedCross.png", ImreadModes.Color);
+            Icon_Zone = new Mat("../Assets/Icons/Zone.png/", ImreadModes.Color);
 
-            Cv2.Resize(Icon_CarA, Icon_CarA, new OpenCvSharp.Size(20,20), 0, 0, InterpolationFlags.Cubic);
+            Cv2.Resize(Icon_CarA, Icon_CarA, new OpenCvSharp.Size(20, 20), 0, 0, InterpolationFlags.Cubic);
             Cv2.Resize(Icon_CarB, Icon_CarB, new OpenCvSharp.Size(20, 20), 0, 0, InterpolationFlags.Cubic);
-            //Cv2.Resize(Icon_Package, Icon_Package, new OpenCvSharp.Size(22, 22), 0, 0, InterpolationFlags.Cubic);
-            //Cv2.Resize(Icon_Person, Icon_Person, new OpenCvSharp.Size(20, 20), 0, 0, InterpolationFlags.Cubic);
-            //Cv2.Resize(Icon_RedCross, Icon_RedCross, new OpenCvSharp.Size(20, 20), 0, 0, InterpolationFlags.Cubic);
-            //Cv2.Resize(Icon_Zone, Icon_Zone, new OpenCvSharp.Size(22, 22), 0, 0, InterpolationFlags.Cubic);
-            Cv2.Resize(Icon_MineA, Icon_MineA, new OpenCvSharp.Size(20, 20), 0, 0, InterpolationFlags.Cubic);
-            Cv2.Resize(Icon_MineB, Icon_MineB, new OpenCvSharp.Size(20, 20), 0, 0, InterpolationFlags.Cubic);
-            Cv2.Resize(Icon_MineC, Icon_MineC, new OpenCvSharp.Size(20, 20), 0, 0, InterpolationFlags.Cubic);
-            Cv2.Resize(Icon_MineD, Icon_MineD, new OpenCvSharp.Size(20, 20), 0, 0, InterpolationFlags.Cubic);
-            Cv2.Resize(Icon_ParkA, Icon_ParkA, new OpenCvSharp.Size(20, 20), 0, 0, InterpolationFlags.Cubic);
-            Cv2.Resize(Icon_ParkB, Icon_ParkB, new OpenCvSharp.Size(20, 20), 0, 0, InterpolationFlags.Cubic);
-            Cv2.Resize(Icon_ParkC, Icon_ParkC, new OpenCvSharp.Size(20, 20), 0, 0, InterpolationFlags.Cubic);
-            Cv2.Resize(Icon_ParkD, Icon_ParkD, new OpenCvSharp.Size(20, 20), 0, 0, InterpolationFlags.Cubic);
-            Cv2.Resize(Icon_BeaconAA, Icon_BeaconAA, new OpenCvSharp.Size(20, 20), 0, 0, InterpolationFlags.Cubic);
-            Cv2.Resize(Icon_BeaconAB, Icon_BeaconAB, new OpenCvSharp.Size(20, 20), 0, 0, InterpolationFlags.Cubic);
-            Cv2.Resize(Icon_BeaconAC, Icon_BeaconAC, new OpenCvSharp.Size(20, 20), 0, 0, InterpolationFlags.Cubic);
-            Cv2.Resize(Icon_BeaconAD, Icon_BeaconAD, new OpenCvSharp.Size(20, 20), 0, 0, InterpolationFlags.Cubic);
-            Cv2.Resize(Icon_BeaconBA, Icon_BeaconBA, new OpenCvSharp.Size(20, 20), 0, 0, InterpolationFlags.Cubic);
-            Cv2.Resize(Icon_BeaconBB, Icon_BeaconBB, new OpenCvSharp.Size(20, 20), 0, 0, InterpolationFlags.Cubic);
-            Cv2.Resize(Icon_BeaconBC, Icon_BeaconBC, new OpenCvSharp.Size(20, 20), 0, 0, InterpolationFlags.Cubic);
-            Cv2.Resize(Icon_BeaconBD, Icon_BeaconBD, new OpenCvSharp.Size(20, 20), 0, 0, InterpolationFlags.Cubic);
+            Cv2.Resize(Icon_Package, Icon_Package, new OpenCvSharp.Size(22, 22), 0, 0, InterpolationFlags.Cubic);
+            Cv2.Resize(Icon_Person, Icon_Person, new OpenCvSharp.Size(20, 20), 0, 0, InterpolationFlags.Cubic);
+            // Cv2.Resize(Icon_RedCross, Icon_RedCross, new OpenCvSharp.Size(20, 20), 0, 0, InterpolationFlags.Cubic);
+            Cv2.Resize(Icon_Zone, Icon_Zone, new OpenCvSharp.Size(22, 22), 0, 0, InterpolationFlags.Cubic);
 
 
-            // 在小车1的位置上绘制红色实心圆
+            // 在小车的位置上绘制小车图案
             foreach (Point2i c1 in loc.GetCentres(Camp.A))
             {
                 int Tx = c1.X - 10, Ty = c1.Y - 10, Tcol = Icon_CarA.Cols, Trow = Icon_CarA.Rows;
                 if (Tx < 0) Tx = 0;
                 if (Ty < 0) Ty = 0;
+                // 如果超出了范围，则只绘制范围内的图像
                 if (Tx + Tcol > mat.Cols) Tcol = mat.Cols - Tx;
                 if (Ty + Trow > mat.Rows) Trow = mat.Rows - Ty;
-                Mat Pos = new Mat(mat, new Rect(Tx , Ty , Tcol, Trow));
+                Mat Pos = new Mat(mat, new Rect(Tx, Ty, Tcol, Trow));
                 Icon_CarA.CopyTo(Pos);
-               // Cv2.Circle(mat, c1, 10, new Scalar(0x3c, 0x14, 0xdc), -1);
+                // 在小车1的位置上绘制红色实心圆
+                // Cv2.Circle(mat, c1, 10, new Scalar(0x3c, 0x14, 0xdc), -1);
             }
             //Point2f[] camCentCarB = loc.GetCentres(Camp.B).ToArray();
             // 在小车2的位置上绘制蓝色实心圆
             foreach (Point2i c2 in loc.GetCentres(Camp.B))
             {
                 int Tx = c2.X - 10, Ty = c2.Y - 10, Tcol = Icon_CarB.Cols, Trow = Icon_CarB.Rows;
+                //Tcol: 小车图像的列的长度， TRow: 小车图像的行的长度
                 if (Tx < 0) Tx = 0;
                 if (Ty < 0) Ty = 0;
+                //这里存疑，为什么不是Tx + Tcol / 2 ？
                 if (Tx + Tcol > mat.Cols) Tcol = mat.Cols - Tx;
+                // 自动适应边界调整图像大小
                 if (Ty + Trow > mat.Rows) Trow = mat.Rows - Ty;
                 Mat Pos = new Mat(mat, new Rect(Tx, Ty, Tcol, Trow));
+                // CopyTo 将小车图像复制到整体图像相应的部分，实现了绘制小车图像
                 Icon_CarB.CopyTo(Pos);
                 //Cv2.Circle(mat, c2, 10, new Scalar(0xff, 0x00, 0x00), -1);
             }
 
-
-            // 绘制金矿位置
-            if (game.mGameState == GameState.NORMAL)
+            // 这些是用来绘制passenger的，不是本届赛题的内容
+            //绘制人员起始或终点位置， 并在当前位置和目标位置连线
+            //目标点 绿色 正方形  边长16
+            //连线 浅绿 线宽 3
+            // (?)
+            if (game.mGameState == GameState.RUN)
             {
-                Point2f[] logicMineDots = new Point2f[game.mMineInMaze[0] + game.mMineInMaze[1]];
-                MineType[] mineTypes = new MineType[game.mMineInMaze[0] + game.mMineInMaze[1]];
-                if (logicMineDots.Length != 0)
-                {
-                    int temp = 0;
-                    for (int i = 0; i < MineGenerator.COURTMINENUM; i++)
-                    {
-                        if (game.mMineInMaze[i] == 1)
-                        {
-                            logicMineDots[temp] = Cvt.Dot2Point(game.mMineArray[i].Pos);
-                            mineTypes[temp] = game.mMineArray[i].Type;
-                            temp++;
-                        }
-                    }
-                    Point2f[] showMineDots = coordCvt.LogicToCamera(logicMineDots);
-                    for (int i = 0; i < game.mMineInMaze[0] + game.mMineInMaze[1]; i++)
-                    {
-                        if (flags.calibrated)
-                        {
-                            int x = (int)showMineDots[i].X;
-                            int y = (int)showMineDots[i].Y;
-                            int Tx = x - 10, Ty = y - 10, Tcol = Icon_MineA.Cols, Trow = Icon_MineA.Rows;
-                            if (Tx < 0) Tx = 0;
-                            if (Ty < 0) Ty = 0;
-                            if (Tx + Tcol > mat.Cols) Tcol = mat.Cols - Tx;
-                            if (Ty + Trow > mat.Rows) Trow = mat.Rows - Ty;
-                            Mat Pos = new Mat(mat, new Rect(Tx, Ty, Tcol, Trow));
-                            if (game.mGameStage == GameStage.FIRST_A || game.mGameStage == GameStage.FIRST_B)
-                            {
-                                Icon_MineA.CopyTo(Pos);
-                            }
-                            else
-                            {
-                                switch (mineTypes[i])
-                                {
-                                    case MineType.A:
-                                        {
-                                            Icon_MineA.CopyTo(Pos); break;
-                                        }
-                                    case MineType.B:
-                                        {
-                                            Icon_MineB.CopyTo(Pos); break;
-                                        }
-                                    case MineType.C:
-                                        {
-                                            Icon_MineC.CopyTo(Pos); break;
-                                        }
-                                    case MineType.D:
-                                        {
-                                            Icon_MineD.CopyTo(Pos); break;
-                                        }
-                                };
-                            }
-                        }
-                    }
-                }
-            }
-            
+                //绘制物资
+                List<Package> packagelist = game.PackagesOnStage();
+                int package_num = packagelist.Count;
+                List<Dot> departurelist = new List<Dot>();
+                List<Point2f> logicDots = new List<Point2f>();
 
-            // 绘制停车点位置
-            if (game.mGameState == GameState.NORMAL)
-            {
-                Point2f[] logicParkingDots = new Point2f[Court.TOTAL_PARKING_AREA];       // 8个停车点
-                MineType[] parkTypes = new MineType[Court.TOTAL_PARKING_AREA];          // 8个停车点的类型
-                for (int i = 0; i < Court.TOTAL_PARKING_AREA; i++){
-                    logicParkingDots[i] = Cvt.Dot2Point(Court.ParkID2Dot(i));
-                }
-                Point2f[] showParkingDots = coordCvt.LogicToCamera(logicParkingDots);  // 8个停车点
-                for (int i = 0; i < Court.TOTAL_PARKING_AREA; i++)
+                foreach (Package package in packagelist)
                 {
-                    int x = (int)showParkingDots[i].X;
-                    int y = (int)showParkingDots[i].Y;
-                    int Tx = x - 10, Ty = y - 10, Tcol = Icon_ParkA.Cols, Trow = Icon_ParkA.Rows;
+                    Dot dot = package.Departure();
+                    departurelist.Add(dot);
+                    logicDots.Add(Cvt.Dot2Point(dot));
+                }
+                List<Point2f> showDots = new List<Point2f>(coordCvt.LogicToCamera(logicDots.ToArray()));
+
+                for (int i = 0; i < package_num; ++i)
+                {
+                    int x = (int)showDots[i].X;
+                    int y = (int)showDots[i].Y;
+                    int Tx = x - 11, Ty = y - 11, Tcol = Icon_Package.Cols, Trow = Icon_Package.Rows;
                     if (Tx < 0) Tx = 0;
                     if (Ty < 0) Ty = 0;
                     if (Tx + Tcol > mat.Cols) Tcol = mat.Cols - Tx;
                     if (Ty + Trow > mat.Rows) Trow = mat.Rows - Ty;
                     Mat Pos = new Mat(mat, new Rect(Tx, Ty, Tcol, Trow));
-                    if (game.mGameStage == GameStage.FIRST_A || game.mGameStage == GameStage.FIRST_B)
-                    {
-                        Icon_ParkA.CopyTo(Pos);
-                    }
-                    else
-                    {
-                        switch (game.mMineGenerator.ParkType[i])
-                        {
-                            case MineType.A: Icon_ParkA.CopyTo(Pos); break;
-                            case MineType.B: Icon_ParkB.CopyTo(Pos); break;
-                            case MineType.C: Icon_ParkC.CopyTo(Pos); break;
-                            case MineType.D: Icon_ParkD.CopyTo(Pos); break;
-                        };
-                    }
-                }            
+                    Icon_Package.CopyTo(Pos);
+                }
             }
 
-            // 绘制信标位置
-            if (game.mGameState == GameState.NORMAL)
+            //绘制充电站
+            List<Dot> stationlistA = Station.StationOnStage(0);
+            List<Dot> stationlistB = Station.StationOnStage(1);
+
+            int station_numA = stationlistA.Count;
+            int station_numB = stationlistB.Count;
+            List<Point2f> logicDots2A = new List<Point2f>();
+            List<Point2f> logicDots2B = new List<Point2f>();
+
+            foreach (Dot dot in stationlistA)
             {
-                if (game.mBeacon.CarABeaconNum > 0)
-                {
-                    Point2f[] logicBeaconADots = new Point2f[game.mBeacon.CarABeaconNum];
-                    MineType[] beaconAType = new MineType[game.mBeacon.CarABeaconNum];
-                    for (int i = 0; i < game.mBeacon.CarABeaconNum; i++)
-                    {
-                        logicBeaconADots[i] = Cvt.Dot2Point(game.mBeacon.CarABeacon[i]);
-                        beaconAType[i] = game.mBeacon.CarABeaconMineType[i];
-                    }
-                    Point2f[] showBeaconADots = coordCvt.LogicToCamera(logicBeaconADots);
-                    for (int i = 0; i < game.mBeacon.CarABeaconNum; i++)
-                    {
-                        if (flags.calibrated)
-                        {
-                            int x = (int)showBeaconADots[i].X;
-                            int y = (int)showBeaconADots[i].Y;
-                            int Tx = x - 10, Ty = y - 10, Tcol = Icon_BeaconAA.Cols, Trow = Icon_BeaconAA.Rows;
-                            if (Tx < 0) Tx = 0;
-                            if (Ty < 0) Ty = 0;
-                            if (Tx + Tcol > mat.Cols) Tcol = mat.Cols - Tx;
-                            if (Ty + Trow > mat.Rows) Trow = mat.Rows - Ty;
-                            Mat Pos = new Mat(mat, new Rect(Tx, Ty, Tcol, Trow));
-                            switch (beaconAType[i])
-                            {
-                                case MineType.A: Icon_BeaconAA.CopyTo(Pos); break;
-                                case MineType.B: Icon_BeaconAB.CopyTo(Pos); break;
-                                case MineType.C: Icon_BeaconAC.CopyTo(Pos); break;
-                                case MineType.D: Icon_BeaconAD.CopyTo(Pos); break;
-                            };
-                        }
-                    }
-                }
-                if (game.mBeacon.CarBBeaconNum > 0)
-                {
-                    Point2f[] logicBeaconBDots = new Point2f[game.mBeacon.CarBBeaconNum];
-                    MineType[] beaconBType = new MineType[game.mBeacon.CarBBeaconNum];
-                    for (int i = 0; i < game.mBeacon.CarBBeaconNum; i++)
-                    {
-                        logicBeaconBDots[i] = Cvt.Dot2Point(game.mBeacon.CarBBeacon[i]);
-                        beaconBType[i] = game.mBeacon.CarBBeaconMineType[i];
-                    }
-                    Point2f[] showBeaconBDots = coordCvt.LogicToCamera(logicBeaconBDots);
-                    for (int i = 0; i < game.mBeacon.CarBBeaconNum; i++)
-                    {
-                        if (flags.calibrated)
-                        {
-                            int x = (int)showBeaconBDots[i].X;
-                            int y = (int)showBeaconBDots[i].Y;
-                            int Tx = x - 10, Ty = y - 10, Tcol = Icon_BeaconAA.Cols, Trow = Icon_BeaconAA.Rows;
-                            if (Tx < 0) Tx = 0;
-                            if (Ty < 0) Ty = 0;
-                            if (Tx + Tcol > mat.Cols) Tcol = mat.Cols - Tx;
-                            if (Ty + Trow > mat.Rows) Trow = mat.Rows - Ty;
-                            Mat Pos = new Mat(mat, new Rect(Tx, Ty, Tcol, Trow));
-                            switch (beaconBType[i])
-                            {
-                                case MineType.A: Icon_BeaconBA.CopyTo(Pos); break;
-                                case MineType.B: Icon_BeaconBB.CopyTo(Pos); break;
-                                case MineType.C: Icon_BeaconBC.CopyTo(Pos); break;
-                                case MineType.D: Icon_BeaconBD.CopyTo(Pos); break;
-                            };
-                        }
-                    }
-                }
+                logicDots2A.Add(Cvt.Dot2Point(dot));
             }
+            foreach (Dot dot in stationlistB)
+            {
+                logicDots2B.Add(Cvt.Dot2Point(dot));
+            }
+            List<Point2f> showDots2A = new List<Point2f>(coordCvt.LogicToCamera(logicDots2A.ToArray()));
+            List<Point2f> showDots2B = new List<Point2f>(coordCvt.LogicToCamera(logicDots2B.ToArray()));
+
+            // 第一阶段，只绘制本阶段的充电桩
+            // 第二阶段，绘制双方的充电桩
+            // 这里将A车的绘制成红色，B车绘制成绿色
+            if ((game.mGameStage == GameStage.FIRST_HALF && game.GetCamp() == Camp.A)
+                || game.mGameStage == GameStage.SECOND_HALF)
+            {
+                int x = (int)showDots2A[0].X;
+                int y = (int)showDots2A[0].Y;
+                Cv2.Circle(mat, x, y, 5, new Scalar(0xff, 0x00, 0x00), -1);
+                //Debug.WriteLine("Paint the package of campa");
+            }
+            if ((game.mGameStage == GameStage.FIRST_HALF && game.GetCamp() == Camp.B)
+                || game.mGameStage == GameStage.SECOND_HALF)
+            {
+                int x = (int)showDots2B[0].X;
+                int y = (int)showDots2B[0].Y;
+                Cv2.Circle(mat, x, y, 5, new Scalar(0x00, 0xff, 0x00), -1);
+                //Debug.WriteLine("Paint the package of campb");
+            }
+            /*
+            for (int i = 0; i < station_num; ++i)
+            {
+                if(flags.calibrated)
+                {
+                    List<Point2f> showDots2 = List<Point2f>(coordCvt.LogicToCamera(logicDots2.ToArray()));
+                    int x = (int)showDots2[i].X;
+                    int y = (int)showDots2[i].Y;
+                    int Tx = x - 11, Ty = y - 11, Tcol = Icon_Zone.Cols, Trow = Icon_Zone.Rows;
+                    if (Tx < 0) Tx = 0;
+                    if (Ty < 0) Ty = 0;
+                    if (Tx + Tcol > mat.Cols) Tcol = mat.Cols - Tx;
+                    if (Ty + Trow > mat.Rows) Trow = mat.Rows - Ty;
+                    Mat Pos = new Mat(mat, new Rect(Tx, Ty, Tcol, Trow));
+                    Icon_Zone.CopyTo(Pos);
+                    //Cv2.Circle(mat, x, y, 5, new Scalar(0xff, 0xff, 0x00), -1);
+                }
+            }*/
+
+            // 如果障碍物已被成功设置
+            if (Obstacle.IsLabySet == true)
+            {
+                //绘制迷宫障碍物
+                for (int i = 0; i < Obstacle.mpWallList.Length; i++)
+                {
+                    Dot StartDot = Obstacle.mpWallList[i].w1;
+                    Dot EndDot = Obstacle.mpWallList[i].w2;
+
+                    Point2f[] logicDots = { Cvt.Dot2Point(StartDot), Cvt.Dot2Point(EndDot) };
+
+                    if (flags.calibrated)
+                    {
+                        Point2f[] showDots = coordCvt.LogicToCamera(logicDots);
+                        Cv2.Line(mat, (int)showDots[0].X, (int)showDots[0].Y,
+                            (int)showDots[1].X, (int)showDots[1].Y,
+                            new Scalar(35, 35, 139), 5);
+                    }
+                }
+                //Debug.WriteLine("Has created Laby.");
+                //Cv2.Merge(new Mat[] { car1, car2, black }, merged);
+                //Cv2.ImShow("binary", merged);
+            }
+
         }
 
         // 更新UI界面上的显示图像
@@ -674,43 +510,6 @@ namespace EDCHOST22
         // 参数 M 接收的是发送给小车的编码过的信息，但并未使用，猜测可能仅于调试时使用
         private void ShowMessage(byte[] M)
         {
-            //label_CountDown.Text = $"{(game.MaxRound - game.Round) / 600}:{((game.MaxRound - game.Round) / 10) % 60 / 10}{((game.MaxRound - game.Round) / 10) % 60 % 10}";
-
-            // A,B车的总分数
-            labelAScore.Text = $"{game.CarA.MyScore}";
-            labelBScore.Text = $"{game.CarB.MyScore}";
-
-            // 第一回合或第二回合
-            label_GameCount.Text = (game.mGameStage == GameStage.FIRST_A || game.mGameStage == GameStage.FIRST_B) ? "第一回合" : "第二回合";
-
-            // A上场或B上场
-            label_GameStage.Text = (game.mGameStage == GameStage.FIRST_A || game.mGameStage == GameStage.SECOND_A) ? "A上场" : "B上场";
-
-            // A,B车犯规的次数
-            label_AFoulNum.Text = $"{game.CarA.mFoulCount}";
-            label_BFoulNum.Text = $"{game.CarB.mFoulCount}";
-
-            // A,B车的得分明细
-            label_AMessage.Text =
-                $"收集金矿数　{game.CarA.mMine1Load} + {game.CarA.mMine2Load.Sum()}\n" +
-                $"运送金矿数　{game.CarA.mMine1Unload} + {game.CarA.mMine2Unload.Sum()}\n";
-            label_BMessage.Text =
-                $"{game.CarB.mMine1Load} + {game.CarB.mMine2Load.Sum()}　收集金矿数\n" +
-                $"{game.CarB.mMine1Unload} + {game.CarB.mMine2Unload.Sum()}　运送金矿数\n";
-
-            // A,B车的坐标信息
-            label_Debug.Text =
-                $"A车坐标： ({game.CarA.mPos.x}, {game.CarA.mPos.y})\n" +
-                $"B车坐标： ({game.CarB.mPos.x}, {game.CarB.mPos.y})";
-
-            //比赛时间信息
-            time.Text = $"比赛时间： ({game.mGameTime/1000})\n";
-
-
-            ABeacon.Text = $"A撞到信标数    {game.CarA.mCrossBeaconCount}\nA载有金矿数    {game.CarA.mMineState[0]}    {game.CarA.mMineState[1]}";
-            label2.Text = $"{game.CarA.mMineState[2]}    {game.CarA.mMineState[3]}";
-            BBeacon.Text = $"B撞到信标数    {game.CarB.mCrossBeaconCount}\nB载有金矿数    {game.CarB.mMineState[0]}    {game.CarB.mMineState[1]}";
-            label3.Text = $"{game.CarB.mMineState[2]}    {game.CarB.mMineState[3]}";
 
         }
 
@@ -783,60 +582,69 @@ namespace EDCHOST22
                     coordCvt.UpdateCorners(showCornerPts, flags);
                     MessageBox.Show(
                           $"边界点设置完成\n"
-                        + $"0: {showCornerPts[0].X, 5}, {showCornerPts[0].Y, 5}\t"
-                        + $"1: {showCornerPts[1].X, 5}, {showCornerPts[1].Y, 5}\n"
-                        + $"2: {showCornerPts[2].X, 5}, {showCornerPts[2].Y, 5}\t"
-                        + $"3: {showCornerPts[3].X, 5}, {showCornerPts[3].Y, 5}");
+                        + $"0: {showCornerPts[0].X,5}, {showCornerPts[0].Y,5}\t"
+                        + $"1: {showCornerPts[1].X,5}, {showCornerPts[1].Y,5}\n"
+                        + $"2: {showCornerPts[2].X,5}, {showCornerPts[2].Y,5}\t"
+                        + $"3: {showCornerPts[3].X,5}, {showCornerPts[3].Y,5}");
                 }
             }
         }
 
 
-        // 比赛开始
-        private void buttonStart_Click(object sender, EventArgs e)
+        // Choose the game stage to begin
+        private void bottonStartA_FirstHalf_Click(object sender, EventArgs e)
         {
-            if (flags.clickCount < 4)
-            {
-                MessageBox.Show("未设置边界点!");
-                return;
-            }
-            game.Start();
-            buttonPause.Enabled = true;
-            button_Continue.Enabled = false;
-            if (game.mGameStage==GameStage.FIRST_A)
-            {
-                game.mBeacon.CarABeaconNum = 0;
-                game.mBeacon.CarBBeaconNum = 0;
-            }
+            game.Start(Camp.A, GameStage.FIRST_HALF);
         }
 
-        // 比赛暂停（待完善）
+        private void bottonStartB_FirstHalf_Click(object sender, EventArgs e)
+        {
+            game.Start(Camp.B, GameStage.FIRST_HALF);
+        }
+        private void bottonStartA_SecondHalf_Click(object sender, EventArgs e)
+        {
+            game.Start(Camp.A, GameStage.SECOND_HALF);
+        }
+
+        private void bottonStartB_SecondHalf_Click(object sender, EventArgs e)
+        {
+            game.Start(Camp.B, GameStage.SECOND_HALF);
+        }
+
+        // Pause
         private void buttonPause_Click(object sender, EventArgs e)
         {
-            // to add something...
             game.Pause();
-            buttonPause.Enabled = false;
-            button_Continue.Enabled = true;
         }
 
-        // 比赛重新开始
-        private void button_restart_Click(object sender, EventArgs e)
+        // Continue
+        private void buttonContinue_Click(object sender, EventArgs e)
         {
-            lock (game) { game = new Game(); }
-            buttonStart.Enabled = true;
-            button_Continue.Enabled = false;
-            buttonPause.Enabled = false;
-            label_CarA.Text = "A车";
-            label_CarB.Text = "B车";
+            game.Continue();
         }
 
-        private void buttonOverTime_Click(object sender, EventArgs e)
+        // End
+        private void buttonEnd_Click(object sender, EventArgs e)
         {
-            game.OverTime();
-            buttonStart.Enabled = true;
-            button_Continue.Enabled = false;
-            buttonPause.Enabled = false;
+            game.End();
         }
+
+        private void buttonRestart_click(object sender, EventArgs e)
+        {
+            game = new Game();
+        }
+
+        // Get foul mark
+        private void buttonFoul_Click(object sender, EventArgs e)
+        {
+            game.GetMark();
+        }
+
+        private void buttonSetStation_Click(object sender, EventArgs e)
+        {
+            game.SetChargeStation();
+        }
+
 
         // 开始录像
         private void button_video_Click(object sender, EventArgs e)
@@ -846,11 +654,11 @@ namespace EDCHOST22
                 if (flags.videomode == false)
                 {
                     string time = DateTime.Now.ToString("MMdd_HH_mm_ss");
-                    vw = new VideoWriter(@"Data\Video" + time + ".avi",
+                    vw = new VideoWriter("video/" + time + ".avi",
                         FourCC.XVID, 10.0, flags.showSize);
                     flags.videomode = true;
                     ((Button)sender).Text = "停止录像";
-                    game.FoulTimeFS = new FileStream(@"Data\Video" + time + ".txt", FileMode.CreateNew);
+                    game.FoulTimeFS = new FileStream("video/" + time + ".txt", FileMode.CreateNew);
                 }
                 else
                 {
@@ -875,174 +683,20 @@ namespace EDCHOST22
             }
         }
 
-        // 继续比赛
-        private void button_Continue_Click(object sender, EventArgs e)
-        {
-            //if (game.state == GameState.End)
-            game.Continue();
-            buttonPause.Enabled = true;
-            buttonStart.Enabled = false;
-            button_Continue.Enabled = false;
-        }
-        // A车记1次犯规
-        private void button_AFoul_Click(object sender, EventArgs e)
-        {
-            game.CarA.AddFoulCount();
-
-            if (game.FoulTimeFS != null)
-            {
-                byte[] data = Encoding.Default.GetBytes($"A -50 @game time {game.mGameTime/1000} s\r\n");
-                game.FoulTimeFS.Write(data, 0, data.Length);
-                // 如果不加以下两行的话，数据无法写到文件中
-                game.FoulTimeFS.Flush();
-                //game.FoulTimeFS.Close();
-            }
-        }
-
-        // B车记1次犯规
-        private void button_BFoul_Click(object sender, EventArgs e)
-        {
-            game.CarB.AddFoulCount();
-
-            if (game.FoulTimeFS != null)
-            {
-                byte[] data = Encoding.Default.GetBytes($"B -50 @game time {game.mGameTime/1000} s\r\n");
-                game.FoulTimeFS.Write(data, 0, data.Length);
-                // 如果不加以下两行的话，数据无法写到文件中
-                game.FoulTimeFS.Flush();
-                
-                //game.FoulTimeFS.Close();
-            }
-        }
-        private void SetBeacon_Click(object sender, EventArgs e)
-        {
-            game.SetBeacon(CurrentBeaconType);
-        }
-
-        private void NextStage_Click(object sender, EventArgs e)
-        {
-            game.mGameTime = 200000;
-            game.CheckNextStage();
-            game.mGameTime = 0;
-            buttonStart.Enabled = true;
-            button_Continue.Enabled = false;
-            buttonPause.Enabled = false;
-        }
-
-        private void LastStage_Click(object sender, EventArgs e)
-        {
-            game.mGameTime = 0;
-            game.mGameStage--;
-            buttonStart.Enabled = true;
-            button_Continue.Enabled = false;
-            buttonPause.Enabled = false;
-        }
-
-        private void label4_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label6_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label9_Click(object sender, EventArgs e)
-        {
-
-        }
-
         #endregion
 
-        #region 由定时器控制的函数，已完成修改
 
+        #region 由定时器控制的函数
         //计时器事件，每100ms触发一次，向小车发送信息
         private void timerMsg100ms_Tick(object sender, EventArgs e)
         {
             Flush();
             // 如果A车在场地内且在迷宫外
-            SendCarAMessage();
-            // 如果B车在场地内且在迷宫外
-            SendCarBMessage();
+            SendMessage();
             //更新界面
             SetWindowSize();
         }
 
-        
-
-        ////计时器事件，每1s触发一次，向在迷宫内的小车发送信息
-        //private void timerMsg1s_Tick(object sender, EventArgs e)
-        //{
-        //    game.UpdateCarLastOneSecondPos();
-        //    game.SetFlood();
-        //}
-
-        #endregion
-
-
-        #region 被注释的代码 暂先保留
-        /*
-        private void buttonchangescore_click(object sender, eventargs e)
-        {
-            int ascore = (int)numericupdownscorea.value;
-            int bscore = (int)numericupdownscoreb.value;
-            numericupdownscorea.value = 0;
-            numericupdownscoreb.value = 0;
-            lock (game)
-            {
-                game.cara.score += ascore;
-                game.carb.score += bscore;
-            }
-        }
-
-        private void numericUpDownScoreA_ValueChanged(object sender, EventArgs e)
-        {
-            game.AddScore(Camp.CampA, (int)((NumericUpDown)sender).Value);
-            ((NumericUpDown)sender).Value = 0;
-        }
-
-        private void numericUpDownScoreB_ValueChanged(object sender, EventArgs e)
-        {
-            game.AddScore(Camp.CampB, (int)((NumericUpDown)sender).Value);
-            ((NumericUpDown)sender).Value = 0;
-        }
-
-        //绘制人员信息
-        private void groupBox_Person_Paint(object sender, PaintEventArgs e)
-        {
-            Brush br_No_NV = new SolidBrush(Color.Silver);
-            Brush br_No_V = new SolidBrush(Color.DimGray);
-            Brush br_A_NV = new SolidBrush(Color.Pink);
-            Brush br_A_V = new SolidBrush(Color.Red);
-            Brush br_B_NV = new SolidBrush(Color.SkyBlue);
-            Brush br_B_V = new SolidBrush(Color.RoyalBlue);
-            Graphics gra = e.Graphics;
-            int vbargin = 100;
-            for (int i = 0; i != game.CurrPersonNumber; ++i)
-            {
-                switch (game.People[i].Owner)
-                {
-                    case Camp.None:
-                        gra.FillEllipse(br_No_V, 40, 100 + i * vbargin, 30, 30);
-                        gra.FillEllipse(br_A_NV, 100, 100 + i * vbargin, 30, 30);
-                        gra.FillEllipse(br_B_NV, 160, 100 + i * vbargin, 30, 30);
-                        break;
-                    case Camp.CampA:
-                        gra.FillEllipse(br_No_NV, 40, 100 + i * vbargin, 30, 30);
-                        gra.FillEllipse(br_A_V, 100, 100 + i * vbargin, 30, 30);
-                        gra.FillEllipse(br_B_NV, 160, 100 + i * vbargin, 30, 30);
-                        break;
-                    case Camp.CampB:
-                        gra.FillEllipse(br_No_NV, 40, 100 + i * vbargin, 30, 30);
-                        gra.FillEllipse(br_A_NV, 100, 100 + i * vbargin, 30, 30);
-                        gra.FillEllipse(br_B_V, 160, 100 + i * vbargin, 30, 30);
-                        break;
-                    default: break;
-                }
-            }
-        }
-        */
         #endregion
     }
 
