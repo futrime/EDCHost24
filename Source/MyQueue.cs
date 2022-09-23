@@ -5,27 +5,27 @@ namespace EdcHost;
 
 public class MyQueue<T>
 {
-    private int MAX_LONGTH;
+    private int MAX_LENGTH;
 
     private List<T> mItem;
 
-    public MyQueue(int _MaxLongth)
+    public MyQueue(int _MaxLength)
     {
-        if (_MaxLongth < 1)
+        if (_MaxLength < 1)
         {
             throw new Exception("MaxLongth is expected to be larger than 0");
         }
-        MAX_LONGTH = _MaxLongth;
+        MAX_LENGTH = _MaxLength;
         mItem = new List<T>();
     }
 
     public void Enqueue(T _item)
     {
-        if (mItem.Count < MAX_LONGTH)
+        if (mItem.Count < MAX_LENGTH)
         {
             mItem.Add(_item);
         }
-        else if (mItem.Count == MAX_LONGTH)
+        else if (mItem.Count == MAX_LENGTH)
         {
             mItem.RemoveAt(0);
             mItem.Add(_item);

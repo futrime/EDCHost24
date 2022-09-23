@@ -80,7 +80,7 @@ public class PackageList //存储预备要用的物资信息
 
     public int Amount()
     {
-        return mPackageList.Count();
+        return mPackageList.Count;
     }
 
     public Package GeneratePackage()

@@ -1,4 +1,4 @@
-using OpenCvSharp;
+﻿using OpenCvSharp;
 using OpenCvSharp.Extensions;
 using System;
 using System.Collections.Generic;
@@ -368,40 +368,42 @@ public partial class Tracker : Form
             //Cv2.Circle(mat, c2, 10, new Scalar(0xff, 0x00, 0x00), -1);
         }
 
-        // 这些是用来绘制passenger的，不是本届赛题的内容
+        // 这些是用来绘制passenger的，不是本届赛题的内容 
+        // 不是赛题内容的为什么不删啊 --张琰然
+
         //绘制人员起始或终点位置， 并在当前位置和目标位置连线
         //目标点 绿色 正方形  边长16
         //连线 浅绿 线宽 3
-        // (?)
-        if (game.mGameState == GameState.RUN)
-        {
-            //绘制物资
-            List<Package> packagelist = game.PackagesOnStage();
-            int package_num = packagelist.Count;
-            List<Dot> departurelist = new List<Dot>();
-            List<Point2f> logicDots = new List<Point2f>();
 
-            foreach (Package package in packagelist)
-            {
-                Dot dot = package.Departure();
-                departurelist.Add(dot);
-                logicDots.Add(Cvt.Dot2Point(dot));
-            }
-            List<Point2f> showDots = new List<Point2f>(coordCvt.LogicToCamera(logicDots.ToArray()));
+        // if (game.mGameState == GameState.RUN)
+        // {
+        //     //绘制物资
+        //     List<Package> packagelist = game.PackagesOnStage();
+        //     int package_num = packagelist.Count;
+        //     List<Dot> departurelist = new List<Dot>();
+        //     List<Point2f> logicDots = new List<Point2f>();
 
-            for (int i = 0; i < package_num; ++i)
-            {
-                int x = (int)showDots[i].X;
-                int y = (int)showDots[i].Y;
-                int Tx = x - 11, Ty = y - 11, Tcol = Icon_Package.Cols, Trow = Icon_Package.Rows;
-                if (Tx < 0) Tx = 0;
-                if (Ty < 0) Ty = 0;
-                if (Tx + Tcol > mat.Cols) Tcol = mat.Cols - Tx;
-                if (Ty + Trow > mat.Rows) Trow = mat.Rows - Ty;
-                Mat Pos = new Mat(mat, new Rect(Tx, Ty, Tcol, Trow));
-                Icon_Package.CopyTo(Pos);
-            }
-        }
+        //     foreach (Package package in packagelist)
+        //     {
+        //         Dot dot = package.Departure();
+        //         departurelist.Add(dot);
+        //         logicDots.Add(Cvt.Dot2Point(dot));
+        //     }
+        //     List<Point2f> showDots = new List<Point2f>(coordCvt.LogicToCamera(logicDots.ToArray()));
+
+        //     for (int i = 0; i < package_num; ++i)
+        //     {
+        //         int x = (int)showDots[i].X;
+        //         int y = (int)showDots[i].Y;
+        //         int Tx = x - 11, Ty = y - 11, Tcol = Icon_Package.Cols, Trow = Icon_Package.Rows;
+        //         if (Tx < 0) Tx = 0;
+        //         if (Ty < 0) Ty = 0;
+        //         if (Tx + Tcol > mat.Cols) Tcol = mat.Cols - Tx;
+        //         if (Ty + Trow > mat.Rows) Trow = mat.Rows - Ty;
+        //         Mat Pos = new Mat(mat, new Rect(Tx, Ty, Tcol, Trow));
+        //         Icon_Package.CopyTo(Pos);
+        //     }
+        // }
 
         //绘制充电站
         List<Dot> stationlistA = Station.StationOnStage(0);

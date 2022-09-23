@@ -1,11 +1,22 @@
 namespace EdcHost;
 public class Boundary
 {
-    private static Wall[] mWall = null;
-    static private int mMap;
-    static private int mSize;
-    static private int mEntrance;
-    static private int mWidth;
+
+    static private int mMap = 254;
+    static private int mSize = 28;
+    static private int mEntrance = 36;
+    static private int mWidth = 2;
+    // 双实线内侧到边界的距离
+    static private int size1 = mSize + mWidth;
+    // 双实线的长度
+    static private int height = (mMap - 2 * mSize - mEntrance) / 2;
+
+    private static Wall[] mWall = new Wall[4]{
+        new Wall(new Dot(mSize, mSize), new Dot(mSize, mSize + height)),
+         new Wall(new Dot(size1, size1), new Dot(size1, mSize + height)),
+        new Wall(new Dot(mSize, mSize), new Dot(mSize + height, mSize)),
+         new Wall(new Dot(size1, size1), new Dot(mSize + height, size1))
+    };
 
     // 构造函数
     //四个参数分别是：地图的边长，分界线到地图边缘的最短距离，入口的大小，双实线的宽度

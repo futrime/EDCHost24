@@ -210,15 +210,15 @@ public class Game
         }
 
         // Generate the package list
-        if (!hasFirstPackageListGenerated && mGameStage == GameStage.FIRST_HALF)
+        if (!hasFirstPackageListGenerated && _GameStage == GameStage.FIRST_HALF)
         {
-            mPackageFirstHalf = mPackageFirstHalf = new PackageList(AVAILIABLE_MAX_X, AVAILIABLE_MIN_X,
+            mPackageFirstHalf = new PackageList(AVAILIABLE_MAX_X, AVAILIABLE_MIN_X,
                     AVAILIABLE_MAX_Y, AVAILIABLE_MIN_Y, INITIAL_PKG_NUM, FIRST_HALF_TIME, TIME_INTERVAL, 0);
         }
 
-        if (!hasSecondPackageListGenerated && mGameStage == GameStage.SECOND_HALF)
+        if (!hasSecondPackageListGenerated && _GameStage == GameStage.SECOND_HALF)
         {
-            mPackageFirstHalf = mPackageFirstHalf = new PackageList(AVAILIABLE_MAX_X, AVAILIABLE_MIN_X,
+            mPackageFirstHalf = new PackageList(AVAILIABLE_MAX_X, AVAILIABLE_MIN_X,
                     AVAILIABLE_MAX_Y, AVAILIABLE_MIN_Y, INITIAL_PKG_NUM, FIRST_HALF_TIME, TIME_INTERVAL, 1);
         }
 
