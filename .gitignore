@@ -55,6 +55,8 @@ msbuild.wrn
 # capture
 *.avi
 
+
 ## Project specific ignored files
 Data/*
 !Data/.keep
+*.resx
