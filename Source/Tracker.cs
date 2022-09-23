@@ -61,8 +61,6 @@ public partial class Tracker : Form
         // Setup Windows Forms controls
         label_RedBG.SendToBack();
         label_BlueBG.SendToBack();
-        label_RedBG.Controls.Add(labelAScore);
-        label_BlueBG.Controls.Add(labelBScore);
         label_GameCount.Text = "上半场";
 
         //flags参数类
@@ -150,6 +148,7 @@ public partial class Tracker : Form
 
         this.labelAScore.Text = this.game.GetScore(Camp.A, this.game.mGameStage).ToString();
         this.labelBScore.Text = this.game.GetScore(Camp.B, this.game.mGameStage).ToString();
+        this.Refresh();
     }
 
     // 当Tracker被加载时调用此函数
