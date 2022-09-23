@@ -1,4 +1,4 @@
-﻿namespace EdcHost;
+namespace EdcHost;
 //Package
 public class Package
 {

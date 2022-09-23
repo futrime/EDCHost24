@@ -1,4 +1,4 @@
-﻿using Point2i = OpenCvSharp.Point;
+using Point2i = OpenCvSharp.Point;
 
 namespace EdcHost;
 

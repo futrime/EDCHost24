@@ -1,4 +1,4 @@
-﻿namespace EdcHost;
+namespace EdcHost;
 public class MyFlags
 {
     // 调试颜色识别

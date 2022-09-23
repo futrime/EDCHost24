@@ -1,4 +1,4 @@
-﻿namespace EdcHost;
+namespace EdcHost;
 public class Wall
 {
     public Dot w1;

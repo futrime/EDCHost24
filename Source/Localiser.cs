@@ -1,4 +1,4 @@
-﻿using OpenCvSharp;
+using OpenCvSharp;
 using System.Collections.Generic;
 using Point2i = OpenCvSharp.Point;
 
