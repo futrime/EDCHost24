@@ -48,8 +48,6 @@ public partial class Tracker : Form
     private Game game;
     // 视频输出流
     private VideoWriter vw = null;
-    //是否已经进行了参数设置
-    private bool alreadySet;
     // 与小车进行蓝牙通讯的端口
     public SerialPort serial1, serial2;
     // 可用的端口名称
@@ -63,16 +61,8 @@ public partial class Tracker : Form
         // Setup Windows Forms controls
         label_RedBG.SendToBack();
         label_BlueBG.SendToBack();
-        label_RedBG.Controls.Add(label_CarA);
         label_RedBG.Controls.Add(labelAScore);
-        label_BlueBG.Controls.Add(label_CarB);
         label_BlueBG.Controls.Add(labelBScore);
-        int newX = label_CarB.Location.X - label_BlueBG.Location.X;
-        int newY = label_CarB.Location.Y - label_BlueBG.Location.Y;
-        label_CarB.Location = new System.Drawing.Point(newX, newY);
-        newX = labelBScore.Location.X - label_BlueBG.Location.X;
-        newY = labelBScore.Location.Y - label_BlueBG.Location.Y;
-        labelBScore.Location = new System.Drawing.Point(newX, newY);
         label_GameCount.Text = "上半场";
 
         //flags参数类
@@ -118,7 +108,6 @@ public partial class Tracker : Form
         button_Continue.Enabled = false;
 
         validPorts = SerialPort.GetPortNames();
-        alreadySet = false;
 
         //Game.LoadMap();
         game = new Game();
@@ -144,21 +133,12 @@ public partial class Tracker : Form
     // 进行界面刷新、读取摄像头图像、与游戏逻辑交互的周期性函数
     private void Flush()
     {
-        // 如果还未进行参数设置，则创建并打开SetWindow窗口，进行参数设置
-        if (!alreadySet)
-        {
-            SetWindow st = new SetWindow(ref flags, ref game, this);
-            st.Show();
-            alreadySet = true;
-        }
-
-        // 从视频帧中读取一帧，进行图像处理、绘图和数值更新
         VideoProcess();
 
-        Dot CarPosA = Cvt.Point2Dot(logicCarA);
-        Dot CarPosB = Cvt.Point2Dot(logicCarB);
+        Dot CarPosA = Cvt.Point2Dot(this.logicCarA);
+        Dot CarPosB = Cvt.Point2Dot(this.logicCarB);
 
-        // Update the information of car which is racing
+        // Refresh the game
         if (game.GetCamp() == Camp.A)
         {
             game.UpdateOnEachFrame(CarPosA);
@@ -167,6 +147,9 @@ public partial class Tracker : Form
         {
             game.UpdateOnEachFrame(CarPosB);
         }
+
+        this.labelAScore.Text = this.game.GetScore(Camp.A, this.game.mGameStage).ToString();
+        this.labelBScore.Text = this.game.GetScore(Camp.B, this.game.mGameStage).ToString();
     }
 
     // 当Tracker被加载时调用此函数
@@ -287,11 +270,6 @@ public partial class Tracker : Form
                 }
             }
         }
-    }
-    public void SetWindowSize()
-    {
-
-        System.Drawing.Rectangle rect = System.Windows.Forms.Screen.PrimaryScreen.Bounds;
     }
 
     /// <summary>
@@ -532,24 +510,40 @@ public partial class Tracker : Form
     }
 
 
-    // Choose the game stage to begin
-    private void bottonStartA_FirstHalf_Click(object sender, EventArgs e)
+    private void buttonStart_Click(object sender, EventArgs e)
     {
-        game.Start(Camp.A, GameStage.FIRST_HALF);
-    }
+        if (this.game.mGameStage == GameStage.FIRST_HALF)
+        {
+            switch (this.game.GetCamp())
+            {
+                case Camp.NONE:
+                    game.Start(Camp.A, GameStage.FIRST_HALF);
+                    break;
 
-    private void bottonStartB_FirstHalf_Click(object sender, EventArgs e)
-    {
-        game.Start(Camp.B, GameStage.FIRST_HALF);
-    }
-    private void bottonStartA_SecondHalf_Click(object sender, EventArgs e)
-    {
-        game.Start(Camp.A, GameStage.SECOND_HALF);
-    }
+                case Camp.A:
+                    game.Start(Camp.B, GameStage.FIRST_HALF);
+                    break;
 
-    private void bottonStartB_SecondHalf_Click(object sender, EventArgs e)
-    {
-        game.Start(Camp.B, GameStage.SECOND_HALF);
+                case Camp.B:
+                    game.Start(Camp.A, GameStage.SECOND_HALF);
+                    break;
+
+                default:
+                    break;
+            }
+        }
+        else if (this.game.mGameStage == GameStage.SECOND_HALF)
+        {
+            switch (this.game.GetCamp())
+            {
+                case Camp.A:
+                    game.Start(Camp.B, GameStage.SECOND_HALF);
+                    break;
+
+                default:
+                    break;
+            }
+        }
     }
 
     // Pause
@@ -604,8 +598,6 @@ public partial class Tracker : Form
         Flush();
         // 如果A车在场地内且在迷宫外
         SendMessage();
-        //更新界面
-        SetWindowSize();
     }
 
     #endregion

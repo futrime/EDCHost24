@@ -8,6 +8,8 @@ namespace EdcHost;
 /// </summary>
 public class PackageList
 {
+    private const int MaxPackageNumber = 20;
+
     private static List<Package> mPackageList;
 
     private int X_MAX;
@@ -26,59 +28,32 @@ public class PackageList
     public PackageList(int _X_MAX, int _X_MIN, int _Y_MAX, int _Y_MIN,
         int _INITIAL_AMOUNT, int _LIMITED_TIME, int _TIME_INTERVAL, int stage)
     {
-        #region Initialize member fields and properties
+        #region Initialize fields
 
-        mPointer = _INITIAL_AMOUNT;
-
+        mPackageList = new List<Package>();
         X_MAX = _X_MAX;
         X_MIN = _X_MIN;
         Y_MAX = _Y_MAX;
         Y_MIN = _Y_MIN;
         LIMITED_TIME = _LIMITED_TIME;
         TIME_INTERVAL = _TIME_INTERVAL;
-
-        mPackageList = new List<Package>();
+        mPointer = _INITIAL_AMOUNT;
 
         #endregion
 
-        Random NRand = new Random();
 
-        // initialize package at the beginning of game
-        for (int i = 0; i < _INITIAL_AMOUNT; i++)
+        var random = new Random((int)DateTime.Now.Ticks);
+
+        for (int i = 0; i < PackageList.MaxPackageNumber; ++i)
         {
-            Dot Departure = new Dot(NRand.Next(X_MIN, X_MAX), NRand.Next(Y_MIN, Y_MAX));
-            Dot Destination = new Dot(NRand.Next(X_MIN, X_MAX), NRand.Next(Y_MIN, Y_MAX));
+            Dot departure = new Dot(random.Next(X_MIN, X_MAX), random.Next(Y_MIN, Y_MAX));
+            Dot destination = new Dot(random.Next(X_MIN, X_MAX), random.Next(Y_MIN, Y_MAX));
 
-            if (!(IsPosLegal(Departure, stage) && IsPosLegal(Destination, stage)))
-            {
-                i--;
-                continue;
-            }
+            int generationTime = random.Next(0, this.LIMITED_TIME);
 
-            mPackageList.Add(new Package(Departure, Destination, 0, i));
-        }
-
-
-        // generate the time series for packages
-        int LastGenerationTime = 0;
-        for (int i = _INITIAL_AMOUNT; LastGenerationTime + TIME_INTERVAL <= LIMITED_TIME; i++)
-        {
-            Dot Departure = new Dot(NRand.Next(X_MIN, X_MAX), NRand.Next(Y_MIN, Y_MAX));
-            Dot Destination = new Dot(NRand.Next(X_MIN, X_MAX), NRand.Next(Y_MIN, Y_MAX));
-
-            if (!(IsPosLegal(Departure, stage) && IsPosLegal(Destination, stage)))
-            {
-                i--;
-                continue;
-            }
-
-            int GenerationTime = NRand.Next(LastGenerationTime, LastGenerationTime + TIME_INTERVAL);
-
-            LastGenerationTime = GenerationTime;
-            mPackageList.Add(new Package(Departure, Destination, 0, i));
+            mPackageList.Add(new Package(departure, destination, generationTime, i));
         }
     }
-
 
     public Package Index(int i)
     {

@@ -474,16 +474,19 @@ public class Game
     {
         if (gs == GameStage.NONE)
         {
-            Debug.WriteLine("Failed to get score! Game stage expects to be first-half or second-half.");
+            return 0;
         }
 
-        if (c == Camp.A)
+        switch (c)
         {
-            return mScoreA[(int)gs - 1];
-        }
-        else if (c == Camp.B)
-        {
-            return mScoreA[(int)gs - 1];
+            case Camp.A:
+                return mScoreA[(int)gs - 1];
+
+            case Camp.B:
+                return mScoreB[(int)gs - 1];
+                
+            default:
+                break;
         }
 
         return 0;
