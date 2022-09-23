@@ -1,12 +1,5 @@
 ﻿using OpenCvSharp;
-using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
-using System.IO.Ports;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
 using Point2i = OpenCvSharp.Point;
 
 namespace EDCHOST

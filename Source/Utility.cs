@@ -1,4 +1,5 @@
 using System;
+
 namespace EDCHOST
 {
     public class Utility
@@ -6,7 +7,7 @@ namespace EDCHOST
         // 计算点到线段的最小距离
         public static int DistanceL(Wall wall, Dot CarPos)
         {
-            int sameP, bigP, smallP, sameC, diffC; 
+            int sameP, bigP, smallP, sameC, diffC;
             // 相同的坐标，不同坐标中较大的，不同坐标中较小的,
             // 相同坐标对应的小车坐标，不同的坐标对应小车坐标
             if (wall.w1.y == wall.w2.y)
@@ -41,7 +42,7 @@ namespace EDCHOST
                     smallP = wall.w2.y;
                 }
             }
-            
+
             //如果小车在两个障碍点之间，计算垂直距离
             if (smallP <= diffC && diffC <= bigP)
             {
@@ -52,7 +53,7 @@ namespace EDCHOST
             {
                 int d1 = Math.Min(Math.Abs(smallP - diffC), Math.Abs(bigP - diffC));
                 int d2 = Math.Abs(sameP - sameC);
-                return (int) Math.Sqrt(d1 * d1 + d2 * d2);
+                return (int)Math.Sqrt(d1 * d1 + d2 * d2);
             }
         }
 

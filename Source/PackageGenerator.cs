@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EDCHOST
 {
@@ -25,7 +22,7 @@ namespace EDCHOST
         // stage represents first or second half of the race
         // stage == 0, first half
         // stage == 1, second half
-        public PackageList(int _X_MAX, int _X_MIN, int _Y_MAX, int _Y_MIN, 
+        public PackageList(int _X_MAX, int _X_MIN, int _Y_MAX, int _Y_MIN,
             int _INITIAL_AMOUNT, int _LIMITED_TIME, int _TIME_INTERVAL, int stage)
         {
             mPointer = _INITIAL_AMOUNT;
@@ -92,12 +89,12 @@ namespace EDCHOST
             return mPackageList[mPointer++];
         }
 
-        
+
         public Package LastGenerationPackage()
         {
-            return  mPackageList[mPointer - 1];
+            return mPackageList[mPointer - 1];
         }
-        
+
 
         public Package NextGenerationPackage()
         {

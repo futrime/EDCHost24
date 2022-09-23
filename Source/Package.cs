@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace EDCHOST
 {
     //Package
@@ -31,7 +26,7 @@ namespace EDCHOST
         public Package()
         {
             mDeparture = new Dot(0xff, 0xff);
-            mDestination = new Dot (0xff, 0xff);
+            mDestination = new Dot(0xff, 0xff);
             mGenerationTime = 0xff;
             mScheduledDeliveryTime = 0xff;
             mPackageLevel = 0;

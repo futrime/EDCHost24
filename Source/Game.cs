@@ -1,11 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
-using System.Drawing;
-using System.Security.Cryptography;
 using System.Diagnostics;
 
 namespace EDCHOST
@@ -350,7 +345,7 @@ namespace EDCHOST
                 MyMessage[Index++] = (byte)(item.w1.x);
                 MyMessage[Index++] = (byte)(item.w1.y);
                 MyMessage[Index++] = (byte)(item.w2.x);
-                MyMessage[Index++] = (byte)(item.w2.x);
+                MyMessage[Index++] = (byte)(item.w2.y);
             }
 
             if (mCamp == Camp.A)
@@ -441,7 +436,7 @@ namespace EDCHOST
                 MyMessage[Index++] = (byte)(mPackageFirstHalf.LastGenerationPackage().ScheduledDeliveryTime() / 100 >> 8);
                 MyMessage[Index++] = (byte)(mPackageFirstHalf.LastGenerationPackage().ScheduledDeliveryTime() / 100);
             }
-            else
+            else if (mGameStage == GameStage.SECOND_HALF)
             {
                 MyMessage[Index++] = (byte)(mPackageSecondHalf.LastGenerationPackage().IndentityCode());
                 MyMessage[Index++] = (byte)(mPackageSecondHalf.LastGenerationPackage().Departure().x);

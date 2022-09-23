@@ -2,9 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace EDCHOST
@@ -25,6 +22,18 @@ namespace EDCHOST
             IsLabySet = false;
             // 默认的障碍物数量是8个
             mpWallList = new Wall[MAX_WALL_NUM];
+            // 随机构造障碍物
+            int time = (int)System.DateTime.Now.Ticks;
+
+            int a = new Random(time).Next();
+            for (int i = 0; i < MAX_WALL_NUM; i++)
+            {
+                int x1 = new Random(time).Next() % Game.MAX_SIZE;
+                int y1 = new Random(time).Next() % Game.MAX_SIZE;
+                int x2 = new Random(time).Next() % Game.MAX_SIZE;
+                int y2 = new Random(time).Next() % Game.MAX_SIZE;
+                mpWallList[i] = new Wall(new Dot(x1, y1), new Dot(x2, y2));
+            }
             LabyName = new List<string>();
         }
 

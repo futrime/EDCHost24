@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace EDCHOST
@@ -12,8 +8,8 @@ namespace EDCHOST
         static private int MAX_STATION = 3;
 
 
-        static private List<Dot> mStationList1 = null; //一个包含站点位置信息的list
-        static private List<Dot> mStationList2 = null;
+        static private List<Dot> mStationList1 = new List<Dot>(); //一个包含站点位置信息的list
+        static private List<Dot> mStationList2 = new List<Dot>();
 
         public Station() //构造函数
         {
@@ -90,7 +86,7 @@ namespace EDCHOST
             {
                 return mStationList1[i];
             }
-            else if (_Type == 1 && i <  mStationList2.Count)
+            else if (_Type == 1 && i < mStationList2.Count)
             {
                 return mStationList2[i];
             }

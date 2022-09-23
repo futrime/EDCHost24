@@ -1,11 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 using System.IO.Ports;
@@ -40,7 +33,7 @@ namespace EDCHOST
             {
                 cbPorts1.Items.Add(port);
             }
-                
+
             cbPorts2.Items.Clear();
             cbPorts2.Items.Add("(None)");
             foreach (string port in _tracker.validPorts)
@@ -48,7 +41,7 @@ namespace EDCHOST
                 cbPorts2.Items.Add(port);
             }
 
-                
+
             if (_tracker.serial1 != null && _tracker.serial1.IsOpen)
             {
                 cbPorts1.Text = _tracker.serial1.PortName;
@@ -123,8 +116,8 @@ namespace EDCHOST
         private void button_ConfigSave_Click(object sender, EventArgs e)
         {
             string arrStr = String.Format("{0} {1} {2} {3} {4} {5} {6} {7}", _flags.configs.hue1Lower,
-                                        _flags.configs.hue1Upper, _flags.configs.hue2Lower, _flags.configs.hue2Upper, 
-                                        _flags.configs.saturation1Lower, _flags.configs.saturation2Lower, 
+                                        _flags.configs.hue1Upper, _flags.configs.hue2Lower, _flags.configs.hue2Upper,
+                                        _flags.configs.saturation1Lower, _flags.configs.saturation2Lower,
                                         _flags.configs.valueLower, _flags.configs.areaLower);
             File.WriteAllText(@"Data\data.txt", arrStr);
         }
@@ -154,7 +147,7 @@ namespace EDCHOST
         private void nudCapture_ValueChanged(object sender, EventArgs e)
         {
             VideoCapture tmpCamture = new VideoCapture((int)nudCapture.Value);
-            if (tmpCamture.IsOpened() && tmpCamture.FrameWidth > 0 && tmpCamture.FrameHeight > 0) 
+            if (tmpCamture.IsOpened() && tmpCamture.FrameWidth > 0 && tmpCamture.FrameHeight > 0)
             {
                 tmpCamture.Release();
                 if (_tracker.capture.IsOpened())

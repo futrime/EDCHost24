@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Diagnostics;
 
 namespace EDCHOST
 {
@@ -15,7 +11,7 @@ namespace EDCHOST
 
 
     // STL: Store a series of position of car
-    public class MyQueue <T>
+    public class MyQueue<T>
     {
         private int MAX_LONGTH;
 
@@ -28,10 +24,10 @@ namespace EDCHOST
                 throw new Exception("MaxLongth is expected to be larger than 0");
             }
             MAX_LONGTH = _MaxLongth;
-            mItem = new List<T>(); 
+            mItem = new List<T>();
         }
 
-        public void Enqueue (T _item)
+        public void Enqueue(T _item)
         {
             if (mItem.Count < MAX_LONGTH)
             {
@@ -44,7 +40,7 @@ namespace EDCHOST
             }
         }
 
-        public T Item (int _index)
+        public T Item(int _index)
         {
             if (_index < mItem.Count && _index >= 0)
             {
@@ -84,7 +80,7 @@ namespace EDCHOST
             public Package mPkg;
             public int mFirstCollisionTime;
 
-            public PackagesAndTime (Package _pkg, int _FirstCollisionTime = -1)
+            public PackagesAndTime(Package _pkg, int _FirstCollisionTime = -1)
             {
                 mPkg = _pkg;
                 mFirstCollisionTime = _FirstCollisionTime;
@@ -94,13 +90,13 @@ namespace EDCHOST
         public const int RUN_CREDIT = 10;          //小车启动可以得到10分;
         public const int PICK_CREDIT = 5;          //接到一笔订单得5分;
         public const int CHARGE_CREDIT = 5;        // credit for set a charge station
-        public const int ON_BLACk_LINE_PENALTY = 10;    
+        public const int ON_BLACk_LINE_PENALTY = 10;
         public const int IN_OPPONENT_STATION_PENALTY = 10; // in cm per frame
         public const int IN_OBSTACLE_PENALTY = 10; // in cm per frame
-        public const int MARK_PENALTY = 50;        
-        public const int MAX_PKG_COUNT = 5;        
+        public const int MARK_PENALTY = 50;
+        public const int MAX_PKG_COUNT = 5;
         public const int ENERGY_EXHAUSTION_PENALTY = 50; // 50 ms per cm
-        
+
 
 
         public const int COLLISION_RADIUS = 8;
@@ -120,11 +116,11 @@ namespace EDCHOST
 
         // Flags of Location
         // Locations where car would get penalty
-        private bool mIsOnBlackLine;   
+        private bool mIsOnBlackLine;
         private bool mIsInOpponentChargeStation;
-        private bool mIsInObstacle;       
-        
-        
+        private bool mIsInObstacle;
+
+
         public MyQueue<bool> mFlagIsInChargeStation;
 
 
@@ -141,7 +137,7 @@ namespace EDCHOST
             mScore = 0;
             mMileage = MAX_MILEAGE;
             mPickedPackages = new List<PackagesAndTime>();
-            
+
             // Flags
             mIsAbleToRun = false;
             mIsOnBlackLine = false;
@@ -170,15 +166,15 @@ namespace EDCHOST
             mGameTime = -1;
         }
 
-        public void Update(Dot _CarPos, int _GameTime, bool _IsOnBlackLine, 
-            bool _IsInObstacle, bool _IsInOpponentStation, bool _IsInChargeStation, 
+        public void Update(Dot _CarPos, int _GameTime, bool _IsOnBlackLine,
+            bool _IsInObstacle, bool _IsInOpponentStation, bool _IsInChargeStation,
             ref List<Package> _PackagesRemain, out int _TimePenalty)
         {
             mGameTime = _GameTime;
 
             UpdatePos(_CarPos);
 
-            if (!mIsAbleToRun) 
+            if (!mIsAbleToRun)
             {
                 AbleToRun();
             }
@@ -197,7 +193,7 @@ namespace EDCHOST
             InObstaclePenalty(_IsInObstacle);
         }
 
-        public int GetScore ()
+        public int GetScore()
         {
             return mScore;
         }
@@ -207,7 +203,7 @@ namespace EDCHOST
             mScore -= MARK_PENALTY;
         }
 
-        public void SetChargeStation ()
+        public void SetChargeStation()
         {
             mScore += CHARGE_CREDIT;
         }
@@ -243,14 +239,14 @@ namespace EDCHOST
         Private Functions
         *********************************************/
 
-        private void UpdatePos (Dot _CarPos)
+        private void UpdatePos(Dot _CarPos)
         {
             mQueuePos.Enqueue(_CarPos);
         }
 
         private void AbleToRun()
         {
-            if (!mIsAbleToRun && mQueuePos.Count() > 1 && 
+            if (!mIsAbleToRun && mQueuePos.Count() > 1 &&
             Dot.Distance(mQueuePos.Item(-1), mQueuePos.Item(-2)) > 0)
             {
                 mScore += RUN_CREDIT;
@@ -262,10 +258,10 @@ namespace EDCHOST
         {
             foreach (var pkg in _PackagesRemain)
             {
-                if (pkg.Distance2Departure(_CarPos) <= COLLISION_RADIUS && 
+                if (pkg.Distance2Departure(_CarPos) <= COLLISION_RADIUS &&
                     mPickedPackages.Count <= MAX_PKG_COUNT)
                 {
-                    mPickedPackages.Add(new PackagesAndTime (pkg));
+                    mPickedPackages.Add(new PackagesAndTime(pkg));
                     _PackagesRemain.Remove(pkg);
                     mScore += PICK_CREDIT;
                 }
@@ -278,7 +274,7 @@ namespace EDCHOST
             {
                 if (PkgAndTime.mPkg.Distance2Destination(_CarPos) <= COLLISION_RADIUS)
                 {
-                    if (PkgAndTime.mFirstCollisionTime != -1 && 
+                    if (PkgAndTime.mFirstCollisionTime != -1 &&
                         mGameTime - PkgAndTime.mFirstCollisionTime > COLLISION_DETECTION_TIME)
                     {
                         mPickedPackages.Remove(PkgAndTime);
@@ -296,7 +292,7 @@ namespace EDCHOST
             }
         }
 
-        private void UpdateMileage (out int _Time_Penalty)
+        private void UpdateMileage(out int _Time_Penalty)
         {
             int DeltaDistance = Dot.Distance(mQueuePos.Item(-1), mQueuePos.Item(-2));
             mMileage -= DeltaDistance;
@@ -310,10 +306,10 @@ namespace EDCHOST
             }
         }
 
-        private void Charge (bool IsInChargeStation)
+        private void Charge(bool IsInChargeStation)
         {
             mFlagIsInChargeStation.Enqueue(IsInChargeStation);
-            for (int i = 0; i < mFlagIsInChargeStation.Count();i++)
+            for (int i = 0; i < mFlagIsInChargeStation.Count(); i++)
             {
                 if (!mFlagIsInChargeStation.Item(i))
                 {
@@ -324,12 +320,12 @@ namespace EDCHOST
             mMileage = MAX_MILEAGE;
         }
 
-        private void OnBlackLinePenaly (bool IsOnBlackLine)
+        private void OnBlackLinePenaly(bool IsOnBlackLine)
         {
             if (IsOnBlackLine && !mIsOnBlackLine)
             {
                 mIsOnBlackLine = IsOnBlackLine;
-            } 
+            }
             else if (!IsOnBlackLine && mIsOnBlackLine)
             {
                 mIsOnBlackLine = IsOnBlackLine;
@@ -337,7 +333,7 @@ namespace EDCHOST
             }
         }
 
-        private void InOpponentStationPenalty (bool IsInOpponentStation)
+        private void InOpponentStationPenalty(bool IsInOpponentStation)
         {
             if (IsInOpponentStation)
             {
@@ -345,7 +341,7 @@ namespace EDCHOST
             }
         }
 
-        private void InObstaclePenalty (bool IsInObstacle)
+        private void InObstaclePenalty(bool IsInObstacle)
         {
             if (mIsInObstacle)
             {

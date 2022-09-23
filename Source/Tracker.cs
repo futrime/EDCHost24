@@ -5,13 +5,10 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.IO.Ports;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using System.Diagnostics;
 using Point2i = OpenCvSharp.Point;
 using Cvt = EDCHOST.MyConvert;
-using System.Runtime.InteropServices;
 
 namespace EDCHOST
 {
@@ -334,12 +331,12 @@ namespace EDCHOST
             //读取图标信息
             //图像的信息是由矩阵来表示的
             Mat Icon_CarA, Icon_CarB, Icon_Package, Icon_Person, Icon_Zone;
-            Icon_CarA = new Mat("../Assets/Icons/CARA.png/", ImreadModes.Color);
-            Icon_CarB = new Mat("../Assets/Icons/CARB.png/", ImreadModes.Color);
-            Icon_Package = new Mat("../Assets/Icons/Package.png/", ImreadModes.Color);
-            Icon_Person = new Mat("../Assets/Icons/Person.png/", ImreadModes.Color);
+            Icon_CarA = new Mat(@"Assets\Icons\CARA.png", ImreadModes.Color);
+            Icon_CarB = new Mat(@"Assets\Icons\CARB.png", ImreadModes.Color);
+            Icon_Package = new Mat(@"Assets\Icons\Package.png", ImreadModes.Color);
+            Icon_Person = new Mat(@"Assets\Icons\Person.png", ImreadModes.Color);
             // Icon_RedCross = new Mat(@"..\\Assets\\icon\\RedCross.png", ImreadModes.Color);
-            Icon_Zone = new Mat("../Assets/Icons/Zone.png/", ImreadModes.Color);
+            Icon_Zone = new Mat(@"Assets\Icons\Zone.png", ImreadModes.Color);
 
             Cv2.Resize(Icon_CarA, Icon_CarA, new OpenCvSharp.Size(20, 20), 0, 0, InterpolationFlags.Cubic);
             Cv2.Resize(Icon_CarB, Icon_CarB, new OpenCvSharp.Size(20, 20), 0, 0, InterpolationFlags.Cubic);
@@ -422,39 +419,52 @@ namespace EDCHOST
 
             int station_numA = stationlistA.Count;
             int station_numB = stationlistB.Count;
-            List<Point2f> logicDots2A = new List<Point2f>();
-            List<Point2f> logicDots2B = new List<Point2f>();
 
-            foreach (Dot dot in stationlistA)
+            if (station_numA != 0)
             {
-                logicDots2A.Add(Cvt.Dot2Point(dot));
+                List<Point2f> logicDots2A = new List<Point2f>();
+                foreach (Dot dot in stationlistA)
+                {
+                    logicDots2A.Add(Cvt.Dot2Point(dot));
+                }
+                List<Point2f> showDots2A = new List<Point2f>(coordCvt.LogicToCamera(logicDots2A.ToArray()));
+                // 第一阶段，只绘制本阶段的充电桩
+                // 第二阶段，绘制双方的充电桩
+                // 这里将A车的绘制成红色，B车绘制成绿色
+                if ((game.mGameStage == GameStage.FIRST_HALF && game.GetCamp() == Camp.A)
+                    || game.mGameStage == GameStage.SECOND_HALF)
+                {
+                    int x = (int)showDots2A[0].X;
+                    int y = (int)showDots2A[0].Y;
+                    Cv2.Circle(mat, x, y, 5, new Scalar(0xff, 0x00, 0x00), -1);
+                    //Debug.WriteLine("Paint the package of campa");
+                }
             }
-            foreach (Dot dot in stationlistB)
+            else if (station_numB != 0)
             {
-                logicDots2B.Add(Cvt.Dot2Point(dot));
-            }
-            List<Point2f> showDots2A = new List<Point2f>(coordCvt.LogicToCamera(logicDots2A.ToArray()));
-            List<Point2f> showDots2B = new List<Point2f>(coordCvt.LogicToCamera(logicDots2B.ToArray()));
+                List<Point2f> logicDots2B = new List<Point2f>();
+                // 第一阶段，只绘制本阶段的充电桩
+                // 第二阶段，绘制双方的充电桩
+                // 这里将A车的绘制成红色，B车绘制成绿色
+                foreach (Dot dot in stationlistB)
+                {
+                    logicDots2B.Add(Cvt.Dot2Point(dot));
+                }
 
-            // 第一阶段，只绘制本阶段的充电桩
-            // 第二阶段，绘制双方的充电桩
-            // 这里将A车的绘制成红色，B车绘制成绿色
-            if ((game.mGameStage == GameStage.FIRST_HALF && game.GetCamp() == Camp.A)
-                || game.mGameStage == GameStage.SECOND_HALF)
-            {
-                int x = (int)showDots2A[0].X;
-                int y = (int)showDots2A[0].Y;
-                Cv2.Circle(mat, x, y, 5, new Scalar(0xff, 0x00, 0x00), -1);
-                //Debug.WriteLine("Paint the package of campa");
+                List<Point2f> showDots2B = new List<Point2f>(coordCvt.LogicToCamera(logicDots2B.ToArray()));
+
+
+                if ((game.mGameStage == GameStage.FIRST_HALF && game.GetCamp() == Camp.B)
+                    || game.mGameStage == GameStage.SECOND_HALF)
+                {
+                    int x = (int)showDots2B[0].X;
+                    int y = (int)showDots2B[0].Y;
+                    Cv2.Circle(mat, x, y, 5, new Scalar(0x00, 0xff, 0x00), -1);
+                    //Debug.WriteLine("Paint the package of campb");
+                }
             }
-            if ((game.mGameStage == GameStage.FIRST_HALF && game.GetCamp() == Camp.B)
-                || game.mGameStage == GameStage.SECOND_HALF)
-            {
-                int x = (int)showDots2B[0].X;
-                int y = (int)showDots2B[0].Y;
-                Cv2.Circle(mat, x, y, 5, new Scalar(0x00, 0xff, 0x00), -1);
-                //Debug.WriteLine("Paint the package of campb");
-            }
+
+
             /*
             for (int i = 0; i < station_num; ++i)
             {
@@ -654,11 +664,11 @@ namespace EDCHOST
                 if (flags.videomode == false)
                 {
                     string time = DateTime.Now.ToString("MMdd_HH_mm_ss");
-                    vw = new VideoWriter("video/" + time + ".avi",
+                    vw = new VideoWriter("Video/" + time + ".avi",
                         FourCC.XVID, 10.0, flags.showSize);
                     flags.videomode = true;
                     ((Button)sender).Text = "停止录像";
-                    game.FoulTimeFS = new FileStream("video/" + time + ".txt", FileMode.CreateNew);
+                    game.FoulTimeFS = new FileStream("Video/" + time + ".txt", FileMode.CreateNew);
                 }
                 else
                 {
