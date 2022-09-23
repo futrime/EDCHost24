@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace EdcHost;
-// STL : Storage the Package
-public class PackageList //存储预备要用的物资信息
+
+/// <summary>
+/// A list of packages
+/// </summary>
+public class PackageList
 {
-    private static List<Package> mPackageList = null;
+    private static List<Package> mPackageList;
 
     private int X_MAX;
     private int X_MIN;
@@ -24,6 +26,8 @@ public class PackageList //存储预备要用的物资信息
     public PackageList(int _X_MAX, int _X_MIN, int _Y_MAX, int _Y_MIN,
         int _INITIAL_AMOUNT, int _LIMITED_TIME, int _TIME_INTERVAL, int stage)
     {
+        #region Initialize member fields and properties
+
         mPointer = _INITIAL_AMOUNT;
 
         X_MAX = _X_MAX;
@@ -34,6 +38,9 @@ public class PackageList //存储预备要用的物资信息
         TIME_INTERVAL = _TIME_INTERVAL;
 
         mPackageList = new List<Package>();
+
+        #endregion
+
         Random NRand = new Random();
 
         // initialize package at the beginning of game
