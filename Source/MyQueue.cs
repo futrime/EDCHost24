@@ -5,8 +5,11 @@ namespace EdcHost;
 
 public class MyQueue<T>
 {
+    // 计算车的位移，因而我们需要保存最近几帧中车的位置(Dot)，所以用一个Queue来存储。
+    // MAX_LENGTH即位置的最大存储数量，暂定为10个
     private int MAX_LENGTH;
 
+    //保存车的位置的列表
     private List<T> mItem;
 
     public MyQueue(int _MaxLength)
@@ -31,7 +34,7 @@ public class MyQueue<T>
             mItem.Add(_item);
         }
     }
-
+    // getter _index为-1即最后一个 -2为倒数第二个
     public T Item(int _index)
     {
         if (_index < mItem.Count && _index >= 0)

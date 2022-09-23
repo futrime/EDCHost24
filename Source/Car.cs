@@ -103,24 +103,31 @@ public class Car //选手的车
         mGameTime = _GameTime;
 
         UpdatePos(_CarPos);
-
-        if (!mIsAbleToRun)
+        int temp_TimePenalty = 0;
+        //至少获取了两个位置之后(0.1s)才有后面的操作
+        if (_GameTime > 1)
         {
-            AbleToRun();
+            if (!mIsAbleToRun)
+            {
+                AbleToRun();
+            }
+
+            _TimePenalty = 0;
+
+            //action
+            PickPackage(_CarPos, ref _PackagesRemain);
+            DropPackage(_CarPos);
+            //这里不能直接写_TimePenalty，因为它必须写在最外层，故用临时变量temp_TimePenalty作为out
+            UpdateMileage(out temp_TimePenalty);
+            Charge(_IsInChargeStation);
+
+            // Penalty
+            OnBlackLinePenaly(_IsOnBlackLine);
+            InOpponentStationPenalty(_IsInOpponentStation);
+            InObstaclePenalty(_IsInObstacle);
         }
+        _TimePenalty = temp_TimePenalty;
 
-        _TimePenalty = 0;
-
-        //action
-        PickPackage(_CarPos, ref _PackagesRemain);
-        DropPackage(_CarPos);
-        UpdateMileage(out _TimePenalty);
-        Charge(_IsInChargeStation);
-
-        // Penalty
-        OnBlackLinePenaly(_IsOnBlackLine);
-        InOpponentStationPenalty(_IsInOpponentStation);
-        InObstaclePenalty(_IsInObstacle);
     }
 
     public int GetScore()
@@ -186,14 +193,16 @@ public class Car //选手的车
 
     private void PickPackage(Dot _CarPos, ref List<Package> _PackagesRemain)      //拾取外卖
     {
-        foreach (var pkg in _PackagesRemain)
+        for (int i = 0; i < _PackagesRemain.Count; i++)
         {
+            var pkg = _PackagesRemain[i];
             if (pkg.Distance2Departure(_CarPos) <= COLLISION_RADIUS &&
                 mPickedPackages.Count <= MAX_PKG_COUNT)
             {
                 mPickedPackages.Add(new PackagesAndTime(pkg));
                 _PackagesRemain.Remove(pkg);
                 mScore += PICK_CREDIT;
+                break;
             }
         }
     }
