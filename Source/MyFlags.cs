@@ -53,7 +53,7 @@ public class MyFlags
         // 设置3张地图的大小
         const int MAX_SIZE_CM = 254;
         // 以下数据待定，根据实际设备确定
-        showSize = new OpenCvSharp.Size(960, 720);
+        showSize = new OpenCvSharp.Size(1280, 960);
         cameraSize = new OpenCvSharp.Size(1280, 960);
         logicSize = new OpenCvSharp.Size(MAX_SIZE_CM, MAX_SIZE_CM);
 

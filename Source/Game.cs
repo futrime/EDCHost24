@@ -10,10 +10,10 @@ public class Game
     // size of competition area
     // 最大游戏场地
     public const int MAX_SIZE = 254;
-    public const int AVAILIABLE_MAX_X = 254;
-    public const int AVAILIABLE_MIN_X = 0;
-    public const int AVAILIABLE_MAX_Y = 254;
-    public const int AVAILIABLE_MIN_Y = 0;
+    public const int AVAILABLE_MAX_X = 254;
+    public const int AVAILABLE_MIN_X = 0;
+    public const int AVAILABLE_MAX_Y = 254;
+    public const int AVAILABLE_MIN_Y = 0;
     public const int EDGE_DISTANCE = 28;
     public const int ENTRANCE_WIDTH = 36;
     public const int LINE_WIDTH = 2;
@@ -178,6 +178,9 @@ public class Game
             this._timePenaltySum += TimePenalty;
             this.mTimeRemain = gameDuration - this._timePenaltySum - mGameTime;
 
+            Console.WriteLine("remain:" + mTimeRemain.ToString());
+            Console.WriteLine("now:" + mGameTime.ToString());
+
             //judge wether to end the game automatiacally
             if (mTimeRemain <= 0)
             {
@@ -229,14 +232,14 @@ public class Game
         // Generate the package list
         if (!hasFirstPackageListGenerated && _GameStage == GameStage.FIRST_HALF)
         {
-            mPackageFirstHalf = new PackageList(AVAILIABLE_MAX_X, AVAILIABLE_MIN_X,
-                    AVAILIABLE_MAX_Y, AVAILIABLE_MIN_Y, INITIAL_PKG_NUM, FIRST_HALF_TIME, TIME_INTERVAL, 0);
+            mPackageFirstHalf = new PackageList(AVAILABLE_MAX_X, AVAILABLE_MIN_X,
+                    AVAILABLE_MAX_Y, AVAILABLE_MIN_Y, INITIAL_PKG_NUM, FIRST_HALF_TIME, TIME_INTERVAL, 0);
         }
 
         if (!hasSecondPackageListGenerated && _GameStage == GameStage.SECOND_HALF)
         {
-            mPackageFirstHalf = new PackageList(AVAILIABLE_MAX_X, AVAILIABLE_MIN_X,
-                    AVAILIABLE_MAX_Y, AVAILIABLE_MIN_Y, INITIAL_PKG_NUM, FIRST_HALF_TIME, TIME_INTERVAL, 1);
+            mPackageFirstHalf = new PackageList(AVAILABLE_MAX_X, AVAILABLE_MIN_X,
+                    AVAILABLE_MAX_Y, AVAILABLE_MIN_Y, INITIAL_PKG_NUM, FIRST_HALF_TIME, TIME_INTERVAL, 1);
         }
 
         // set state param of game

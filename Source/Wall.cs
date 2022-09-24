@@ -3,10 +3,10 @@ public class Wall
 {
     public Dot w1;
     public Dot w2;
-    public Wall(Dot iw1, Dot iw2)
+    public Wall(Dot left_up, Dot right_down)
     {
-        w1 = iw1;
-        w2 = iw2;
+        w1 = left_up;
+        w2 = right_down;
     }
     public Wall(Wall aWall)
     {

@@ -281,82 +281,95 @@ public partial class Tracker : Form
         // Draw cross patterns at the corners.
         foreach (Point2f pt in coordCvt.ShowToCamera(showCornerPts))
         {
-            Cv2.Line(mat, (int)(pt.X - 3), (int)(pt.Y),
-                (int)(pt.X + 3), (int)(pt.Y), new Scalar(0x00, 0xff, 0x98));
-            Cv2.Line(mat, (int)(pt.X), (int)(pt.Y - 3),
-                (int)(pt.X), (int)(pt.Y + 3), new Scalar(0x00, 0xff, 0x98));
+            Cv2.Line(mat, (int)(pt.X - 10), (int)(pt.Y),
+                (int)(pt.X + 10), (int)(pt.Y), new Scalar(0x00, 0xff, 0x98));
+            Cv2.Line(mat, (int)(pt.X), (int)(pt.Y - 10),
+                (int)(pt.X), (int)(pt.Y + 10), new Scalar(0x00, 0xff, 0x98));
         }
 
         // Read the icons
-        Mat Icon_CarA, Icon_CarB, Icon_Package, Icon_Person, Icon_Zone;
+        Mat Icon_CarA, Icon_CarB, Icon_Package, Icon_Person, Icon_Zone, Icon_Obstacle;
         Icon_CarA = new Mat(@"Assets\Icons\VehicleRed.png", ImreadModes.Color);
         Icon_CarB = new Mat(@"Assets\Icons\VehicleBlue.png", ImreadModes.Color);
         Icon_Package = new Mat(@"Assets\Icons\Package.png", ImreadModes.Color);
         Icon_Person = new Mat(@"Assets\Icons\Person.png", ImreadModes.Color);
         Icon_Zone = new Mat(@"Assets\Icons\Zone.png", ImreadModes.Color);
+        //障碍物的图标 暂定
+        Icon_Obstacle = new Mat(@"Assets\Icons\Obstacle.png", ImreadModes.Color);
 
         Cv2.Resize(src: Icon_CarA, dst: Icon_CarA, dsize: new OpenCvSharp.Size(20, 20));
         Cv2.Resize(src: Icon_CarB, dst: Icon_CarB, dsize: new OpenCvSharp.Size(20, 20));
         Cv2.Resize(src: Icon_Package, dst: Icon_Package, dsize: new OpenCvSharp.Size(22, 22));
         Cv2.Resize(src: Icon_Person, dst: Icon_Person, dsize: new OpenCvSharp.Size(20, 20));
         Cv2.Resize(src: Icon_Zone, dst: Icon_Zone, dsize: new OpenCvSharp.Size(22, 22));
+        Cv2.Resize(src: Icon_Obstacle, dst: Icon_Obstacle, dsize: new OpenCvSharp.Size(20, 20));
 
         // Draw vehicle icons
         foreach (Point2i c1 in loc.GetCentres(Camp.A))
         {
-            // Point2f[] converted_cord = coordCvt.ShowToCamera(new Point2f[] { (Point2f)c1 });
-            int Tx = c1.X;
-            int Ty = c1.Y;
-            // int Tx = (int)converted_cord[0].X - 10;
-            // int Ty = (int)converted_cord[0].Y - 10;
-            int Tcol = Icon_CarA.Cols;
-            int Trow = Icon_CarA.Rows;
-            if (Tx < 0)
+            if (c1.X >= 0 && c1.X <= Game.AVAILABLE_MAX_X && c1.Y >= 0 && c1.Y <= Game.AVAILABLE_MAX_Y)
             {
-                Tx = 0;
-            }
-            if (Ty < 0)
-            {
-                Ty = 0;
-            }
-            if (Tx + Tcol > mat.Cols)
-            {
-                Tx = mat.Cols - Tcol;
-            }
-            if (Ty + Trow > mat.Rows)
-            {
-                Ty = mat.Rows - Trow;
-            }
+                // Point2f[] converted_cord = coordCvt.ShowToCamera(new Point2f[] { (Point2f)c1 });
+                int Tx = c1.X;
+                int Ty = c1.Y;
+                // int Tx = (int)converted_cord[0].X - 10;
+                // int Ty = (int)converted_cord[0].Y - 10;
+                int Tcol = Icon_CarA.Cols;
+                int Trow = Icon_CarA.Rows;
+                if (Tx < 0)
+                {
+                    Tx = 0;
+                }
+                if (Ty < 0)
+                {
+                    Ty = 0;
+                }
+                if (Tx + Tcol > mat.Cols)
+                {
+                    Tx = mat.Cols - Tcol;
+                }
+                if (Ty + Trow > mat.Rows)
+                {
+                    Ty = mat.Rows - Trow;
+                }
 
-            Mat Pos = new Mat(mat, new Rect(Tx, Ty, Tcol, Trow));
-            Icon_CarA.CopyTo(Pos);
+                Mat Pos = new Mat(mat, new Rect(Tx, Ty, Tcol, Trow));
+                Icon_CarA.CopyTo(Pos);
+                //暂时只画一个车，如果要画多个车，删去break
+                break;
+            }
         }
 
         foreach (Point2i c2 in loc.GetCentres(Camp.B))
         {
-            int Tx = c2.X;
-            int Ty = c2.Y;
-            int Tcol = Icon_CarB.Cols;
-            int Trow = Icon_CarB.Rows;
-            if (Tx < 0)
+            if (c2.X >= 0 && c2.X <= Game.AVAILABLE_MAX_X && c2.Y >= 0 && c2.Y <= Game.AVAILABLE_MAX_Y)
             {
-                Tx = 0;
-            }
-            if (Ty < 0)
-            {
-                Ty = 0;
-            }
-            if (Tx + Tcol > mat.Cols)
-            {
-                Tx = mat.Cols - Tcol;
-            }
-            if (Ty + Trow > mat.Rows)
-            {
-                Ty = mat.Rows - Trow;
-            }
+                int Tx = c2.X;
+                int Ty = c2.Y;
+                int Tcol = Icon_CarB.Cols;
+                int Trow = Icon_CarB.Rows;
+                if (Tx < 0)
+                {
+                    Tx = 0;
+                }
+                if (Ty < 0)
+                {
+                    Ty = 0;
+                }
+                if (Tx + Tcol > mat.Cols)
+                {
+                    Tx = mat.Cols - Tcol;
+                }
+                if (Ty + Trow > mat.Rows)
+                {
+                    Ty = mat.Rows - Trow;
+                }
 
-            Mat Pos = new Mat(mat, new Rect(Tx, Ty, Tcol, Trow));
-            Icon_CarB.CopyTo(Pos);
+                Mat Pos = new Mat(mat, new Rect(Tx, Ty, Tcol, Trow));
+                Icon_CarB.CopyTo(Pos);
+                //暂时只画一个车，如果要画多个车，删去break
+                break;
+            }
         }
 
         // Draw charging piles
@@ -423,9 +436,14 @@ public partial class Tracker : Form
                 if (flags.calibrated)
                 {
                     Point2f[] showDots = coordCvt.LogicToCamera(logicDots);
-                    Cv2.Line(mat, (int)showDots[0].X, (int)showDots[0].Y,
-                        (int)showDots[1].X, (int)showDots[1].Y,
-                        new Scalar(35, 35, 139), 5);
+
+                    Point2i[] resultDots = new Point2i[2];
+                    resultDots[0] = (Point2i)showDots[0];
+                    resultDots[1] = (Point2i)showDots[1];
+                    // Cv2.Line(mat, (int)showDots[0].X, (int)showDots[0].Y,
+                    //     (int)showDots[1].X, (int)showDots[1].Y,
+                    //     new Scalar(35, 35, 139), 5);
+                    Cv2.Rectangle(Icon_Obstacle, resultDots[0], resultDots[1], color: Scalar.Red);
                 }
             }
         }

@@ -10,6 +10,8 @@ public class Obstacle
 {
     static public List<string> LabyName = null;
     public const int MAX_WALL_NUM = 8;
+    // 障碍物的最大边长
+    public const int OBSTACLE_MAX_LENGTH = 8;
     static public Wall[] mpWallList = null;
     static public string FileNameNow;
 
@@ -19,20 +21,22 @@ public class Obstacle
     // 默认构造函数
     public Obstacle()
     {
-        IsLabySet = false;
+        //开局就随机生成8个
+        IsLabySet = true;
         // 默认的障碍物数量是8个
         mpWallList = new Wall[MAX_WALL_NUM];
         // 随机构造障碍物
-        int time = (int)System.DateTime.Now.Ticks;
+        int time = (int)MathF.Abs((int)System.DateTime.Now.Ticks);
 
-        int a = new Random(time).Next();
+        Random random = new Random(time);
         for (int i = 0; i < MAX_WALL_NUM; i++)
         {
-            int x1 = new Random(time).Next() % Game.MAX_SIZE;
-            int y1 = new Random(time).Next() % Game.MAX_SIZE;
-            int x2 = new Random(time).Next() % Game.MAX_SIZE;
-            int y2 = new Random(time).Next() % Game.MAX_SIZE;
-            mpWallList[i] = new Wall(new Dot(x1, y1), new Dot(x2, y2));
+            //左上角的点
+            int x1 = random.Next() % (Game.MAX_SIZE - OBSTACLE_MAX_LENGTH);
+            int y1 = random.Next() % (Game.MAX_SIZE - OBSTACLE_MAX_LENGTH);
+            int width = random.Next() % OBSTACLE_MAX_LENGTH;
+            int height = random.Next() % OBSTACLE_MAX_LENGTH;
+            mpWallList[i] = new Wall(new Dot(x1, y1), new Dot(x1 + width, y1 + height));
         }
         LabyName = new List<string>();
     }
