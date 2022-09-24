@@ -5,6 +5,7 @@ namespace EdcHost;
 public class Utility
 {
     // 计算点到线段的最小距离
+    // 。。。。弃用吧 这代码nb
     public static int DistanceL(Wall wall, Dot CarPos)
     {
         int sameP, bigP, smallP, sameC, diffC;
@@ -64,4 +65,5 @@ public class Utility
         int d2 = Math.Abs(p1.y - p2.y);
         return (int)Math.Sqrt(d1 * d1 + d2 * d2);
     }
+
 }

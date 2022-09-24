@@ -105,7 +105,6 @@ public class Game
         mGameTime = -1;
         mTimeRemain = 0;
 
-        mObstacle = new Obstacle();
         mBoundary = new Boundary();
     }
 
@@ -233,12 +232,16 @@ public class Game
         {
             mPackageFirstHalf = new PackageList(AVAILABLE_MAX_X, AVAILABLE_MIN_X,
                     AVAILABLE_MAX_Y, AVAILABLE_MIN_Y, INITIAL_PKG_NUM, FIRST_HALF_TIME, TIME_INTERVAL, 0);
+            // 在生成包裹后生成障碍物 保证与包裹有一定距离
+            mObstacle = new Obstacle();
         }
 
         if (!hasSecondPackageListGenerated && _GameStage == GameStage.SECOND_HALF)
         {
             mPackageFirstHalf = new PackageList(AVAILABLE_MAX_X, AVAILABLE_MIN_X,
                     AVAILABLE_MAX_Y, AVAILABLE_MIN_Y, INITIAL_PKG_NUM, FIRST_HALF_TIME, TIME_INTERVAL, 1);
+            // 在生成包裹后生成障碍物 保证与包裹有一定距离
+            mObstacle = new Obstacle();
         }
 
         // set state param of game

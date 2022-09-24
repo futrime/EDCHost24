@@ -446,8 +446,8 @@ public partial class Tracker : Form
                     //     new Scalar(35, 35, 139), 5);
 
                     Cv2.Rectangle(mat, resultDots[0], resultDots[1], color: Scalar.Red, 2);
-                    // 画竖直直线
-                    for (int k = 0; k < resultDots[1].X - resultDots[0].X; k += 5)
+                    // 画竖直直线 从坐标x=resultDots[0].X+4开始画(随便定的)
+                    for (int k = 4; k < resultDots[1].X - resultDots[0].X; k += 5)
                     {
                         Point2i upperPoint = new Point2i(resultDots[0].X + k, resultDots[0].Y);
                         Point2i lowerPoint = new Point2i(resultDots[0].X + k, resultDots[1].Y);
@@ -463,7 +463,6 @@ public partial class Tracker : Form
             Car current_car = this.game.GetCar(this.game.GetCamp());
             // 现在车上载有的外卖数量 
             int package_number_on_car = current_car.GetPackageCount();
-
             foreach (Package package in game.PackagesOnStage())
             {
 
@@ -506,6 +505,7 @@ public partial class Tracker : Form
                 {
                     Ty = 0;
                 }
+                // 
                 if (Tx + Tcol > mat.Cols)
                 {
                     Tcol = mat.Cols - Tx;
@@ -514,7 +514,7 @@ public partial class Tracker : Form
                 {
                     Trow = mat.Rows - Ty;
                 }
-
+                // 可能会出错 位置生成不正确
                 Mat Pos = new Mat(mat, new Rect(Tx, Ty, Tcol, Trow));
                 target_img.CopyTo(Pos);
 
@@ -698,8 +698,11 @@ public partial class Tracker : Form
     private void timerMsg100ms_Tick(object sender, EventArgs e)
     {
         Flush();
-        // 如果A车在场地内且在迷宫外
-        SendMessage();
+        // 如果A车在场地内且在迷宫外  ???这是上上一届的规则吧 --张琰然
+
+        // 如果游戏开始了才发信息
+        if (GameState.RUN == game.mGameState)
+            SendMessage();
     }
 
     #endregion
