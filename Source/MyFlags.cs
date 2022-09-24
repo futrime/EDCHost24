@@ -28,12 +28,12 @@ public class MyFlags
     /// <summary>
     /// The size of the court
     /// </summary>
-    private static readonly (int Width, int Height) CourtSize = (1280, 960);
+    private static readonly (int Width, int Height) CourtSize = (254, 254);
 
     /// <summary>
     /// The size of the monitor frame
     /// </summary>
-    private static readonly (int Width, int Height) MonitorFrameSize = (254, 254);
+    private static readonly (int Width, int Height) MonitorFrameSize = (0, 0);
 
     // 调试颜色识别
     public bool showMask;

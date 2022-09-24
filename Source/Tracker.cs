@@ -209,67 +209,65 @@ public partial class Tracker : Form
         if (flags.running)
         {
             // 多个using连在一起写可能是共用最后一个using的作用域（没查到相关资料）
-            using (Mat videoFrame = new Mat())
-            using (Mat showFrame = new Mat())
+            Mat videoFrame = new Mat();
+            Mat showFrame = new Mat();
+            // 从视频流中读取一帧相机画面videoFrame
+            if (capture.Read(videoFrame))
             {
-                // 从视频流中读取一帧相机画面videoFrame
-                if (capture.Read(videoFrame))
+                // 调用坐标转换器，将flags中设置的人员出发点从逻辑坐标转换为显示坐标
+                // coordCvt.PeopleFilter(flags);
+
+                // 调用定位器，进行图像处理，得到小车位置中心点集
+                // 第一个形参videoFrame传入的是指针，所以videoFrame已被修改（画上了红蓝圆点）
+                localiser.Locate(videoFrame, flags);
+
+                // 调用定位器，得到小车的坐标
+                localiser.GetCarLocations(out camCarA, out camCarB);
+
+                // 小车的相机坐标数组
+                Point2f[] camCars = { camCarA, camCarB };
+
+                // 转换成显示坐标数组
+                // 此转换与只与showMap和camMap有关，不需要图像被校正
+                Point2f[] showCars = coordCvt.CameraToShow(camCars);
+
+                showCarA = (Point2i)showCars[0];
+                showCarB = (Point2i)showCars[1];
+
+                // 将小车坐标从相机坐标转化成逻辑坐标
+                Point2f[] logicCars = coordCvt.CameraToLogic(camCars);
+
+                logicCarA = (Point2i)logicCars[0];
+                logicCarB = (Point2i)logicCars[1];
+
+                // 在显示的画面上绘制小车，乘客，物资等对应的图案
+                videoFrame = PaintPattern(videoFrame, localiser);
+
+                // 将摄像头视频帧缩放成显示帧
+                // Resize函数的最后一个参数是缩放函数的插值算法
+                // InterpolationFlags.Cubic 表示双三次插值法，放大图像时效果较好，但速度较慢
+                Cv2.Resize(videoFrame, showFrame, flags.showSize, 0, 0, InterpolationFlags.Cubic);
+
+                // 更新界面组件的画面显示
+                BeginInvoke(new Action<Image>(UpdateCameraPicture), BitmapConverter.ToBitmap(showFrame));
+                // 输出视频
+                if (flags.videomode == true)
                 {
-                    // 调用坐标转换器，将flags中设置的人员出发点从逻辑坐标转换为显示坐标
-                    // coordCvt.PeopleFilter(flags);
-
-                    // 调用定位器，进行图像处理，得到小车位置中心点集
-                    // 第一个形参videoFrame传入的是指针，所以videoFrame已被修改（画上了红蓝圆点）
-                    localiser.Locate(videoFrame, flags);
-
-                    // 调用定位器，得到小车的坐标
-                    localiser.GetCarLocations(out camCarA, out camCarB);
-
-                    // 小车的相机坐标数组
-                    Point2f[] camCars = { camCarA, camCarB };
-
-                    // 转换成显示坐标数组
-                    // 此转换与只与showMap和camMap有关，不需要图像被校正
-                    Point2f[] showCars = coordCvt.CameraToShow(camCars);
-
-                    showCarA = (Point2i)showCars[0];
-                    showCarB = (Point2i)showCars[1];
-
-                    // 将小车坐标从相机坐标转化成逻辑坐标
-                    Point2f[] logicCars = coordCvt.CameraToLogic(camCars);
-
-                    logicCarA = (Point2i)logicCars[0];
-                    logicCarB = (Point2i)logicCars[1];
-
-                    // 在显示的画面上绘制小车，乘客，物资等对应的图案
-                    PaintPattern(videoFrame, localiser);
-
-                    // 将摄像头视频帧缩放成显示帧
-                    // Resize函数的最后一个参数是缩放函数的插值算法
-                    // InterpolationFlags.Cubic 表示双三次插值法，放大图像时效果较好，但速度较慢
-                    Cv2.Resize(videoFrame, showFrame, flags.showSize, 0, 0, InterpolationFlags.Cubic);
-
-                    // 更新界面组件的画面显示
-                    BeginInvoke(new Action<Image>(UpdateCameraPicture), BitmapConverter.ToBitmap(showFrame));
-                    // 输出视频
-                    if (flags.videomode == true)
-                    {
-                        vw.Write(showFrame);
-                    }
+                    vw.Write(showFrame);
                 }
             }
         }
     }
 
     /// <summary>
-    /// Draw patterns on the picture.
+    /// Draw patterns on the monitor frame.
     /// </summary>
     /// <param name="mat">The background picture</param>
     /// <param name="loc">The localiser</param>
-    public void PaintPattern(Mat mat, Localiser loc)
+    public Mat PaintPattern(Mat mat, Localiser loc)
     {
         // Draw cross patterns at the corners.
-        foreach (Point2f pt in coordCvt.ShowToCamera(showCornerPts))
+        foreach (Point2f pt in this.coordCvt.ShowToCamera(this.showCornerPts))
         {
             Cv2.Line(mat, (int)(pt.X - 10), (int)(pt.Y),
                 (int)(pt.X + 10), (int)(pt.Y), new Scalar(0x00, 0xff, 0x98));
@@ -295,7 +293,7 @@ public partial class Tracker : Form
         Cv2.Resize(src: Icon_Obstacle, dst: Icon_Obstacle, dsize: new OpenCvSharp.Size(20, 20));
 
         // Draw vehicle icons
-        foreach (Point2i c1 in loc.GetCentres(Camp.A))
+        foreach (Point2i c1 in this.coordCvt.LogicToCamera(Array.ConvertAll(loc.GetCentres(Camp.A).ToArray(), item => (Point2f)item)))
         {
             if (c1.X >= 0 && c1.X <= Game.AVAILABLE_MAX_X && c1.Y >= 0 && c1.Y <= Game.AVAILABLE_MAX_Y)
             {
@@ -330,7 +328,7 @@ public partial class Tracker : Form
             }
         }
 
-        foreach (Point2i c2 in loc.GetCentres(Camp.B))
+        foreach (Point2i c2 in this.coordCvt.LogicToCamera(Array.ConvertAll(loc.GetCentres(Camp.B).ToArray(), item => (Point2f)item)))
         {
             if (c2.X >= 0 && c2.X <= Game.AVAILABLE_MAX_X && c2.Y >= 0 && c2.Y <= Game.AVAILABLE_MAX_Y)
             {
@@ -421,20 +419,17 @@ public partial class Tracker : Form
                 Dot StartDot = Obstacle.mpWallList[i].w1;
                 Dot EndDot = Obstacle.mpWallList[i].w2;
 
-                Point2f[] logicDots = { Utilities.Dot2Point(StartDot), Utilities.Dot2Point(EndDot) };
+                Point2f[] pointsInCourtCoordination = { Utilities.Dot2Point(StartDot), Utilities.Dot2Point(EndDot) };
 
-                Point2f[] showDots = coordCvt.LogicToCamera(logicDots);
-                // 将Point2f转换为Point2i
-                Point2i[] resultDots = new Point2i[2];
-                resultDots[0] = (Point2i)showDots[0];
-                resultDots[1] = (Point2i)showDots[1];
+                Point2i[] pointsInCameraCoordination = Array.ConvertAll(
+                    coordCvt.LogicToCamera(pointsInCourtCoordination), item => (Point2i)item
+                );
 
-                Cv2.Rectangle(mat, resultDots[0], resultDots[1], color: Scalar.Red, 2);
-                // 画竖直直线 从坐标x=resultDots[0].X+4开始画(随便定的)
-                for (int k = 4; k < resultDots[1].X - resultDots[0].X; k += 5)
+                Cv2.Rectangle(mat, pointsInCameraCoordination[0], pointsInCameraCoordination[1], color: Scalar.Red, 2);
+                for (int k = 4; k < pointsInCameraCoordination[1].X - pointsInCameraCoordination[0].X; k += 5)
                 {
-                    Point2i upperPoint = new Point2i(resultDots[0].X + k, resultDots[0].Y);
-                    Point2i lowerPoint = new Point2i(resultDots[0].X + k, resultDots[1].Y);
+                    Point2i upperPoint = new Point2i(pointsInCameraCoordination[0].X + k, pointsInCameraCoordination[0].Y);
+                    Point2i lowerPoint = new Point2i(pointsInCameraCoordination[0].X + k, pointsInCameraCoordination[1].Y);
                     Cv2.Line(mat, upperPoint, lowerPoint, color: Scalar.Orange, 1);
                 }
             }
@@ -503,6 +498,8 @@ public partial class Tracker : Form
 
             }
         }
+
+        return mat;
     }
 
     /// <summary>
