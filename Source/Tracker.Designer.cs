@@ -30,6 +30,7 @@ partial class Tracker
             this.buttonSettings = new System.Windows.Forms.Button();
             this.label_BlueBG = new System.Windows.Forms.Label();
             this.label_RedBG = new System.Windows.Forms.Label();
+            this.GameTimeLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pbCamera)).BeginInit();
             this.SuspendLayout();
             // 
@@ -194,12 +195,22 @@ partial class Tracker
             this.label_RedBG.TabIndex = 5;
             this.label_RedBG.Text = "              ";
             // 
+            // GameTimeLabel
+            // 
+            this.GameTimeLabel.AutoSize = true;
+            this.GameTimeLabel.Location = new System.Drawing.Point(523, 18);
+            this.GameTimeLabel.Name = "GameTimeLabel";
+            this.GameTimeLabel.Size = new System.Drawing.Size(92, 15);
+            this.GameTimeLabel.TabIndex = 18;
+            this.GameTimeLabel.Text = "GameTimeLabel";
+            // 
             // Tracker
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.SystemColors.Window;
             this.ClientSize = new System.Drawing.Size(963, 539);
+            this.Controls.Add(this.GameTimeLabel);
             this.Controls.Add(this.buttonSettings);
             this.Controls.Add(this.buttonRestart);
             this.Controls.Add(this.buttonEnd);
@@ -241,4 +252,5 @@ partial class Tracker
     private System.Windows.Forms.Button buttonSettings;
     private System.Windows.Forms.Label label_BlueBG;
     private System.Windows.Forms.Label label_RedBG;
+    private System.Windows.Forms.Label GameTimeLabel;
 }

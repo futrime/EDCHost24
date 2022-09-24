@@ -40,9 +40,20 @@ public class Game
 
     // Time
     // Set time zero as the start time of each race
-    private int mStartTime; // system time, update for each race
-    private int mGameTime;
-    private int mTimeRemain;
+    private long mStartTime; // system time, update for each race
+    private long mGameTime;
+
+    public long GameTime
+    {
+        get => this.mGameTime;
+    }
+
+    private long mTimeRemain;
+
+    public long RemainingTime
+    {
+        get => this.mTimeRemain;
+    }
 
     /// <summary>
     /// The sum of the time penalty
@@ -147,13 +158,13 @@ public class Game
         // Update car's info on each frame
         if (mCamp == Camp.A)
         {
-            mCarA.Update(_CarPos, mGameTime, _IsOnBlackLine(_CarPos),
+            mCarA.Update(_CarPos, (int)mGameTime, _IsOnBlackLine(_CarPos),
             _IsInObstacle(_CarPos), _IsInOpponentStation(_CarPos),
             _IsInChargeStation(_CarPos), ref mPackagesRemain, out TimePenalty);
         }
         else if (mCamp == Camp.B)
         {
-            mCarB.Update(_CarPos, mGameTime, _IsOnBlackLine(_CarPos),
+            mCarB.Update(_CarPos, (int)mGameTime, _IsOnBlackLine(_CarPos),
             _IsInObstacle(_CarPos), _IsInOpponentStation(_CarPos),
             _IsInChargeStation(_CarPos), ref mPackagesRemain, out TimePenalty);
         }
@@ -590,15 +601,12 @@ public class Game
     ***********************************************/
     private void _UpdateGameTime()
     {
-        mGameTime = _GetCurrentTime() - mStartTime;
+        this.mGameTime = _GetCurrentTime() - mStartTime;
     }
 
-    private static int _GetCurrentTime()
+    private static long _GetCurrentTime()
     {
-        System.DateTime currentTime = System.DateTime.Now;
-        // time is in millisecond
-        int time = currentTime.Hour * 3600000 + currentTime.Minute * 60000 + currentTime.Second * 1000;
-        return time;
+        return DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
     }
 
 

@@ -130,23 +130,27 @@ public partial class Tracker : Form
     // 进行界面刷新、读取摄像头图像、与游戏逻辑交互的周期性函数
     private void Flush()
     {
-        VideoProcess();
+        this.VideoProcess();
 
-        Dot CarPosA = Utilities.Point2Dot(this.logicCarA);
-        Dot CarPosB = Utilities.Point2Dot(this.logicCarB);
+        Dot carAPosition = Utilities.Point2Dot(this.logicCarA);
+        Dot carBPosition = Utilities.Point2Dot(this.logicCarB);
 
         // Refresh the game
-        if (game.GetCamp() == Camp.A)
+        if (this.game.GetCamp() == Camp.A)
         {
-            game.UpdateOnEachFrame(CarPosA);
+            this.game.UpdateOnEachFrame(carAPosition);
         }
-        else if (game.GetCamp() == Camp.B)
+        else if (this.game.GetCamp() == Camp.B)
         {
-            game.UpdateOnEachFrame(CarPosB);
+            this.game.UpdateOnEachFrame(carBPosition);
         }
 
+        // Refresh the controls in the tracker form
         this.labelAScore.Text = this.game.GetScore(Camp.A, this.game.mGameStage).ToString();
         this.labelBScore.Text = this.game.GetScore(Camp.B, this.game.mGameStage).ToString();
+
+        this.GameTimeLabel.Text = ((decimal)this.game.RemainingTime / 1000).ToString("0.00");
+
         this.Refresh();
     }
 
