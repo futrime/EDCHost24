@@ -21,8 +21,24 @@ internal class PacketGetSiteInformationHost : Packet
     /// <remarks>
     /// There is no field in this type of packets.
     /// </remarks>
-    public PacketGetSiteInformationHost()
+    public PacketGetSiteInformationHost(
+        int ObstacleListLength,
+        List<Wall> ObstacleList,
+        GameStage CurrentGameStage,
+        double CurrentTime,
+        int OwnChargingPilesLength,
+        List<Dot> OwnChargingPiles,
+        int OpponentChargingPilesLength,
+        List<Dot> OpponentChargingPiles)
     {
+        this.ObstacleListLength = ObstacleListLength;
+        this.ObstacleList = ObstacleList;
+        this.CurrentGameStage = CurrentGameStage;
+        this.CurrentTime = CurrentTime;
+        this.OwnChargingPilesLength = OwnChargingPilesLength;
+        this.OwnChargingPiles = OpponentChargingPiles;
+        this.OpponentChargingPilesLength = OpponentChargingPilesLength;
+        this.OpponentChargingPiles = OpponentChargingPiles;
     }
 
     /// <summary>
@@ -32,32 +48,17 @@ internal class PacketGetSiteInformationHost : Packet
     /// <exception cref="ArgumentException">
     /// The raw byte array violates the rules.
     /// </exception>
-    public PacketGetSiteInformationHost(byte[] bytes) : this()
+    public PacketGetSiteInformationHost(byte[] bytes)
     {
-        // Validate the byte array
-        if (bytes.Length < 6)
-        {
-            throw new Exception("The header of the packet is broken.");
-        }
+        // Validate the packet and extract data
+        Packet.ExtractPacketData(bytes);
 
         byte packetId = bytes[0];
-        uint dataLength = BitConverter.ToUInt32(bytes, 1);
-        byte checksum = bytes[5];
-        var data = new byte[dataLength];
-        Array.Copy(bytes, data, 6);
-
         if (packetId != this.PacketId)
         {
             throw new Exception("The packet ID is incorrect.");
         }
-        if (dataLength != bytes.Length - 6)
-        {
-            throw new Exception("The data length of the packet is incorrect.");
-        }
-        if (checksum != Packet.CalculateChecksum(data))
-        {
-            throw new Exception("The data of the packet is broken.");
-        }
+
         int CurrentIndex = 6;
         // Obstacle data
         this.ObstacleListLength = BitConverter.ToInt32(bytes, 6);
@@ -123,11 +124,13 @@ internal class PacketGetSiteInformationHost : Packet
         for (int i = 0; i < this.ObstacleListLength; i++)
         {
             // 2 Dots —— 16 Bytes per Obstacle
-            for (int intNumber = 0; intNumber < 4; intNumber++)
-            {
-                BitConverter.GetBytes(this.ObstacleListLength).CopyTo(data, CurrentIndex);
-                CurrentIndex += 4;
-            }
+            BitConverter.GetBytes(this.ObstacleList[i].w1.x).CopyTo(data, CurrentIndex);
+            CurrentIndex += 4 * 4;
+            BitConverter.GetBytes(this.ObstacleList[i].w1.y).CopyTo(data, CurrentIndex);
+            BitConverter.GetBytes(this.ObstacleList[i].w2.x).CopyTo(data, CurrentIndex);
+            BitConverter.GetBytes(this.ObstacleList[i].w2.y).CopyTo(data, CurrentIndex);
+
+
         }
 
         // Gamestage 
@@ -178,5 +181,10 @@ internal class PacketGetSiteInformationHost : Packet
         data.CopyTo(bytes, header.Length);
 
         return bytes;
+    }
+
+    public void UpdateData()
+    {
+
     }
 }
