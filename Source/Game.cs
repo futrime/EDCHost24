@@ -80,7 +80,6 @@ public class Game
     // obstacle
     private Obstacle mObstacle;
 
-    private Boundary mBoundary;
 
     // flags represents whether package list has been generated
     private bool hasFirstPackageListGenerated;
@@ -116,7 +115,6 @@ public class Game
         mGameTime = -1;
         mTimeRemain = 0;
 
-        mBoundary = new Boundary();
 
         this.mPackageFirstHalf = new PackageList(AVAILABLE_MAX_X, AVAILABLE_MIN_X,
                 AVAILABLE_MAX_Y, AVAILABLE_MIN_Y, INITIAL_PKG_NUM, FIRST_HALF_TIME, TIME_INTERVAL, 0);
@@ -152,13 +150,13 @@ public class Game
         // Update car's info on each frame
         if (mCamp == Camp.A)
         {
-            mCarA.Update(_CarPos, (int)mGameTime, _IsOnBlackLine(_CarPos),
+            mCarA.Update(_CarPos, (int)mGameTime,
             _IsInObstacle(_CarPos), _IsInOpponentStation(_CarPos),
             _IsInChargeStation(_CarPos), ref mPackagesRemain, out TimePenalty);
         }
         else if (mCamp == Camp.B)
         {
-            mCarB.Update(_CarPos, (int)mGameTime, _IsOnBlackLine(_CarPos),
+            mCarB.Update(_CarPos, (int)mGameTime,
             _IsInObstacle(_CarPos), _IsInOpponentStation(_CarPos),
             _IsInChargeStation(_CarPos), ref mPackagesRemain, out TimePenalty);
         }
@@ -607,10 +605,10 @@ public class Game
     /***********************************************
     Judge Collision of illegal locations
     ***********************************************/
-    private bool _IsOnBlackLine(Dot _CarPos)
-    {
-        return Boundary.isCollided(_CarPos, COLLISION_RADIUS);
-    }
+    // private bool _IsOnBlackLine(Dot _CarPos)
+    // {
+    //     return Boundary.isCollided(_CarPos, COLLISION_RADIUS);
+    // }
 
     private bool _IsInObstacle(Dot _CarPos)
     {

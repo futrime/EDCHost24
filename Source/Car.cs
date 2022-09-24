@@ -96,7 +96,7 @@ public class Car //选手的车
         mGameTime = -1;
     }
 
-    public void Update(Dot _CarPos, int _GameTime, bool _IsOnBlackLine,
+    public void Update(Dot _CarPos, int _GameTime,
         bool _IsInObstacle, bool _IsInOpponentStation, bool _IsInChargeStation,
         ref List<Package> _PackagesRemain, out int _TimePenalty)
     {
@@ -122,7 +122,7 @@ public class Car //选手的车
             Charge(_IsInChargeStation);
 
             // Penalty
-            OnBlackLinePenaly(_IsOnBlackLine);
+            // OnBlackLinePenaly(_IsOnBlackLine);
             InOpponentStationPenalty(_IsInOpponentStation);
             InObstaclePenalty(_IsInObstacle);
         }

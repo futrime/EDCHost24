@@ -98,11 +98,11 @@ public class PackageList
     {
         if (_Type == 0)
         {
-            return !(Boundary.isCollided(_dot) || Obstacle.isCollided(_dot));
+            return !(Obstacle.isCollided(_dot));
         }
         else if (_Type == 1)
         {
-            return !(Boundary.isCollided(_dot) || Obstacle.isCollided(_dot) || Station.isCollided(_dot, 0));
+            return !(Obstacle.isCollided(_dot) || Station.isCollided(_dot, 0));
         }
 
         return false;
