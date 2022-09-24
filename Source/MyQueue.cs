@@ -34,7 +34,7 @@ public class MyQueue<T>
             mItem.Add(_item);
         }
     }
-    // getter _index为-1即最后一个 -2为倒数第二个
+    // getter()  _index为-1即最后一个 -2为倒数第二个
     public T Item(int _index)
     {
         if (_index < mItem.Count && _index >= 0)

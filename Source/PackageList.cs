@@ -8,10 +8,10 @@ namespace EdcHost;
 /// </summary>
 public class PackageList
 {
-    private const int MaxPackageNumber = 20;
+    public const int MaxPackageNumber = 20;
 
     public static List<Package> mPackageList;
-
+    // public static int InitialPackageNumber = 1;
     private int X_MAX;
     private int X_MIN;
     private int Y_MAX;
@@ -43,13 +43,18 @@ public class PackageList
 
 
         var random = new Random((int)DateTime.Now.Ticks);
+        // 生成package的时间下限，值会随循环变动
+        int begin_time = 0;
+        // 步长，包裹生成时间为(begin_time, begin_time + step_time)
+        int step_time = this.LIMITED_TIME / PackageList.MaxPackageNumber;
 
         for (int i = 0; i < PackageList.MaxPackageNumber; ++i)
         {
             Dot departure = new Dot(random.Next(X_MIN, X_MAX), random.Next(Y_MIN, Y_MAX));
             Dot destination = new Dot(random.Next(X_MIN, X_MAX), random.Next(Y_MIN, Y_MAX));
 
-            int generationTime = random.Next(0, this.LIMITED_TIME);
+            int generationTime = random.Next(begin_time, begin_time + step_time);
+            begin_time += step_time;
 
             mPackageList.Add(new Package(departure, destination, generationTime, i));
         }

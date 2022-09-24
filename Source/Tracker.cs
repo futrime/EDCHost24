@@ -424,7 +424,7 @@ public partial class Tracker : Form
         }
 
         // Draw obstacles
-        if (Obstacle.IsLabySet == true)
+        if (Obstacle.IsLabySet == true && game.mGameState == GameState.RUN)
         {
             for (int i = 0; i < Obstacle.mpWallList.Length; i++)
             {
@@ -436,26 +436,35 @@ public partial class Tracker : Form
                 if (flags.calibrated)
                 {
                     Point2f[] showDots = coordCvt.LogicToCamera(logicDots);
-
+                    // 将Point2f转换为Point2i
                     Point2i[] resultDots = new Point2i[2];
                     resultDots[0] = (Point2i)showDots[0];
                     resultDots[1] = (Point2i)showDots[1];
+
                     // Cv2.Line(mat, (int)showDots[0].X, (int)showDots[0].Y,
                     //     (int)showDots[1].X, (int)showDots[1].Y,
                     //     new Scalar(35, 35, 139), 5);
-                    Cv2.Rectangle(Icon_Obstacle, resultDots[0], resultDots[1], color: Scalar.Red);
+
+                    Cv2.Rectangle(mat, resultDots[0], resultDots[1], color: Scalar.Red, 2);
+                    // 画竖直直线
+                    for (int k = 0; k < resultDots[1].X - resultDots[0].X; k += 5)
+                    {
+                        Point2i upperPoint = new Point2i(resultDots[0].X + k, resultDots[0].Y);
+                        Point2i lowerPoint = new Point2i(resultDots[0].X + k, resultDots[1].Y);
+                        Cv2.Line(mat, upperPoint, lowerPoint, color: Scalar.Orange, 1);
+                    }
                 }
             }
         }
 
-        if (GameState.RUN == game.mGameState)
+        if (Obstacle.IsLabySet == true && GameState.RUN == game.mGameState)
         {
             // 找到当前的车队
             Car current_car = this.game.GetCar(this.game.GetCamp());
             // 现在车上载有的外卖数量 
             int package_number_on_car = current_car.GetPackageCount();
 
-            foreach (Package package in PackageList.mPackageList)
+            foreach (Package package in game.PackagesOnStage())
             {
 
                 PackageStatus current_package_status = package.Status;
@@ -469,9 +478,7 @@ public partial class Tracker : Form
                 {
                     target_img = Icon_Package;
                     //修正坐标
-                    Point2f[] converted_cord = coordCvt.ShowToCamera(new Point2f[] { (Point2f)MyConvert.Dot2Point(package.mDeparture) });
-                    // Tx = package.mDeparture.x - 10;
-                    // Ty = package.mDeparture.y - 10;
+                    Point2f[] converted_cord = coordCvt.LogicToCamera(new Point2f[] { (Point2f)MyConvert.Dot2Point(package.mDeparture) });
                     Tx = (int)converted_cord[0].X - 10;
                     Ty = (int)converted_cord[0].Y - 10;
 
@@ -480,7 +487,7 @@ public partial class Tracker : Form
                 else if (PackageStatus.PICKED == current_package_status)
                 {
                     target_img = Icon_Zone;
-                    Point2f[] converted_cord = coordCvt.ShowToCamera(new Point2f[] { (Point2f)MyConvert.Dot2Point(package.mDestination) });
+                    Point2f[] converted_cord = coordCvt.LogicToCamera(new Point2f[] { (Point2f)MyConvert.Dot2Point(package.mDestination) });
                     Tx = (int)converted_cord[0].X - 10;
                     Ty = (int)converted_cord[0].Y - 10;
                 }

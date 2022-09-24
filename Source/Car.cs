@@ -195,7 +195,7 @@ public class Car //选手的车
         for (int i = 0; i < _PackagesRemain.Count; i++)
         {
             Package pkg = _PackagesRemain[i];
-            if (pkg.Distance2Departure(_CarPos) <= COLLISION_RADIUS &&
+            if (pkg.Status == PackageStatus.UNPICKED && pkg.Distance2Departure(_CarPos) <= COLLISION_RADIUS &&
                 mPickedPackages.Count <= MAX_PKG_COUNT)
             {
                 mPickedPackages.Add(new PackagesAndTime(pkg));
@@ -212,7 +212,7 @@ public class Car //选手的车
     {
         foreach (var PkgAndTime in mPickedPackages)
         {
-            if (PkgAndTime.mPkg.Distance2Destination(_CarPos) <= COLLISION_RADIUS)
+            if (PkgAndTime.mPkg.Status == PackageStatus.PICKED && PkgAndTime.mPkg.Distance2Destination(_CarPos) <= COLLISION_RADIUS)
             {
                 if (PkgAndTime.mFirstCollisionTime != -1 &&
                     mGameTime - PkgAndTime.mFirstCollisionTime > COLLISION_DETECTION_TIME)

@@ -22,7 +22,7 @@ public class Game
     public const int COLLISION_RADIUS = 8;
 
     // initial amount of package
-    public const int INITIAL_PKG_NUM = 5;
+    public const int INITIAL_PKG_NUM = 1;
     // time interval of packages
     public const int TIME_INTERVAL = 1500;
 
@@ -176,10 +176,9 @@ public class Game
             }
 
             this._timePenaltySum += TimePenalty;
-            this.mTimeRemain = gameDuration - this._timePenaltySum - mGameTime;
-
-            Console.WriteLine("remain:" + mTimeRemain.ToString());
-            Console.WriteLine("now:" + mGameTime.ToString());
+            // this.mTimeRemain = gameDuration - this._timePenaltySum - mGameTime;
+            //暂时去掉penalty
+            this.mTimeRemain = gameDuration - mGameTime;
 
             //judge wether to end the game automatiacally
             if (mTimeRemain <= 0)
@@ -540,7 +539,8 @@ public class Game
 
         if (mGameStage == GameStage.FIRST_HALF)
         {
-            for (int i = 0; i < mPackageFirstHalf.Amount(); i++)
+            // 开局仅添加INITIAL_PKG_NUM个package
+            for (int i = 0; i < INITIAL_PKG_NUM; i++)
             {
                 mPackagesRemain.Add(mPackageFirstHalf.Index(i));
             }
@@ -548,7 +548,8 @@ public class Game
         }
         else if (mGameStage == GameStage.SECOND_HALF)
         {
-            for (int i = 0; i < mPackageSecondHalf.Amount(); i++)
+            // 开局仅添加INITIAL_PKG_NUM个package
+            for (int i = 0; i < INITIAL_PKG_NUM; i++)
             {
                 mPackagesRemain.Add(mPackageSecondHalf.Index(i));
             }
@@ -562,13 +563,13 @@ public class Game
 
     private bool _GeneratePackage()
     {
-        if (mGameStage == GameStage.FIRST_HALF &&
+        if (mPackagesRemain.Count < PackageList.MaxPackageNumber && mGameStage == GameStage.FIRST_HALF &&
             mGameTime >= mPackageFirstHalf.NextGenerationPackage().GenerationTime())
         {
             mPackagesRemain.Add(mPackageFirstHalf.GeneratePackage());
             return true;
         }
-        else if (mGameStage == GameStage.SECOND_HALF &&
+        else if (mPackagesRemain.Count < PackageList.MaxPackageNumber && mGameStage == GameStage.SECOND_HALF &&
             mGameTime >= mPackageSecondHalf.NextGenerationPackage().GenerationTime())
         {
             mPackagesRemain.Add(mPackageSecondHalf.GeneratePackage());
