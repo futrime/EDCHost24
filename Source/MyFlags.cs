@@ -1,6 +1,40 @@
 namespace EdcHost;
 public class MyFlags
-{
+{    
+    /// <summary>
+    /// The object detection configurations
+    /// </summary>
+    public struct LocConfigs
+    {
+        public int hue1Lower;
+        public int hue1Upper;
+        public int hue2Lower;
+        public int hue2Upper;
+        public int saturation1Lower;
+        public int saturation2Lower;
+        public int valueLower;
+
+        /// <summary>
+        /// The mininum area of the color block to be detected as a vehicle.
+        /// </summary>
+        public int areaLower;
+    }
+
+    /// <summary>
+    /// The size of the camera frame
+    /// </summary>
+    private static readonly (int Width, int Height) CameraFrameSize = (1280, 960);
+
+    /// <summary>
+    /// The size of the court
+    /// </summary>
+    private static readonly (int Width, int Height) CourtSize = (1280, 960);
+
+    /// <summary>
+    /// The size of the monitor frame
+    /// </summary>
+    private static readonly (int Width, int Height) MonitorFrameSize = (254, 254);
+
     // 调试颜色识别
     public bool showMask;
     // 比赛是否正在进行
@@ -14,20 +48,6 @@ public class MyFlags
     public bool videomode;
     public int clickCount;   // 画面被点击的次数
 
-    // 图像识别参数
-    // HSV颜色模型：Hue为色调，Saturation为饱和度，Value为亮度
-    public struct LocConfigs
-    {
-        public int hue1Lower;
-        public int hue1Upper;
-        public int hue2Lower;
-        public int hue2Upper;
-        public int saturation1Lower;
-        public int saturation2Lower;
-        public int valueLower;
-        // 小车面积的最小值，低于这个值的检测对象会被过滤掉
-        public int areaLower;
-    }
     public LocConfigs configs;
 
     // 三个画面的大小
@@ -35,39 +55,32 @@ public class MyFlags
     public OpenCvSharp.Size cameraSize;
     public OpenCvSharp.Size logicSize;
 
-
-
-    //将Init()替换为默认构造函数
     public MyFlags()
     {
-        showMask = false;
-        running = false;
-        calibrated = false;
-        videomode = false;
+        this.showMask = false;
+        this.running = false;
+        this.calibrated = false;
+        this.videomode = false;
 
         // 初始化色彩识别参数
-        configs = new LocConfigs();
+        this.configs = new LocConfigs();
 
-
-
-        // 设置3张地图的大小
-        const int MAX_SIZE_CM = 254;
         // 以下数据待定，根据实际设备确定
-        showSize = new OpenCvSharp.Size(1280, 960);
-        cameraSize = new OpenCvSharp.Size(1280, 960);
-        logicSize = new OpenCvSharp.Size(MAX_SIZE_CM, MAX_SIZE_CM);
+        this.cameraSize = new OpenCvSharp.Size(MyFlags.CameraFrameSize.Width, MyFlags.CameraFrameSize.Height);
+        this.logicSize = new OpenCvSharp.Size(MyFlags.CourtSize.Width, MyFlags.CourtSize.Height);
+        this.showSize = new OpenCvSharp.Size(MyFlags.MonitorFrameSize.Width, MyFlags.MonitorFrameSize.Width);
 
         // 点击显示画面的次数，用于校正画面
-        clickCount = 0;
+        this.clickCount = 0;
     }
 
     public void Start()
     {
-        running = true;
+        this.running = true;
     }
 
     public void End()
     {
-        running = false;
+        this.running = false;
     }
 }
