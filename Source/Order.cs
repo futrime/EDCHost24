@@ -54,7 +54,11 @@ public class Order
     /// <summary>
     /// The order status
     /// </summary>
-    public StatusType Status => this._status;
+    public StatusType Status
+    {
+        get => this._status;
+        set => this._status = value;
+    }
 
 
     /// <summary>
@@ -104,5 +108,6 @@ public class Order
         this._destinationPosition = destinationPosition;
         this._generationTime = generationTime;
         this._deliveryTimeLimit = deliveryTimeLimit;
+        this._status = StatusType.Pending;
     }
 }
