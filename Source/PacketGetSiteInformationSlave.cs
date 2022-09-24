@@ -2,7 +2,7 @@ using System;
 
 namespace EdcHost;
 
-internal class PacketGetSiteInformation : Packet
+internal class PacketGetSiteInformationSlave : Packet
 {
     /// <summary>
     /// Construct a GetSiteInformation packet with fields.
@@ -10,7 +10,7 @@ internal class PacketGetSiteInformation : Packet
     /// <remarks>
     /// There is no field in this type of packets.
     /// </remarks>
-    public PacketGetSiteInformation()
+    public PacketGetSiteInformationSlave()
     {
         this._packetId = 0x00;
     }
@@ -22,7 +22,7 @@ internal class PacketGetSiteInformation : Packet
     /// <exception cref="ArgumentException">
     /// The raw byte array violates the rules.
     /// </exception>
-    public PacketGetSiteInformation(byte[] bytes): this()
+    public PacketGetSiteInformationSlave(byte[] bytes): this()
     {
         // Validate the byte array
         if (bytes.Length < 6)
