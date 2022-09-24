@@ -16,7 +16,7 @@ public class MyQueue<T>
     {
         if (_MaxLength < 1)
         {
-            throw new Exception("MaxLongth is expected to be larger than 0");
+            throw new Exception("MaxLength is expected to be larger than 0");
         }
         MAX_LENGTH = _MaxLength;
         mItem = new List<T>();

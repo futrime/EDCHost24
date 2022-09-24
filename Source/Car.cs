@@ -237,16 +237,21 @@ public class Car //选手的车
 
     private void UpdateMileage(out int _Time_Penalty)
     {
-        int DeltaDistance = Dot.Distance(mQueuePos.Item(-1), mQueuePos.Item(-2));
-        mMileage -= DeltaDistance;
-        if (mMileage < 0)
+        int temp_TimePenalty = 0;
+        if (mQueuePos.Count() > 1)
         {
-            _Time_Penalty = DeltaDistance * ENERGY_EXHAUSTION_PENALTY;
+            int DeltaDistance = Dot.Distance(mQueuePos.Item(-1), mQueuePos.Item(-2));
+            mMileage -= DeltaDistance;
+            if (mMileage < 0)
+            {
+                temp_TimePenalty = DeltaDistance * ENERGY_EXHAUSTION_PENALTY;
+            }
+            else
+            {
+                temp_TimePenalty = 0;
+            }
         }
-        else
-        {
-            _Time_Penalty = 0;
-        }
+        _Time_Penalty = temp_TimePenalty;
     }
 
     private void Charge(bool IsInChargeStation)
