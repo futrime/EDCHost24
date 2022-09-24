@@ -51,9 +51,4 @@ internal class PacketGetSiteInformationSlave : Packet
 
         return bytes;
     }
-
-    public void UpdateData()
-    {
-
-    }
 }

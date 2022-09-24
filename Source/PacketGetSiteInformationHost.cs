@@ -183,8 +183,4 @@ internal class PacketGetSiteInformationHost : Packet
         return bytes;
     }
 
-    public void UpdateData()
-    {
-
-    }
 }
