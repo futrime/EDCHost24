@@ -4,6 +4,8 @@ using System.Collections.Generic;
 
 internal class PacketGetSiteInformationHost : Packet
 {
+    private readonly byte PacketId = 0x01;
+
     private int ObstacleListLength;
     private List<Wall> ObstacleList;
     private GameStage CurrentGameStage;
@@ -21,7 +23,6 @@ internal class PacketGetSiteInformationHost : Packet
     /// </remarks>
     public PacketGetSiteInformationHost()
     {
-        this._packetId = 0x00;
     }
 
     /// <summary>
@@ -45,7 +46,7 @@ internal class PacketGetSiteInformationHost : Packet
         var data = new byte[dataLength];
         Array.Copy(bytes, data, 6);
 
-        if (packetId != this._packetId)
+        if (packetId != this.PacketId)
         {
             throw new Exception("The packet ID is incorrect.");
         }
@@ -168,7 +169,7 @@ internal class PacketGetSiteInformationHost : Packet
         var header = new byte[6];
 
 
-        header[0] = this._packetId;
+        header[0] = this.PacketId;
         BitConverter.GetBytes(data.Length).CopyTo(header, 1);
         header[5] = Packet.CalculateChecksum(data);
 
