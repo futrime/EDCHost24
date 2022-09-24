@@ -65,8 +65,8 @@ public class Game
 
     private int[] mScoreA, mScoreB;
 
-    private PackageList mPackageFirstHalf = null;
-    private PackageList mPackageSecondHalf = null;
+    private PackageList mPackageFirstHalf;
+    private PackageList mPackageSecondHalf;
 
     // store the packages on the field
     private List<Package> mPackagesRemain;
@@ -117,6 +117,12 @@ public class Game
         mTimeRemain = 0;
 
         mBoundary = new Boundary();
+
+        this.mPackageFirstHalf = new PackageList(AVAILABLE_MAX_X, AVAILABLE_MIN_X,
+                AVAILABLE_MAX_Y, AVAILABLE_MIN_Y, INITIAL_PKG_NUM, FIRST_HALF_TIME, TIME_INTERVAL, 0);
+
+        this.mPackageSecondHalf = new PackageList(AVAILABLE_MAX_X, AVAILABLE_MIN_X,
+                AVAILABLE_MAX_Y, AVAILABLE_MIN_Y, INITIAL_PKG_NUM, FIRST_HALF_TIME, TIME_INTERVAL, 1);
     }
 
 
@@ -126,26 +132,14 @@ public class Game
     public void UpdateOnEachFrame(Dot _CarPos)
     {
         // check the game state
-        if (mGameState == GameState.UNSTART)
+        if (mGameState == GameState.UNSTART || mGameState == GameState.PAUSE || mGameState == GameState.END)
         {
-            Debug.WriteLine("Failed to update on frame! The game state is unstart.");
-            return;
-        }
-        else if (mGameState == GameState.PAUSE)
-        {
-            Debug.WriteLine("Failed to update on frame! The game state is pause.");
-            return;
-        }
-        else if (mGameState == GameState.END)
-        {
-            Debug.WriteLine("Failed to update on frame! The game state is end.");
             return;
         }
 
         if (mCamp == Camp.NONE)
         {
-            Debug.WriteLine("Failed to update on frame! Camp is none which expects to be A or B.");
-            return;
+            throw new Exception("The camp is invalid.");
         }
 
         _UpdateGameTime();
@@ -241,16 +235,12 @@ public class Game
         // Generate the package list
         if (!hasFirstPackageListGenerated && _GameStage == GameStage.FIRST_HALF)
         {
-            mPackageFirstHalf = new PackageList(AVAILABLE_MAX_X, AVAILABLE_MIN_X,
-                    AVAILABLE_MAX_Y, AVAILABLE_MIN_Y, INITIAL_PKG_NUM, FIRST_HALF_TIME, TIME_INTERVAL, 0);
             // 在生成包裹后生成障碍物 保证与包裹有一定距离
             mObstacle = new Obstacle();
         }
 
         if (!hasSecondPackageListGenerated && _GameStage == GameStage.SECOND_HALF)
         {
-            mPackageFirstHalf = new PackageList(AVAILABLE_MAX_X, AVAILABLE_MIN_X,
-                    AVAILABLE_MAX_Y, AVAILABLE_MIN_Y, INITIAL_PKG_NUM, FIRST_HALF_TIME, TIME_INTERVAL, 1);
             // 在生成包裹后生成障碍物 保证与包裹有一定距离
             mObstacle = new Obstacle();
         }
@@ -577,14 +567,18 @@ public class Game
 
     private bool _GeneratePackage()
     {
-        if (mPackagesRemain.Count < PackageList.MaxPackageNumber && mGameStage == GameStage.FIRST_HALF &&
-            mGameTime >= mPackageFirstHalf.NextGenerationPackage().GenerationTime())
+        if (this.mPackageFirstHalf.mPointer < PackageList.MaxPackageNumber &&
+            mGameStage == GameStage.FIRST_HALF &&
+            mGameTime >= mPackageFirstHalf.NextGenerationPackage().GenerationTime()
+        )
         {
             mPackagesRemain.Add(mPackageFirstHalf.GeneratePackage());
             return true;
         }
-        else if (mPackagesRemain.Count < PackageList.MaxPackageNumber && mGameStage == GameStage.SECOND_HALF &&
-            mGameTime >= mPackageSecondHalf.NextGenerationPackage().GenerationTime())
+        else if (this.mPackageSecondHalf.mPointer < PackageList.MaxPackageNumber &&
+            mGameStage == GameStage.SECOND_HALF &&
+            mGameTime >= mPackageSecondHalf.NextGenerationPackage().GenerationTime()
+        )
         {
             mPackagesRemain.Add(mPackageSecondHalf.GeneratePackage());
             return true;

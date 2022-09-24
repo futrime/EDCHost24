@@ -4,6 +4,8 @@ namespace EdcHost;
 
 internal class PacketGetSiteInformationSlave : Packet
 {
+    private readonly byte PacketId = 0x00;
+
     /// <summary>
     /// Construct a GetSiteInformation packet with fields.
     /// </summary>
@@ -12,7 +14,7 @@ internal class PacketGetSiteInformationSlave : Packet
     /// </remarks>
     public PacketGetSiteInformationSlave()
     {
-        this._packetId = 0x00;
+        // Empty
     }
 
     /// <summary>
@@ -24,27 +26,13 @@ internal class PacketGetSiteInformationSlave : Packet
     /// </exception>
     public PacketGetSiteInformationSlave(byte[] bytes): this()
     {
-        // Validate the byte array
-        if (bytes.Length < 6)
-        {
-            throw new Exception("The header of the packet is broken.");
-        }
+        // Validate the packet and extract data
+        Packet.ExtractPacketData(bytes);
 
         byte packetId = bytes[0];
-        uint dataLength = BitConverter.ToUInt32(bytes, 1);
-        byte checksum = bytes[5];
-        var data = new byte[dataLength];
-        Array.Copy(bytes, data, 6);
-
-        if (packetId != this._packetId)
+        if (packetId != this.PacketId)
         {
             throw new Exception("The packet ID is incorrect.");
-        }
-        if (dataLength != bytes.Length - 6) {
-            throw new Exception("The data length of the packet is incorrect.");
-        }
-        if (checksum != Packet.CalculateChecksum(data)) {
-            throw new Exception("The data of the packet is broken.");
         }
     }
 
@@ -53,7 +41,7 @@ internal class PacketGetSiteInformationSlave : Packet
         var header = new byte[6];
         var data = new byte[0];
 
-        header[0] = this._packetId;
+        header[0] = this.PacketId;
         BitConverter.GetBytes(data.Length).CopyTo(header, 1);
         header[5] = Packet.CalculateChecksum(data);
 

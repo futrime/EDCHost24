@@ -597,40 +597,29 @@ public partial class Tracker : Form
 
     private void OnStartButtonClick(object sender, EventArgs e)
     {
-        //状态+1
-        this.game.mGameStage += 1;
-
-        if (this.game.mGameStage == GameStage.FIRST_HALF)
+        if (this.game.mGameStage == GameStage.NONE &&
+            this.game.GetCamp() == Camp.NONE)
         {
-            switch (this.game.GetCamp())
-            {
-                case Camp.NONE:
-                    game.Start(Camp.A, GameStage.FIRST_HALF);
-                    break;
-
-                case Camp.A:
-                    game.Start(Camp.B, GameStage.FIRST_HALF);
-                    break;
-
-                case Camp.B:
-                    game.Start(Camp.A, GameStage.SECOND_HALF);
-                    break;
-
-                default:
-                    break;
-            }
+            game.Start(Camp.A, GameStage.FIRST_HALF);
         }
-        else if (this.game.mGameStage == GameStage.SECOND_HALF)
+        else if (this.game.mGameStage == GameStage.FIRST_HALF &&
+            this.game.GetCamp() == Camp.A)
         {
-            switch (this.game.GetCamp())
-            {
-                case Camp.A:
-                    game.Start(Camp.B, GameStage.SECOND_HALF);
-                    break;
-
-                default:
-                    break;
-            }
+            game.Start(Camp.B, GameStage.FIRST_HALF);
+        }
+        else if (this.game.mGameStage == GameStage.FIRST_HALF &&
+            this.game.GetCamp() == Camp.B)
+        {
+            game.Start(Camp.A, GameStage.SECOND_HALF);
+        }
+        else if (this.game.mGameStage == GameStage.SECOND_HALF &&
+            this.game.GetCamp() == Camp.A)
+        {
+            game.Start(Camp.B, GameStage.SECOND_HALF);
+        }
+        else
+        {
+            throw new Exception("The game stage or the camp is invalid.");
         }
     }
 
