@@ -39,11 +39,6 @@ public class MyFlags
     public bool showMask;
     // 比赛是否正在进行
     public bool running;
-    // 地图是否被校准
-    // 只有校正后才能准确实现logicMap与showMap，camMap间的坐标转换
-    // camMap和showMap坐标的对应始终是准确的，但它们与logicMap的顶点不一定重合
-    // 因此需要手动在showMap上选中场地的4个顶点以校正
-    public bool calibrated;
 
     public bool videomode;
     public int clickCount;   // 画面被点击的次数
@@ -59,7 +54,6 @@ public class MyFlags
     {
         this.showMask = false;
         this.running = false;
-        this.calibrated = false;
         this.videomode = false;
 
         // 初始化色彩识别参数

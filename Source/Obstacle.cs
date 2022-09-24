@@ -203,7 +203,7 @@ public class Obstacle
                 wall.w1.y + (bigger_than_w1_y ? 1 : 0) * height
                 );
 
-            if (Utility.DistanceP(dot_to_be_compared, CarPos) < radius)
+            if (Utilities.DistanceP(dot_to_be_compared, CarPos) < radius)
             {
                 return true;
             }

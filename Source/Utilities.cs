@@ -1,11 +1,10 @@
 using System;
+using OpenCvSharp;
 
 namespace EdcHost;
 
-public class Utility
+public class Utilities
 {
-    // 计算点到线段的最小距离
-    // 。。。。弃用吧 这代码nb
     public static int DistanceL(Wall wall, Dot CarPos)
     {
         int sameP, bigP, smallP, sameC, diffC;
@@ -58,7 +57,6 @@ public class Utility
         }
     }
 
-    // 计算两点之间的距离
     public static int DistanceP(Dot p1, Dot p2)
     {
         int d1 = Math.Abs(p1.x - p2.x);
@@ -66,4 +64,15 @@ public class Utility
         return (int)Math.Sqrt(d1 * d1 + d2 * d2);
     }
 
+    public static Point Dot2Point(Dot dot)
+    {
+        Point tmpPt = new Point(dot.x, dot.y);
+        return tmpPt;
+    }
+
+    public static Dot Point2Dot(Point pt)
+    {
+        Dot tmpDot = new Dot(pt.X, pt.Y);
+        return tmpDot;
+    }
 }

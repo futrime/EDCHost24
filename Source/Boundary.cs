@@ -49,7 +49,7 @@ public class Boundary
         }
         foreach (Wall wall in mWall)
         {
-            if (Utility.DistanceL(wall, CarPos) < radius)
+            if (Utilities.DistanceL(wall, CarPos) < radius)
             {
                 return true;
             }

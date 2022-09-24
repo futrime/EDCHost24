@@ -94,9 +94,6 @@ public class CoordinateConverter : IDisposable
         // Get the position transformations between camera frames and the court
         this.cam2logic = Cv2.GetPerspectiveTransform(corners, this.logicCorners);
         this.logic2cam = Cv2.GetPerspectiveTransform(this.logicCorners, corners);
-
-        // 标记摄像机画面为已校正
-        myFlags.calibrated = true;
     }
 
     #region Transformations

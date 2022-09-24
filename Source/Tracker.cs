@@ -7,7 +7,6 @@ using System.IO.Ports;
 using System.Windows.Forms;
 using OpenCvSharp;
 using OpenCvSharp.Extensions;
-using Cvt = EdcHost.MyConvert;
 using Point2i = OpenCvSharp.Point;
 
 namespace EdcHost;
@@ -133,8 +132,8 @@ public partial class Tracker : Form
     {
         VideoProcess();
 
-        Dot CarPosA = Cvt.Point2Dot(this.logicCarA);
-        Dot CarPosB = Cvt.Point2Dot(this.logicCarB);
+        Dot CarPosA = Utilities.Point2Dot(this.logicCarA);
+        Dot CarPosB = Utilities.Point2Dot(this.logicCarB);
 
         // Refresh the game
         if (game.GetCamp() == Camp.A)
@@ -236,20 +235,11 @@ public partial class Tracker : Form
                     showCarA = (Point2i)showCars[0];
                     showCarB = (Point2i)showCars[1];
 
-                    // 如果画面已经被手工校正，则可以获取小车的逻辑坐标
-                    if (flags.calibrated)
-                    {
-                        // 将小车坐标从相机坐标转化成逻辑坐标
-                        Point2f[] logicCars = coordCvt.CameraToLogic(camCars);
+                    // 将小车坐标从相机坐标转化成逻辑坐标
+                    Point2f[] logicCars = coordCvt.CameraToLogic(camCars);
 
-                        logicCarA = (Point2i)logicCars[0];
-                        logicCarB = (Point2i)logicCars[1];
-                    }
-                    else  // 否则将小车的坐标设为（-1，-1）
-                    {
-                        logicCarA = InvalidPos;
-                        logicCarB = InvalidPos;
-                    }
+                    logicCarA = (Point2i)logicCars[0];
+                    logicCarB = (Point2i)logicCars[1];
 
                     // 在显示的画面上绘制小车，乘客，物资等对应的图案
                     PaintPattern(videoFrame, localiser);
@@ -384,7 +374,7 @@ public partial class Tracker : Form
             List<Point2f> logicDots2A = new List<Point2f>();
             foreach (Dot dot in stationlistA)
             {
-                logicDots2A.Add(Cvt.Dot2Point(dot));
+                logicDots2A.Add(Utilities.Dot2Point(dot));
             }
             List<Point2f> showDots2A = new List<Point2f>(coordCvt.LogicToCamera(logicDots2A.ToArray()));
             // 第一阶段，只绘制本阶段的充电桩
@@ -407,7 +397,7 @@ public partial class Tracker : Form
             // 这里将A车的绘制成红色，B车绘制成绿色
             foreach (Dot dot in stationlistB)
             {
-                logicDots2B.Add(Cvt.Dot2Point(dot));
+                logicDots2B.Add(Utilities.Dot2Point(dot));
             }
 
             List<Point2f> showDots2B = new List<Point2f>(coordCvt.LogicToCamera(logicDots2B.ToArray()));
@@ -431,28 +421,21 @@ public partial class Tracker : Form
                 Dot StartDot = Obstacle.mpWallList[i].w1;
                 Dot EndDot = Obstacle.mpWallList[i].w2;
 
-                Point2f[] logicDots = { Cvt.Dot2Point(StartDot), Cvt.Dot2Point(EndDot) };
+                Point2f[] logicDots = { Utilities.Dot2Point(StartDot), Utilities.Dot2Point(EndDot) };
 
-                if (flags.calibrated)
+                Point2f[] showDots = coordCvt.LogicToCamera(logicDots);
+                // 将Point2f转换为Point2i
+                Point2i[] resultDots = new Point2i[2];
+                resultDots[0] = (Point2i)showDots[0];
+                resultDots[1] = (Point2i)showDots[1];
+
+                Cv2.Rectangle(mat, resultDots[0], resultDots[1], color: Scalar.Red, 2);
+                // 画竖直直线 从坐标x=resultDots[0].X+4开始画(随便定的)
+                for (int k = 4; k < resultDots[1].X - resultDots[0].X; k += 5)
                 {
-                    Point2f[] showDots = coordCvt.LogicToCamera(logicDots);
-                    // 将Point2f转换为Point2i
-                    Point2i[] resultDots = new Point2i[2];
-                    resultDots[0] = (Point2i)showDots[0];
-                    resultDots[1] = (Point2i)showDots[1];
-
-                    // Cv2.Line(mat, (int)showDots[0].X, (int)showDots[0].Y,
-                    //     (int)showDots[1].X, (int)showDots[1].Y,
-                    //     new Scalar(35, 35, 139), 5);
-
-                    Cv2.Rectangle(mat, resultDots[0], resultDots[1], color: Scalar.Red, 2);
-                    // 画竖直直线 从坐标x=resultDots[0].X+4开始画(随便定的)
-                    for (int k = 4; k < resultDots[1].X - resultDots[0].X; k += 5)
-                    {
-                        Point2i upperPoint = new Point2i(resultDots[0].X + k, resultDots[0].Y);
-                        Point2i lowerPoint = new Point2i(resultDots[0].X + k, resultDots[1].Y);
-                        Cv2.Line(mat, upperPoint, lowerPoint, color: Scalar.Orange, 1);
-                    }
+                    Point2i upperPoint = new Point2i(resultDots[0].X + k, resultDots[0].Y);
+                    Point2i lowerPoint = new Point2i(resultDots[0].X + k, resultDots[1].Y);
+                    Cv2.Line(mat, upperPoint, lowerPoint, color: Scalar.Orange, 1);
                 }
             }
         }
@@ -477,7 +460,7 @@ public partial class Tracker : Form
                 {
                     target_img = Icon_Package;
                     //修正坐标
-                    Point2f[] converted_cord = coordCvt.LogicToCamera(new Point2f[] { (Point2f)MyConvert.Dot2Point(package.mDeparture) });
+                    Point2f[] converted_cord = coordCvt.LogicToCamera(new Point2f[] { (Point2f)Utilities.Dot2Point(package.mDeparture) });
                     Tx = (int)converted_cord[0].X - 10;
                     Ty = (int)converted_cord[0].Y - 10;
 
@@ -486,7 +469,7 @@ public partial class Tracker : Form
                 else if (PackageStatus.PICKED == current_package_status)
                 {
                     target_img = Icon_Zone;
-                    Point2f[] converted_cord = coordCvt.LogicToCamera(new Point2f[] { (Point2f)MyConvert.Dot2Point(package.mDestination) });
+                    Point2f[] converted_cord = coordCvt.LogicToCamera(new Point2f[] { (Point2f)Utilities.Dot2Point(package.mDestination) });
                     Tx = (int)converted_cord[0].X - 10;
                     Ty = (int)converted_cord[0].Y - 10;
                 }
@@ -536,8 +519,12 @@ public partial class Tracker : Form
 
     #region 与界面控件有关的函数
 
-    // 当Tracker界面被关闭时，处理一些接口的关闭
-    private void Tracker_FormClosed(object sender, FormClosedEventArgs e)
+    /// <summary>
+    /// OnFormClose
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void OnFormClosed(object sender, FormClosedEventArgs e)
     {
         lock (flags)
         {
@@ -552,13 +539,11 @@ public partial class Tracker : Form
             serial2.Close();
     }
 
-    // 重置画面
-    private void btnReset_Click(object sender, EventArgs e)
+    private void OnCalibrateButtonClick(object sender, EventArgs e)
     {
         lock (flags)
         {
             flags.clickCount = 0;
-            flags.calibrated = false;
             for (int i = 0; i < 4; ++i)
                 showCornerPts[i].X = showCornerPts[i].Y = 0;
         }
@@ -569,7 +554,7 @@ public partial class Tracker : Form
     // C#中，X轴从左向右，Y轴从上向下
     // 左上角（0,0）；     右上角（width，0）
     // 左下角（0,height）；右下角（width，height）
-    private void pbCamera_MouseClick(object sender, MouseEventArgs e)
+    private void OnMonitorMouseClick(object sender, MouseEventArgs e)
     {
         int widthView = pbCamera.Width;
         int heightView = pbCamera.Height;
@@ -609,7 +594,7 @@ public partial class Tracker : Form
     }
 
 
-    private void buttonStart_Click(object sender, EventArgs e)
+    private void OnStartButtonClick(object sender, EventArgs e)
     {
         //状态+1
         this.game.mGameStage += 1;
@@ -649,41 +634,36 @@ public partial class Tracker : Form
     }
 
     // Pause
-    private void buttonPause_Click(object sender, EventArgs e)
+    private void OnPauseButtonClick(object sender, EventArgs e)
     {
         game.Pause();
     }
 
     // Continue
-    private void buttonContinue_Click(object sender, EventArgs e)
+    private void OnContinueButtonClick(object sender, EventArgs e)
     {
         game.Continue();
     }
 
     // End
-    private void buttonEnd_Click(object sender, EventArgs e)
+    private void OnEndButtonClick(object sender, EventArgs e)
     {
         game.End();
     }
 
-    private void buttonRestart_click(object sender, EventArgs e)
+    private void OnRestartButtonClick(object sender, EventArgs e)
     {
         game = new Game();
     }
 
     // Get foul mark
-    private void buttonFoul_Click(object sender, EventArgs e)
+    private void OnFoulButtonClick(object sender, EventArgs e)
     {
         game.GetMark();
     }
 
-    private void buttonSetStation_Click(object sender, EventArgs e)
-    {
-        game.SetChargeStation();
-    }
-
     // 打开设置调试窗口
-    private void button_set_Click(object sender, EventArgs e)
+    private void OnSettingsButtonClick(object sender, EventArgs e)
     {
         lock (flags)
         {
@@ -694,15 +674,15 @@ public partial class Tracker : Form
     #endregion
 
     #region 由定时器控制的函数
-    //计时器事件，每100ms触发一次，向小车发送信息
-    private void timerMsg100ms_Tick(object sender, EventArgs e)
-    {
-        Flush();
-        // 如果A车在场地内且在迷宫外  ???这是上上一届的规则吧 --张琰然
 
-        // 如果游戏开始了才发信息
+    private void OnTimerTick(object sender, EventArgs e)
+    {
+        this.Flush();
+
         if (GameState.RUN == game.mGameState)
-            SendMessage();
+        {
+            this.SendMessage();
+        }
     }
 
     #endregion

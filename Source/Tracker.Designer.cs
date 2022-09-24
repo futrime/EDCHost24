@@ -21,16 +21,15 @@ partial class Tracker
             this.buttonPause = new System.Windows.Forms.Button();
             this.button_Continue = new System.Windows.Forms.Button();
             this.label_GameCount = new System.Windows.Forms.Label();
-            this.label_RedBG = new System.Windows.Forms.Label();
-            this.label_BlueBG = new System.Windows.Forms.Label();
             this.labelAScore = new System.Windows.Forms.Label();
             this.labelBScore = new System.Windows.Forms.Label();
-            this.btnReset = new System.Windows.Forms.Button();
-            this.button_set = new System.Windows.Forms.Button();
+            this.CalibrateButton = new System.Windows.Forms.Button();
             this.buttonFoul = new System.Windows.Forms.Button();
             this.buttonEnd = new System.Windows.Forms.Button();
-            this.buttonSetStation = new System.Windows.Forms.Button();
             this.buttonRestart = new System.Windows.Forms.Button();
+            this.buttonSettings = new System.Windows.Forms.Button();
+            this.label_BlueBG = new System.Windows.Forms.Label();
+            this.label_RedBG = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pbCamera)).BeginInit();
             this.SuspendLayout();
             // 
@@ -42,11 +41,11 @@ partial class Tracker
             this.pbCamera.Size = new System.Drawing.Size(286, 269);
             this.pbCamera.TabIndex = 0;
             this.pbCamera.TabStop = false;
-            this.pbCamera.MouseClick += new System.Windows.Forms.MouseEventHandler(this.pbCamera_MouseClick);
+            this.pbCamera.MouseClick += new System.Windows.Forms.MouseEventHandler(this.OnMonitorMouseClick);
             // 
             // timerMsg100ms
             // 
-            this.timerMsg100ms.Tick += new System.EventHandler(this.timerMsg100ms_Tick);
+            this.timerMsg100ms.Tick += new System.EventHandler(this.OnTimerTick);
             // 
             // buttonStart
             // 
@@ -57,7 +56,7 @@ partial class Tracker
             this.buttonStart.TabIndex = 1;
             this.buttonStart.Text = "Start";
             this.buttonStart.UseVisualStyleBackColor = true;
-            this.buttonStart.Click += new System.EventHandler(this.buttonStart_Click);
+            this.buttonStart.Click += new System.EventHandler(this.OnStartButtonClick);
             // 
             // buttonPause
             // 
@@ -68,7 +67,7 @@ partial class Tracker
             this.buttonPause.TabIndex = 2;
             this.buttonPause.Text = "Pause";
             this.buttonPause.UseVisualStyleBackColor = true;
-            this.buttonPause.Click += new System.EventHandler(this.buttonPause_Click);
+            this.buttonPause.Click += new System.EventHandler(this.OnPauseButtonClick);
             // 
             // button_Continue
             // 
@@ -79,7 +78,7 @@ partial class Tracker
             this.button_Continue.TabIndex = 3;
             this.button_Continue.Text = "Continue";
             this.button_Continue.UseVisualStyleBackColor = true;
-            this.button_Continue.Click += new System.EventHandler(this.buttonContinue_Click);
+            this.button_Continue.Click += new System.EventHandler(this.OnContinueButtonClick);
             // 
             // label_GameCount
             // 
@@ -90,30 +89,6 @@ partial class Tracker
             this.label_GameCount.Size = new System.Drawing.Size(38, 15);
             this.label_GameCount.TabIndex = 4;
             this.label_GameCount.Text = "label1";
-            // 
-            // label_RedBG
-            // 
-            this.label_RedBG.AutoSize = true;
-            this.label_RedBG.BackColor = System.Drawing.Color.Red;
-            this.label_RedBG.Font = new System.Drawing.Font("Segoe UI", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label_RedBG.Location = new System.Drawing.Point(11, 9);
-            this.label_RedBG.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label_RedBG.Name = "label_RedBG";
-            this.label_RedBG.Size = new System.Drawing.Size(210, 65);
-            this.label_RedBG.TabIndex = 5;
-            this.label_RedBG.Text = "              ";
-            // 
-            // label_BlueBG
-            // 
-            this.label_BlueBG.AutoSize = true;
-            this.label_BlueBG.BackColor = System.Drawing.Color.Blue;
-            this.label_BlueBG.Font = new System.Drawing.Font("Segoe UI", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label_BlueBG.Location = new System.Drawing.Point(742, 12);
-            this.label_BlueBG.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label_BlueBG.Name = "label_BlueBG";
-            this.label_BlueBG.Size = new System.Drawing.Size(210, 65);
-            this.label_BlueBG.TabIndex = 6;
-            this.label_BlueBG.Text = "              ";
             // 
             // labelAScore
             // 
@@ -141,27 +116,16 @@ partial class Tracker
             this.labelBScore.TabIndex = 10;
             this.labelBScore.Text = "B Score";
             // 
-            // btnReset
+            // CalibrateButton
             // 
-            this.btnReset.Location = new System.Drawing.Point(553, 80);
-            this.btnReset.Margin = new System.Windows.Forms.Padding(2);
-            this.btnReset.Name = "btnReset";
-            this.btnReset.Size = new System.Drawing.Size(75, 23);
-            this.btnReset.TabIndex = 11;
-            this.btnReset.Text = "Reset";
-            this.btnReset.UseVisualStyleBackColor = true;
-            this.btnReset.Click += new System.EventHandler(this.btnReset_Click);
-            // 
-            // button_set
-            // 
-            this.button_set.Location = new System.Drawing.Point(339, 77);
-            this.button_set.Margin = new System.Windows.Forms.Padding(2);
-            this.button_set.Name = "button_set";
-            this.button_set.Size = new System.Drawing.Size(75, 23);
-            this.button_set.TabIndex = 12;
-            this.button_set.Text = "Settings";
-            this.button_set.UseVisualStyleBackColor = true;
-            this.button_set.Click += new System.EventHandler(this.button_set_Click);
+            this.CalibrateButton.Location = new System.Drawing.Point(553, 80);
+            this.CalibrateButton.Margin = new System.Windows.Forms.Padding(2);
+            this.CalibrateButton.Name = "CalibrateButton";
+            this.CalibrateButton.Size = new System.Drawing.Size(75, 23);
+            this.CalibrateButton.TabIndex = 11;
+            this.CalibrateButton.Text = "Calibrate";
+            this.CalibrateButton.UseVisualStyleBackColor = true;
+            this.CalibrateButton.Click += new System.EventHandler(this.OnCalibrateButtonClick);
             // 
             // buttonFoul
             // 
@@ -172,7 +136,7 @@ partial class Tracker
             this.buttonFoul.TabIndex = 13;
             this.buttonFoul.Text = "Foul";
             this.buttonFoul.UseVisualStyleBackColor = true;
-            this.buttonFoul.Click += new System.EventHandler(this.buttonFoul_Click);
+            this.buttonFoul.Click += new System.EventHandler(this.OnFoulButtonClick);
             // 
             // buttonEnd
             // 
@@ -183,18 +147,7 @@ partial class Tracker
             this.buttonEnd.TabIndex = 14;
             this.buttonEnd.Text = "End";
             this.buttonEnd.UseVisualStyleBackColor = true;
-            this.buttonEnd.Click += new System.EventHandler(this.buttonEnd_Click);
-            // 
-            // buttonSetStation
-            // 
-            this.buttonSetStation.Location = new System.Drawing.Point(659, 201);
-            this.buttonSetStation.Margin = new System.Windows.Forms.Padding(2);
-            this.buttonSetStation.Name = "buttonSetStation";
-            this.buttonSetStation.Size = new System.Drawing.Size(75, 23);
-            this.buttonSetStation.TabIndex = 15;
-            this.buttonSetStation.Text = "Set Station";
-            this.buttonSetStation.UseVisualStyleBackColor = true;
-            this.buttonSetStation.Click += new System.EventHandler(this.buttonSetStation_Click);
+            this.buttonEnd.Click += new System.EventHandler(this.OnEndButtonClick);
             // 
             // buttonRestart
             // 
@@ -205,7 +158,41 @@ partial class Tracker
             this.buttonRestart.TabIndex = 16;
             this.buttonRestart.Text = "Restart";
             this.buttonRestart.UseVisualStyleBackColor = true;
-            this.buttonRestart.Click += new System.EventHandler(this.buttonRestart_click);
+            this.buttonRestart.Click += new System.EventHandler(this.OnRestartButtonClick);
+            // 
+            // buttonSettings
+            // 
+            this.buttonSettings.Location = new System.Drawing.Point(332, 75);
+            this.buttonSettings.Name = "buttonSettings";
+            this.buttonSettings.Size = new System.Drawing.Size(75, 23);
+            this.buttonSettings.TabIndex = 17;
+            this.buttonSettings.Text = "Settings";
+            this.buttonSettings.UseVisualStyleBackColor = true;
+            this.buttonSettings.Click += new System.EventHandler(this.OnSettingsButtonClick);
+            // 
+            // label_BlueBG
+            // 
+            this.label_BlueBG.AutoSize = true;
+            this.label_BlueBG.BackColor = System.Drawing.Color.Blue;
+            this.label_BlueBG.Font = new System.Drawing.Font("Segoe UI", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.label_BlueBG.Location = new System.Drawing.Point(742, 12);
+            this.label_BlueBG.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label_BlueBG.Name = "label_BlueBG";
+            this.label_BlueBG.Size = new System.Drawing.Size(210, 65);
+            this.label_BlueBG.TabIndex = 6;
+            this.label_BlueBG.Text = "              ";
+            // 
+            // label_RedBG
+            // 
+            this.label_RedBG.AutoSize = true;
+            this.label_RedBG.BackColor = System.Drawing.Color.Red;
+            this.label_RedBG.Font = new System.Drawing.Font("Segoe UI", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.label_RedBG.Location = new System.Drawing.Point(11, 9);
+            this.label_RedBG.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label_RedBG.Name = "label_RedBG";
+            this.label_RedBG.Size = new System.Drawing.Size(210, 65);
+            this.label_RedBG.TabIndex = 5;
+            this.label_RedBG.Text = "              ";
             // 
             // Tracker
             // 
@@ -213,12 +200,11 @@ partial class Tracker
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.SystemColors.Window;
             this.ClientSize = new System.Drawing.Size(963, 539);
+            this.Controls.Add(this.buttonSettings);
             this.Controls.Add(this.buttonRestart);
-            this.Controls.Add(this.buttonSetStation);
             this.Controls.Add(this.buttonEnd);
             this.Controls.Add(this.buttonFoul);
-            this.Controls.Add(this.button_set);
-            this.Controls.Add(this.btnReset);
+            this.Controls.Add(this.CalibrateButton);
             this.Controls.Add(this.labelBScore);
             this.Controls.Add(this.labelAScore);
             this.Controls.Add(this.label_BlueBG);
@@ -231,7 +217,7 @@ partial class Tracker
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Tracker";
             this.ShowIcon = false;
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Tracker_FormClosed);
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
             this.Load += new System.EventHandler(this.Tracker_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pbCamera)).EndInit();
             this.ResumeLayout(false);
@@ -246,14 +232,13 @@ partial class Tracker
     private System.Windows.Forms.Button buttonPause;
     private System.Windows.Forms.Button button_Continue;
     private System.Windows.Forms.Label label_GameCount;
-    private System.Windows.Forms.Label label_RedBG;
-    private System.Windows.Forms.Label label_BlueBG;
     private System.Windows.Forms.Label labelAScore;
     private System.Windows.Forms.Label labelBScore;
-    private System.Windows.Forms.Button btnReset;
-    private System.Windows.Forms.Button button_set;
+    private System.Windows.Forms.Button CalibrateButton;
     private System.Windows.Forms.Button buttonFoul;
     private System.Windows.Forms.Button buttonEnd;
-    private System.Windows.Forms.Button buttonSetStation;
     private System.Windows.Forms.Button buttonRestart;
+    private System.Windows.Forms.Button buttonSettings;
+    private System.Windows.Forms.Label label_BlueBG;
+    private System.Windows.Forms.Label label_RedBG;
 }
