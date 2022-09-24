@@ -8,9 +8,9 @@ namespace EdcHost;
 public class Order
 {
     /// <summary>
-    /// The order status
+    /// The order status enum type
     /// </summary>
-    public enum Status
+    public enum StatusType
     {
         /// <summary>
         /// The order is ready for picking up.
@@ -33,6 +33,8 @@ public class Order
     private long _generationTime;
     private long _deliveryTimeLimit;
 
+    private StatusType _status;
+
     /// <summary>
     /// The departure position
     /// </summary>
@@ -49,13 +51,17 @@ public class Order
     /// The delivery time limit
     /// </summary>
     public long DeliveryTime => this._deliveryTimeLimit;
+    /// <summary>
+    /// The order status
+    /// </summary>
+    public StatusType Status => this._status;
 
 
     /// <summary>
     /// Generate a random order.
     /// </summary>
     /// <param name="area">The area</param>
-    /// <param name="generationTimeRange">The time range</param>
+    /// <param name="generationTimeRange">The generation time range</param>
     /// <param name="timeLimitRange">The time limit range</param>
     /// <returns></returns>
     public static Order GenerateRandomOrder(
