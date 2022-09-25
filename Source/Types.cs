@@ -56,11 +56,3 @@ public enum GameStage
     /// </summary>
     SECOND_HALF = 2
 };
-
-public enum PackageStatus
-{
-    UNPICKED = 0,
-
-    PICKED = 1,
-    ARRIVED = 2
-};

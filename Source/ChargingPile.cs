@@ -8,7 +8,7 @@ public class ChargingPile
     /// <summary>
     /// The charging range radius in centimeters
     /// </summary>
-    private const decimal ChargingRangeRadius = 20;
+    private const decimal InfluenceScopeRadius = 20;
 
     /// <summary>
     /// The position
@@ -37,6 +37,6 @@ public class ChargingPile
     public bool CanCharge(Dot position)
     {
         return Dot.Distance(position, this._position) <
-            ChargingPile.ChargingRangeRadius;
+            ChargingPile.InfluenceScopeRadius;
     }
 }
