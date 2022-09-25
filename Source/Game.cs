@@ -6,32 +6,24 @@ namespace EdcHost;
 
 public class Game
 {
-    // size of competition area
-    // 最大游戏场地
-    public const int MAX_SIZE = 254;
-    public const int AVAILABLE_MAX_X = 254;
-    public const int AVAILABLE_MAX_Y = 254;
+    // Parameters for the game
+    public const int GameDurationFirstHalf = 60000;
+    public const int GameDurationSecondHalf = 180000;
 
-    // size of car
-    public const int COLLISION_RADIUS = 8;
+    // Parameters for the court
+    public const int CourtWidth = 254;
+    public const int CourtHeight = 254;
 
-    // time of first and second half
-    public const int FIRST_HALF_TIME = 60000;
-    public const int SECOND_HALF_TIME = 180000;
-
-
+    // Parameters for orders
     public const int MaxOrderNumber = 20;
-
     public const int MinDeliveryTime = 20;
     public const int MaxDeliveryTime = 60;
 
+    // Parameters for barriers
     public const int MaxBarrierNum = 8;
-    // 障碍物的最小边长
-    public const int BarrierMinLength = 12;
-    // 障碍物的最大边长
-    public const int BarrierMaxLength = 16;
-
-    public const int BarrierMinDistanceFromBarrier = 40;
+    public const int MinBarrierLength = 12;
+    public const int MaxBarrierLength = 16;
+    public const int MinDistanceBetweenBarriers = 40;
 
 
     /// <summary>
@@ -44,20 +36,14 @@ public class Game
             return DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
         }
     }
-
-    // state
-    public GameStage _gameStage;
-    public GameState _gameState;
-
-    // Time
-    // Set time zero as the start time of each race
-    private long _startTime; // system time, update for each race
-
+    /// <summary>
+    /// The game time
+    /// </summary>
     public long GameTime
     {
         get
         {
-            if (this._gameState != GameState.Running)
+            if (this.GameState != GameState.Running)
             {
                 return 0;
             }
@@ -65,12 +51,14 @@ public class Game
             return Math.Max(this.SystemTime - this._startTime, 0);
         }
     }
-
+    /// <summary>
+    /// The remaining time
+    /// </summary>
     public long RemainingTime
     {
         get
         {
-            if (this._gameState != GameState.Running)
+            if (this.GameState != GameState.Running)
             {
                 return 0;
             }
@@ -78,78 +66,44 @@ public class Game
             return Math.Max(this._gameDuration - this.GameTime, 0);
         }
     }
-
     /// <summary>
-    /// The sum of the time penalty
+    /// A list of all orders
     /// </summary>
-    private int _timePenaltySum = 0;
-
-    // car and package
-    private Car mCarA, mCarB;
-
-    private int[] mScoreA, mScoreB;
-
-
-    // store the packages on the field
-    private OrderGenerator _orderGenerator;
-
-    /// <summary>
-    /// All orders in orderGenerator
-    /// </summary>
-    private List<Order> _allOrderList;
     public List<Order> AllOrderList => _allOrderList;
-
     /// <summary>
-    /// orders remained on GUI
+    /// A list of barriers
     /// </summary>
-    private List<Order> _pendingOrderList;
-
-    // which team is racing A or B
-    private Camp _camp;
-
-    private List<Barrier> _barrierList;
     public List<Barrier> BarrierList => _barrierList;
 
-    private List<ChargingPile> _chargingPileList = new List<ChargingPile>();
+    public GameStage GameStage = GameStage.None;
+    public GameState GameState = GameState.Unstarted;
+    private Camp _camp = Camp.None;
 
-    private int _gameDuration = FIRST_HALF_TIME;
+    private long _startTime = 0;
+    private int _timePenaltySum = 0;
+    private int _gameDuration = GameDurationFirstHalf;
+
+    private Vehicle _vehicleA = new Vehicle(Camp.A);
+    private Vehicle _vehicleB = new Vehicle(Camp.B);
+    private int[] _scoreA = {0, 0};
+    private int[] _scoreB = {0, 0};
+
+    private OrderGenerator _orderGenerator;
+    private List<Order> _allOrderList;
+    private List<Order> _pendingOrderList = new List<Order>();
+
+    private List<Barrier> _barrierList;
+    private List<ChargingPile> _chargingPileList = new List<ChargingPile>();
 
 
     public Game()
     {
-        Debug.WriteLine("Call Constructor of Game");
-
-        _gameState = GameState.Unstarted;
-        _gameStage = GameStage.None;
-
-        _camp = Camp.None;
-
-        mCarA = new Car(Camp.A);
-        mCarB = new Car(Camp.B);
-
-        mScoreA = new int[] { 0, 0 };
-        mScoreB = new int[] { 0, 0 };
-
-        _pendingOrderList = new List<Order>();
-
-        _startTime = -1;
-
-
-        // this.mPackageFirstHalf = new PackageList(AVAILABLE_MAX_X, AVAILABLE_MIN_X,
-        //         AVAILABLE_MAX_Y, AVAILABLE_MIN_Y, INITIAL_PKG_NUM, FIRST_HALF_TIME, TIME_INTERVAL, 0);
-
-        // this.mPackageSecondHalf = new PackageList(AVAILABLE_MAX_X, AVAILABLE_MIN_X,
-        //         AVAILABLE_MAX_Y, AVAILABLE_MIN_Y, INITIAL_PKG_NUM, FIRST_HALF_TIME, TIME_INTERVAL, 1);
+        Debug.WriteLine("Constructing the Game object...");
     }
 
-
-    /***********************************************
-    Update on each frame
-    ***********************************************/
-    public void UpdateOnEachFrame(Dot _CarPos)
+    public void Refresh(Dot _CarPos)
     {
-        // check the game state
-        if (_gameState == GameState.Unstarted || _gameState == GameState.Paused || _gameState == GameState.Ended)
+        if (this.GameState != GameState.Running)
         {
             return;
         }
@@ -160,10 +114,10 @@ public class Game
         }
 
         // Try to generate packages on each refresh
-        Order ord = _orderGenerator.Generate(GameTime);
-        if (ord != null)
+        Order order = _orderGenerator.Generate(GameTime);
+        if (order != null)
         {
-            _pendingOrderList.Add(ord);
+            _pendingOrderList.Add(order);
         }
 
         int TimePenalty = 0;
@@ -171,27 +125,27 @@ public class Game
         // Update car's info on each frame
         if (_camp == Camp.A)
         {
-            mCarA.Update(_CarPos, (int)GameTime,
+            _vehicleA.Update(_CarPos, (int)GameTime,
             IsInBarrier(_CarPos), this.IsInChargingPileInfluenceScope(Camp.B, _CarPos),
             this.IsInChargingPileInfluenceScope(Camp.A, _CarPos), ref _pendingOrderList, out TimePenalty);
         }
         else if (_camp == Camp.B)
         {
-            mCarA.Update(_CarPos, (int)GameTime,
+            _vehicleA.Update(_CarPos, (int)GameTime,
             IsInBarrier(_CarPos), this.IsInChargingPileInfluenceScope(Camp.A, _CarPos),
             this.IsInChargingPileInfluenceScope(Camp.B, _CarPos), ref _pendingOrderList, out TimePenalty);
         }
 
-        if (this._gameState == GameState.Running)
+        if (this.GameState == GameState.Running)
         {
             // Calculate the remaining time
-            switch (this._gameStage)
+            switch (this.GameStage)
             {
                 case GameStage.FirstHalf:
-                    this._gameDuration = Game.FIRST_HALF_TIME;
+                    this._gameDuration = Game.GameDurationFirstHalf;
                     break;
                 case GameStage.SecondHalf:
-                    this._gameDuration = Game.SECOND_HALF_TIME;
+                    this._gameDuration = Game.GameDurationSecondHalf;
                     break;
                 default:
                     break;
@@ -202,7 +156,7 @@ public class Game
             //judge wether to end the game automatiacally
             if (RemainingTime <= 0)
             {
-                _gameState = GameState.Ended;
+                GameState = GameState.Ended;
                 Debug.WriteLine("Time remaining is up to 0. The End.");
             }
         }
@@ -211,13 +165,13 @@ public class Game
     {
         if (_camp == Camp.A)
         {
-            mCarA.SetChargeStation();
-            Station.Add(mCarA.CurrentPos(), 0);
+            _vehicleA.SetChargeStation();
+            Station.Add(_vehicleA.CurrentPos(), 0);
         }
         else if (_camp == Camp.B)
         {
-            mCarB.SetChargeStation();
-            Station.Add(mCarB.CurrentPos(), 1);
+            _vehicleB.SetChargeStation();
+            Station.Add(_vehicleB.CurrentPos(), 1);
         }
     }
 
@@ -225,18 +179,18 @@ public class Game
     {
         if (_camp == Camp.A)
         {
-            mCarA.GetMark();
+            _vehicleA.GetMark();
         }
         else if (_camp == Camp.B)
         {
-            mCarB.GetMark();
+            _vehicleB.GetMark();
         }
     }
 
     // decide which team and stage is going on
     public void Start(Camp _camp, GameStage _GameStage)
     {
-        if (_gameState == GameState.Running)
+        if (GameState == GameState.Running)
         {
             Debug.WriteLine("Failed! The current game is going on");
             return;
@@ -248,33 +202,33 @@ public class Game
         }
 
         // set state param of game
-        _gameState = GameState.Running;
-        _gameStage = _GameStage;
+        GameState = GameState.Running;
+        GameStage = _GameStage;
         this._camp = _camp;
 
         if (this._camp == Camp.A)
         {
-            mScoreA[(int)_gameStage - 1] = 0;
+            _scoreA[(int)GameStage - 1] = 0;
         }
         else if (this._camp == Camp.B)
         {
-            mScoreB[(int)_gameStage - 1] = 0;
+            _scoreB[(int)GameStage - 1] = 0;
         }
 
-        if (_gameStage == GameStage.FirstHalf)
+        if (GameStage == GameStage.FirstHalf)
         {
-            this._gameDuration = FIRST_HALF_TIME;
+            this._gameDuration = GameDurationFirstHalf;
         }
-        else if (_gameStage == GameStage.SecondHalf)
+        else if (GameStage == GameStage.SecondHalf)
         {
-            this._gameDuration = SECOND_HALF_TIME;
+            this._gameDuration = GameDurationSecondHalf;
         }
 
         _startTime = this.SystemTime;
 
         // initial packages on the field
         // 暂定时限为10-20s!!
-        _orderGenerator = new OrderGenerator(MaxOrderNumber, (new Dot(0, 0), new Dot(MAX_SIZE, MAX_SIZE)),
+        _orderGenerator = new OrderGenerator(MaxOrderNumber, (new Dot(0, 0), new Dot(Game.CourtWidth, Game.CourtHeight)),
                                             (0, _gameDuration), (MinDeliveryTime, MaxDeliveryTime), out _allOrderList);
 
         this._pendingOrderList.Clear();
@@ -297,7 +251,7 @@ public class Game
 
                     //判断与障碍物的距离
                     if (Math.Sqrt((centerX - currentCenterX) * (centerX - currentCenterX) +
-                        (centerY - currentCenterY) * (centerY - currentCenterY)) < BarrierMinDistanceFromBarrier)
+                        (centerY - currentCenterY) * (centerY - currentCenterY)) < MinDistanceBetweenBarriers)
                     {
                         return false;
                     }
@@ -309,8 +263,8 @@ public class Game
         int currentBarrierNumber = 0;
         while (currentBarrierNumber < MaxBarrierNum)
         {
-            Barrier barrier = Barrier.GenerateRandomBarrier((new Dot(0, 0), new Dot(MAX_SIZE, MAX_SIZE)),
-            (new Dot(BarrierMinLength, BarrierMinLength), new Dot(BarrierMaxLength, BarrierMaxLength)));
+            Barrier barrier = Barrier.GenerateRandomBarrier((new Dot(0, 0), new Dot(Game.CourtWidth, Game.CourtHeight)),
+            (new Dot(MinBarrierLength, MinBarrierLength), new Dot(MaxBarrierLength, MaxBarrierLength)));
 
             if (AwayFromBarriers(barrier, _barrierList))
             {
@@ -322,27 +276,27 @@ public class Game
 
     public void Pause()
     {
-        if (_gameState != GameState.Running)
+        if (GameState != GameState.Running)
         {
             Debug.WriteLine("Pause failed! No race is going on.");
             return;
         }
-        _gameState = GameState.Paused;
+        GameState = GameState.Paused;
     }
 
     public void Continue()
     {
-        if (_gameState != GameState.Paused)
+        if (GameState != GameState.Paused)
         {
             Debug.WriteLine("Continue Failed! No race is suspended");
         }
-        _gameState = GameState.Running;
+        GameState = GameState.Running;
     }
 
     // finish on a manul mode
     public void End()
     {
-        if (_gameState != GameState.Running)
+        if (GameState != GameState.Running)
         {
             Debug.WriteLine("Failed! There is no game going on");
         }
@@ -350,13 +304,13 @@ public class Game
         //Reset Car and Save Score
         if (_camp == Camp.A)
         {
-            mScoreA[(int)_gameStage - 1] = mCarA.GetScore();
-            mCarA.Reset();
+            _scoreA[(int)GameStage - 1] = _vehicleA.GetScore();
+            _vehicleA.Reset();
         }
         else if (_camp == Camp.B)
         {
-            mScoreB[(int)_gameStage - 1] = mCarB.GetScore();
-            mCarB.Reset();
+            _scoreB[(int)GameStage - 1] = _vehicleB.GetScore();
+            _vehicleB.Reset();
         }
 
         // Reset pointer which used to genrate packages
@@ -371,8 +325,8 @@ public class Game
         _orderGenerator.Reset();
 
         // set state param of game
-        _gameState = GameState.Unstarted;
-        _gameStage = GameStage.None;
+        GameState = GameState.Unstarted;
+        GameStage = GameStage.None;
         _camp = Camp.None;
 
         _pendingOrderList.Clear();
@@ -400,10 +354,10 @@ public class Game
         switch (c)
         {
             case Camp.A:
-                return mScoreA[(int)gs - 1];
+                return _scoreA[(int)gs - 1];
 
             case Camp.B:
-                return mScoreB[(int)gs - 1];
+                return _scoreB[(int)gs - 1];
 
             default:
                 break;
@@ -416,26 +370,26 @@ public class Game
     {
         if (_camp == Camp.A)
         {
-            return mCarA.GetMileage();
+            return _vehicleA.GetMileage();
         }
         else if (_camp == Camp.B)
         {
-            return mCarB.GetMileage();
+            return _vehicleB.GetMileage();
         }
         else
         {
             return 0;
         }
     }
-    public Car GetCar(Camp c)
+    public Vehicle GetCar(Camp c)
     {
         if (c == Camp.A)
         {
-            return mCarA;
+            return _vehicleA;
         }
         else if (c == Camp.B)
         {
-            return mCarB;
+            return _vehicleB;
         }
         else
         {

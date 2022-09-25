@@ -3,21 +3,8 @@ using System.Linq;
 
 namespace EdcHost;
 
-public class Car //选手的车
+public class Vehicle
 {
-    // the object of package and picked by car and first collision time
-    // private class PackagesAndTime
-    // {
-    //     public Package mPkg;
-    //     public int mFirstCollisionTime;
-
-    //     public PackagesAndTime(Package _pkg, int _FirstCollisionTime = -1)
-    //     {
-    //         mPkg = _pkg;
-    //         mFirstCollisionTime = _FirstCollisionTime;
-    //     }
-    // }
-
     public const int RUN_CREDIT = 10;          //小车启动可以得到10分;
     public const int PICK_CREDIT = 5;          //接到一笔订单得5分;
     public const int CHARGE_CREDIT = 5;        // credit for set a charge station
@@ -61,7 +48,7 @@ public class Car //选手的车
     /********************************************
     Interface
     *********************************************/
-    public Car(Camp c)
+    public Vehicle(Camp c)
     {
         mQueuePos = new Queue<Dot>(10);
         mCamp = c;
