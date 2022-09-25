@@ -117,7 +117,8 @@ public partial class MainWindow : Form
             this.labelAScore.Text = this._game.GetScore(Camp.A, this._game.GameStage).ToString();
             this.labelBScore.Text = this._game.GetScore(Camp.B, this._game.GameStage).ToString();
 
-            this.GameTimeLabel.Text = Math.Max((decimal)this._game.RemainingTime / 1000, (decimal)0).ToString("0.00");
+
+            this.GameTimeLabel.Text = Math.Max((decimal)(this._game.RemainingTime) / 1000, (decimal)0).ToString("0.00");
         }
         else if (this._game.GameState == GameState.Paused)
         {
@@ -338,7 +339,6 @@ public partial class MainWindow : Form
             {
                 Order.StatusType currentOrderStatus = ord.Status;
                 //判断此外卖是否在车上
-
                 int Tx, Ty, Tcol, Trow;
                 // 若小车没有接收外卖，显示起点
                 Mat target_img = null;
@@ -361,7 +361,7 @@ public partial class MainWindow : Form
                 }
                 else
                 {
-                    break;
+                    continue;
                 }
                 // 修正位置
                 Tcol = target_img.Cols;

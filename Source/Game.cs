@@ -47,8 +47,9 @@ public class Game
             {
                 return 0;
             }
-
-            return Math.Max(this.SystemTime - this._startTime, 0);
+            // To fix the bug that time still runs when 'Pause' button is pressed,
+            // we should minus this.ContinueTime - this.PauseTime
+            return Math.Max(this.SystemTime - this._startTime - (this.ContinueTime - this.PauseTime), 0);
         }
     }
     /// <summary>
@@ -66,6 +67,10 @@ public class Game
             return Math.Max(this._gameDuration - this.GameTime, 0);
         }
     }
+    public long PauseTime;
+    public long ContinueTime;
+
+
     /// <summary>
     /// A list of all orders
     /// </summary>
@@ -85,8 +90,8 @@ public class Game
 
     private Vehicle _vehicleA = new Vehicle(Camp.A);
     private Vehicle _vehicleB = new Vehicle(Camp.B);
-    private int[] _scoreA = {0, 0};
-    private int[] _scoreB = {0, 0};
+    private int[] _scoreA = { 0, 0 };
+    private int[] _scoreB = { 0, 0 };
 
     private OrderGenerator _orderGenerator;
     private List<Order> _allOrderList;
@@ -280,8 +285,9 @@ public class Game
         {
             return;
         }
-
-        GameState = GameState.Paused;
+        this.GameState = GameState.Paused;
+        // To fix the bug that time still runs when 'Pause' button is pressed  
+        this.PauseTime = this.SystemTime;
     }
 
     public void Continue()
@@ -291,6 +297,8 @@ public class Game
             Debug.WriteLine("Continue Failed! No race is suspended");
         }
         GameState = GameState.Running;
+        // To fix the bug that time still runs when 'Pause' button is pressed  
+        this.ContinueTime = this.SystemTime;
     }
 
     public void End()
