@@ -1,16 +1,19 @@
 using System;
-//using Math; unneeded
 
 namespace EdcHost;
+
+/// <summary>
+/// A 2-dimenstion dot
+/// </summary>
 public class Dot
 {
     public int x;
     public int y;
 
-    public Dot(int _x = 0, int _y = 0)
+    public Dot(int x, int y)
     {
-        x = _x;
-        y = _y;
+        this.x = x;
+        this.y = y;
     }
 
     public static bool operator ==(Dot a, Dot b)
@@ -23,6 +26,12 @@ public class Dot
         return !(a == b);
     }
 
+    /// <summary>
+    /// Get the Euclidean distance between two dots.
+    /// </summary>
+    /// <param name="A"></param>
+    /// <param name="B"></param>
+    /// <returns>The distance</returns>
     public static int Distance(Dot A, Dot B)
     {
         return (int)Math.Sqrt((A.x - B.x) * (A.x - B.x)
