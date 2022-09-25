@@ -22,18 +22,23 @@ public class Game
     public const int COLLISION_RADIUS = 8;
 
     // initial amount of package
-    public const int INITIAL_PKG_NUM = 1;
+    public const int INITIAL_ORDER_NUM = 1;
     // time interval of packages
     public const int TIME_INTERVAL = 1500;
 
     // time of first and second half
     public const int FIRST_HALF_TIME = 60000;
     public const int SECOND_HALF_TIME = 180000;
+    public int gameDuration = FIRST_HALF_TIME;
 
     // Message Token
     public const byte START = 0xff;
     public const byte END = 0;
 
+    public const int MaxOrderNumber = 20;
+
+    public const int MinDeliveryTime = 20;
+    public const int MaxDeliveryTime = 60;
     // state
     public GameStage mGameStage;
     public GameState mGameState;
@@ -65,11 +70,10 @@ public class Game
 
     private int[] mScoreA, mScoreB;
 
-    private PackageList mPackageFirstHalf;
-    private PackageList mPackageSecondHalf;
 
     // store the packages on the field
-    private List<Package> mPackagesRemain;
+    private OrderGenerator _orderGenerator;
+    private List<Order> _ordersRemain;
 
     // Charge station set by Team A and B
     private Station mChargeStation;
@@ -109,18 +113,18 @@ public class Game
 
         mChargeStation = new Station();
 
-        mPackagesRemain = new List<Package>();
+        _ordersRemain = new List<Order>();
 
         mStartTime = -1;
         mGameTime = -1;
         mTimeRemain = 0;
 
 
-        this.mPackageFirstHalf = new PackageList(AVAILABLE_MAX_X, AVAILABLE_MIN_X,
-                AVAILABLE_MAX_Y, AVAILABLE_MIN_Y, INITIAL_PKG_NUM, FIRST_HALF_TIME, TIME_INTERVAL, 0);
+        // this.mPackageFirstHalf = new PackageList(AVAILABLE_MAX_X, AVAILABLE_MIN_X,
+        //         AVAILABLE_MAX_Y, AVAILABLE_MIN_Y, INITIAL_PKG_NUM, FIRST_HALF_TIME, TIME_INTERVAL, 0);
 
-        this.mPackageSecondHalf = new PackageList(AVAILABLE_MAX_X, AVAILABLE_MIN_X,
-                AVAILABLE_MAX_Y, AVAILABLE_MIN_Y, INITIAL_PKG_NUM, FIRST_HALF_TIME, TIME_INTERVAL, 1);
+        // this.mPackageSecondHalf = new PackageList(AVAILABLE_MAX_X, AVAILABLE_MIN_X,
+        //         AVAILABLE_MAX_Y, AVAILABLE_MIN_Y, INITIAL_PKG_NUM, FIRST_HALF_TIME, TIME_INTERVAL, 1);
     }
 
 
@@ -143,7 +147,11 @@ public class Game
         _UpdateGameTime();
 
         // Try to generate packages on each refresh
-        _GeneratePackage();
+        Order ord = _orderGenerator.Generate(mGameTime);
+        if (ord != null)
+        {
+            _ordersRemain.Add(ord);
+        }
 
         int TimePenalty = 0;
 
@@ -152,26 +160,25 @@ public class Game
         {
             mCarA.Update(_CarPos, (int)mGameTime,
             _IsInObstacle(_CarPos), _IsInOpponentStation(_CarPos),
-            _IsInChargeStation(_CarPos), ref mPackagesRemain, out TimePenalty);
+            _IsInChargeStation(_CarPos), ref _ordersRemain, out TimePenalty);
         }
         else if (mCamp == Camp.B)
         {
             mCarB.Update(_CarPos, (int)mGameTime,
             _IsInObstacle(_CarPos), _IsInOpponentStation(_CarPos),
-            _IsInChargeStation(_CarPos), ref mPackagesRemain, out TimePenalty);
+            _IsInChargeStation(_CarPos), ref _ordersRemain, out TimePenalty);
         }
 
         if (this.mGameState == GameState.RUN)
         {
             // Calculate the remaining time
-            int gameDuration = 0;
             switch (this.mGameStage)
             {
                 case GameStage.FIRST_HALF:
-                    gameDuration = Game.FIRST_HALF_TIME;
+                    this.gameDuration = Game.FIRST_HALF_TIME;
                     break;
                 case GameStage.SECOND_HALF:
-                    gameDuration = Game.SECOND_HALF_TIME;
+                    this.gameDuration = Game.SECOND_HALF_TIME;
                     break;
                 default:
                     break;
@@ -180,7 +187,7 @@ public class Game
             this._timePenaltySum += TimePenalty;
             // this.mTimeRemain = gameDuration - this._timePenaltySum - mGameTime;
             //暂时去掉penalty
-            this.mTimeRemain = gameDuration - mGameTime;
+            this.mTimeRemain = this.gameDuration - mGameTime;
 
             //judge wether to end the game automatiacally
             if (mTimeRemain <= 0)
@@ -230,19 +237,6 @@ public class Game
             Debug.WriteLine("Failed to set game stage! Expect input to be GameStage.FIRST_HALF or GameStage.SECOND_HALF");
         }
 
-        // Generate the package list
-        if (!hasFirstPackageListGenerated && _GameStage == GameStage.FIRST_HALF)
-        {
-            // 在生成包裹后生成障碍物 保证与包裹有一定距离
-            mObstacle = new Obstacle();
-        }
-
-        if (!hasSecondPackageListGenerated && _GameStage == GameStage.SECOND_HALF)
-        {
-            // 在生成包裹后生成障碍物 保证与包裹有一定距离
-            mObstacle = new Obstacle();
-        }
-
         // set state param of game
         mGameState = GameState.RUN;
         mGameStage = _GameStage;
@@ -257,9 +251,6 @@ public class Game
             mScoreB[(int)mGameStage - 1] = 0;
         }
 
-        // initial packages on the field
-        _InitialPackagesRemain();
-
         if (mGameStage == GameStage.FIRST_HALF)
         {
             mTimeRemain = FIRST_HALF_TIME;
@@ -271,6 +262,15 @@ public class Game
 
         mStartTime = _GetCurrentTime();
         mGameTime = 0;
+
+        // initial packages on the field
+        // 暂定时限为10-20s!!
+        _orderGenerator = new OrderGenerator(MaxOrderNumber, (new Dot(0, 0), new Dot(MAX_SIZE, MAX_SIZE)),
+                                            (0, gameDuration), (MinDeliveryTime, MaxDeliveryTime));
+        InitialOrdersRemain();
+
+        // 在生成包裹后生成障碍物 保证障碍物与包裹有一定距离
+        mObstacle = new Obstacle();
     }
 
     public void Pause()
@@ -313,162 +313,163 @@ public class Game
         }
 
         // Reset pointer which used to genrate packages
-        if (mGameStage == GameStage.FIRST_HALF)
-        {
-            mPackageFirstHalf.ResetPointer();
-        }
-        else if (mGameStage == GameStage.SECOND_HALF)
-        {
-            mPackageSecondHalf.ResetPointer();
-        }
+        // if (mGameStage == GameStage.FIRST_HALF)
+        // {
+        //     mPackageFirstHalf.ResetPointer();
+        // }
+        // else if (mGameStage == GameStage.SECOND_HALF)
+        // {
+        //     mPackageSecondHalf.ResetPointer();
+        // }
+        _orderGenerator.Reset();
 
         // set state param of game
         mGameState = GameState.UNSTART;
         mGameStage = GameStage.NONE;
         mCamp = Camp.NONE;
 
-        mPackagesRemain.Clear();
+        _ordersRemain.Clear();
 
         mStartTime = -1;
         mGameTime = -1;
     }
 
-    public byte[] Message()
-    {
-        byte[] MyMessage = new byte[100];
-        int Index = 0;
-        // Game Stage
-        MyMessage[Index++] = (byte)mGameStage;
-        // Game State
-        MyMessage[Index++] = (byte)mGameState;
+    // public byte[] Message()
+    // {
+    //     byte[] MyMessage = new byte[100];
+    //     int Index = 0;
+    //     // Game Stage
+    //     MyMessage[Index++] = (byte)mGameStage;
+    //     // Game State
+    //     MyMessage[Index++] = (byte)mGameState;
 
-        // GameTime 
-        MyMessage[Index++] = (byte)((mGameTime / 100) >> 8);
-        MyMessage[Index++] = (byte)(mGameTime / 100);
+    //     // GameTime 
+    //     MyMessage[Index++] = (byte)((mGameTime / 100) >> 8);
+    //     MyMessage[Index++] = (byte)(mGameTime / 100);
 
-        // TimeRemain
-        MyMessage[Index++] = (byte)((mTimeRemain / 100) >> 8);
-        MyMessage[Index++] = (byte)(mTimeRemain / 100);
+    //     // TimeRemain
+    //     MyMessage[Index++] = (byte)((mTimeRemain / 100) >> 8);
+    //     MyMessage[Index++] = (byte)(mTimeRemain / 100);
 
 
-        // Obstacle
-        // Add your code here...
-        foreach (Wall item in Obstacle.mpWallList)
-        {
-            MyMessage[Index++] = (byte)(item.w1.x);
-            MyMessage[Index++] = (byte)(item.w1.y);
-            MyMessage[Index++] = (byte)(item.w2.x);
-            MyMessage[Index++] = (byte)(item.w2.y);
-        }
+    //     // Obstacle
+    //     // Add your code here...
+    //     foreach (Wall item in Obstacle.mpWallList)
+    //     {
+    //         MyMessage[Index++] = (byte)(item.w1.x);
+    //         MyMessage[Index++] = (byte)(item.w1.y);
+    //         MyMessage[Index++] = (byte)(item.w2.x);
+    //         MyMessage[Index++] = (byte)(item.w2.y);
+    //     }
 
-        if (mCamp == Camp.A)
-        {
-            // Your Charge Station
-            MyMessage[Index++] = (byte)Station.Index(0, 0).x;
-            MyMessage[Index++] = (byte)Station.Index(0, 0).y;
-            MyMessage[Index++] = (byte)Station.Index(1, 0).x;
-            MyMessage[Index++] = (byte)Station.Index(1, 0).y;
-            MyMessage[Index++] = (byte)Station.Index(2, 0).x;
-            MyMessage[Index++] = (byte)Station.Index(2, 0).y;
+    //     if (mCamp == Camp.A)
+    //     {
+    //         // Your Charge Station
+    //         MyMessage[Index++] = (byte)Station.Index(0, 0).x;
+    //         MyMessage[Index++] = (byte)Station.Index(0, 0).y;
+    //         MyMessage[Index++] = (byte)Station.Index(1, 0).x;
+    //         MyMessage[Index++] = (byte)Station.Index(1, 0).y;
+    //         MyMessage[Index++] = (byte)Station.Index(2, 0).x;
+    //         MyMessage[Index++] = (byte)Station.Index(2, 0).y;
 
-            // Oppenont's Charge Station
-            MyMessage[Index++] = (byte)Station.Index(0, 1).x;
-            MyMessage[Index++] = (byte)Station.Index(0, 1).y;
-            MyMessage[Index++] = (byte)Station.Index(1, 1).x;
-            MyMessage[Index++] = (byte)Station.Index(1, 1).y;
-            MyMessage[Index++] = (byte)Station.Index(2, 1).x;
-            MyMessage[Index++] = (byte)Station.Index(2, 1).y;
+    //         // Oppenont's Charge Station
+    //         MyMessage[Index++] = (byte)Station.Index(0, 1).x;
+    //         MyMessage[Index++] = (byte)Station.Index(0, 1).y;
+    //         MyMessage[Index++] = (byte)Station.Index(1, 1).x;
+    //         MyMessage[Index++] = (byte)Station.Index(1, 1).y;
+    //         MyMessage[Index++] = (byte)Station.Index(2, 1).x;
+    //         MyMessage[Index++] = (byte)Station.Index(2, 1).y;
 
-            // Score
-            MyMessage[Index++] = (byte)(mCarA.GetScore() >> 8);
-            MyMessage[Index++] = (byte)(mCarA.GetScore());
+    //         // Score
+    //         MyMessage[Index++] = (byte)(mCarA.GetScore() >> 8);
+    //         MyMessage[Index++] = (byte)(mCarA.GetScore());
 
-            // Car Position
-            MyMessage[Index++] = (byte)(mCarA.CurrentPos().x);
-            MyMessage[Index++] = (byte)(mCarA.CurrentPos().y);
+    //         // Car Position
+    //         MyMessage[Index++] = (byte)(mCarA.CurrentPos().x);
+    //         MyMessage[Index++] = (byte)(mCarA.CurrentPos().y);
 
-            // Car's Package List
-            MyMessage[Index++] = (byte)(mCarA.GetPackageCount());
-            // Destinaton, Scheduled Time
-            for (int i = 0; i < 5; i++)
-            {
-                MyMessage[Index++] = (byte)(mCarA.GetPackageOnCar(i).Destination().x);
-                MyMessage[Index++] = (byte)(mCarA.GetPackageOnCar(i).Destination().y);
-                MyMessage[Index++] = (byte)(mCarA.GetPackageOnCar(i).ScheduledDeliveryTime() / 100 >> 8);
-                MyMessage[Index++] = (byte)(mCarA.GetPackageOnCar(i).ScheduledDeliveryTime());
-            }
-        }
-        else if (mCamp == Camp.B)
-        {
-            // Your Charge Station
-            MyMessage[Index++] = (byte)Station.Index(0, 1).x;
-            MyMessage[Index++] = (byte)Station.Index(0, 1).y;
-            MyMessage[Index++] = (byte)Station.Index(1, 1).x;
-            MyMessage[Index++] = (byte)Station.Index(1, 1).y;
-            MyMessage[Index++] = (byte)Station.Index(2, 1).x;
-            MyMessage[Index++] = (byte)Station.Index(2, 1).y;
+    //         // Car's Package List
+    //         MyMessage[Index++] = (byte)(mCarA.GetPackageCount());
+    //         // Destinaton, Scheduled Time
+    //         for (int i = 0; i < 5; i++)
+    //         {
+    //             MyMessage[Index++] = (byte)(mCarA.GetPackageOnCar(i).Destination().x);
+    //             MyMessage[Index++] = (byte)(mCarA.GetPackageOnCar(i).Destination().y);
+    //             MyMessage[Index++] = (byte)(mCarA.GetPackageOnCar(i).ScheduledDeliveryTime() / 100 >> 8);
+    //             MyMessage[Index++] = (byte)(mCarA.GetPackageOnCar(i).ScheduledDeliveryTime());
+    //         }
+    //     }
+    //     else if (mCamp == Camp.B)
+    //     {
+    //         // Your Charge Station
+    //         MyMessage[Index++] = (byte)Station.Index(0, 1).x;
+    //         MyMessage[Index++] = (byte)Station.Index(0, 1).y;
+    //         MyMessage[Index++] = (byte)Station.Index(1, 1).x;
+    //         MyMessage[Index++] = (byte)Station.Index(1, 1).y;
+    //         MyMessage[Index++] = (byte)Station.Index(2, 1).x;
+    //         MyMessage[Index++] = (byte)Station.Index(2, 1).y;
 
-            // Oppenont's Charge Station
-            MyMessage[Index++] = (byte)Station.Index(0, 0).x;
-            MyMessage[Index++] = (byte)Station.Index(0, 0).y;
-            MyMessage[Index++] = (byte)Station.Index(1, 0).x;
-            MyMessage[Index++] = (byte)Station.Index(1, 0).y;
-            MyMessage[Index++] = (byte)Station.Index(2, 0).x;
-            MyMessage[Index++] = (byte)Station.Index(2, 0).y;
+    //         // Oppenont's Charge Station
+    //         MyMessage[Index++] = (byte)Station.Index(0, 0).x;
+    //         MyMessage[Index++] = (byte)Station.Index(0, 0).y;
+    //         MyMessage[Index++] = (byte)Station.Index(1, 0).x;
+    //         MyMessage[Index++] = (byte)Station.Index(1, 0).y;
+    //         MyMessage[Index++] = (byte)Station.Index(2, 0).x;
+    //         MyMessage[Index++] = (byte)Station.Index(2, 0).y;
 
-            // Score
-            MyMessage[Index++] = (byte)(mCarB.GetScore() >> 8);
-            MyMessage[Index++] = (byte)(mCarB.GetScore());
+    //         // Score
+    //         MyMessage[Index++] = (byte)(mCarB.GetScore() >> 8);
+    //         MyMessage[Index++] = (byte)(mCarB.GetScore());
 
-            // Car Position
-            MyMessage[Index++] = (byte)(mCarB.CurrentPos().x);
-            MyMessage[Index++] = (byte)(mCarB.CurrentPos().y);
+    //         // Car Position
+    //         MyMessage[Index++] = (byte)(mCarB.CurrentPos().x);
+    //         MyMessage[Index++] = (byte)(mCarB.CurrentPos().y);
 
-            // Car's Package List
-            // Total numbrt of picked packages
-            MyMessage[Index++] = (byte)(mCarB.GetPackageCount());
-            // Destinaton, Scheduled Time
-            for (int i = 0; i < 5; i++)
-            {
-                MyMessage[Index++] = (byte)(mCarB.GetPackageOnCar(i).Destination().x);
-                MyMessage[Index++] = (byte)(mCarB.GetPackageOnCar(i).Destination().y);
-                MyMessage[Index++] = (byte)(mCarB.GetPackageOnCar(i).ScheduledDeliveryTime() / 100 >> 8);
-                MyMessage[Index++] = (byte)(mCarB.GetPackageOnCar(i).ScheduledDeliveryTime());
-            }
-        }
+    //         // Car's Package List
+    //         // Total numbrt of picked packages
+    //         MyMessage[Index++] = (byte)(mCarB.GetPackageCount());
+    //         // Destinaton, Scheduled Time
+    //         for (int i = 0; i < 5; i++)
+    //         {
+    //             MyMessage[Index++] = (byte)(mCarB.GetPackageOnCar(i).Destination().x);
+    //             MyMessage[Index++] = (byte)(mCarB.GetPackageOnCar(i).Destination().y);
+    //             MyMessage[Index++] = (byte)(mCarB.GetPackageOnCar(i).ScheduledDeliveryTime() / 100 >> 8);
+    //             MyMessage[Index++] = (byte)(mCarB.GetPackageOnCar(i).ScheduledDeliveryTime());
+    //         }
+    //     }
 
-        // Packages Generate on this frame
-        // Indentity Code, Departure, Destination, Scheduled Time
-        if (mGameStage == GameStage.FIRST_HALF)
-        {
-            MyMessage[Index++] = (byte)(mPackageFirstHalf.LastGenerationPackage().IndentityCode());
-            MyMessage[Index++] = (byte)(mPackageFirstHalf.LastGenerationPackage().Departure().x);
-            MyMessage[Index++] = (byte)(mPackageFirstHalf.LastGenerationPackage().Departure().y);
-            MyMessage[Index++] = (byte)(mPackageFirstHalf.LastGenerationPackage().Destination().x);
-            MyMessage[Index++] = (byte)(mPackageFirstHalf.LastGenerationPackage().Destination().y);
-            MyMessage[Index++] = (byte)(mPackageFirstHalf.LastGenerationPackage().ScheduledDeliveryTime() / 100 >> 8);
-            MyMessage[Index++] = (byte)(mPackageFirstHalf.LastGenerationPackage().ScheduledDeliveryTime() / 100);
-        }
-        else if (mGameStage == GameStage.SECOND_HALF)
-        {
-            MyMessage[Index++] = (byte)(mPackageSecondHalf.LastGenerationPackage().IndentityCode());
-            MyMessage[Index++] = (byte)(mPackageSecondHalf.LastGenerationPackage().Departure().x);
-            MyMessage[Index++] = (byte)(mPackageSecondHalf.LastGenerationPackage().Departure().y);
-            MyMessage[Index++] = (byte)(mPackageSecondHalf.LastGenerationPackage().Destination().x);
-            MyMessage[Index++] = (byte)(mPackageSecondHalf.LastGenerationPackage().Destination().y);
-            MyMessage[Index++] = (byte)(mPackageSecondHalf.LastGenerationPackage().ScheduledDeliveryTime() / 100 >> 8);
-            MyMessage[Index++] = (byte)(mPackageSecondHalf.LastGenerationPackage().ScheduledDeliveryTime() / 100);
-        }
+    //     // Packages Generate on this frame
+    //     // Indentity Code, Departure, Destination, Scheduled Time
+    //     if (mGameStage == GameStage.FIRST_HALF)
+    //     {
+    //         MyMessage[Index++] = (byte)(mPackageFirstHalf.LastGenerationPackage().IndentityCode());
+    //         MyMessage[Index++] = (byte)(mPackageFirstHalf.LastGenerationPackage().Departure().x);
+    //         MyMessage[Index++] = (byte)(mPackageFirstHalf.LastGenerationPackage().Departure().y);
+    //         MyMessage[Index++] = (byte)(mPackageFirstHalf.LastGenerationPackage().Destination().x);
+    //         MyMessage[Index++] = (byte)(mPackageFirstHalf.LastGenerationPackage().Destination().y);
+    //         MyMessage[Index++] = (byte)(mPackageFirstHalf.LastGenerationPackage().ScheduledDeliveryTime() / 100 >> 8);
+    //         MyMessage[Index++] = (byte)(mPackageFirstHalf.LastGenerationPackage().ScheduledDeliveryTime() / 100);
+    //     }
+    //     else if (mGameStage == GameStage.SECOND_HALF)
+    //     {
+    //         MyMessage[Index++] = (byte)(mPackageSecondHalf.LastGenerationPackage().IndentityCode());
+    //         MyMessage[Index++] = (byte)(mPackageSecondHalf.LastGenerationPackage().Departure().x);
+    //         MyMessage[Index++] = (byte)(mPackageSecondHalf.LastGenerationPackage().Departure().y);
+    //         MyMessage[Index++] = (byte)(mPackageSecondHalf.LastGenerationPackage().Destination().x);
+    //         MyMessage[Index++] = (byte)(mPackageSecondHalf.LastGenerationPackage().Destination().y);
+    //         MyMessage[Index++] = (byte)(mPackageSecondHalf.LastGenerationPackage().ScheduledDeliveryTime() / 100 >> 8);
+    //         MyMessage[Index++] = (byte)(mPackageSecondHalf.LastGenerationPackage().ScheduledDeliveryTime() / 100);
+    //     }
 
-        return MyMessage;
-    }
+    //     return MyMessage;
+    // }
 
     /***********************************************************************
     Interface used for Tracker to display the information of current game
     ***********************************************************************/
-    public List<Package> PackagesOnStage()
+    public List<Order> OrdersRemain()
     {
-        return mPackagesRemain;
+        return _ordersRemain;
     }
 
     public Camp GetCamp()
@@ -535,56 +536,9 @@ public class Game
     /***********************************************
     Initialize and Generate Package
     ***********************************************/
-    private bool _InitialPackagesRemain()
+    private void InitialOrdersRemain()
     {
-        mPackagesRemain.Clear();
-
-        if (mGameStage == GameStage.FIRST_HALF)
-        {
-            // 开局仅添加INITIAL_PKG_NUM个package
-            for (int i = 0; i < INITIAL_PKG_NUM; i++)
-            {
-                mPackagesRemain.Add(mPackageFirstHalf.Index(i));
-            }
-            return true;
-        }
-        else if (mGameStage == GameStage.SECOND_HALF)
-        {
-            // 开局仅添加INITIAL_PKG_NUM个package
-            for (int i = 0; i < INITIAL_PKG_NUM; i++)
-            {
-                mPackagesRemain.Add(mPackageSecondHalf.Index(i));
-            }
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-    private bool _GeneratePackage()
-    {
-        if (this.mPackageFirstHalf.mPointer < PackageList.MaxPackageNumber &&
-            mGameStage == GameStage.FIRST_HALF &&
-            mGameTime >= mPackageFirstHalf.NextGenerationPackage().GenerationTime()
-        )
-        {
-            mPackagesRemain.Add(mPackageFirstHalf.GeneratePackage());
-            return true;
-        }
-        else if (this.mPackageSecondHalf.mPointer < PackageList.MaxPackageNumber &&
-            mGameStage == GameStage.SECOND_HALF &&
-            mGameTime >= mPackageSecondHalf.NextGenerationPackage().GenerationTime()
-        )
-        {
-            mPackagesRemain.Add(mPackageSecondHalf.GeneratePackage());
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        _ordersRemain.Clear();
     }
 
 

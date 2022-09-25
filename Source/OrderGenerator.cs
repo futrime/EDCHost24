@@ -59,10 +59,13 @@ public class OrderGenerator
     /// <returns>The order; null if unable to generate</returns>
     public Order Generate(long time)
     {
+        // Return null if all orders are generated
         if (this._nextGeneratedOrderIndex >= this._orderList.Count)
         {
             return null;
         }
+
+        // Return null if it is not time to generate the next order
         if (this._orderList[this._nextGeneratedOrderIndex].GenerationTime > time)
         {
             return null;
@@ -70,6 +73,8 @@ public class OrderGenerator
 
         var order = this._orderList[this._nextGeneratedOrderIndex];
         ++this._nextGeneratedOrderIndex;
+
+        order.Status = Order.StatusType.Pending;
 
         return order;
     }

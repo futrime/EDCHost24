@@ -185,7 +185,7 @@ public partial class Tracker : Form
     /// </summary>
     private void SendMessage()
     {
-        byte[] Message = game.Message();
+        byte[] Message = new byte[] { };
 
         if (game.GetCamp() == Camp.A)
         {
@@ -444,31 +444,30 @@ public partial class Tracker : Form
             // 找到当前的车队
             Car current_car = this.game.GetCar(this.game.GetCamp());
             // 现在车上载有的外卖数量 
-            int package_number_on_car = current_car.GetPackageCount();
-            foreach (Package package in game.PackagesOnStage())
+            int order_number_on_car = current_car.GetOrderCount();
+            foreach (Order ord in game.OrdersRemain())
             {
-
-                PackageStatus current_package_status = package.Status;
+                Order.StatusType currentOrderStatus = ord.Status;
 
                 //判断此外卖是否在车上
 
                 int Tx, Ty, Tcol, Trow;
                 // 若小车没有接收外卖，显示起点
                 Mat target_img = null;
-                if (PackageStatus.UNPICKED == current_package_status)
+                if (Order.StatusType.Pending == currentOrderStatus)
                 {
                     target_img = Icon_Package;
                     //修正坐标
-                    Point2f[] converted_cord = coordCvt.LogicToCamera(new Point2f[] { (Point2f)Utilities.Dot2Point(package.mDeparture) });
+                    Point2f[] converted_cord = coordCvt.LogicToCamera(new Point2f[] { (Point2f)Utilities.Dot2Point(ord.DeparturePosition) });
                     Tx = (int)converted_cord[0].X - 10;
                     Ty = (int)converted_cord[0].Y - 10;
 
                 }
-                // 若小车没有装载此外卖，显示终点
-                else if (PackageStatus.PICKED == current_package_status)
+                // 若小车装载此外卖，显示终点
+                else if (Order.StatusType.InDelivery == currentOrderStatus)
                 {
                     target_img = Icon_Zone;
-                    Point2f[] converted_cord = coordCvt.LogicToCamera(new Point2f[] { (Point2f)Utilities.Dot2Point(package.mDestination) });
+                    Point2f[] converted_cord = coordCvt.LogicToCamera(new Point2f[] { (Point2f)Utilities.Dot2Point(ord.DestinationPosition) });
                     Tx = (int)converted_cord[0].X - 10;
                     Ty = (int)converted_cord[0].Y - 10;
                 }

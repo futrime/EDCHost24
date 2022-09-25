@@ -37,19 +37,19 @@ public class Obstacle
         Random random = new Random(time);
 
         //保证障碍物与包裹有一定距离的判定函数
-        bool AwayFromPackages(int centerX, int centerY)
+        bool AwayFromOrders(int centerX, int centerY, List<Order> orderList)
         {
-            foreach (Package pkg in PackageList.mPackageList)
+            foreach (Order ord in orderList)
             {
-                if (pkg != null)
+                if (ord != null)
                 {
                     //判断与起点距离
-                    if (Math.Sqrt((centerX - pkg.mDeparture.x) * (centerX - pkg.mDeparture.x) + (centerY - pkg.mDeparture.y) * (centerY - pkg.mDeparture.y)) < PACKAGE_MIN_DISTANCE_FROM_OBSTACLE)
+                    if (Math.Sqrt((centerX - ord.DeparturePosition.x) * (centerX - ord.DeparturePosition.x) + (centerY - ord.DeparturePosition.y) * (centerY - ord.DeparturePosition.y)) < PACKAGE_MIN_DISTANCE_FROM_OBSTACLE)
                     {
                         return false;
                     }
                     //判断与终点距离
-                    if (Math.Sqrt((centerX - pkg.mDestination.x) * (centerX - pkg.mDestination.x) + (centerY - pkg.mDestination.y) * (centerY - pkg.mDestination.y)) < PACKAGE_MIN_DISTANCE_FROM_OBSTACLE)
+                    if (Math.Sqrt((centerX - ord.DestinationPosition.x) * (centerX - ord.DestinationPosition.x) + (centerY - ord.DestinationPosition.y) * (centerY - ord.DestinationPosition.y)) < PACKAGE_MIN_DISTANCE_FROM_OBSTACLE)
                     {
                         return false;
                     }
@@ -97,7 +97,8 @@ public class Obstacle
                 width = random.Next(OBSTACLE_MIN_LENGTH, OBSTACLE_MAX_LENGTH);
                 height = random.Next(OBSTACLE_MIN_LENGTH, OBSTACLE_MAX_LENGTH);
             }
-            while (!AwayFromPackages(x1 + width / 2, y1 + height / 2) ||
+            while (
+            //!AwayFromPackages(x1 + width / 2, y1 + height / 2) ||
             !AwayFromObstacles(x1 + width / 2, y1 + height / 2));
 
             mpWallList[i] = new Wall(new Dot(x1, y1), new Dot(x1 + width, y1 + height));

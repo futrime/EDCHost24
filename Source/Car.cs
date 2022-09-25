@@ -38,7 +38,7 @@ public class Car //选手的车
     public Camp mCamp;               //A or B get、set直接两个封装好的函数
     private int mScore;               //得分
     private int mMileage;              //小车续航里程
-    private List<PackagesAndTime> mPickedPackages; // package picked by car
+    private List<Order> _deliveringOrder; // orders that are being delivered by car
 
     //Flag of whether the car is able to run
     private bool mIsAbleToRun;
@@ -66,7 +66,7 @@ public class Car //选手的车
         mCamp = c;
         mScore = 0;
         mMileage = MAX_MILEAGE;
-        mPickedPackages = new List<PackagesAndTime>();
+        _deliveringOrder = new List<Order>();
 
         // Flags
         mIsAbleToRun = false;
@@ -84,7 +84,7 @@ public class Car //选手的车
 
         mScore = 0;
         mMileage = MAX_MILEAGE;
-        mPickedPackages.Clear();
+        _deliveringOrder.Clear();
 
         // Flags
         mIsAbleToRun = false;
@@ -98,7 +98,7 @@ public class Car //选手的车
 
     public void Update(Dot _CarPos, int _GameTime,
         bool _IsInObstacle, bool _IsInOpponentStation, bool _IsInChargeStation,
-        ref List<Package> _PackagesRemain, out int _TimePenalty)
+        ref List<Order> ordersRemain, out int _TimePenalty)
     {
         mGameTime = _GameTime;
 
@@ -115,7 +115,7 @@ public class Car //选手的车
             _TimePenalty = 0;
 
             //action
-            PickPackage(_CarPos, ref _PackagesRemain);
+            PickOrders(_CarPos, ref ordersRemain);
             DropPackage(_CarPos);
             //这里不能直接写_TimePenalty，因为它必须写在最外层，故用临时变量temp_TimePenalty作为out
             UpdateMileage(out temp_TimePenalty);
@@ -150,21 +150,21 @@ public class Car //选手的车
         return mQueuePos.Item(-1);
     }
 
-    public Package GetPackageOnCar(int _index)
+    public Order GetPackageOnCar(int index)
     {
-        if (_index >= mPickedPackages.Count)
+        if (index >= _deliveringOrder.Count)
         {
-            return new Package();
+            return null;
         }
         else
         {
-            return mPickedPackages[_index].mPkg;
+            return _deliveringOrder[index];
         }
     }
 
-    public int GetPackageCount()
+    public int GetOrderCount()
     {
-        return mPickedPackages.Count;
+        return _deliveringOrder.Count;
     }
     public int GetMileage()
     {
@@ -190,19 +190,20 @@ public class Car //选手的车
         }
     }
 
-    private void PickPackage(Dot _CarPos, ref List<Package> _PackagesRemain)      //拾取外卖
+    private void PickOrders(Dot _CarPos, ref List<Order> ordersRemain)      //拾取外卖
     {
-        for (int i = 0; i < _PackagesRemain.Count; i++)
+        for (int i = 0; i < ordersRemain.Count; i++)
         {
-            Package pkg = _PackagesRemain[i];
-            if (pkg.Status == PackageStatus.UNPICKED && pkg.Distance2Departure(_CarPos) <= COLLISION_RADIUS &&
-                mPickedPackages.Count <= MAX_PKG_COUNT)
+            Order ord = ordersRemain[i];
+            if (ord.Status == Order.StatusType.Pending && ord.Distance2Departure(_CarPos) <= COLLISION_RADIUS &&
+                _deliveringOrder.Count <= MAX_PKG_COUNT)
             {
-                mPickedPackages.Add(new PackagesAndTime(pkg));
-                _PackagesRemain.Remove(pkg);
+                ord.AddFirstCollisionTime(this.mGameTime);
+                _deliveringOrder.Add(ord);
+                ordersRemain.Remove(ord);
                 mScore += PICK_CREDIT;
                 // 拾取后改变pkg的packagestatus
-                pkg.Status = PackageStatus.PICKED;
+                ord.Status = Order.StatusType.InDelivery;
                 break;
             }
         }
@@ -210,27 +211,19 @@ public class Car //选手的车
 
     private void DropPackage(Dot _CarPos)      //送达外卖 
     {
-        foreach (var PkgAndTime in mPickedPackages)
+        foreach (var ord in _deliveringOrder)
         {
-            if (PkgAndTime.mPkg.Status == PackageStatus.PICKED && PkgAndTime.mPkg.Distance2Destination(_CarPos) <= COLLISION_RADIUS)
+            if (ord.Status == Order.StatusType.InDelivery && ord.Distance2Destination(_CarPos) <= COLLISION_RADIUS)
             {
-                if (PkgAndTime.mFirstCollisionTime != -1 &&
-                    mGameTime - PkgAndTime.mFirstCollisionTime > COLLISION_DETECTION_TIME)
+                if (ord.FirstCollisionTime != -1 &&
+                    this.mGameTime - ord.FirstCollisionTime > COLLISION_DETECTION_TIME)
                 {
                     // 送达后改变pkg的packagestatus
-                    PkgAndTime.mPkg.Status = PackageStatus.ARRIVED;
+                    ord.Status = Order.StatusType.Delivered;
 
-                    mPickedPackages.Remove(PkgAndTime);
-                    mScore += PkgAndTime.mPkg.GetPackageScore(mGameTime);
+                    _deliveringOrder.Remove(ord);
+                    mScore += ord.GetPackageScore(mGameTime);
                 }
-                else if (PkgAndTime.mFirstCollisionTime == -1)
-                {
-                    PkgAndTime.mFirstCollisionTime = mGameTime;
-                }
-            }
-            else if (PkgAndTime.mFirstCollisionTime != -1)
-            {
-                PkgAndTime.mFirstCollisionTime = -1;
             }
         }
     }
