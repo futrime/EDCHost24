@@ -8,9 +8,6 @@ namespace EdcHost;
 /// </summary>
 public class Dot
 {
-    private int _x;
-    private int _y;
-
     /// <summary>
     /// The x-coordinate of the dot
     /// </summary>
@@ -28,6 +25,21 @@ public class Dot
         set => this._y = value;
     }
 
+    private int _x;
+    private int _y;
+
+
+    /// <summary>
+    /// Get the Euclidean distance between two dots.
+    /// </summary>
+    /// <param name="A"></param>
+    /// <param name="B"></param>
+    /// <returns>The distance</returns>
+    public static int Distance(Dot A, Dot B)
+    {
+        return (int)Math.Sqrt((A.x - B.x) * (A.x - B.x)
+            + (A.y - B.y) * (A.y - B.y));
+    }
 
     public Dot(int x, int y)
     {
@@ -41,7 +53,6 @@ public class Dot
         this._y = point.Y;
     }
 
-
     public static bool operator ==(Dot a, Dot b)
     {
         return (a.x == b.x) && (a.y == b.y);
@@ -50,18 +61,6 @@ public class Dot
     public static bool operator !=(Dot a, Dot b)
     {
         return !(a == b);
-    }
-
-    /// <summary>
-    /// Get the Euclidean distance between two dots.
-    /// </summary>
-    /// <param name="A"></param>
-    /// <param name="B"></param>
-    /// <returns>The distance</returns>
-    public static int Distance(Dot A, Dot B)
-    {
-        return (int)Math.Sqrt((A.x - B.x) * (A.x - B.x)
-            + (A.y - B.y) * (A.y - B.y));
     }
 
     public override bool Equals(object obj)

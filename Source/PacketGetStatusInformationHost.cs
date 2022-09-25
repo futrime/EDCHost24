@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 namespace EdcHost;
 
-internal class PacketSendStatusInformationHost : Packet
+internal class PacketGetStatusInformationHost : Packet
 {
     /// <summary>
     /// An order that consists of 4 elements
@@ -37,7 +37,7 @@ internal class PacketSendStatusInformationHost : Packet
     /// <remarks>
     /// Note that we should convert package list into order list
     /// </remarks>
-    public PacketSendStatusInformationHost(GameState currentState, double currentTime, int currentScore,
+    public PacketGetStatusInformationHost(GameState currentState, double currentTime, int currentScore,
         Dot carPos, double mileage, List<Package> packageList)
     {
         this._currentScore = currentScore;
@@ -60,7 +60,7 @@ internal class PacketSendStatusInformationHost : Packet
     /// <exception cref="ArgumentException">
     /// The raw byte array violates the rules.
     /// </exception>
-    public PacketSendStatusInformationHost(byte[] bytes)
+    public PacketGetStatusInformationHost(byte[] bytes)
     {
         // Validate the packet and extract data
         Packet.ExtractPacketData(bytes);

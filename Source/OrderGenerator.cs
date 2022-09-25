@@ -7,13 +7,13 @@ namespace EdcHost;
 /// </summary>
 public class OrderGenerator
 {
-    private int _nextGeneratedOrderIndex = 0;
-    private List<Order> _orderList = new List<Order>();
-
     /// <summary>
     /// The number of orders generated
     /// </summary>
     public int Count => this._orderList.Count;
+
+    private int _nextGeneratedOrderIndex = 0;
+    private List<Order> _orderList = new List<Order>();
 
 
     /// <summary>

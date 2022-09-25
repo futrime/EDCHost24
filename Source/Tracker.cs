@@ -233,13 +233,13 @@ public partial class Tracker : Form
 
                 // 转换成显示坐标数组
                 // 此转换与只与showMap和camMap有关，不需要图像被校正
-                Point2f[] showCars = coordCvt.CameraToShow(camCars);
+                Point2f[] showCars = coordCvt.CameraToMonitor(camCars);
 
                 showCarA = (Point2i)showCars[0];
                 showCarB = (Point2i)showCars[1];
 
                 // 将小车坐标从相机坐标转化成逻辑坐标
-                Point2f[] logicCars = coordCvt.CameraToLogic(camCars);
+                Point2f[] logicCars = coordCvt.CameraToCourt(camCars);
 
                 logicCarA = (Point2i)logicCars[0];
                 logicCarB = (Point2i)logicCars[1];
@@ -271,7 +271,7 @@ public partial class Tracker : Form
     public Mat PaintPattern(Mat mat, Localiser loc)
     {
         // Draw cross patterns at the corners.
-        foreach (Point2f pt in this.coordCvt.ShowToCamera(this.showCornerPts))
+        foreach (Point2f pt in this.coordCvt.MonitorToCamera(this.showCornerPts))
         {
             Cv2.Line(mat, (int)(pt.X - 10), (int)(pt.Y),
                 (int)(pt.X + 10), (int)(pt.Y), new Scalar(0x00, 0xff, 0x98));
@@ -297,7 +297,7 @@ public partial class Tracker : Form
         Cv2.Resize(src: Icon_Obstacle, dst: Icon_Obstacle, dsize: new OpenCvSharp.Size(20, 20));
 
         // Draw vehicle icons
-        foreach (Point2i c1 in this.coordCvt.LogicToCamera(Array.ConvertAll(loc.GetCentres(Camp.A).ToArray(), item => (Point2f)item)))
+        foreach (Point2i c1 in this.coordCvt.CourtToCamera(Array.ConvertAll(loc.GetCentres(Camp.A).ToArray(), item => (Point2f)item)))
         {
             if (c1.X >= 0 && c1.X <= Game.AVAILABLE_MAX_X && c1.Y >= 0 && c1.Y <= Game.AVAILABLE_MAX_Y)
             {
@@ -332,7 +332,7 @@ public partial class Tracker : Form
             }
         }
 
-        foreach (Point2i c2 in this.coordCvt.LogicToCamera(Array.ConvertAll(loc.GetCentres(Camp.B).ToArray(), item => (Point2f)item)))
+        foreach (Point2i c2 in this.coordCvt.CourtToCamera(Array.ConvertAll(loc.GetCentres(Camp.B).ToArray(), item => (Point2f)item)))
         {
             if (c2.X >= 0 && c2.X <= Game.AVAILABLE_MAX_X && c2.Y >= 0 && c2.Y <= Game.AVAILABLE_MAX_Y)
             {
@@ -378,7 +378,7 @@ public partial class Tracker : Form
             {
                 logicDots2A.Add(dot.ToPoint());
             }
-            List<Point2f> showDots2A = new List<Point2f>(coordCvt.LogicToCamera(logicDots2A.ToArray()));
+            List<Point2f> showDots2A = new List<Point2f>(coordCvt.CourtToCamera(logicDots2A.ToArray()));
             // 第一阶段，只绘制本阶段的充电桩
             // 第二阶段，绘制双方的充电桩
             // 这里将A车的绘制成红色，B车绘制成绿色
@@ -402,7 +402,7 @@ public partial class Tracker : Form
                 logicDots2B.Add(dot.ToPoint());
             }
 
-            List<Point2f> showDots2B = new List<Point2f>(coordCvt.LogicToCamera(logicDots2B.ToArray()));
+            List<Point2f> showDots2B = new List<Point2f>(coordCvt.CourtToCamera(logicDots2B.ToArray()));
 
 
             if ((game.mGameStage == GameStage.FIRST_HALF && game.GetCamp() == Camp.B)
@@ -426,7 +426,7 @@ public partial class Tracker : Form
                 Point2f[] pointsInCourtCoordination = { StartDot.ToPoint(), EndDot.ToPoint() };
 
                 Point2i[] pointsInCameraCoordination = Array.ConvertAll(
-                    coordCvt.LogicToCamera(pointsInCourtCoordination), item => (Point2i)item
+                    coordCvt.CourtToCamera(pointsInCourtCoordination), item => (Point2i)item
                 );
 
                 Cv2.Rectangle(mat, pointsInCameraCoordination[0], pointsInCameraCoordination[1], color: Scalar.Red, 2);
@@ -457,7 +457,7 @@ public partial class Tracker : Form
                 {
                     target_img = Icon_Package;
                     //修正坐标
-                    Point2f[] converted_cord = coordCvt.LogicToCamera(new Point2f[] { (Point2f)ord.DeparturePosition.ToPoint() });
+                    Point2f[] converted_cord = coordCvt.CourtToCamera(new Point2f[] { (Point2f)ord.DeparturePosition.ToPoint() });
                     Tx = (int)converted_cord[0].X - 10;
                     Ty = (int)converted_cord[0].Y - 10;
 
@@ -466,7 +466,7 @@ public partial class Tracker : Form
                 else if (Order.StatusType.InDelivery == currentOrderStatus)
                 {
                     target_img = Icon_Zone;
-                    Point2f[] converted_cord = coordCvt.LogicToCamera(new Point2f[] { (Point2f)ord.DestinationPosition.ToPoint() });
+                    Point2f[] converted_cord = coordCvt.CourtToCamera(new Point2f[] { (Point2f)ord.DestinationPosition.ToPoint() });
                     Tx = (int)converted_cord[0].X - 10;
                     Ty = (int)converted_cord[0].Y - 10;
                 }
@@ -581,7 +581,7 @@ public partial class Tracker : Form
             showCornerPts[idx].Y = yMouse;
             if (idx == 3)
             {
-                coordCvt.UpdateCorners(showCornerPts, flags);
+                coordCvt.Calibrate(showCornerPts);
                 MessageBox.Show(
                       $"边界点设置完成\n"
                     + $"0: {showCornerPts[0].X,5}, {showCornerPts[0].Y,5}\t"
