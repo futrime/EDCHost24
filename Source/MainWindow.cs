@@ -84,7 +84,7 @@ public partial class MainWindow : Form
     /// </summary>
     private void RefreshAll()
     {
-        this.VideoProcess();
+        this.ProcessCameraFrame();
 
         if (this._game.GameState == GameState.Unstarted)
         {
@@ -138,32 +138,6 @@ public partial class MainWindow : Form
         this.Refresh();
     }
 
-    // 当Tracker被加载时调用此函数
-    // 读取data.txt文件中存储的hue,saturation,value等的默认值
-    private void Tracker_Load(object sender, EventArgs e)
-    {
-        if (File.Exists("data.txt"))
-        {
-            FileStream fsRead = new FileStream("data.txt", FileMode.Open);
-            int fsLen = (int)fsRead.Length;
-            byte[] heByte = new byte[fsLen];
-            fsRead.Read(heByte, 0, heByte.Length);
-            string myStr = System.Text.Encoding.UTF8.GetString(heByte);
-            string[] str = myStr.Split(' ');
-
-            _flags.configs.hue1Lower = Convert.ToInt32(str[0]);
-            _flags.configs.hue1Upper = Convert.ToInt32(str[1]);
-            _flags.configs.hue2Lower = Convert.ToInt32(str[2]);
-            _flags.configs.hue2Upper = Convert.ToInt32(str[3]);
-            _flags.configs.saturation1Lower = Convert.ToInt32(str[4]);
-            _flags.configs.saturation2Lower = Convert.ToInt32(str[5]);
-            _flags.configs.valueLower = Convert.ToInt32(str[6]);
-            _flags.configs.areaLower = Convert.ToInt32(str[7]);
-
-            fsRead.Close();
-        }
-    }
-
     /// <summary>
     /// Communicate with the slaves
     /// </summary>
@@ -175,7 +149,7 @@ public partial class MainWindow : Form
     #region Methods related to the camera and the monitor
 
     // 从视频帧中读取一帧，进行图像处理、绘图和数值更新
-    private void VideoProcess()
+    private void ProcessCameraFrame()
     {
         if (_flags.running)
         {
@@ -209,12 +183,12 @@ public partial class MainWindow : Form
                 _carBPosition = (Point2i)logicCars[1];
 
                 // 在显示的画面上绘制小车，乘客，物资等对应的图案
-                videoFrame = PaintPattern(videoFrame, _vehicleLocalizer);
+                videoFrame = Draw(videoFrame, _vehicleLocalizer);
 
                 // 将摄像头视频帧缩放成显示帧
                 // Resize函数的最后一个参数是缩放函数的插值算法
                 // InterpolationFlags.Cubic 表示双三次插值法，放大图像时效果较好，但速度较慢
-                Cv2.Resize(videoFrame, showFrame, _flags.showSize, 0, 0, InterpolationFlags.Cubic);
+                Cv2.Resize(videoFrame, showFrame, this._flags.showSize);
 
                 // 更新界面组件的画面显示
                 BeginInvoke(new Action<Image>(RefreshMonitor), BitmapConverter.ToBitmap(showFrame));
@@ -227,7 +201,7 @@ public partial class MainWindow : Form
     /// </summary>
     /// <param name="image">The background picture</param>
     /// <param name="localizer">The localiser</param>
-    private Mat PaintPattern(Mat image, Localiser localizer)
+    private Mat Draw(Mat image, Localiser localizer)
     {
         // Read icons
         var iconCarA = new Mat(@"Assets\Icons\VehicleRed.png", ImreadModes.Color);
@@ -408,6 +382,30 @@ public partial class MainWindow : Form
 
 
     #region Methods related to the Windows Form
+
+    private void OnLoad(object sender, EventArgs e)
+    {
+        if (File.Exists(@"Data/data.txt"))
+        {
+            FileStream fsRead = new FileStream(@"Data/data.txt", FileMode.Open);
+            int fsLen = (int)fsRead.Length;
+            byte[] heByte = new byte[fsLen];
+            fsRead.Read(heByte, 0, heByte.Length);
+            string myStr = System.Text.Encoding.UTF8.GetString(heByte);
+            string[] str = myStr.Split(' ');
+
+            _flags.configs.hue1Lower = Convert.ToInt32(str[0]);
+            _flags.configs.hue1Upper = Convert.ToInt32(str[1]);
+            _flags.configs.hue2Lower = Convert.ToInt32(str[2]);
+            _flags.configs.hue2Upper = Convert.ToInt32(str[3]);
+            _flags.configs.saturation1Lower = Convert.ToInt32(str[4]);
+            _flags.configs.saturation2Lower = Convert.ToInt32(str[5]);
+            _flags.configs.valueLower = Convert.ToInt32(str[6]);
+            _flags.configs.areaLower = Convert.ToInt32(str[7]);
+
+            fsRead.Close();
+        }
+    }
 
     /// <summary>
     /// OnFormClose

@@ -236,7 +236,7 @@ partial class MainWindow
             this.Name = "MainWindow";
             this.ShowIcon = false;
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
-            this.Load += new System.EventHandler(this.Tracker_Load);
+            this.Load += new System.EventHandler(this.OnLoad);
             ((System.ComponentModel.ISupportInitialize)(this.pbCamera)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
