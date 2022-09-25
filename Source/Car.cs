@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 
 namespace EdcHost;
 
@@ -34,7 +35,7 @@ public class Car //选手的车
     public const int MAX_MILEAGE = 2000; // in cm
 
 
-    private MyQueue<Dot> mQueuePos;   // series of location
+    private Queue<Dot> mQueuePos;   // series of location
     public Camp mCamp;               //A or B get、set直接两个封装好的函数
     private int mScore;               //得分
     private int mMileage;              //小车续航里程
@@ -51,7 +52,7 @@ public class Car //选手的车
     private bool mIsInObstacle;
 
 
-    public MyQueue<bool> mFlagIsInChargeStation;
+    public Queue<bool> mFlagIsInChargeStation;
 
 
     private int mGameTime;
@@ -62,7 +63,7 @@ public class Car //选手的车
     *********************************************/
     public Car(Camp c)
     {
-        mQueuePos = new MyQueue<Dot>(10);
+        mQueuePos = new Queue<Dot>(10);
         mCamp = c;
         mScore = 0;
         mMileage = MAX_MILEAGE;
@@ -73,7 +74,7 @@ public class Car //选手的车
         mIsOnBlackLine = false;
         mIsInOpponentChargeStation = false;
         mIsInObstacle = false;
-        mFlagIsInChargeStation = new MyQueue<bool>(10);
+        mFlagIsInChargeStation = new Queue<bool>(10);
 
         mGameTime = -1;
     }
@@ -147,7 +148,7 @@ public class Car //选手的车
 
     public Dot CurrentPos()
     {
-        return mQueuePos.Item(-1);
+        return mQueuePos.ElementAt(mQueuePos.Count - 1);
     }
     /// <summary>
     /// Get the last position
@@ -156,7 +157,7 @@ public class Car //选手的车
     {
         if (mQueuePos.Count() > 0)
         {
-            return mQueuePos.Item(-2);
+            return mQueuePos.ElementAt(mQueuePos.Count - 2);
         }
         else
         {
@@ -197,7 +198,7 @@ public class Car //选手的车
     private void AbleToRun()
     {
         if (!mIsAbleToRun && mQueuePos.Count() > 1 &&
-        Dot.Distance(mQueuePos.Item(-1), mQueuePos.Item(-2)) > 0)
+        Dot.Distance(mQueuePos.ElementAt(mQueuePos.Count - 1), mQueuePos.ElementAt(mQueuePos.Count - 2)) > 0)
         {
             mScore += RUN_CREDIT;
             mIsAbleToRun = true;
@@ -252,7 +253,7 @@ public class Car //选手的车
         int temp_TimePenalty = 0;
         if (mQueuePos.Count() > 1)
         {
-            int DeltaDistance = Dot.Distance(mQueuePos.Item(-1), mQueuePos.Item(-2));
+            int DeltaDistance = Dot.Distance(mQueuePos.ElementAt(mQueuePos.Count - 1), mQueuePos.ElementAt(mQueuePos.Count - 2));
             mMileage -= DeltaDistance;
             if (mMileage < 0)
             {
@@ -271,7 +272,7 @@ public class Car //选手的车
         mFlagIsInChargeStation.Enqueue(IsInChargeStation);
         for (int i = 0; i < mFlagIsInChargeStation.Count(); i++)
         {
-            if (!mFlagIsInChargeStation.Item(i))
+            if (!mFlagIsInChargeStation.ElementAt(i))
             {
                 return;
             }
