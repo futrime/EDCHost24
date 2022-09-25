@@ -6,8 +6,8 @@ partial class Tracker
         if (disposing && (components != null))
         {
             components.Dispose();
-            capture.Dispose();
-            coordCvt.Dispose();
+            _camera.Dispose();
+            _coordinateConverter.Dispose();
         }
         base.Dispose(disposing);
     }
