@@ -195,7 +195,7 @@ public class Car //选手的车
         for (int i = 0; i < ordersRemain.Count; i++)
         {
             Order ord = ordersRemain[i];
-            if (ord.Status == Order.StatusType.Pending && ord.Distance2Departure(_CarPos) <= COLLISION_RADIUS &&
+            if (ord.Status == Order.StatusType.Pending && Dot.Distance(ord.DeparturePosition, _CarPos) <= COLLISION_RADIUS &&
                 _deliveringOrder.Count <= MAX_PKG_COUNT)
             {
                 ord.AddFirstCollisionTime(this.mGameTime);
@@ -213,7 +213,7 @@ public class Car //选手的车
     {
         foreach (var ord in _deliveringOrder)
         {
-            if (ord.Status == Order.StatusType.InDelivery && ord.Distance2Destination(_CarPos) <= COLLISION_RADIUS)
+            if (ord.Status == Order.StatusType.InDelivery && Dot.Distance(ord.DestinationPosition, _CarPos) <= COLLISION_RADIUS)
             {
                 if (ord.FirstCollisionTime != -1 &&
                     this.mGameTime - ord.FirstCollisionTime > COLLISION_DETECTION_TIME)

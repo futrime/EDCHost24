@@ -30,19 +30,19 @@ public class Order
         Delivered
     }
 
+
     private const int OverTimePenalty = 5; // per second
     /// <summary>
     /// The order is delivered.
     /// </summary>
     private const int ScheduledScore = 25;
 
+
     private Dot _departurePosition;
     private Dot _destinationPosition;
-
     private long _generationTime;
     private long _deliveryTimeLimit;
     private long _firstCollisionTime;
-
     private StatusType _status = StatusType.Ungenerated;
 
     /// <summary>
@@ -158,15 +158,5 @@ public class Order
         }
 
         return orderScore;
-    }
-
-    public double Distance2Departure(Dot dot)
-    {
-        return Dot.Distance(dot, this._departurePosition);
-    }
-
-    public double Distance2Destination(Dot dot)
-    {
-        return Dot.Distance(dot, this._destinationPosition);
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using OpenCvSharp;
 
 namespace EdcHost;
 
@@ -7,14 +8,39 @@ namespace EdcHost;
 /// </summary>
 public class Dot
 {
-    public int x;
-    public int y;
+    private int _x;
+    private int _y;
+
+    /// <summary>
+    /// The x-coordinate of the dot
+    /// </summary>
+    public int x
+    {
+        get => this._x;
+        set => this._x = value;
+    }
+    /// <summary>
+    /// The y-coordinate of the dot
+    /// </summary>
+    public int y
+    {
+        get => this._x;
+        set => this._x = value;
+    }
+
 
     public Dot(int x, int y)
     {
-        this.x = x;
-        this.y = y;
+        this._x = x;
+        this._y = y;
     }
+
+    public Dot(Point point)
+    {
+        this._x = point.X;
+        this._y = point.Y;
+    }
+
 
     public static bool operator ==(Dot a, Dot b)
     {
@@ -46,5 +72,14 @@ public class Dot
     public override int GetHashCode()
     {
         return base.GetHashCode();
+    }
+
+    /// <summary>
+    /// Convert the dot to a Point object
+    /// </summary>
+    /// <returns>The Point object</returns>
+    public Point ToPoint()
+    {
+        return new Point(this._x, this._y);
     }
 }

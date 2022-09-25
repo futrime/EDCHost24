@@ -132,8 +132,8 @@ public partial class Tracker : Form
     {
         this.VideoProcess();
 
-        Dot carAPosition = Utilities.Point2Dot(this.logicCarA);
-        Dot carBPosition = Utilities.Point2Dot(this.logicCarB);
+        var carAPosition = new Dot(this.logicCarA);
+        var carBPosition = new Dot(this.logicCarB);
 
         // Refresh the game
         if (this.game.GetCamp() == Camp.A)
@@ -376,7 +376,7 @@ public partial class Tracker : Form
             List<Point2f> logicDots2A = new List<Point2f>();
             foreach (Dot dot in stationlistA)
             {
-                logicDots2A.Add(Utilities.Dot2Point(dot));
+                logicDots2A.Add(dot.ToPoint());
             }
             List<Point2f> showDots2A = new List<Point2f>(coordCvt.LogicToCamera(logicDots2A.ToArray()));
             // 第一阶段，只绘制本阶段的充电桩
@@ -399,7 +399,7 @@ public partial class Tracker : Form
             // 这里将A车的绘制成红色，B车绘制成绿色
             foreach (Dot dot in stationlistB)
             {
-                logicDots2B.Add(Utilities.Dot2Point(dot));
+                logicDots2B.Add(dot.ToPoint());
             }
 
             List<Point2f> showDots2B = new List<Point2f>(coordCvt.LogicToCamera(logicDots2B.ToArray()));
@@ -423,7 +423,7 @@ public partial class Tracker : Form
                 Dot StartDot = Obstacle.mpWallList[i].w1;
                 Dot EndDot = Obstacle.mpWallList[i].w2;
 
-                Point2f[] pointsInCourtCoordination = { Utilities.Dot2Point(StartDot), Utilities.Dot2Point(EndDot) };
+                Point2f[] pointsInCourtCoordination = { StartDot.ToPoint(), EndDot.ToPoint() };
 
                 Point2i[] pointsInCameraCoordination = Array.ConvertAll(
                     coordCvt.LogicToCamera(pointsInCourtCoordination), item => (Point2i)item
@@ -458,7 +458,7 @@ public partial class Tracker : Form
                 {
                     target_img = Icon_Package;
                     //修正坐标
-                    Point2f[] converted_cord = coordCvt.LogicToCamera(new Point2f[] { (Point2f)Utilities.Dot2Point(ord.DeparturePosition) });
+                    Point2f[] converted_cord = coordCvt.LogicToCamera(new Point2f[] { (Point2f)ord.DeparturePosition.ToPoint() });
                     Tx = (int)converted_cord[0].X - 10;
                     Ty = (int)converted_cord[0].Y - 10;
 
@@ -467,7 +467,7 @@ public partial class Tracker : Form
                 else if (Order.StatusType.InDelivery == currentOrderStatus)
                 {
                     target_img = Icon_Zone;
-                    Point2f[] converted_cord = coordCvt.LogicToCamera(new Point2f[] { (Point2f)Utilities.Dot2Point(ord.DestinationPosition) });
+                    Point2f[] converted_cord = coordCvt.LogicToCamera(new Point2f[] { (Point2f)ord.DestinationPosition.ToPoint() });
                     Tx = (int)converted_cord[0].X - 10;
                     Ty = (int)converted_cord[0].Y - 10;
                 }
