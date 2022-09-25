@@ -104,8 +104,8 @@ public partial class Tracker : Form
         }
 
         // Refresh the controls in the tracker form
-        this.labelAScore.Text = this._game.GetScore(Camp.A, this._game.mGameStage).ToString();
-        this.labelBScore.Text = this._game.GetScore(Camp.B, this._game.mGameStage).ToString();
+        this.labelAScore.Text = this._game.GetScore(Camp.A, this._game._gameStage).ToString();
+        this.labelBScore.Text = this._game.GetScore(Camp.B, this._game._gameStage).ToString();
 
         decimal currentTime = (decimal)this._game.RemainingTime / 1000;
         this.GameTimeLabel.Text = (currentTime < 0 ? 0 : currentTime).ToString("0.00");
@@ -339,8 +339,8 @@ public partial class Tracker : Form
             // 第一阶段，只绘制本阶段的充电桩
             // 第二阶段，绘制双方的充电桩
             // 这里将A车的绘制成红色，B车绘制成绿色
-            if ((_game.mGameStage == GameStage.FIRST_HALF && _game.GetCamp() == Camp.A)
-                || _game.mGameStage == GameStage.SECOND_HALF)
+            if ((_game._gameStage == GameStage.FIRST_HALF && _game.GetCamp() == Camp.A)
+                || _game._gameStage == GameStage.SECOND_HALF)
             {
                 int x = (int)showDots2A[0].X;
                 int y = (int)showDots2A[0].Y;
@@ -362,8 +362,8 @@ public partial class Tracker : Form
             List<Point2f> showDots2B = new List<Point2f>(_coordinateConverter.CourtToCamera(logicDots2B.ToArray()));
 
 
-            if ((_game.mGameStage == GameStage.FIRST_HALF && _game.GetCamp() == Camp.B)
-                || _game.mGameStage == GameStage.SECOND_HALF)
+            if ((_game._gameStage == GameStage.FIRST_HALF && _game.GetCamp() == Camp.B)
+                || _game._gameStage == GameStage.SECOND_HALF)
             {
                 int x = (int)showDots2B[0].X;
                 int y = (int)showDots2B[0].Y;
@@ -373,7 +373,7 @@ public partial class Tracker : Form
         }
 
         // Draw Barriers
-        if (_game.mGameState == GameState.RUN)
+        if (_game._gameState == GameState.RUN)
         {
             for (int i = 0; i < _game.BarrierList.Count; i++)
             {
@@ -396,13 +396,13 @@ public partial class Tracker : Form
             }
         }
 
-        if (GameState.RUN == _game.mGameState)
+        if (GameState.RUN == _game._gameState)
         {
             // 找到当前的车队
             Car current_car = this._game.GetCar(this._game.GetCamp());
             // 现在车上载有的外卖数量 
             int order_number_on_car = current_car.GetOrderCount();
-            foreach (Order ord in _game.AllOrders)
+            foreach (Order ord in _game.AllOrderList)
             {
                 Order.StatusType currentOrderStatus = ord.Status;
                 //判断此外卖是否在车上
@@ -554,25 +554,25 @@ public partial class Tracker : Form
 
     private void OnStartButtonClick(object sender, EventArgs e)
     {
-        if (this._game.mGameStage == GameStage.NONE &&
+        if (this._game._gameStage == GameStage.NONE &&
             this._game.GetCamp() == Camp.NONE)
         {
             _game.Start(Camp.A, GameStage.FIRST_HALF);
             label_GameCount.Text = "上半场";
         }
-        else if (this._game.mGameStage == GameStage.FIRST_HALF &&
+        else if (this._game._gameStage == GameStage.FIRST_HALF &&
             this._game.GetCamp() == Camp.A)
         {
             _game.Start(Camp.B, GameStage.FIRST_HALF);
             label_GameCount.Text = "上半场";
         }
-        else if (this._game.mGameStage == GameStage.FIRST_HALF &&
+        else if (this._game._gameStage == GameStage.FIRST_HALF &&
             this._game.GetCamp() == Camp.B)
         {
             _game.Start(Camp.A, GameStage.SECOND_HALF);
             label_GameCount.Text = "下半场";
         }
-        else if (this._game.mGameStage == GameStage.SECOND_HALF &&
+        else if (this._game._gameStage == GameStage.SECOND_HALF &&
             this._game.GetCamp() == Camp.A)
         {
             _game.Start(Camp.B, GameStage.SECOND_HALF);

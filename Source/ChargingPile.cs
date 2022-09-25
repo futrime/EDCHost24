@@ -10,11 +10,18 @@ public class ChargingPile
     /// </summary>
     private const decimal InfluenceScopeRadius = 20;
 
+
+    /// <summary>
+    /// The camp
+    /// </summary>
+    public Camp Camp => this._camp;
+
     /// <summary>
     /// The position
     /// </summary>
     public Dot Position => this._position;
 
+    private Camp _camp;
     private Dot _position;
 
 
@@ -22,19 +29,20 @@ public class ChargingPile
     /// Construct a charging pile.
     /// </summary>
     /// <param name="position">The position</param>
-    public ChargingPile(Dot position)
+    public ChargingPile(Camp camp, Dot position)
     {
+        this._camp = camp;
         this._position = position;
     }
 
     /// <summary>
-    /// Check if the vehicle can be charged at the position.
+    /// Check if the vehicle is in the influence scope of the charging pile.
     /// </summary>
     /// <param name="position">The position of the vehicle</param>
     /// <returns>
-    /// True if the vehicle can be charged; otherwise false
+    /// True if the vehicle is in the influence scope; otherwise false
     /// </returns>
-    public bool CanCharge(Dot position)
+    public bool IsInInfluenceScope(Dot position)
     {
         return Dot.Distance(position, this._position) <
             ChargingPile.InfluenceScopeRadius;

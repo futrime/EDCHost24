@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 
 namespace EdcHost;
 
@@ -19,7 +18,7 @@ public class Game
     // time of first and second half
     public const int FIRST_HALF_TIME = 60000;
     public const int SECOND_HALF_TIME = 180000;
-    public int gameDuration = FIRST_HALF_TIME;
+
 
     public const int MaxOrderNumber = 20;
 
@@ -33,25 +32,50 @@ public class Game
     public const int BarrierMaxLength = 16;
 
     public const int BarrierMinDistanceFromBarrier = 20;
+
+
+    /// <summary>
+    /// The system time
+    /// </summary>
+    public long SystemTime
+    {
+        get
+        {
+            return DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+        }
+    }
+
     // state
-    public GameStage mGameStage;
-    public GameState mGameState;
+    public GameStage _gameStage;
+    public GameState _gameState;
 
     // Time
     // Set time zero as the start time of each race
-    private long mStartTime; // system time, update for each race
-    private long mGameTime;
+    private long _startTime; // system time, update for each race
 
     public long GameTime
     {
-        get => this.mGameTime;
-    }
+        get
+        {
+            if (this._gameState != GameState.RUN)
+            {
+                return 0;
+            }
 
-    private long mTimeRemain;
+            return Math.Max(this.SystemTime - this._startTime, 0);
+        }
+    }
 
     public long RemainingTime
     {
-        get => this.mTimeRemain;
+        get {
+            if (this._gameState != GameState.RUN)
+            {
+                return 0;
+            }
+
+            return Math.Max(this._gameDuration - this.GameTime, 0);
+        }
     }
 
     /// <summary>
@@ -71,34 +95,33 @@ public class Game
     /// <summary>
     /// All orders in orderGenerator
     /// </summary>
-    private List<Order> _allOrders;
-    public List<Order> AllOrders => _allOrders;
+    private List<Order> _allOrderList;
+    public List<Order> AllOrderList => _allOrderList;
 
     /// <summary>
     /// orders remained on GUI
     /// </summary>
-    private List<Order> _ordersRemain;
-
-    // Charge station set by Team A and B
-    private Station mChargeStation;
+    private List<Order> _pendingOrderList;
 
     // which team is racing A or B
-    private Camp mCamp;
+    private Camp _camp;
 
-    // obstacle
     private List<Barrier> _barrierList;
-    // 常引用
     public List<Barrier> BarrierList => _barrierList;
+
+    private List<ChargingPile> _chargingPileList = new List<ChargingPile>();
+
+    private int _gameDuration = FIRST_HALF_TIME;
 
 
     public Game()
     {
         Debug.WriteLine("Call Constructor of Game");
 
-        mGameState = GameState.UNSTART;
-        mGameStage = GameStage.NONE;
+        _gameState = GameState.UNSTART;
+        _gameStage = GameStage.NONE;
 
-        mCamp = Camp.NONE;
+        _camp = Camp.NONE;
 
         mCarA = new Car(Camp.A);
         mCarB = new Car(Camp.B);
@@ -106,13 +129,9 @@ public class Game
         mScoreA = new int[] { 0, 0 };
         mScoreB = new int[] { 0, 0 };
 
-        mChargeStation = new Station();
+        _pendingOrderList = new List<Order>();
 
-        _ordersRemain = new List<Order>();
-
-        mStartTime = -1;
-        mGameTime = -1;
-        mTimeRemain = 0;
+        _startTime = -1;
 
 
         // this.mPackageFirstHalf = new PackageList(AVAILABLE_MAX_X, AVAILABLE_MIN_X,
@@ -129,77 +148,72 @@ public class Game
     public void UpdateOnEachFrame(Dot _CarPos)
     {
         // check the game state
-        if (mGameState == GameState.UNSTART || mGameState == GameState.PAUSE || mGameState == GameState.END)
+        if (_gameState == GameState.UNSTART || _gameState == GameState.PAUSE || _gameState == GameState.END)
         {
             return;
         }
 
-        if (mCamp == Camp.NONE)
+        if (_camp == Camp.NONE)
         {
             throw new Exception("The camp is invalid.");
         }
 
-        _UpdateGameTime();
-
         // Try to generate packages on each refresh
-        Order ord = _orderGenerator.Generate(mGameTime);
+        Order ord = _orderGenerator.Generate(GameTime);
         if (ord != null)
         {
-            _ordersRemain.Add(ord);
+            _pendingOrderList.Add(ord);
         }
 
         int TimePenalty = 0;
 
         // Update car's info on each frame
-        if (mCamp == Camp.A)
+        if (_camp == Camp.A)
         {
-            mCarA.Update(_CarPos, (int)mGameTime,
-            _IsInObstacle(_CarPos), _IsInOpponentStation(_CarPos),
-            _IsInChargeStation(_CarPos), ref _ordersRemain, out TimePenalty);
+            mCarA.Update(_CarPos, (int)GameTime,
+            IsInBarrier(_CarPos), this.IsInChargingPileInfluenceScope(Camp.B, _CarPos),
+            this.IsInChargingPileInfluenceScope(Camp.A, _CarPos), ref _pendingOrderList, out TimePenalty);
         }
-        else if (mCamp == Camp.B)
+        else if (_camp == Camp.B)
         {
-            mCarB.Update(_CarPos, (int)mGameTime,
-            _IsInObstacle(_CarPos), _IsInOpponentStation(_CarPos),
-            _IsInChargeStation(_CarPos), ref _ordersRemain, out TimePenalty);
+            mCarA.Update(_CarPos, (int)GameTime,
+            IsInBarrier(_CarPos), this.IsInChargingPileInfluenceScope(Camp.A, _CarPos),
+            this.IsInChargingPileInfluenceScope(Camp.B, _CarPos), ref _pendingOrderList, out TimePenalty);
         }
 
-        if (this.mGameState == GameState.RUN)
+        if (this._gameState == GameState.RUN)
         {
             // Calculate the remaining time
-            switch (this.mGameStage)
+            switch (this._gameStage)
             {
                 case GameStage.FIRST_HALF:
-                    this.gameDuration = Game.FIRST_HALF_TIME;
+                    this._gameDuration = Game.FIRST_HALF_TIME;
                     break;
                 case GameStage.SECOND_HALF:
-                    this.gameDuration = Game.SECOND_HALF_TIME;
+                    this._gameDuration = Game.SECOND_HALF_TIME;
                     break;
                 default:
                     break;
             }
 
             this._timePenaltySum += TimePenalty;
-            // this.mTimeRemain = gameDuration - this._timePenaltySum - mGameTime;
-            //暂时去掉penalty
-            this.mTimeRemain = this.gameDuration - mGameTime;
 
             //judge wether to end the game automatiacally
-            if (mTimeRemain <= 0)
+            if (RemainingTime <= 0)
             {
-                mGameState = GameState.END;
+                _gameState = GameState.END;
                 Debug.WriteLine("Time remaining is up to 0. The End.");
             }
         }
     }
     public void SetChargeStation()
     {
-        if (mCamp == Camp.A)
+        if (_camp == Camp.A)
         {
             mCarA.SetChargeStation();
             Station.Add(mCarA.CurrentPos(), 0);
         }
-        else if (mCamp == Camp.B)
+        else if (_camp == Camp.B)
         {
             mCarB.SetChargeStation();
             Station.Add(mCarB.CurrentPos(), 1);
@@ -208,11 +222,11 @@ public class Game
 
     public void GetMark()
     {
-        if (mCamp == Camp.A)
+        if (_camp == Camp.A)
         {
             mCarA.GetMark();
         }
-        else if (mCamp == Camp.B)
+        else if (_camp == Camp.B)
         {
             mCarB.GetMark();
         }
@@ -221,7 +235,7 @@ public class Game
     // decide which team and stage is going on
     public void Start(Camp _camp, GameStage _GameStage)
     {
-        if (mGameState == GameState.RUN)
+        if (_gameState == GameState.RUN)
         {
             Debug.WriteLine("Failed! The current game is going on");
             return;
@@ -233,37 +247,36 @@ public class Game
         }
 
         // set state param of game
-        mGameState = GameState.RUN;
-        mGameStage = _GameStage;
-        mCamp = _camp;
+        _gameState = GameState.RUN;
+        _gameStage = _GameStage;
+        this._camp = _camp;
 
-        if (mCamp == Camp.A)
+        if (this._camp == Camp.A)
         {
-            mScoreA[(int)mGameStage - 1] = 0;
+            mScoreA[(int)_gameStage - 1] = 0;
         }
-        else if (mCamp == Camp.B)
+        else if (this._camp == Camp.B)
         {
-            mScoreB[(int)mGameStage - 1] = 0;
-        }
-
-        if (mGameStage == GameStage.FIRST_HALF)
-        {
-            mTimeRemain = FIRST_HALF_TIME;
-        }
-        else if (mGameStage == GameStage.SECOND_HALF)
-        {
-            mTimeRemain = SECOND_HALF_TIME;
+            mScoreB[(int)_gameStage - 1] = 0;
         }
 
-        mStartTime = _GetCurrentTime();
-        mGameTime = 0;
+        if (_gameStage == GameStage.FIRST_HALF)
+        {
+            this._gameDuration = FIRST_HALF_TIME;
+        }
+        else if (_gameStage == GameStage.SECOND_HALF)
+        {
+            this._gameDuration = SECOND_HALF_TIME;
+        }
+
+        _startTime = this.SystemTime;
 
         // initial packages on the field
         // 暂定时限为10-20s!!
         _orderGenerator = new OrderGenerator(MaxOrderNumber, (new Dot(0, 0), new Dot(MAX_SIZE, MAX_SIZE)),
-                                            (0, gameDuration), (MinDeliveryTime, MaxDeliveryTime), out _allOrders);
+                                            (0, _gameDuration), (MinDeliveryTime, MaxDeliveryTime), out _allOrderList);
 
-        InitialOrdersRemain();
+        this._pendingOrderList.Clear();
 
         // 在生成包裹后生成障碍物 保证障碍物与包裹有一定距离
         _barrierList = new List<Barrier>();
@@ -308,40 +321,40 @@ public class Game
 
     public void Pause()
     {
-        if (mGameState != GameState.RUN)
+        if (_gameState != GameState.RUN)
         {
             Debug.WriteLine("Pause failed! No race is going on.");
             return;
         }
-        mGameState = GameState.PAUSE;
+        _gameState = GameState.PAUSE;
     }
 
     public void Continue()
     {
-        if (mGameState != GameState.PAUSE)
+        if (_gameState != GameState.PAUSE)
         {
             Debug.WriteLine("Continue Failed! No race is suspended");
         }
-        mGameState = GameState.RUN;
+        _gameState = GameState.RUN;
     }
 
     // finish on a manul mode
     public void End()
     {
-        if (mGameState != GameState.RUN)
+        if (_gameState != GameState.RUN)
         {
             Debug.WriteLine("Failed! There is no game going on");
         }
 
         //Reset Car and Save Score
-        if (mCamp == Camp.A)
+        if (_camp == Camp.A)
         {
-            mScoreA[(int)mGameStage - 1] = mCarA.GetScore();
+            mScoreA[(int)_gameStage - 1] = mCarA.GetScore();
             mCarA.Reset();
         }
-        else if (mCamp == Camp.B)
+        else if (_camp == Camp.B)
         {
-            mScoreB[(int)mGameStage - 1] = mCarB.GetScore();
+            mScoreB[(int)_gameStage - 1] = mCarB.GetScore();
             mCarB.Reset();
         }
 
@@ -357,157 +370,23 @@ public class Game
         _orderGenerator.Reset();
 
         // set state param of game
-        mGameState = GameState.UNSTART;
-        mGameStage = GameStage.NONE;
-        mCamp = Camp.NONE;
+        _gameState = GameState.UNSTART;
+        _gameStage = GameStage.NONE;
+        _camp = Camp.NONE;
 
-        _ordersRemain.Clear();
+        _pendingOrderList.Clear();
 
-        mStartTime = -1;
-        mGameTime = -1;
+        _startTime = -1;
     }
 
-    // public byte[] Message()
-    // {
-    //     byte[] MyMessage = new byte[100];
-    //     int Index = 0;
-    //     // Game Stage
-    //     MyMessage[Index++] = (byte)mGameStage;
-    //     // Game State
-    //     MyMessage[Index++] = (byte)mGameState;
-
-    //     // GameTime 
-    //     MyMessage[Index++] = (byte)((mGameTime / 100) >> 8);
-    //     MyMessage[Index++] = (byte)(mGameTime / 100);
-
-    //     // TimeRemain
-    //     MyMessage[Index++] = (byte)((mTimeRemain / 100) >> 8);
-    //     MyMessage[Index++] = (byte)(mTimeRemain / 100);
-
-
-    //     // Obstacle
-    //     // Add your code here...
-    //     foreach (Wall item in Obstacle.mpWallList)
-    //     {
-    //         MyMessage[Index++] = (byte)(item.w1.x);
-    //         MyMessage[Index++] = (byte)(item.w1.y);
-    //         MyMessage[Index++] = (byte)(item.w2.x);
-    //         MyMessage[Index++] = (byte)(item.w2.y);
-    //     }
-
-    //     if (mCamp == Camp.A)
-    //     {
-    //         // Your Charge Station
-    //         MyMessage[Index++] = (byte)Station.Index(0, 0).x;
-    //         MyMessage[Index++] = (byte)Station.Index(0, 0).y;
-    //         MyMessage[Index++] = (byte)Station.Index(1, 0).x;
-    //         MyMessage[Index++] = (byte)Station.Index(1, 0).y;
-    //         MyMessage[Index++] = (byte)Station.Index(2, 0).x;
-    //         MyMessage[Index++] = (byte)Station.Index(2, 0).y;
-
-    //         // Oppenont's Charge Station
-    //         MyMessage[Index++] = (byte)Station.Index(0, 1).x;
-    //         MyMessage[Index++] = (byte)Station.Index(0, 1).y;
-    //         MyMessage[Index++] = (byte)Station.Index(1, 1).x;
-    //         MyMessage[Index++] = (byte)Station.Index(1, 1).y;
-    //         MyMessage[Index++] = (byte)Station.Index(2, 1).x;
-    //         MyMessage[Index++] = (byte)Station.Index(2, 1).y;
-
-    //         // Score
-    //         MyMessage[Index++] = (byte)(mCarA.GetScore() >> 8);
-    //         MyMessage[Index++] = (byte)(mCarA.GetScore());
-
-    //         // Car Position
-    //         MyMessage[Index++] = (byte)(mCarA.CurrentPos().x);
-    //         MyMessage[Index++] = (byte)(mCarA.CurrentPos().y);
-
-    //         // Car's Package List
-    //         MyMessage[Index++] = (byte)(mCarA.GetPackageCount());
-    //         // Destinaton, Scheduled Time
-    //         for (int i = 0; i < 5; i++)
-    //         {
-    //             MyMessage[Index++] = (byte)(mCarA.GetPackageOnCar(i).Destination().x);
-    //             MyMessage[Index++] = (byte)(mCarA.GetPackageOnCar(i).Destination().y);
-    //             MyMessage[Index++] = (byte)(mCarA.GetPackageOnCar(i).ScheduledDeliveryTime() / 100 >> 8);
-    //             MyMessage[Index++] = (byte)(mCarA.GetPackageOnCar(i).ScheduledDeliveryTime());
-    //         }
-    //     }
-    //     else if (mCamp == Camp.B)
-    //     {
-    //         // Your Charge Station
-    //         MyMessage[Index++] = (byte)Station.Index(0, 1).x;
-    //         MyMessage[Index++] = (byte)Station.Index(0, 1).y;
-    //         MyMessage[Index++] = (byte)Station.Index(1, 1).x;
-    //         MyMessage[Index++] = (byte)Station.Index(1, 1).y;
-    //         MyMessage[Index++] = (byte)Station.Index(2, 1).x;
-    //         MyMessage[Index++] = (byte)Station.Index(2, 1).y;
-
-    //         // Oppenont's Charge Station
-    //         MyMessage[Index++] = (byte)Station.Index(0, 0).x;
-    //         MyMessage[Index++] = (byte)Station.Index(0, 0).y;
-    //         MyMessage[Index++] = (byte)Station.Index(1, 0).x;
-    //         MyMessage[Index++] = (byte)Station.Index(1, 0).y;
-    //         MyMessage[Index++] = (byte)Station.Index(2, 0).x;
-    //         MyMessage[Index++] = (byte)Station.Index(2, 0).y;
-
-    //         // Score
-    //         MyMessage[Index++] = (byte)(mCarB.GetScore() >> 8);
-    //         MyMessage[Index++] = (byte)(mCarB.GetScore());
-
-    //         // Car Position
-    //         MyMessage[Index++] = (byte)(mCarB.CurrentPos().x);
-    //         MyMessage[Index++] = (byte)(mCarB.CurrentPos().y);
-
-    //         // Car's Package List
-    //         // Total numbrt of picked packages
-    //         MyMessage[Index++] = (byte)(mCarB.GetPackageCount());
-    //         // Destinaton, Scheduled Time
-    //         for (int i = 0; i < 5; i++)
-    //         {
-    //             MyMessage[Index++] = (byte)(mCarB.GetPackageOnCar(i).Destination().x);
-    //             MyMessage[Index++] = (byte)(mCarB.GetPackageOnCar(i).Destination().y);
-    //             MyMessage[Index++] = (byte)(mCarB.GetPackageOnCar(i).ScheduledDeliveryTime() / 100 >> 8);
-    //             MyMessage[Index++] = (byte)(mCarB.GetPackageOnCar(i).ScheduledDeliveryTime());
-    //         }
-    //     }
-
-    //     // Packages Generate on this frame
-    //     // Indentity Code, Departure, Destination, Scheduled Time
-    //     if (mGameStage == GameStage.FIRST_HALF)
-    //     {
-    //         MyMessage[Index++] = (byte)(mPackageFirstHalf.LastGenerationPackage().IndentityCode());
-    //         MyMessage[Index++] = (byte)(mPackageFirstHalf.LastGenerationPackage().Departure().x);
-    //         MyMessage[Index++] = (byte)(mPackageFirstHalf.LastGenerationPackage().Departure().y);
-    //         MyMessage[Index++] = (byte)(mPackageFirstHalf.LastGenerationPackage().Destination().x);
-    //         MyMessage[Index++] = (byte)(mPackageFirstHalf.LastGenerationPackage().Destination().y);
-    //         MyMessage[Index++] = (byte)(mPackageFirstHalf.LastGenerationPackage().ScheduledDeliveryTime() / 100 >> 8);
-    //         MyMessage[Index++] = (byte)(mPackageFirstHalf.LastGenerationPackage().ScheduledDeliveryTime() / 100);
-    //     }
-    //     else if (mGameStage == GameStage.SECOND_HALF)
-    //     {
-    //         MyMessage[Index++] = (byte)(mPackageSecondHalf.LastGenerationPackage().IndentityCode());
-    //         MyMessage[Index++] = (byte)(mPackageSecondHalf.LastGenerationPackage().Departure().x);
-    //         MyMessage[Index++] = (byte)(mPackageSecondHalf.LastGenerationPackage().Departure().y);
-    //         MyMessage[Index++] = (byte)(mPackageSecondHalf.LastGenerationPackage().Destination().x);
-    //         MyMessage[Index++] = (byte)(mPackageSecondHalf.LastGenerationPackage().Destination().y);
-    //         MyMessage[Index++] = (byte)(mPackageSecondHalf.LastGenerationPackage().ScheduledDeliveryTime() / 100 >> 8);
-    //         MyMessage[Index++] = (byte)(mPackageSecondHalf.LastGenerationPackage().ScheduledDeliveryTime() / 100);
-    //     }
-
-    //     return MyMessage;
-    // }
-
-    /***********************************************************************
-    Interface used for Tracker to display the information of current game
-    ***********************************************************************/
     public List<Order> OrdersRemain()
     {
-        return _ordersRemain;
+        return _pendingOrderList;
     }
 
     public Camp GetCamp()
     {
-        return mCamp;
+        return _camp;
     }
 
     public int GetScore(Camp c, GameStage gs)
@@ -534,11 +413,11 @@ public class Game
 
     public int GetMileage()
     {
-        if (mCamp == Camp.A)
+        if (_camp == Camp.A)
         {
             return mCarA.GetMileage();
         }
-        else if (mCamp == Camp.B)
+        else if (_camp == Camp.B)
         {
             return mCarB.GetMileage();
         }
@@ -569,39 +448,17 @@ public class Game
     /***********************************************
     Initialize and Generate Package
     ***********************************************/
-    private void InitialOrdersRemain()
+
+    /// <summary>
+    /// Check if a position is in a barrier.
+    /// </summary>
+    /// <param name="position">The position</param>
+    /// <returns>True if the position is in a barrier; otherwise false</returns>
+    private bool IsInBarrier(Dot position)
     {
-        _ordersRemain.Clear();
-    }
-
-
-    /***********************************************
-    Time
-    ***********************************************/
-    private void _UpdateGameTime()
-    {
-        this.mGameTime = _GetCurrentTime() - mStartTime;
-    }
-
-    private static long _GetCurrentTime()
-    {
-        return DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-    }
-
-
-    /***********************************************
-    Judge Collision of illegal locations
-    ***********************************************/
-    // private bool _IsOnBlackLine(Dot _CarPos)
-    // {
-    //     return Boundary.isCollided(_CarPos, COLLISION_RADIUS);
-    // }
-
-    private bool _IsInObstacle(Dot carPos)
-    {
-        foreach (Barrier barrier in _barrierList)
+        foreach (var barrier in this._barrierList)
         {
-            if (barrier.IsIn(carPos))
+            if (barrier.IsIn(position))
             {
                 return true;
             }
@@ -609,31 +466,22 @@ public class Game
         return false;
     }
 
-    private bool _IsInOpponentStation(Dot _CarPos)
+    /// <summary>
+    /// Check if a position is in the influence scope of the charging piles of a camp.
+    /// </summary>
+    /// <param name="camp">The camp</param>
+    /// <param name="position">The position</param>
+    /// <returns>True if the position is in the scope; otherwise false</returns>
+    private bool IsInChargingPileInfluenceScope(Camp camp, Dot position)
     {
-        if (mCamp == Camp.A)
+        foreach (var chargingPile in this._chargingPileList)
         {
-            return Station.isCollided(_CarPos, 2, COLLISION_RADIUS);
+            if (chargingPile.Camp == camp && chargingPile.IsInInfluenceScope(position))
+            {
+                return true;
+            }
         }
-        else if (mCamp == Camp.B)
-        {
-            return Station.isCollided(_CarPos, 1, COLLISION_RADIUS);
-        }
-        else
-        {
-            throw new Exception("No team is racing now");
-        }
-    }
 
-    private bool _IsInChargeStation(Dot _CarPos)
-    {
-        if (mCamp == Camp.NONE)
-        {
-            throw new Exception("No team is racing now");
-        }
-        else
-        {
-            return Station.isCollided(_CarPos, (int)mCamp, COLLISION_RADIUS);
-        }
+        return false;
     }
 }
