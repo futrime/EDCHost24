@@ -198,7 +198,7 @@ public class Car //选手的车
             if (ord.Status == Order.StatusType.Pending && Dot.Distance(ord.DeparturePosition, _CarPos) <= COLLISION_RADIUS &&
                 _deliveringOrder.Count <= MAX_PKG_COUNT)
             {
-                ord.AddFirstCollisionTime(this.mGameTime);
+                // ord.AddFirstCollisionTime(this.mGameTime);
                 _deliveringOrder.Add(ord);
                 ordersRemain.Remove(ord);
                 mScore += PICK_CREDIT;
@@ -215,15 +215,15 @@ public class Car //选手的车
         {
             if (ord.Status == Order.StatusType.InDelivery && Dot.Distance(ord.DestinationPosition, _CarPos) <= COLLISION_RADIUS)
             {
-                if (ord.FirstCollisionTime != -1 &&
-                    this.mGameTime - ord.FirstCollisionTime > COLLISION_DETECTION_TIME)
-                {
-                    // 送达后改变pkg的packagestatus
-                    ord.Status = Order.StatusType.Delivered;
+                // if (ord.DepartureFirstCollisionTime != -1 &&
+                //     this.mGameTime - ord.DepartureFirstCollisionTime > COLLISION_DETECTION_TIME)
+                // {
+                //     // 送达后改变pkg的packagestatus
+                //     ord.Status = Order.StatusType.Delivered;
 
-                    _deliveringOrder.Remove(ord);
-                    mScore += ord.GetPackageScore(mGameTime);
-                }
+                //     _deliveringOrder.Remove(ord);
+                //     mScore += ord.GetScore(mGameTime);
+                // }
             }
         }
     }

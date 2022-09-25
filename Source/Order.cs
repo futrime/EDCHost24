@@ -31,19 +31,9 @@ public class Order
     }
 
 
-    private const int OverTimePenalty = 5; // per second
-    /// <summary>
-    /// The order is delivered.
-    /// </summary>
-    private const int ScheduledScore = 25;
+    private const int OvertimeScorePenaltyPerSecond = 5;
+    private const int MaxScore = 25;
 
-
-    private Dot _departurePosition;
-    private Dot _destinationPosition;
-    private long _generationTime;
-    private long _deliveryTimeLimit;
-    private long _firstCollisionTime;
-    private StatusType _status = StatusType.Ungenerated;
 
     /// <summary>
     /// The departure position
@@ -58,13 +48,9 @@ public class Order
     /// </summary>
     public long GenerationTime => this._generationTime;
     /// <summary>
-    /// The delivery time limit
+    /// The scheduled delivery time
     /// </summary>
-    public long DeliveryTime => this._deliveryTimeLimit;
-    /// <summary>
-    /// The time of first collision with car 
-    /// </summary>
-    public long FirstCollisionTime => this._firstCollisionTime;
+    public long ScheduledDeliveryTime => this._deliveryTimeLimit + this._generationTime;
     /// <summary>
     /// The order status
     /// </summary>
@@ -73,6 +59,30 @@ public class Order
         get => this._status;
         set => this._status = value;
     }
+    /// <summary>
+    /// The score obtained in the order
+    /// </summary>
+    public int Score
+    {
+        get
+        {
+            if (this._deliveryTime == null)
+            {
+                return 0;
+            }
+
+            var overtimeLength = Math.Max((long)this._deliveryTime - this.ScheduledDeliveryTime, 0);
+            return Order.MaxScore - (int)(overtimeLength / 1000) * Order.OvertimeScorePenaltyPerSecond;
+        }
+    }
+
+    private Dot _departurePosition;
+    private Dot _destinationPosition;
+    private long _generationTime;
+    private long _deliveryTimeLimit;
+    private long? _departureTime = null;
+    private long? _deliveryTime = null;
+    private StatusType _status = StatusType.Ungenerated;
 
 
     /// <summary>
@@ -118,45 +128,45 @@ public class Order
         long deliveryTimeLimit
     )
     {
+        // Validate the delivery time limit
+        if (deliveryTimeLimit <= 0 )
+        {
+            throw new Exception("The delivery time limit is invalid.");
+        }
+
         this._departurePosition = departurePosition;
         this._destinationPosition = destinationPosition;
         this._generationTime = generationTime;
         this._deliveryTimeLimit = deliveryTimeLimit;
-        this._firstCollisionTime = -1;
-        this._status = StatusType.Pending;
     }
-    /// <summary>
-    /// Only if the _firstCollisionTime is -1, it can be revised
-    /// </summary>
-    public bool AddFirstCollisionTime(long time)
-    {
-        if (this._firstCollisionTime == -1)
-        {
-            this._firstCollisionTime = time;
-            return true;
-        }
-        // failed to revise
-        else
-        {
-            return false;
-        }
-    }
-    /// <summary>
-    /// Get Order score, 
-    /// </summary>
-    public int GetPackageScore(int arrivalTime)
-    {
-        int orderScore = 0;
 
-        if (arrivalTime <= this.DeliveryTime)
+    /// <summary>
+    /// Deliver the order.
+    /// </summary>
+    /// <param name="time">The current time</param>
+    public void Deliver(long time)
+    {
+        if (this._status != StatusType.InDelivery)
         {
-            orderScore = ScheduledScore;
-        }
-        else
-        {
-            orderScore = ScheduledScore + (int)((this.DeliveryTime - arrivalTime) * OverTimePenalty / 1000);
+            throw new Exception("The order cannot be delivered.");
         }
 
-        return orderScore;
+        this._status = StatusType.Delivered;
+        this._deliveryTime = time;
+    }
+
+    /// <summary>
+    /// Take the order.
+    /// </summary>
+    /// <param name="time">The current time</param>
+    public void Take(long time)
+    {
+        if (this._status != StatusType.Pending)
+        {
+            throw new Exception("The order cannot be taken.");
+        }
+
+        this._status = StatusType.InDelivery;
+        this._departureTime = time;
     }
 }
