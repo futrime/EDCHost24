@@ -13,17 +13,21 @@ public class Order
     public enum StatusType
     {
         /// <summary>
+        /// The order is not generated.
+        /// </summary>
+        Ungenerated,
+        /// <summary>
         /// The order is ready for picking up.
         /// </summary>
-        Pending = 0,
+        Pending,
         /// <summary>
         /// The order is in delivery.
         /// </summary>
-        InDelivery = 1,
+        InDelivery,
         /// <summary>
         /// The order is delivered.
         /// </summary>
-        Delivered = 2
+        Delivered
     }
 
 
@@ -33,7 +37,7 @@ public class Order
     private long _generationTime;
     private long _deliveryTimeLimit;
 
-    private StatusType _status;
+    private StatusType _status = StatusType.Ungenerated;
 
     /// <summary>
     /// The departure position
@@ -108,6 +112,5 @@ public class Order
         this._destinationPosition = destinationPosition;
         this._generationTime = generationTime;
         this._deliveryTimeLimit = deliveryTimeLimit;
-        this._status = StatusType.Pending;
     }
 }
