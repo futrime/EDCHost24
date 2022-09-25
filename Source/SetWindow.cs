@@ -24,7 +24,6 @@ public partial class SetWindow : Form
         nudSat2L.Value = flags.configs.saturation2Lower;
         nudValueL.Value = flags.configs.valueLower;
         nudAreaL.Value = flags.configs.areaLower;
-        checkBox_DebugMode.Checked = game.DebugMode;
 
         cbPorts1.Items.Clear();
         cbPorts1.Items.Add("(None)");
@@ -105,11 +104,6 @@ public partial class SetWindow : Form
     private void nudAreaL_ValueChanged(object sender, EventArgs e)
     {
         _flags.configs.areaLower = (int)nudAreaL.Value;
-    }
-
-    private void checkBox_DebugMode_CheckedChanged(object sender, EventArgs e)
-    {
-        _game.DebugMode = checkBox_DebugMode.Checked;
     }
 
     private void button_ConfigSave_Click(object sender, EventArgs e)

@@ -77,19 +77,6 @@ partial class SetWindow
         ((System.ComponentModel.ISupportInitialize)(this.nudBaudRate)).BeginInit();
         this.SuspendLayout();
         // 
-        // checkBox_DebugMode
-        // 
-        this.checkBox_DebugMode.AutoSize = true;
-        this.checkBox_DebugMode.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-        this.checkBox_DebugMode.Location = new System.Drawing.Point(368, 403);
-        this.checkBox_DebugMode.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-        this.checkBox_DebugMode.Name = "checkBox_DebugMode";
-        this.checkBox_DebugMode.Size = new System.Drawing.Size(75, 21);
-        this.checkBox_DebugMode.TabIndex = 74;
-        this.checkBox_DebugMode.Text = "调试模式";
-        this.checkBox_DebugMode.UseVisualStyleBackColor = true;
-        this.checkBox_DebugMode.CheckedChanged += new System.EventHandler(this.checkBox_DebugMode_CheckedChanged);
-        // 
         // nudAreaL
         // 
         this.nudAreaL.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));

@@ -11,29 +11,15 @@ public class Game
     // 最大游戏场地
     public const int MAX_SIZE = 254;
     public const int AVAILABLE_MAX_X = 254;
-    public const int AVAILABLE_MIN_X = 0;
     public const int AVAILABLE_MAX_Y = 254;
-    public const int AVAILABLE_MIN_Y = 0;
-    public const int EDGE_DISTANCE = 28;
-    public const int ENTRANCE_WIDTH = 36;
-    public const int LINE_WIDTH = 2;
 
     // size of car
     public const int COLLISION_RADIUS = 8;
-
-    // initial amount of package
-    public const int INITIAL_ORDER_NUM = 1;
-    // time interval of packages
-    public const int TIME_INTERVAL = 1500;
 
     // time of first and second half
     public const int FIRST_HALF_TIME = 60000;
     public const int SECOND_HALF_TIME = 180000;
     public int gameDuration = FIRST_HALF_TIME;
-
-    // Message Token
-    public const byte START = 0xff;
-    public const byte END = 0;
 
     public const int MaxOrderNumber = 20;
 
@@ -105,11 +91,6 @@ public class Game
     public List<Barrier> BarrierList => _barrierList;
 
 
-    public bool DebugMode = false;
-
-    /***********************************************************************
-    Interface used for Tracker to display the information of current game
-    ***********************************************************************/
     public Game()
     {
         Debug.WriteLine("Call Constructor of Game");
