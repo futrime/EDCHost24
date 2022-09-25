@@ -289,7 +289,6 @@ public partial class Tracker : Form
         {
             foreach (Point2i c2 in this._coordinateConverter.CourtToCamera(Array.ConvertAll(localizer.GetCentres(Camp.B).ToArray(), item => (Point2f)item)))
             {
-                _game.GetCar(Camp.B).LastPos();
                 if (c2.X >= 0 && c2.X <= Game.AVAILABLE_MAX_X && c2.Y >= 0 && c2.Y <= Game.AVAILABLE_MAX_Y)
                 {
                     int Tx = c2.X;

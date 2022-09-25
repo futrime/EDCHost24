@@ -31,7 +31,7 @@ public class Game
     // 障碍物的最大边长
     public const int BarrierMaxLength = 16;
 
-    public const int BarrierMinDistanceFromBarrier = 20;
+    public const int BarrierMinDistanceFromBarrier = 40;
 
 
     /// <summary>
@@ -68,7 +68,8 @@ public class Game
 
     public long RemainingTime
     {
-        get {
+        get
+        {
             if (this._gameState != GameState.RUN)
             {
                 return 0;
@@ -282,17 +283,17 @@ public class Game
         _barrierList = new List<Barrier>();
 
         // Check if the new barrier is valid: Every Barrier should be away from the others.
-        bool AwayFromObstacles(Barrier targetBarrier, List<Barrier> barrierList)
+        bool AwayFromBarriers(Barrier targetBarrier, List<Barrier> barrierList)
         {
             int centerX = (targetBarrier.TopLeftPosition.x + targetBarrier.BottomRightPosition.x) / 2;
-            int centerY = (targetBarrier.TopLeftPosition.x + targetBarrier.BottomRightPosition.x) / 2;
+            int centerY = (targetBarrier.TopLeftPosition.y + targetBarrier.BottomRightPosition.y) / 2;
 
             foreach (Barrier barrier in barrierList)
             {
                 if (barrier != null)
                 {
-                    int currentCenterX = (barrier.TopLeftPosition.x + barrier.TopLeftPosition.x) / 2;
-                    int currentCenterY = (barrier.BottomRightPosition.y + barrier.BottomRightPosition.y) / 2;
+                    int currentCenterX = (barrier.TopLeftPosition.x + barrier.BottomRightPosition.x) / 2;
+                    int currentCenterY = (barrier.TopLeftPosition.y + barrier.BottomRightPosition.y) / 2;
 
                     //判断与障碍物的距离
                     if (Math.Sqrt((centerX - currentCenterX) * (centerX - currentCenterX) +
@@ -311,7 +312,7 @@ public class Game
             Barrier barrier = Barrier.GenerateRandomBarrier((new Dot(0, 0), new Dot(MAX_SIZE, MAX_SIZE)),
             (new Dot(BarrierMinLength, BarrierMinLength), new Dot(BarrierMaxLength, BarrierMaxLength)));
 
-            if (AwayFromObstacles(barrier, _barrierList))
+            if (AwayFromBarriers(barrier, _barrierList))
             {
                 currentBarrierNumber += 1;
                 _barrierList.Add(barrier);
