@@ -149,7 +149,8 @@ public partial class Tracker : Form
         this.labelAScore.Text = this.game.GetScore(Camp.A, this.game.mGameStage).ToString();
         this.labelBScore.Text = this.game.GetScore(Camp.B, this.game.mGameStage).ToString();
 
-        this.GameTimeLabel.Text = ((decimal)this.game.RemainingTime / 1000).ToString("0.00");
+        decimal currentTime = (decimal)this.game.RemainingTime / 1000;
+        this.GameTimeLabel.Text = (currentTime < 0 ? 0 : currentTime).ToString("0.00");
 
         this.Refresh();
     }
@@ -289,78 +290,88 @@ public partial class Tracker : Form
         //障碍物的图标 暂定
         Icon_Obstacle = new Mat(@"Assets\Icons\Obstacle.png", ImreadModes.Color);
 
-        Cv2.Resize(src: Icon_CarA, dst: Icon_CarA, dsize: new OpenCvSharp.Size(20, 20));
-        Cv2.Resize(src: Icon_CarB, dst: Icon_CarB, dsize: new OpenCvSharp.Size(20, 20));
-        Cv2.Resize(src: Icon_Package, dst: Icon_Package, dsize: new OpenCvSharp.Size(22, 22));
-        Cv2.Resize(src: Icon_Person, dst: Icon_Person, dsize: new OpenCvSharp.Size(20, 20));
-        Cv2.Resize(src: Icon_Zone, dst: Icon_Zone, dsize: new OpenCvSharp.Size(22, 22));
-        Cv2.Resize(src: Icon_Obstacle, dst: Icon_Obstacle, dsize: new OpenCvSharp.Size(20, 20));
+        const int IconSize = 25;
+        Cv2.Resize(src: Icon_CarA, dst: Icon_CarA, dsize: new OpenCvSharp.Size(IconSize, IconSize));
+        Cv2.Resize(src: Icon_CarB, dst: Icon_CarB, dsize: new OpenCvSharp.Size(IconSize, IconSize));
+        Cv2.Resize(src: Icon_Package, dst: Icon_Package, dsize: new OpenCvSharp.Size(IconSize, IconSize));
+        Cv2.Resize(src: Icon_Person, dst: Icon_Person, dsize: new OpenCvSharp.Size(IconSize, IconSize));
+        Cv2.Resize(src: Icon_Zone, dst: Icon_Zone, dsize: new OpenCvSharp.Size(IconSize, IconSize));
+        Cv2.Resize(src: Icon_Obstacle, dst: Icon_Obstacle, dsize: new OpenCvSharp.Size(IconSize, IconSize));
 
         // Draw vehicle icons
-        foreach (Point2i c1 in this.coordCvt.CourtToCamera(Array.ConvertAll(loc.GetCentres(Camp.A).ToArray(), item => (Point2f)item)))
+        if (game.GetCamp() == Camp.A)
         {
-            if (c1.X >= 0 && c1.X <= Game.AVAILABLE_MAX_X && c1.Y >= 0 && c1.Y <= Game.AVAILABLE_MAX_Y)
+            foreach (Point2i c1 in this.coordCvt.CourtToCamera(Array.ConvertAll(loc.GetCentres(Camp.A).ToArray(), item => (Point2f)item)))
             {
-                // Point2f[] converted_cord = coordCvt.ShowToCamera(new Point2f[] { (Point2f)c1 });
-                int Tx = c1.X;
-                int Ty = c1.Y;
-                // int Tx = (int)converted_cord[0].X - 10;
-                // int Ty = (int)converted_cord[0].Y - 10;
-                int Tcol = Icon_CarA.Cols;
-                int Trow = Icon_CarA.Rows;
-                if (Tx < 0)
+                //优化一下，避免画面显示的车 位移太大了，只找到和上一次距离较近的车
+                //待优化
+                if (c1.X >= 0 && c1.X <= Game.AVAILABLE_MAX_X && c1.Y >= 0 && c1.Y <= Game.AVAILABLE_MAX_Y)
                 {
-                    Tx = 0;
-                }
-                if (Ty < 0)
-                {
-                    Ty = 0;
-                }
-                if (Tx + Tcol > mat.Cols)
-                {
-                    Tx = mat.Cols - Tcol;
-                }
-                if (Ty + Trow > mat.Rows)
-                {
-                    Ty = mat.Rows - Trow;
-                }
+                    // Point2f[] converted_cord = coordCvt.ShowToCamera(new Point2f[] { (Point2f)c1 });
 
-                Mat Pos = new Mat(mat, new Rect(Tx, Ty, Tcol, Trow));
-                Icon_CarA.CopyTo(Pos);
-                //暂时只画一个车，如果要画多个车，删去break
-                break;
+                    int Tx = c1.X;
+                    int Ty = c1.Y;
+                    // int Tx = (int)converted_cord[0].X - 10;
+                    // int Ty = (int)converted_cord[0].Y - 10;
+                    int Tcol = Icon_CarA.Cols;
+                    int Trow = Icon_CarA.Rows;
+                    if (Tx < 0)
+                    {
+                        Tx = 0;
+                    }
+                    if (Ty < 0)
+                    {
+                        Ty = 0;
+                    }
+                    if (Tx + Tcol > mat.Cols)
+                    {
+                        Tx = mat.Cols - Tcol;
+                    }
+                    if (Ty + Trow > mat.Rows)
+                    {
+                        Ty = mat.Rows - Trow;
+                    }
+
+                    Mat Pos = new Mat(mat, new Rect(Tx, Ty, Tcol, Trow));
+                    Icon_CarA.CopyTo(Pos);
+                    //暂时只画一个车，如果要画多个车，删去break
+                    break;
+                }
             }
         }
-
-        foreach (Point2i c2 in this.coordCvt.CourtToCamera(Array.ConvertAll(loc.GetCentres(Camp.B).ToArray(), item => (Point2f)item)))
+        else if (game.GetCamp() == Camp.B)
         {
-            if (c2.X >= 0 && c2.X <= Game.AVAILABLE_MAX_X && c2.Y >= 0 && c2.Y <= Game.AVAILABLE_MAX_Y)
+            foreach (Point2i c2 in this.coordCvt.CourtToCamera(Array.ConvertAll(loc.GetCentres(Camp.B).ToArray(), item => (Point2f)item)))
             {
-                int Tx = c2.X;
-                int Ty = c2.Y;
-                int Tcol = Icon_CarB.Cols;
-                int Trow = Icon_CarB.Rows;
-                if (Tx < 0)
+                game.GetCar(Camp.B).LastPos();
+                if (c2.X >= 0 && c2.X <= Game.AVAILABLE_MAX_X && c2.Y >= 0 && c2.Y <= Game.AVAILABLE_MAX_Y)
                 {
-                    Tx = 0;
-                }
-                if (Ty < 0)
-                {
-                    Ty = 0;
-                }
-                if (Tx + Tcol > mat.Cols)
-                {
-                    Tx = mat.Cols - Tcol;
-                }
-                if (Ty + Trow > mat.Rows)
-                {
-                    Ty = mat.Rows - Trow;
-                }
+                    int Tx = c2.X;
+                    int Ty = c2.Y;
+                    int Tcol = Icon_CarB.Cols;
+                    int Trow = Icon_CarB.Rows;
+                    if (Tx < 0)
+                    {
+                        Tx = 0;
+                    }
+                    if (Ty < 0)
+                    {
+                        Ty = 0;
+                    }
+                    if (Tx + Tcol > mat.Cols)
+                    {
+                        Tx = mat.Cols - Tcol;
+                    }
+                    if (Ty + Trow > mat.Rows)
+                    {
+                        Ty = mat.Rows - Trow;
+                    }
 
-                Mat Pos = new Mat(mat, new Rect(Tx, Ty, Tcol, Trow));
-                Icon_CarB.CopyTo(Pos);
-                //暂时只画一个车，如果要画多个车，删去break
-                break;
+                    Mat Pos = new Mat(mat, new Rect(Tx, Ty, Tcol, Trow));
+                    Icon_CarB.CopyTo(Pos);
+                    //暂时只画一个车，如果要画多个车，删去break
+                    break;
+                }
             }
         }
 
@@ -599,21 +610,25 @@ public partial class Tracker : Form
             this.game.GetCamp() == Camp.NONE)
         {
             game.Start(Camp.A, GameStage.FIRST_HALF);
+            label_GameCount.Text = "上半场";
         }
         else if (this.game.mGameStage == GameStage.FIRST_HALF &&
             this.game.GetCamp() == Camp.A)
         {
             game.Start(Camp.B, GameStage.FIRST_HALF);
+            label_GameCount.Text = "上半场";
         }
         else if (this.game.mGameStage == GameStage.FIRST_HALF &&
             this.game.GetCamp() == Camp.B)
         {
             game.Start(Camp.A, GameStage.SECOND_HALF);
+            label_GameCount.Text = "下半场";
         }
         else if (this.game.mGameStage == GameStage.SECOND_HALF &&
             this.game.GetCamp() == Camp.A)
         {
             game.Start(Camp.B, GameStage.SECOND_HALF);
+            label_GameCount.Text = "下半场";
         }
         else
         {

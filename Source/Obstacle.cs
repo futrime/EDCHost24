@@ -77,10 +77,6 @@ public class Obstacle
                         return false;
                     }
                 }
-                // else
-                // {
-                //     Console.WriteLine("null obstacle in Obstacle.cs");
-                // }
             }
             return true;
         }

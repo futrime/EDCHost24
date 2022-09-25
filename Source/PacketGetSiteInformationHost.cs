@@ -67,7 +67,7 @@ internal class PacketGetSiteInformationHost : Packet
         for (int i = 0; i < this._obstacleListLength; i++)
         {
             Dot left_up = new Dot(BitConverter.ToInt32(data, currentIndex), BitConverter.ToInt32(data, currentIndex + 4));
-            Dot right_down = new Dot(BitConverter.ToInt32(data, currentIndex + 8), BitConverter.ToInt32(data, currentIndex + 16));
+            Dot right_down = new Dot(BitConverter.ToInt32(data, currentIndex + 8), BitConverter.ToInt32(data, currentIndex + 12));
 
             this._obstacleList.Add(new Wall(left_up, right_down));
             currentIndex += 4 * 4;
@@ -125,12 +125,10 @@ internal class PacketGetSiteInformationHost : Packet
         {
             // 2 Dots —— 16 Bytes per Obstacle
             BitConverter.GetBytes(this._obstacleList[i].w1.x).CopyTo(data, currentIndex);
+            BitConverter.GetBytes(this._obstacleList[i].w1.y).CopyTo(data, currentIndex + 4);
+            BitConverter.GetBytes(this._obstacleList[i].w2.x).CopyTo(data, currentIndex + 8);
+            BitConverter.GetBytes(this._obstacleList[i].w2.y).CopyTo(data, currentIndex + 12);
             currentIndex += 4 * 4;
-            BitConverter.GetBytes(this._obstacleList[i].w1.y).CopyTo(data, currentIndex);
-            BitConverter.GetBytes(this._obstacleList[i].w2.x).CopyTo(data, currentIndex);
-            BitConverter.GetBytes(this._obstacleList[i].w2.y).CopyTo(data, currentIndex);
-
-
         }
 
         // Gamestage 

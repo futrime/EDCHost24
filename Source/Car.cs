@@ -5,17 +5,17 @@ namespace EdcHost;
 public class Car //选手的车
 {
     // the object of package and picked by car and first collision time
-    private class PackagesAndTime
-    {
-        public Package mPkg;
-        public int mFirstCollisionTime;
+    // private class PackagesAndTime
+    // {
+    //     public Package mPkg;
+    //     public int mFirstCollisionTime;
 
-        public PackagesAndTime(Package _pkg, int _FirstCollisionTime = -1)
-        {
-            mPkg = _pkg;
-            mFirstCollisionTime = _FirstCollisionTime;
-        }
-    }
+    //     public PackagesAndTime(Package _pkg, int _FirstCollisionTime = -1)
+    //     {
+    //         mPkg = _pkg;
+    //         mFirstCollisionTime = _FirstCollisionTime;
+    //     }
+    // }
 
     public const int RUN_CREDIT = 10;          //小车启动可以得到10分;
     public const int PICK_CREDIT = 5;          //接到一笔订单得5分;
@@ -115,8 +115,8 @@ public class Car //选手的车
             _TimePenalty = 0;
 
             //action
-            PickOrders(_CarPos, ref ordersRemain);
-            DropPackage(_CarPos);
+            TakeOrders(_CarPos, ref ordersRemain);
+            DeliverPackage(_CarPos);
             //这里不能直接写_TimePenalty，因为它必须写在最外层，故用临时变量temp_TimePenalty作为out
             UpdateMileage(out temp_TimePenalty);
             Charge(_IsInChargeStation);
@@ -148,6 +148,20 @@ public class Car //选手的车
     public Dot CurrentPos()
     {
         return mQueuePos.Item(-1);
+    }
+    /// <summary>
+    /// Get the last position
+    /// </summary>
+    public Dot LastPos()
+    {
+        if (mQueuePos.Count() > 0)
+        {
+            return mQueuePos.Item(-2);
+        }
+        else
+        {
+            return null;
+        }
     }
 
     public Order GetPackageOnCar(int index)
@@ -190,7 +204,7 @@ public class Car //选手的车
         }
     }
 
-    private void PickOrders(Dot _CarPos, ref List<Order> ordersRemain)      //拾取外卖
+    private void TakeOrders(Dot _CarPos, ref List<Order> ordersRemain)      //拾取外卖
     {
         for (int i = 0; i < ordersRemain.Count; i++)
         {
@@ -210,7 +224,7 @@ public class Car //选手的车
         }
     }
 
-    private void DropPackage(Dot _CarPos)      //送达外卖 
+    private void DeliverPackage(Dot _CarPos)      //送达外卖 
     {
         for (int i = 0; i < _deliveringOrder.Count; i++)
         {
@@ -218,6 +232,8 @@ public class Car //选手的车
             if (ord.Status == Order.StatusType.InDelivery && Dot.Distance(ord.DestinationPosition, _CarPos) <= COLLISION_RADIUS)
             {
                 ord.Deliver(mGameTime);
+                _deliveringOrder.Remove(ord);
+                mScore += ord.Score;
                 // if (ord.DepartureFirstCollisionTime != -1 &&
                 //     this.mGameTime - ord.DepartureFirstCollisionTime > COLLISION_DETECTION_TIME)
                 // {
