@@ -38,7 +38,7 @@ internal class PacketGetStatusInformationHost : Packet
     /// Note that we should convert package list into order list
     /// </remarks>
     public PacketGetStatusInformationHost(GameState currentState, double currentTime, int currentScore,
-        Dot carPos, double mileage, List<Package> packageList)
+        Dot carPos, double mileage, List<Order> orderList)
     {
         this._currentScore = currentScore;
         this._currentTime = currentTime;
