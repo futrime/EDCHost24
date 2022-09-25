@@ -69,6 +69,7 @@ public class Game
     }
     public long PauseTime;
     public long ContinueTime;
+    public List<ChargingPile> ChargingPileList => this._chargingPileList;
 
 
     /// <summary>

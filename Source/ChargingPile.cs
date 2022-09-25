@@ -8,7 +8,7 @@ public class ChargingPile
     /// <summary>
     /// The charging range radius in centimeters
     /// </summary>
-    private const decimal InfluenceScopeRadius = 20;
+    public const decimal InfluenceScopeRadius = 20;
 
 
     /// <summary>

@@ -238,40 +238,6 @@ public partial class MainWindow : Form
             );
         }
 
-        // Draw vehicles
-        foreach (Point2i c1 in localizer.GetCentres(Camp.A).ToArray())
-        {
-            var Tx = c1.X;
-            Tx = Math.Max(Tx, 0);
-            Tx = Math.Min(Tx, image.Cols - iconCarB.Cols);
-
-            var Ty = c1.Y;
-            Ty = Math.Max(Ty, 0);
-            Ty = Math.Min(Ty, image.Rows - iconCarB.Rows);
-
-            Mat Pos = new Mat(image, new Rect(Tx, Ty, iconCarA.Cols, iconCarA.Rows));
-            iconCarA.CopyTo(Pos);
-        }
-        foreach (Point2i c2 in localizer.GetCentres(Camp.B).ToArray())
-        {
-            var Tx = c2.X;
-            Tx = Math.Max(Tx, 0);
-            Tx = Math.Min(Tx, image.Cols - iconCarB.Cols);
-
-            var Ty = c2.Y;
-            Ty = Math.Max(Ty, 0);
-            Ty = Math.Min(Ty, image.Rows - iconCarB.Rows);
-
-            Mat Pos = new Mat(image, new Rect(Tx, Ty, iconCarB.Cols, iconCarB.Rows));
-            iconCarB.CopyTo(Pos);
-        }
-
-        // Draw charging piles
-        if (this._game.GameState == GameState.Running || this._game.GameState == GameState.Paused)
-        {
-            // To be implemented
-        }
-
         // Draw Barriers
         if (this._game.GameState == GameState.Running || this._game.GameState == GameState.Paused)
         {
@@ -294,6 +260,44 @@ public partial class MainWindow : Form
                     Point2i lowerPoint = new Point2i(i, pointsInCameraCoordination[1].Y);
                     Cv2.Line(image, upperPoint, lowerPoint, color: Scalar.Yellow, 1);
                 }
+            }
+        }
+
+        // Draw charging piles
+        if (this._game.GameState == GameState.Running || this._game.GameState == GameState.Paused)
+        {
+            foreach (var chargingPile in this._game.ChargingPileList)
+            {
+                var color = Scalar.Black;
+                switch (chargingPile.Camp)
+                {
+                    case Camp.A:
+                        color = Scalar.Red;
+                        break;
+                    
+                    case Camp.B:
+                        color = Scalar.Blue;
+                        break;
+
+                    default:
+                        break;
+                }
+
+                Point2f[] pointsInCourtCoordination = { chargingPile.Position.ToPoint() };
+
+                Point2i[] pointsInCameraCoordination = Array.ConvertAll(
+                    _coordinateConverter.CourtToCamera(pointsInCourtCoordination), item => (Point2i)item
+                );
+
+                var position = pointsInCameraCoordination[0];
+
+                Cv2.Circle(
+                    image,
+                    position.X, position.Y,
+                    radius: (int)ChargingPile.InfluenceScopeRadius,
+                    color: color,
+                    thickness: 2
+                );
             }
         }
 
@@ -357,6 +361,34 @@ public partial class MainWindow : Form
                 target_img.CopyTo(Pos);
 
             }
+        }
+
+        // Draw vehicles
+        foreach (Point2i c1 in localizer.GetCentres(Camp.A).ToArray())
+        {
+            var Tx = c1.X;
+            Tx = Math.Max(Tx, 0);
+            Tx = Math.Min(Tx, image.Cols - iconCarB.Cols);
+
+            var Ty = c1.Y;
+            Ty = Math.Max(Ty, 0);
+            Ty = Math.Min(Ty, image.Rows - iconCarB.Rows);
+
+            Mat Pos = new Mat(image, new Rect(Tx, Ty, iconCarA.Cols, iconCarA.Rows));
+            iconCarA.CopyTo(Pos);
+        }
+        foreach (Point2i c2 in localizer.GetCentres(Camp.B).ToArray())
+        {
+            var Tx = c2.X;
+            Tx = Math.Max(Tx, 0);
+            Tx = Math.Min(Tx, image.Cols - iconCarB.Cols);
+
+            var Ty = c2.Y;
+            Ty = Math.Max(Ty, 0);
+            Ty = Math.Min(Ty, image.Rows - iconCarB.Rows);
+
+            Mat Pos = new Mat(image, new Rect(Tx, Ty, iconCarB.Cols, iconCarB.Rows));
+            iconCarB.CopyTo(Pos);
         }
 
         return image;
