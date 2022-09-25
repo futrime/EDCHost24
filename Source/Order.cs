@@ -13,28 +13,37 @@ public class Order
     public enum StatusType
     {
         /// <summary>
+        /// The order is ungenerated.
+        /// </summary>
+        UnGenerated = 0,
+        /// <summary>
         /// The order is ready for picking up.
         /// </summary>
-        Pending = 0,
+        Pending = 1,
         /// <summary>
         /// The order is in delivery.
         /// </summary>
-        InDelivery = 1,
+        InDelivery = 2,
         /// <summary>
         /// The order is delivered.
         /// </summary>
-        Delivered = 2
+        Delivered = 3
     }
 
+    private const int OverTimePenalty = 5; // per second
+    /// <summary>
+    /// The order is delivered.
+    /// </summary>
+    private const int ScheduledScore = 25;
 
     private Dot _departurePosition;
     private Dot _destinationPosition;
 
     private long _generationTime;
     private long _deliveryTimeLimit;
+    private long _firstCollisionTime;
 
     private StatusType _status;
-
     /// <summary>
     /// The departure position
     /// </summary>
@@ -51,6 +60,10 @@ public class Order
     /// The delivery time limit
     /// </summary>
     public long DeliveryTime => this._deliveryTimeLimit;
+    /// <summary>
+    /// The time of first collision with car 
+    /// </summary>
+    public long FirstCollisionTime => this._firstCollisionTime;
     /// <summary>
     /// The order status
     /// </summary>
@@ -108,6 +121,51 @@ public class Order
         this._destinationPosition = destinationPosition;
         this._generationTime = generationTime;
         this._deliveryTimeLimit = deliveryTimeLimit;
+        this._firstCollisionTime = -1;
         this._status = StatusType.Pending;
+    }
+    /// <summary>
+    /// Only if the _firstCollisionTime is -1, it can be revised
+    /// </summary>
+    public bool AddFirstCollisionTime(long time)
+    {
+        if (this._firstCollisionTime == -1)
+        {
+            this._firstCollisionTime = time;
+            return true;
+        }
+        // failed to revise
+        else
+        {
+            return false;
+        }
+    }
+    /// <summary>
+    /// Get Order score, 
+    /// </summary>
+    public int GetPackageScore(int arrivalTime)
+    {
+        int orderScore = 0;
+
+        if (arrivalTime <= this.DeliveryTime)
+        {
+            orderScore = ScheduledScore;
+        }
+        else
+        {
+            orderScore = ScheduledScore + (int)((this.DeliveryTime - arrivalTime) * OverTimePenalty / 1000);
+        }
+
+        return orderScore;
+    }
+
+    public double Distance2Departure(Dot dot)
+    {
+        return Dot.Distance(dot, this._departurePosition);
+    }
+
+    public double Distance2Destination(Dot dot)
+    {
+        return Dot.Distance(dot, this._destinationPosition);
     }
 }
