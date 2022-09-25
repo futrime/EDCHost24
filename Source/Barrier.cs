@@ -7,9 +7,6 @@ namespace EdcHost;
 /// </summary>
 public class Barrier
 {
-    private Dot _topLeftPosition;
-    private Dot _bottomRightPosition;
-
     /// <summary>
     /// The position of the top left corner
     /// </summary>
@@ -18,6 +15,9 @@ public class Barrier
     /// The position of the bottom right corner
     /// </summary>
     public Dot BottomRightPosition => this._bottomRightPosition;
+
+    private Dot _topLeftPosition;
+    private Dot _bottomRightPosition;
 
 
     /// <summary>
