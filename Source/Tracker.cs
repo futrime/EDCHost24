@@ -12,6 +12,9 @@ using Point2i = OpenCvSharp.Point;
 namespace EdcHost;
 public partial class Tracker : Form
 {
+    private const int IconSize = 20;
+
+
     public MyFlags _flags = new MyFlags();
     public VideoCapture _camera = new VideoCapture();
     private Point2f[] _monitorCorners = new Point2f[4];
@@ -206,7 +209,23 @@ public partial class Tracker : Form
     /// <param name="localizer">The localiser</param>
     private Mat PaintPattern(ref Mat image, Localiser localizer)
     {
-        // Draw cross patterns at the corners.
+        // Read icons
+        var iconCarA = new Mat(@"Assets\Icons\VehicleRed.png", ImreadModes.Color);
+        var iconCarB = new Mat(@"Assets\Icons\VehicleBlue.png", ImreadModes.Color);
+        var iconTakeawayDeparture = new Mat(@"Assets\Icons\Package.png", ImreadModes.Color);
+        var iconTakeawayDestination = new Mat(@"Assets\Icons\Zone.png", ImreadModes.Color);
+        Cv2.Resize(src: iconCarA, dst: iconCarA, dsize: new OpenCvSharp.Size(IconSize, IconSize));
+        Cv2.Resize(src: iconCarB, dst: iconCarB, dsize: new OpenCvSharp.Size(IconSize, IconSize));
+        Cv2.Resize(
+            src: iconTakeawayDeparture, dst: iconTakeawayDeparture,
+            dsize: new OpenCvSharp.Size(IconSize, IconSize)
+        );
+        Cv2.Resize(
+            src: iconTakeawayDestination, dst: iconTakeawayDestination,
+            dsize: new OpenCvSharp.Size(IconSize, IconSize)
+        );
+
+        // Draw crosses at the corners.
         foreach (Point2f pt in this._coordinateConverter.MonitorToCamera(this._monitorCorners))
         {
             Cv2.Line(
@@ -224,25 +243,6 @@ public partial class Tracker : Form
                 thickness: 3
             );
         }
-
-        // Read icons
-        Mat iconCarA, iconCarB, iconTakeawayDeparture, iconTakeawayDestination;
-        iconCarA = new Mat(@"Assets\Icons\VehicleRed.png", ImreadModes.Color);
-        iconCarB = new Mat(@"Assets\Icons\VehicleBlue.png", ImreadModes.Color);
-        iconTakeawayDeparture = new Mat(@"Assets\Icons\Package.png", ImreadModes.Color);
-        iconTakeawayDestination = new Mat(@"Assets\Icons\Zone.png", ImreadModes.Color);
-
-        const int IconSize = 20;
-        Cv2.Resize(src: iconCarA, dst: iconCarA, dsize: new OpenCvSharp.Size(IconSize, IconSize));
-        Cv2.Resize(src: iconCarB, dst: iconCarB, dsize: new OpenCvSharp.Size(IconSize, IconSize));
-        Cv2.Resize(
-            src: iconTakeawayDeparture, dst: iconTakeawayDeparture,
-            dsize: new OpenCvSharp.Size(IconSize, IconSize)
-        );
-        Cv2.Resize(
-            src: iconTakeawayDestination, dst: iconTakeawayDestination,
-            dsize: new OpenCvSharp.Size(IconSize, IconSize)
-        );
 
         // Draw vehicle icons
         if (_game.GetCamp() == Camp.A)
