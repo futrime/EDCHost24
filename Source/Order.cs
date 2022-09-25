@@ -13,21 +13,21 @@ public class Order
     public enum StatusType
     {
         /// <summary>
-        /// The order is ungenerated.
+        /// The order is not generated.
         /// </summary>
-        UnGenerated = 0,
+        Ungenerated,
         /// <summary>
         /// The order is ready for picking up.
         /// </summary>
-        Pending = 1,
+        Pending,
         /// <summary>
         /// The order is in delivery.
         /// </summary>
-        InDelivery = 2,
+        InDelivery,
         /// <summary>
         /// The order is delivered.
         /// </summary>
-        Delivered = 3
+        Delivered
     }
 
     private const int OverTimePenalty = 5; // per second
@@ -43,7 +43,8 @@ public class Order
     private long _deliveryTimeLimit;
     private long _firstCollisionTime;
 
-    private StatusType _status;
+    private StatusType _status = StatusType.Ungenerated;
+
     /// <summary>
     /// The departure position
     /// </summary>
