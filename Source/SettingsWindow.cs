@@ -5,12 +5,12 @@ using System.IO.Ports;
 using OpenCvSharp;
 
 namespace EdcHost;
-public partial class SetWindow : Form
+public partial class SettingsWindow : Form
 {
     private MyFlags _flags;
     private Game _game;
-    private Tracker _tracker;
-    public SetWindow(ref MyFlags flags, ref Game game, Tracker tracker)
+    private MainWindow _tracker;
+    public SettingsWindow(ref MyFlags flags, ref Game game, MainWindow tracker)
     {
         InitializeComponent();
         _flags = flags;

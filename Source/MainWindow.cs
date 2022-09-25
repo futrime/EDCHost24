@@ -10,7 +10,7 @@ using OpenCvSharp.Extensions;
 using Point2i = OpenCvSharp.Point;
 
 namespace EdcHost;
-public partial class Tracker : Form
+public partial class MainWindow : Form
 {
     private const int IconSize = 20;
 
@@ -35,7 +35,7 @@ public partial class Tracker : Form
     public string[] _availableSerialPortList;
 
 
-    public Tracker()
+    public MainWindow()
     {
         InitializeComponent();
 
@@ -61,14 +61,7 @@ public partial class Tracker : Form
         // 以既有的flags参数初始化坐标转换器
         _coordinateConverter = new CoordinateConverter(_flags);
 
-        buttonStart.Enabled = true;
-        buttonPause.Enabled = false;
-        button_Continue.Enabled = false;
-
         _availableSerialPortList = SerialPort.GetPortNames();
-
-        //Game.LoadMap();
-        _game = new Game();
 
         // 如果视频流开启，开始进行计时器事件
         if (_camera.IsOpened())
@@ -84,34 +77,62 @@ public partial class Tracker : Form
             // 启动计时器，执行给迷宫外的小车定时发信息的任务
             timerMsg100ms.Start();
         }
-
-        Debug.WriteLine("Tracker Initialize Finished\n");
     }
 
-    // 进行界面刷新、读取摄像头图像、与游戏逻辑交互的周期性函数
-    private void Flush()
+    /// <summary>
+    /// Refresh everything.
+    /// </summary>
+    private void RefreshAll()
     {
         this.VideoProcess();
 
-        var carAPosition = new Dot(this._carAPosition);
-        var carBPosition = new Dot(this._carBPosition);
-
-        // Refresh the game
-        if (this._game.GetCamp() == Camp.A)
+        if (this._game.GameState == GameState.Unstarted)
         {
-            this._game.Refresh(carAPosition);
+            this.buttonStart.Enabled = true;
+            this.buttonPause.Enabled = false;
+            this.button_Continue.Enabled = false;
+            this.buttonEnd.Enabled = false;
         }
-        else if (this._game.GetCamp() == Camp.B)
+        else if (this._game.GameState == GameState.Running)
         {
-            this._game.Refresh(carBPosition);
+            this.buttonStart.Enabled = false;
+            this.buttonPause.Enabled = true;
+            this.button_Continue.Enabled = false;
+            this.buttonEnd.Enabled = true;
+
+            var carAPosition = new Dot(this._carAPosition);
+            var carBPosition = new Dot(this._carBPosition);
+
+            // Refresh the game
+            if (this._game.GetCamp() == Camp.A)
+            {
+                this._game.Refresh(carAPosition);
+            }
+            else if (this._game.GetCamp() == Camp.B)
+            {
+                this._game.Refresh(carBPosition);
+            }
+
+            // Refresh the controls in the tracker form
+            this.labelAScore.Text = this._game.GetScore(Camp.A, this._game.GameStage).ToString();
+            this.labelBScore.Text = this._game.GetScore(Camp.B, this._game.GameStage).ToString();
+
+            this.GameTimeLabel.Text = Math.Max((decimal)this._game.RemainingTime / 1000, (decimal)0).ToString("0.00");
         }
-
-        // Refresh the controls in the tracker form
-        this.labelAScore.Text = this._game.GetScore(Camp.A, this._game.GameStage).ToString();
-        this.labelBScore.Text = this._game.GetScore(Camp.B, this._game.GameStage).ToString();
-
-        decimal currentTime = (decimal)this._game.RemainingTime / 1000;
-        this.GameTimeLabel.Text = (currentTime < 0 ? 0 : currentTime).ToString("0.00");
+        else if (this._game.GameState == GameState.Paused)
+        {
+            this.buttonStart.Enabled = false;
+            this.buttonPause.Enabled = false;
+            this.button_Continue.Enabled = true;
+            this.buttonEnd.Enabled = true;
+        }
+        else if (this._game.GameState == GameState.Ended)
+        {
+            this.buttonStart.Enabled = true;
+            this.buttonPause.Enabled = false;
+            this.button_Continue.Enabled = false;
+            this.buttonEnd.Enabled = false;
+        }
 
         this.Refresh();
     }
@@ -162,8 +183,6 @@ public partial class Tracker : Form
             // 从视频流中读取一帧相机画面videoFrame
             if (_camera.Read(videoFrame))
             {
-                // 调用坐标转换器，将flags中设置的人员出发点从逻辑坐标转换为显示坐标
-                // coordCvt.PeopleFilter(flags);
 
                 // 调用定位器，进行图像处理，得到小车位置中心点集
                 // 第一个形参videoFrame传入的是指针，所以videoFrame已被修改（画上了红蓝圆点）
@@ -189,7 +208,7 @@ public partial class Tracker : Form
                 _carBPosition = (Point2i)logicCars[1];
 
                 // 在显示的画面上绘制小车，乘客，物资等对应的图案
-                videoFrame = PaintPattern(ref videoFrame, _vehicleLocalizer);
+                videoFrame = PaintPattern(videoFrame, _vehicleLocalizer);
 
                 // 将摄像头视频帧缩放成显示帧
                 // Resize函数的最后一个参数是缩放函数的插值算法
@@ -207,7 +226,7 @@ public partial class Tracker : Form
     /// </summary>
     /// <param name="image">The background picture</param>
     /// <param name="localizer">The localiser</param>
-    private Mat PaintPattern(ref Mat image, Localiser localizer)
+    private Mat PaintPattern(Mat image, Localiser localizer)
     {
         // Read icons
         var iconCarA = new Mat(@"Assets\Icons\VehicleRed.png", ImreadModes.Color);
@@ -321,58 +340,10 @@ public partial class Tracker : Form
         }
 
         // Draw charging piles
-        List<Dot> stationlistA = Station.StationOnStage(0);
-        List<Dot> stationlistB = Station.StationOnStage(1);
-
-        int station_numA = stationlistA.Count;
-        int station_numB = stationlistB.Count;
-
-        if (station_numA != 0)
-        {
-            List<Point2f> logicDots2A = new List<Point2f>();
-            foreach (Dot dot in stationlistA)
-            {
-                logicDots2A.Add(dot.ToPoint());
-            }
-            List<Point2f> showDots2A = new List<Point2f>(_coordinateConverter.CourtToCamera(logicDots2A.ToArray()));
-            // 第一阶段，只绘制本阶段的充电桩
-            // 第二阶段，绘制双方的充电桩
-            // 这里将A车的绘制成红色，B车绘制成绿色
-            if ((_game.GameStage == GameStage.FirstHalf && _game.GetCamp() == Camp.A)
-                || _game.GameStage == GameStage.SecondHalf)
-            {
-                int x = (int)showDots2A[0].X;
-                int y = (int)showDots2A[0].Y;
-                Cv2.Circle(image, x, y, 5, new Scalar(0xff, 0x00, 0x00), -1);
-                //Debug.WriteLine("Paint the package of campa");
-            }
-        }
-        else if (station_numB != 0)
-        {
-            List<Point2f> logicDots2B = new List<Point2f>();
-            // 第一阶段，只绘制本阶段的充电桩
-            // 第二阶段，绘制双方的充电桩
-            // 这里将A车的绘制成红色，B车绘制成绿色
-            foreach (Dot dot in stationlistB)
-            {
-                logicDots2B.Add(dot.ToPoint());
-            }
-
-            List<Point2f> showDots2B = new List<Point2f>(_coordinateConverter.CourtToCamera(logicDots2B.ToArray()));
-
-
-            if ((_game.GameStage == GameStage.FirstHalf && _game.GetCamp() == Camp.B)
-                || _game.GameStage == GameStage.SecondHalf)
-            {
-                int x = (int)showDots2B[0].X;
-                int y = (int)showDots2B[0].Y;
-                Cv2.Circle(image, x, y, 5, new Scalar(0x00, 0xff, 0x00), -1);
-                //Debug.WriteLine("Paint the package of campb");
-            }
-        }
+        // To be implemented
 
         // Draw Barriers
-        if (_game.GameState == GameState.Running)
+        if (this._game.GameState == GameState.Running || this._game.GameState == GameState.Paused)
         {
             for (int i = 0; i < _game.BarrierList.Count; i++)
             {
@@ -395,7 +366,8 @@ public partial class Tracker : Form
             }
         }
 
-        if (GameState.Running == _game.GameState)
+        // Draw departures and destinations of orders
+        if (this._game.GameState == GameState.Running || this._game.GameState == GameState.Paused)
         {
             // 找到当前的车队
             Vehicle current_car = this._game.GetCar(this._game.GetCamp());
@@ -579,14 +551,14 @@ public partial class Tracker : Form
         }
         else
         {
-            throw new Exception("The game stage or the camp is invalid.");
+            return;
         }
     }
 
     // Pause
     private void OnPauseButtonClick(object sender, EventArgs e)
     {
-        _game.Pause();
+        this._game.Pause();
     }
 
     // Continue
@@ -601,9 +573,9 @@ public partial class Tracker : Form
         _game.End();
     }
 
-    private void OnRestartButtonClick(object sender, EventArgs e)
+    private void OnResetButtonClick(object sender, EventArgs e)
     {
-        _game = new Game();
+        this._game = new Game();
     }
 
     // Get foul mark
@@ -617,14 +589,14 @@ public partial class Tracker : Form
     {
         lock (_flags)
         {
-            SetWindow st = new SetWindow(ref _flags, ref _game, this);
+            SettingsWindow st = new SettingsWindow(ref _flags, ref _game, this);
             st.Show();
         }
     }
 
     private void OnTimerTick(object sender, EventArgs e)
     {
-        this.Flush();
+        this.RefreshAll();
         this.Communicate();
     }
 

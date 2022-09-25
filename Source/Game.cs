@@ -278,9 +278,9 @@ public class Game
     {
         if (GameState != GameState.Running)
         {
-            Debug.WriteLine("Pause failed! No race is going on.");
             return;
         }
+
         GameState = GameState.Paused;
     }
 
@@ -293,45 +293,14 @@ public class Game
         GameState = GameState.Running;
     }
 
-    // finish on a manul mode
     public void End()
     {
         if (GameState != GameState.Running)
         {
-            Debug.WriteLine("Failed! There is no game going on");
+            return;
         }
 
-        //Reset Car and Save Score
-        if (_camp == Camp.A)
-        {
-            _scoreA[(int)GameStage - 1] = _vehicleA.GetScore();
-            _vehicleA.Reset();
-        }
-        else if (_camp == Camp.B)
-        {
-            _scoreB[(int)GameStage - 1] = _vehicleB.GetScore();
-            _vehicleB.Reset();
-        }
-
-        // Reset pointer which used to genrate packages
-        // if (mGameStage == GameStage.FIRST_HALF)
-        // {
-        //     mPackageFirstHalf.ResetPointer();
-        // }
-        // else if (mGameStage == GameStage.SECOND_HALF)
-        // {
-        //     mPackageSecondHalf.ResetPointer();
-        // }
-        _orderGenerator.Reset();
-
-        // set state param of game
-        GameState = GameState.Unstarted;
-        GameStage = GameStage.None;
-        _camp = Camp.None;
-
-        _pendingOrderList.Clear();
-
-        _startTime = -1;
+        GameState = GameState.Ended;
     }
 
     public List<Order> OrdersRemain()
