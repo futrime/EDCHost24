@@ -268,57 +268,31 @@ public partial class MainWindow : Form
         {
             foreach (Point2i c1 in localizer.GetCentres(Camp.A).ToArray())
             {
-                int Tx = c1.X;
-                int Ty = c1.Y;
-                int Tcol = iconCarA.Cols;
-                int Trow = iconCarA.Rows;
-                if (Tx < 0)
-                {
-                    Tx = 0;
-                }
-                if (Ty < 0)
-                {
-                    Ty = 0;
-                }
-                if (Tx + Tcol > image.Cols)
-                {
-                    Tx = image.Cols - Tcol;
-                }
-                if (Ty + Trow > image.Rows)
-                {
-                    Ty = image.Rows - Trow;
-                }
+                var Tx = c1.X;
+                Tx = Math.Max(Tx, 0);
+                Tx = Math.Min(Tx, image.Cols - iconCarB.Cols);
 
-                Mat Pos = new Mat(image, new Rect(Tx, Ty, Tcol, Trow));
-                iconCarA.CopyTo(Pos);
+                var Ty = c1.Y;
+                Ty = Math.Max(Ty, 0);
+                Ty = Math.Min(Ty, image.Rows - iconCarB.Rows);
+
+                Mat Pos = new Mat(image, new Rect(Tx, Ty, iconCarB.Cols, iconCarB.Rows));
+                iconCarB.CopyTo(Pos);
             }
         }
         else if (_game.GetCamp() == Camp.B)
         {
             foreach (Point2i c2 in localizer.GetCentres(Camp.B).ToArray())
             {
-                int Tx = c2.X;
-                int Ty = c2.Y;
-                int Tcol = iconCarB.Cols;
-                int Trow = iconCarB.Rows;
-                if (Tx < 0)
-                {
-                    Tx = 0;
-                }
-                if (Ty < 0)
-                {
-                    Ty = 0;
-                }
-                if (Tx + Tcol > image.Cols)
-                {
-                    Tx = image.Cols - Tcol;
-                }
-                if (Ty + Trow > image.Rows)
-                {
-                    Ty = image.Rows - Trow;
-                }
+                var Tx = c2.X;
+                Tx = Math.Max(Tx, 0);
+                Tx = Math.Min(Tx, image.Cols - iconCarB.Cols);
 
-                Mat Pos = new Mat(image, new Rect(Tx, Ty, Tcol, Trow));
+                var Ty = c2.Y;
+                Ty = Math.Max(Ty, 0);
+                Ty = Math.Min(Ty, image.Rows - iconCarB.Rows);
+
+                Mat Pos = new Mat(image, new Rect(Tx, Ty, iconCarB.Cols, iconCarB.Rows));
                 iconCarB.CopyTo(Pos);
             }
         }
