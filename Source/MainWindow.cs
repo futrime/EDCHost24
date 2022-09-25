@@ -239,37 +239,31 @@ public partial class MainWindow : Form
         }
 
         // Draw vehicles
-        if (_game.GetCamp() == Camp.A)
+        foreach (Point2i c1 in localizer.GetCentres(Camp.A).ToArray())
         {
-            foreach (Point2i c1 in localizer.GetCentres(Camp.A).ToArray())
-            {
-                var Tx = c1.X;
-                Tx = Math.Max(Tx, 0);
-                Tx = Math.Min(Tx, image.Cols - iconCarB.Cols);
+            var Tx = c1.X;
+            Tx = Math.Max(Tx, 0);
+            Tx = Math.Min(Tx, image.Cols - iconCarB.Cols);
 
-                var Ty = c1.Y;
-                Ty = Math.Max(Ty, 0);
-                Ty = Math.Min(Ty, image.Rows - iconCarB.Rows);
+            var Ty = c1.Y;
+            Ty = Math.Max(Ty, 0);
+            Ty = Math.Min(Ty, image.Rows - iconCarB.Rows);
 
-                Mat Pos = new Mat(image, new Rect(Tx, Ty, iconCarB.Cols, iconCarB.Rows));
-                iconCarB.CopyTo(Pos);
-            }
+            Mat Pos = new Mat(image, new Rect(Tx, Ty, iconCarA.Cols, iconCarA.Rows));
+            iconCarA.CopyTo(Pos);
         }
-        else if (_game.GetCamp() == Camp.B)
+        foreach (Point2i c2 in localizer.GetCentres(Camp.B).ToArray())
         {
-            foreach (Point2i c2 in localizer.GetCentres(Camp.B).ToArray())
-            {
-                var Tx = c2.X;
-                Tx = Math.Max(Tx, 0);
-                Tx = Math.Min(Tx, image.Cols - iconCarB.Cols);
+            var Tx = c2.X;
+            Tx = Math.Max(Tx, 0);
+            Tx = Math.Min(Tx, image.Cols - iconCarB.Cols);
 
-                var Ty = c2.Y;
-                Ty = Math.Max(Ty, 0);
-                Ty = Math.Min(Ty, image.Rows - iconCarB.Rows);
+            var Ty = c2.Y;
+            Ty = Math.Max(Ty, 0);
+            Ty = Math.Min(Ty, image.Rows - iconCarB.Rows);
 
-                Mat Pos = new Mat(image, new Rect(Tx, Ty, iconCarB.Cols, iconCarB.Rows));
-                iconCarB.CopyTo(Pos);
-            }
+            Mat Pos = new Mat(image, new Rect(Tx, Ty, iconCarB.Cols, iconCarB.Rows));
+            iconCarB.CopyTo(Pos);
         }
 
         // Draw charging piles
@@ -281,23 +275,24 @@ public partial class MainWindow : Form
         // Draw Barriers
         if (this._game.GameState == GameState.Running || this._game.GameState == GameState.Paused)
         {
-            for (int i = 0; i < _game.BarrierList.Count; i++)
+            foreach (var barrier in this._game.BarrierList)
             {
-                Dot StartDot = _game.BarrierList[i].TopLeftPosition;
-                Dot EndDot = _game.BarrierList[i].BottomRightPosition;
+                Dot topLeftPosition = barrier.TopLeftPosition;
+                Dot bottomRightPosition = barrier.BottomRightPosition;
 
-                Point2f[] pointsInCourtCoordination = { StartDot.ToPoint(), EndDot.ToPoint() };
+                Point2f[] pointsInCourtCoordination = { topLeftPosition.ToPoint(), bottomRightPosition.ToPoint() };
 
                 Point2i[] pointsInCameraCoordination = Array.ConvertAll(
                     _coordinateConverter.CourtToCamera(pointsInCourtCoordination), item => (Point2i)item
                 );
 
-                Cv2.Rectangle(image, pointsInCameraCoordination[0], pointsInCameraCoordination[1], color: Scalar.Red, 2);
-                for (int k = 4; k < pointsInCameraCoordination[1].X - pointsInCameraCoordination[0].X; k += 5)
+                Cv2.Rectangle(image, pointsInCameraCoordination[0], pointsInCameraCoordination[1], color: Scalar.Yellow, thickness: 2);
+
+                for (int i = pointsInCameraCoordination[0].X; i < pointsInCameraCoordination[1].X; i += 2)
                 {
-                    Point2i upperPoint = new Point2i(pointsInCameraCoordination[0].X + k, pointsInCameraCoordination[0].Y);
-                    Point2i lowerPoint = new Point2i(pointsInCameraCoordination[0].X + k, pointsInCameraCoordination[1].Y);
-                    Cv2.Line(image, upperPoint, lowerPoint, color: Scalar.Orange, 1);
+                    Point2i upperPoint = new Point2i(i, pointsInCameraCoordination[0].Y);
+                    Point2i lowerPoint = new Point2i(i, pointsInCameraCoordination[1].Y);
+                    Cv2.Line(image, upperPoint, lowerPoint, color: Scalar.Yellow, 1);
                 }
             }
         }
