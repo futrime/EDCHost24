@@ -5,35 +5,9 @@ namespace EdcHost;
 /// </summary>
 public enum Camp
 {
-    NONE = 0,
-    A = 1,
-    B = 2
-};
-
-/// <summary>
-/// The game state
-/// </summary>
-public enum GameState
-{
-    /// <summary>
-    /// The game has not started yet
-    /// </summary>
-    UNSTART = 0,
-
-    /// <summary>
-    /// The game is in progress
-    /// </summary>
-    RUN = 1,
-
-    /// <summary>
-    /// The game is paused
-    /// </summary>
-    PAUSE = 2,
-
-    /// <summary>
-    /// The game is ended
-    /// </summary>
-    END = 3
+    None,
+    A,
+    B
 };
 
 /// <summary>
@@ -44,15 +18,41 @@ public enum GameStage
     /// <summary>
     /// Undefined stage
     /// </summary>
-    NONE = 0,
+    None,
 
     /// <summary>
     /// The first half
     /// </summary>
-    FIRST_HALF = 1,
+    FirstHalf,
 
     /// <summary>
     /// The second half
     /// </summary>
-    SECOND_HALF = 2
+    SecondHalf
+};
+
+/// <summary>
+/// The game state
+/// </summary>
+public enum GameState
+{
+    /// <summary>
+    /// The game has not started yet
+    /// </summary>
+    Unstarted,
+
+    /// <summary>
+    /// The game is in progress
+    /// </summary>
+    Running,
+
+    /// <summary>
+    /// The game is paused
+    /// </summary>
+    Paused,
+
+    /// <summary>
+    /// The game is ended
+    /// </summary>
+    Ended
 };

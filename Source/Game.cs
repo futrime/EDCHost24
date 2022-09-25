@@ -57,7 +57,7 @@ public class Game
     {
         get
         {
-            if (this._gameState != GameState.RUN)
+            if (this._gameState != GameState.Running)
             {
                 return 0;
             }
@@ -70,7 +70,7 @@ public class Game
     {
         get
         {
-            if (this._gameState != GameState.RUN)
+            if (this._gameState != GameState.Running)
             {
                 return 0;
             }
@@ -119,10 +119,10 @@ public class Game
     {
         Debug.WriteLine("Call Constructor of Game");
 
-        _gameState = GameState.UNSTART;
-        _gameStage = GameStage.NONE;
+        _gameState = GameState.Unstarted;
+        _gameStage = GameStage.None;
 
-        _camp = Camp.NONE;
+        _camp = Camp.None;
 
         mCarA = new Car(Camp.A);
         mCarB = new Car(Camp.B);
@@ -149,12 +149,12 @@ public class Game
     public void UpdateOnEachFrame(Dot _CarPos)
     {
         // check the game state
-        if (_gameState == GameState.UNSTART || _gameState == GameState.PAUSE || _gameState == GameState.END)
+        if (_gameState == GameState.Unstarted || _gameState == GameState.Paused || _gameState == GameState.Ended)
         {
             return;
         }
 
-        if (_camp == Camp.NONE)
+        if (_camp == Camp.None)
         {
             throw new Exception("The camp is invalid.");
         }
@@ -182,15 +182,15 @@ public class Game
             this.IsInChargingPileInfluenceScope(Camp.B, _CarPos), ref _pendingOrderList, out TimePenalty);
         }
 
-        if (this._gameState == GameState.RUN)
+        if (this._gameState == GameState.Running)
         {
             // Calculate the remaining time
             switch (this._gameStage)
             {
-                case GameStage.FIRST_HALF:
+                case GameStage.FirstHalf:
                     this._gameDuration = Game.FIRST_HALF_TIME;
                     break;
-                case GameStage.SECOND_HALF:
+                case GameStage.SecondHalf:
                     this._gameDuration = Game.SECOND_HALF_TIME;
                     break;
                 default:
@@ -202,7 +202,7 @@ public class Game
             //judge wether to end the game automatiacally
             if (RemainingTime <= 0)
             {
-                _gameState = GameState.END;
+                _gameState = GameState.Ended;
                 Debug.WriteLine("Time remaining is up to 0. The End.");
             }
         }
@@ -236,19 +236,19 @@ public class Game
     // decide which team and stage is going on
     public void Start(Camp _camp, GameStage _GameStage)
     {
-        if (_gameState == GameState.RUN)
+        if (_gameState == GameState.Running)
         {
             Debug.WriteLine("Failed! The current game is going on");
             return;
         }
 
-        if (_GameStage != GameStage.FIRST_HALF && _GameStage != GameStage.SECOND_HALF)
+        if (_GameStage != GameStage.FirstHalf && _GameStage != GameStage.SecondHalf)
         {
             Debug.WriteLine("Failed to set game stage! Expect input to be GameStage.FIRST_HALF or GameStage.SECOND_HALF");
         }
 
         // set state param of game
-        _gameState = GameState.RUN;
+        _gameState = GameState.Running;
         _gameStage = _GameStage;
         this._camp = _camp;
 
@@ -261,11 +261,11 @@ public class Game
             mScoreB[(int)_gameStage - 1] = 0;
         }
 
-        if (_gameStage == GameStage.FIRST_HALF)
+        if (_gameStage == GameStage.FirstHalf)
         {
             this._gameDuration = FIRST_HALF_TIME;
         }
-        else if (_gameStage == GameStage.SECOND_HALF)
+        else if (_gameStage == GameStage.SecondHalf)
         {
             this._gameDuration = SECOND_HALF_TIME;
         }
@@ -322,27 +322,27 @@ public class Game
 
     public void Pause()
     {
-        if (_gameState != GameState.RUN)
+        if (_gameState != GameState.Running)
         {
             Debug.WriteLine("Pause failed! No race is going on.");
             return;
         }
-        _gameState = GameState.PAUSE;
+        _gameState = GameState.Paused;
     }
 
     public void Continue()
     {
-        if (_gameState != GameState.PAUSE)
+        if (_gameState != GameState.Paused)
         {
             Debug.WriteLine("Continue Failed! No race is suspended");
         }
-        _gameState = GameState.RUN;
+        _gameState = GameState.Running;
     }
 
     // finish on a manul mode
     public void End()
     {
-        if (_gameState != GameState.RUN)
+        if (_gameState != GameState.Running)
         {
             Debug.WriteLine("Failed! There is no game going on");
         }
@@ -371,9 +371,9 @@ public class Game
         _orderGenerator.Reset();
 
         // set state param of game
-        _gameState = GameState.UNSTART;
-        _gameStage = GameStage.NONE;
-        _camp = Camp.NONE;
+        _gameState = GameState.Unstarted;
+        _gameStage = GameStage.None;
+        _camp = Camp.None;
 
         _pendingOrderList.Clear();
 
@@ -392,7 +392,7 @@ public class Game
 
     public int GetScore(Camp c, GameStage gs)
     {
-        if (gs == GameStage.NONE)
+        if (gs == GameStage.None)
         {
             return 0;
         }

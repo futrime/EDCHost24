@@ -338,8 +338,8 @@ public partial class Tracker : Form
             // 第一阶段，只绘制本阶段的充电桩
             // 第二阶段，绘制双方的充电桩
             // 这里将A车的绘制成红色，B车绘制成绿色
-            if ((_game._gameStage == GameStage.FIRST_HALF && _game.GetCamp() == Camp.A)
-                || _game._gameStage == GameStage.SECOND_HALF)
+            if ((_game._gameStage == GameStage.FirstHalf && _game.GetCamp() == Camp.A)
+                || _game._gameStage == GameStage.SecondHalf)
             {
                 int x = (int)showDots2A[0].X;
                 int y = (int)showDots2A[0].Y;
@@ -361,8 +361,8 @@ public partial class Tracker : Form
             List<Point2f> showDots2B = new List<Point2f>(_coordinateConverter.CourtToCamera(logicDots2B.ToArray()));
 
 
-            if ((_game._gameStage == GameStage.FIRST_HALF && _game.GetCamp() == Camp.B)
-                || _game._gameStage == GameStage.SECOND_HALF)
+            if ((_game._gameStage == GameStage.FirstHalf && _game.GetCamp() == Camp.B)
+                || _game._gameStage == GameStage.SecondHalf)
             {
                 int x = (int)showDots2B[0].X;
                 int y = (int)showDots2B[0].Y;
@@ -372,7 +372,7 @@ public partial class Tracker : Form
         }
 
         // Draw Barriers
-        if (_game._gameState == GameState.RUN)
+        if (_game._gameState == GameState.Running)
         {
             for (int i = 0; i < _game.BarrierList.Count; i++)
             {
@@ -395,7 +395,7 @@ public partial class Tracker : Form
             }
         }
 
-        if (GameState.RUN == _game._gameState)
+        if (GameState.Running == _game._gameState)
         {
             // 找到当前的车队
             Car current_car = this._game.GetCar(this._game.GetCamp());
@@ -553,28 +553,28 @@ public partial class Tracker : Form
 
     private void OnStartButtonClick(object sender, EventArgs e)
     {
-        if (this._game._gameStage == GameStage.NONE &&
-            this._game.GetCamp() == Camp.NONE)
+        if (this._game._gameStage == GameStage.None &&
+            this._game.GetCamp() == Camp.None)
         {
-            _game.Start(Camp.A, GameStage.FIRST_HALF);
+            _game.Start(Camp.A, GameStage.FirstHalf);
             label_GameCount.Text = "上半场";
         }
-        else if (this._game._gameStage == GameStage.FIRST_HALF &&
+        else if (this._game._gameStage == GameStage.FirstHalf &&
             this._game.GetCamp() == Camp.A)
         {
-            _game.Start(Camp.B, GameStage.FIRST_HALF);
+            _game.Start(Camp.B, GameStage.FirstHalf);
             label_GameCount.Text = "上半场";
         }
-        else if (this._game._gameStage == GameStage.FIRST_HALF &&
+        else if (this._game._gameStage == GameStage.FirstHalf &&
             this._game.GetCamp() == Camp.B)
         {
-            _game.Start(Camp.A, GameStage.SECOND_HALF);
+            _game.Start(Camp.A, GameStage.SecondHalf);
             label_GameCount.Text = "下半场";
         }
-        else if (this._game._gameStage == GameStage.SECOND_HALF &&
+        else if (this._game._gameStage == GameStage.SecondHalf &&
             this._game.GetCamp() == Camp.A)
         {
-            _game.Start(Camp.B, GameStage.SECOND_HALF);
+            _game.Start(Camp.B, GameStage.SecondHalf);
             label_GameCount.Text = "下半场";
         }
         else
