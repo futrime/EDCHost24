@@ -415,13 +415,13 @@ public partial class Tracker : Form
             }
         }
 
-        // Draw obstacles
-        if (Obstacle.IsLabySet == true && game.mGameState == GameState.RUN)
+        // Draw Barriers
+        if (game.mGameState == GameState.RUN)
         {
-            for (int i = 0; i < Obstacle.mpWallList.Length; i++)
+            for (int i = 0; i < game.BarrierList.Count; i++)
             {
-                Dot StartDot = Obstacle.mpWallList[i].w1;
-                Dot EndDot = Obstacle.mpWallList[i].w2;
+                Dot StartDot = game.BarrierList[i].TopLeftPosition;
+                Dot EndDot = game.BarrierList[i].BottomRightPosition;
 
                 Point2f[] pointsInCourtCoordination = { StartDot.ToPoint(), EndDot.ToPoint() };
 
@@ -439,16 +439,15 @@ public partial class Tracker : Form
             }
         }
 
-        if (Obstacle.IsLabySet == true && GameState.RUN == game.mGameState)
+        if (GameState.RUN == game.mGameState)
         {
             // 找到当前的车队
             Car current_car = this.game.GetCar(this.game.GetCamp());
             // 现在车上载有的外卖数量 
             int order_number_on_car = current_car.GetOrderCount();
-            foreach (Order ord in game.OrdersRemain())
+            foreach (Order ord in game.AllOrders)
             {
                 Order.StatusType currentOrderStatus = ord.Status;
-
                 //判断此外卖是否在车上
 
                 int Tx, Ty, Tcol, Trow;

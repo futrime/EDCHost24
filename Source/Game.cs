@@ -39,6 +39,14 @@ public class Game
 
     public const int MinDeliveryTime = 20;
     public const int MaxDeliveryTime = 60;
+
+    public const int MaxBarrierNum = 8;
+    // 障碍物的最小边长
+    public const int BarrierMinLength = 12;
+    // 障碍物的最大边长
+    public const int BarrierMaxLength = 16;
+
+    public const int BarrierMinDistanceFromBarrier = 20;
     // state
     public GameStage mGameStage;
     public GameState mGameState;
@@ -73,6 +81,16 @@ public class Game
 
     // store the packages on the field
     private OrderGenerator _orderGenerator;
+
+    /// <summary>
+    /// All orders in orderGenerator
+    /// </summary>
+    private List<Order> _allOrders;
+    public List<Order> AllOrders => _allOrders;
+
+    /// <summary>
+    /// orders remained on GUI
+    /// </summary>
     private List<Order> _ordersRemain;
 
     // Charge station set by Team A and B
@@ -82,12 +100,11 @@ public class Game
     private Camp mCamp;
 
     // obstacle
-    private Obstacle mObstacle;
+    private List<Barrier> _barrierList;
+    // 常引用
+    public List<Barrier> BarrierList => _barrierList;
 
 
-    // flags represents whether package list has been generated
-    private bool hasFirstPackageListGenerated;
-    private bool hasSecondPackageListGenerated;
     public bool DebugMode = false;
 
     /***********************************************************************
@@ -107,9 +124,6 @@ public class Game
 
         mScoreA = new int[] { 0, 0 };
         mScoreB = new int[] { 0, 0 };
-
-        hasFirstPackageListGenerated = false;
-        hasSecondPackageListGenerated = false;
 
         mChargeStation = new Station();
 
@@ -266,11 +280,49 @@ public class Game
         // initial packages on the field
         // 暂定时限为10-20s!!
         _orderGenerator = new OrderGenerator(MaxOrderNumber, (new Dot(0, 0), new Dot(MAX_SIZE, MAX_SIZE)),
-                                            (0, gameDuration), (MinDeliveryTime, MaxDeliveryTime));
+                                            (0, gameDuration), (MinDeliveryTime, MaxDeliveryTime), out _allOrders);
+
         InitialOrdersRemain();
 
         // 在生成包裹后生成障碍物 保证障碍物与包裹有一定距离
-        mObstacle = new Obstacle();
+        _barrierList = new List<Barrier>();
+
+        // Check if the new barrier is valid: Every Barrier should be away from the others.
+        bool AwayFromObstacles(Barrier targetBarrier, List<Barrier> barrierList)
+        {
+            int centerX = (targetBarrier.TopLeftPosition.x + targetBarrier.BottomRightPosition.x) / 2;
+            int centerY = (targetBarrier.TopLeftPosition.x + targetBarrier.BottomRightPosition.x) / 2;
+
+            foreach (Barrier barrier in barrierList)
+            {
+                if (barrier != null)
+                {
+                    int currentCenterX = (barrier.TopLeftPosition.x + barrier.TopLeftPosition.x) / 2;
+                    int currentCenterY = (barrier.BottomRightPosition.y + barrier.BottomRightPosition.y) / 2;
+
+                    //判断与障碍物的距离
+                    if (Math.Sqrt((centerX - currentCenterX) * (centerX - currentCenterX) +
+                        (centerY - currentCenterY) * (centerY - currentCenterY)) < BarrierMinDistanceFromBarrier)
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+        // the number of valid barrier
+        int currentBarrierNumber = 0;
+        while (currentBarrierNumber < MaxBarrierNum)
+        {
+            Barrier barrier = Barrier.GenerateRandomBarrier((new Dot(0, 0), new Dot(MAX_SIZE, MAX_SIZE)),
+            (new Dot(BarrierMinLength, BarrierMinLength), new Dot(BarrierMaxLength, BarrierMaxLength)));
+
+            if (AwayFromObstacles(barrier, _barrierList))
+            {
+                currentBarrierNumber += 1;
+                _barrierList.Add(barrier);
+            }
+        }
     }
 
     public void Pause()
@@ -564,9 +616,16 @@ public class Game
     //     return Boundary.isCollided(_CarPos, COLLISION_RADIUS);
     // }
 
-    private bool _IsInObstacle(Dot _CarPos)
+    private bool _IsInObstacle(Dot carPos)
     {
-        return Obstacle.isCollided(_CarPos, COLLISION_RADIUS);
+        foreach (Barrier barrier in _barrierList)
+        {
+            if (barrier.IsIn(carPos))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     private bool _IsInOpponentStation(Dot _CarPos)

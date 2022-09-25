@@ -23,11 +23,13 @@ public class OrderGenerator
     /// <param name="area">The area to generate</param>
     /// <param name="generationTimeRange">The generation time range</param>
     /// <param name="timeLimitRange">The time limit range</param>
+    /// <param name="allOrders">The output value which contains all orders</param>
     public OrderGenerator(
         int count,
         (Dot TopLeft, Dot BottomRight) area,
         (long Lower, long Upper) generationTimeRange,
-        (long Lower, long Upper) timeLimitRange
+        (long Lower, long Upper) timeLimitRange,
+        out List<Order> allOrders
     )
     {
         // Generate orders
@@ -45,6 +47,8 @@ public class OrderGenerator
             (order1, order2) =>
                 (order1.GenerationTime.CompareTo(order2.GenerationTime))
         );
+
+        allOrders = this._orderList;
     }
 
     /// <summary>

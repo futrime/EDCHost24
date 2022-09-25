@@ -24,8 +24,8 @@ public class Dot
     /// </summary>
     public int y
     {
-        get => this._x;
-        set => this._x = value;
+        get => this._y;
+        set => this._y = value;
     }
 
 

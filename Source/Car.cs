@@ -199,6 +199,7 @@ public class Car //选手的车
                 _deliveringOrder.Count <= MAX_PKG_COUNT)
             {
                 // ord.AddFirstCollisionTime(this.mGameTime);
+                ord.Take(mGameTime);
                 _deliveringOrder.Add(ord);
                 ordersRemain.Remove(ord);
                 mScore += PICK_CREDIT;
@@ -211,10 +212,12 @@ public class Car //选手的车
 
     private void DropPackage(Dot _CarPos)      //送达外卖 
     {
-        foreach (var ord in _deliveringOrder)
+        for (int i = 0; i < _deliveringOrder.Count; i++)
         {
+            Order ord = _deliveringOrder[i];
             if (ord.Status == Order.StatusType.InDelivery && Dot.Distance(ord.DestinationPosition, _CarPos) <= COLLISION_RADIUS)
             {
+                ord.Deliver(mGameTime);
                 // if (ord.DepartureFirstCollisionTime != -1 &&
                 //     this.mGameTime - ord.DepartureFirstCollisionTime > COLLISION_DETECTION_TIME)
                 // {
