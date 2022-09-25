@@ -129,7 +129,7 @@ public class Order
     )
     {
         // Validate the delivery time limit
-        if (deliveryTimeLimit <= 0 )
+        if (deliveryTimeLimit <= 0)
         {
             throw new Exception("The delivery time limit is invalid.");
         }

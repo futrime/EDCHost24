@@ -37,8 +37,8 @@ public class Dot
     /// <returns>The distance</returns>
     public static int Distance(Dot A, Dot B)
     {
-        return (int)Math.Sqrt((A.x - B.x) * (A.x - B.x)
-            + (A.y - B.y) * (A.y - B.y));
+        return (int)Math.Round(Math.Sqrt((A.x - B.x) * (A.x - B.x)
+            + (A.y - B.y) * (A.y - B.y)));
     }
 
     public Dot(int x, int y)

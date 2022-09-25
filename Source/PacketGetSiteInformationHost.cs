@@ -9,7 +9,7 @@ internal class PacketGetSiteInformationHost : Packet
     private int _obstacleListLength;
     private List<Barrier> _obstacleList;
     private GameStage _currentGameStage;
-    private double _duration;
+    private int _duration;
     private int _ownChargingPilesLength;
     private List<Dot> _ownChargingPiles;
     private int _opponentChargingPilesLength;
@@ -22,22 +22,19 @@ internal class PacketGetSiteInformationHost : Packet
     /// There is no field in this type of packets.
     /// </remarks>
     public PacketGetSiteInformationHost(
-        int obstacleListLength,
         List<Barrier> obstacleList,
         GameStage currentGameStage,
-        double duration,
-        int ownChargingPilesLength,
+        int duration,
         List<Dot> ownChargingPiles,
-        int opponentChargingPilesLength,
         List<Dot> opponentChargingPiles)
     {
-        this._obstacleListLength = obstacleListLength;
+        this._obstacleListLength = obstacleList.Count;
         this._obstacleList = obstacleList;
         this._currentGameStage = currentGameStage;
         this._duration = duration;
-        this._ownChargingPilesLength = ownChargingPilesLength;
+        this._ownChargingPilesLength = ownChargingPiles.Count;
         this._ownChargingPiles = opponentChargingPiles;
-        this._opponentChargingPilesLength = opponentChargingPilesLength;
+        this._opponentChargingPilesLength = opponentChargingPiles.Count;
         this._opponentChargingPiles = opponentChargingPiles;
     }
 
@@ -77,7 +74,7 @@ internal class PacketGetSiteInformationHost : Packet
         this._currentGameStage = (GameStage)BitConverter.ToInt32(data, currentIndex);
         currentIndex += 4;
 
-        this._duration = BitConverter.ToDouble(data, currentIndex);
+        this._duration = BitConverter.ToInt32(data, currentIndex);
         currentIndex += 8;
 
         // Get the information of owncharging piles
@@ -106,10 +103,13 @@ internal class PacketGetSiteInformationHost : Packet
     {
         // Compute the length of the data
         int dataLength = (
+            4 +                                    // this._obstacleListLength
             this._obstacleListLength * 16 +
             1 * 4 +                                // this._currentGameStage
             1 * 8 +                                // this._duration
+            4 +                                    // this._ownChargingPilesLength
             this._ownChargingPilesLength * 8 +
+            4 +                                    // this._opponentChargingPilesLength
             this._opponentChargingPilesLength * 8
         );
         // Initialize the data array
@@ -167,12 +167,7 @@ internal class PacketGetSiteInformationHost : Packet
         }
 
         // write the data's information into the header
-        var header = new byte[6];
-
-
-        header[0] = this.PacketId;
-        BitConverter.GetBytes(data.Length).CopyTo(header, 1);
-        header[5] = Packet.CalculateChecksum(data);
+        var header = GeneratePacketHeader(this.PacketId, data);
 
         var bytes = new byte[header.Length + data.Length];
         header.CopyTo(bytes, 0);
