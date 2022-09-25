@@ -263,84 +263,71 @@ public partial class MainWindow : Form
             );
         }
 
-        // Draw vehicle icons
+        // Draw vehicles
         if (_game.GetCamp() == Camp.A)
         {
-            foreach (Point2i c1 in this._coordinateConverter.CourtToCamera(Array.ConvertAll(localizer.GetCentres(Camp.A).ToArray(), item => (Point2f)item)))
+            foreach (Point2i c1 in localizer.GetCentres(Camp.A).ToArray())
             {
-                //优化一下，避免画面显示的车 位移太大了，只找到和上一次距离较近的车
-                //待优化
-                if (c1.X >= 0 && c1.X <= Game.CourtWidth && c1.Y >= 0 && c1.Y <= Game.CourtHeight)
+                int Tx = c1.X;
+                int Ty = c1.Y;
+                int Tcol = iconCarA.Cols;
+                int Trow = iconCarA.Rows;
+                if (Tx < 0)
                 {
-                    // Point2f[] converted_cord = coordCvt.ShowToCamera(new Point2f[] { (Point2f)c1 });
-
-                    int Tx = c1.X;
-                    int Ty = c1.Y;
-                    // int Tx = (int)converted_cord[0].X - 10;
-                    // int Ty = (int)converted_cord[0].Y - 10;
-                    int Tcol = iconCarA.Cols;
-                    int Trow = iconCarA.Rows;
-                    if (Tx < 0)
-                    {
-                        Tx = 0;
-                    }
-                    if (Ty < 0)
-                    {
-                        Ty = 0;
-                    }
-                    if (Tx + Tcol > image.Cols)
-                    {
-                        Tx = image.Cols - Tcol;
-                    }
-                    if (Ty + Trow > image.Rows)
-                    {
-                        Ty = image.Rows - Trow;
-                    }
-
-                    Mat Pos = new Mat(image, new Rect(Tx, Ty, Tcol, Trow));
-                    iconCarA.CopyTo(Pos);
-                    //暂时只画一个车，如果要画多个车，删去break
-                    // break;
+                    Tx = 0;
                 }
+                if (Ty < 0)
+                {
+                    Ty = 0;
+                }
+                if (Tx + Tcol > image.Cols)
+                {
+                    Tx = image.Cols - Tcol;
+                }
+                if (Ty + Trow > image.Rows)
+                {
+                    Ty = image.Rows - Trow;
+                }
+
+                Mat Pos = new Mat(image, new Rect(Tx, Ty, Tcol, Trow));
+                iconCarA.CopyTo(Pos);
             }
         }
         else if (_game.GetCamp() == Camp.B)
         {
-            foreach (Point2i c2 in this._coordinateConverter.CourtToCamera(Array.ConvertAll(localizer.GetCentres(Camp.B).ToArray(), item => (Point2f)item)))
+            foreach (Point2i c2 in localizer.GetCentres(Camp.B).ToArray())
             {
-                if (c2.X >= 0 && c2.X <= Game.CourtWidth && c2.Y >= 0 && c2.Y <= Game.CourtHeight)
+                int Tx = c2.X;
+                int Ty = c2.Y;
+                int Tcol = iconCarB.Cols;
+                int Trow = iconCarB.Rows;
+                if (Tx < 0)
                 {
-                    int Tx = c2.X;
-                    int Ty = c2.Y;
-                    int Tcol = iconCarB.Cols;
-                    int Trow = iconCarB.Rows;
-                    if (Tx < 0)
-                    {
-                        Tx = 0;
-                    }
-                    if (Ty < 0)
-                    {
-                        Ty = 0;
-                    }
-                    if (Tx + Tcol > image.Cols)
-                    {
-                        Tx = image.Cols - Tcol;
-                    }
-                    if (Ty + Trow > image.Rows)
-                    {
-                        Ty = image.Rows - Trow;
-                    }
-
-                    Mat Pos = new Mat(image, new Rect(Tx, Ty, Tcol, Trow));
-                    iconCarB.CopyTo(Pos);
-                    //暂时只画一个车，如果要画多个车，删去break
-                    // break;
+                    Tx = 0;
                 }
+                if (Ty < 0)
+                {
+                    Ty = 0;
+                }
+                if (Tx + Tcol > image.Cols)
+                {
+                    Tx = image.Cols - Tcol;
+                }
+                if (Ty + Trow > image.Rows)
+                {
+                    Ty = image.Rows - Trow;
+                }
+
+                Mat Pos = new Mat(image, new Rect(Tx, Ty, Tcol, Trow));
+                iconCarB.CopyTo(Pos);
             }
         }
 
         // Draw charging piles
-        // To be implemented
+        if (this._game.GameState == GameState.Running || this._game.GameState == GameState.Paused)
+        {
+            // To be implemented
+        }
 
         // Draw Barriers
         if (this._game.GameState == GameState.Running || this._game.GameState == GameState.Paused)
