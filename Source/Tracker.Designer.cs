@@ -36,10 +36,10 @@ partial class Tracker
             // 
             // pbCamera
             // 
-            this.pbCamera.Location = new System.Drawing.Point(345, 169);
+            this.pbCamera.Location = new System.Drawing.Point(277, 11);
             this.pbCamera.Margin = new System.Windows.Forms.Padding(2);
             this.pbCamera.Name = "pbCamera";
-            this.pbCamera.Size = new System.Drawing.Size(286, 269);
+            this.pbCamera.Size = new System.Drawing.Size(916, 650);
             this.pbCamera.TabIndex = 0;
             this.pbCamera.TabStop = false;
             this.pbCamera.MouseClick += new System.Windows.Forms.MouseEventHandler(this.OnMonitorMouseClick);
@@ -50,10 +50,10 @@ partial class Tracker
             // 
             // buttonStart
             // 
-            this.buttonStart.Location = new System.Drawing.Point(309, 115);
+            this.buttonStart.Location = new System.Drawing.Point(113, 498);
             this.buttonStart.Margin = new System.Windows.Forms.Padding(2);
             this.buttonStart.Name = "buttonStart";
-            this.buttonStart.Size = new System.Drawing.Size(75, 23);
+            this.buttonStart.Size = new System.Drawing.Size(94, 29);
             this.buttonStart.TabIndex = 1;
             this.buttonStart.Text = "Start";
             this.buttonStart.UseVisualStyleBackColor = true;
@@ -61,10 +61,10 @@ partial class Tracker
             // 
             // buttonPause
             // 
-            this.buttonPause.Location = new System.Drawing.Point(432, 108);
+            this.buttonPause.Location = new System.Drawing.Point(112, 564);
             this.buttonPause.Margin = new System.Windows.Forms.Padding(2);
             this.buttonPause.Name = "buttonPause";
-            this.buttonPause.Size = new System.Drawing.Size(75, 23);
+            this.buttonPause.Size = new System.Drawing.Size(94, 29);
             this.buttonPause.TabIndex = 2;
             this.buttonPause.Text = "Pause";
             this.buttonPause.UseVisualStyleBackColor = true;
@@ -72,10 +72,10 @@ partial class Tracker
             // 
             // button_Continue
             // 
-            this.button_Continue.Location = new System.Drawing.Point(549, 111);
+            this.button_Continue.Location = new System.Drawing.Point(112, 597);
             this.button_Continue.Margin = new System.Windows.Forms.Padding(2);
             this.button_Continue.Name = "button_Continue";
-            this.button_Continue.Size = new System.Drawing.Size(75, 23);
+            this.button_Continue.Size = new System.Drawing.Size(94, 29);
             this.button_Continue.TabIndex = 3;
             this.button_Continue.Text = "Continue";
             this.button_Continue.UseVisualStyleBackColor = true;
@@ -84,10 +84,10 @@ partial class Tracker
             // label_GameCount
             // 
             this.label_GameCount.AutoSize = true;
-            this.label_GameCount.Location = new System.Drawing.Point(442, 52);
+            this.label_GameCount.Location = new System.Drawing.Point(14, 211);
             this.label_GameCount.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label_GameCount.Name = "label_GameCount";
-            this.label_GameCount.Size = new System.Drawing.Size(38, 15);
+            this.label_GameCount.Size = new System.Drawing.Size(50, 20);
             this.label_GameCount.TabIndex = 4;
             this.label_GameCount.Text = "label1";
             // 
@@ -97,10 +97,10 @@ partial class Tracker
             this.labelAScore.BackColor = System.Drawing.Color.Red;
             this.labelAScore.Font = new System.Drawing.Font("Segoe UI", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.labelAScore.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.labelAScore.Location = new System.Drawing.Point(11, 9);
+            this.labelAScore.Location = new System.Drawing.Point(14, 11);
             this.labelAScore.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.labelAScore.Name = "labelAScore";
-            this.labelAScore.Size = new System.Drawing.Size(190, 65);
+            this.labelAScore.Size = new System.Drawing.Size(237, 81);
             this.labelAScore.TabIndex = 8;
             this.labelAScore.Text = "A Score";
             // 
@@ -110,19 +110,19 @@ partial class Tracker
             this.labelBScore.BackColor = System.Drawing.Color.Blue;
             this.labelBScore.Font = new System.Drawing.Font("Segoe UI", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.labelBScore.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.labelBScore.Location = new System.Drawing.Point(742, 12);
+            this.labelBScore.Location = new System.Drawing.Point(14, 99);
             this.labelBScore.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.labelBScore.Name = "labelBScore";
-            this.labelBScore.Size = new System.Drawing.Size(187, 65);
+            this.labelBScore.Size = new System.Drawing.Size(232, 81);
             this.labelBScore.TabIndex = 10;
             this.labelBScore.Text = "B Score";
             // 
             // CalibrateButton
             // 
-            this.CalibrateButton.Location = new System.Drawing.Point(553, 80);
+            this.CalibrateButton.Location = new System.Drawing.Point(14, 597);
             this.CalibrateButton.Margin = new System.Windows.Forms.Padding(2);
             this.CalibrateButton.Name = "CalibrateButton";
-            this.CalibrateButton.Size = new System.Drawing.Size(75, 23);
+            this.CalibrateButton.Size = new System.Drawing.Size(94, 29);
             this.CalibrateButton.TabIndex = 11;
             this.CalibrateButton.Text = "Calibrate";
             this.CalibrateButton.UseVisualStyleBackColor = true;
@@ -130,10 +130,10 @@ partial class Tracker
             // 
             // buttonFoul
             // 
-            this.buttonFoul.Location = new System.Drawing.Point(444, 75);
+            this.buttonFoul.Location = new System.Drawing.Point(11, 564);
             this.buttonFoul.Margin = new System.Windows.Forms.Padding(2);
             this.buttonFoul.Name = "buttonFoul";
-            this.buttonFoul.Size = new System.Drawing.Size(75, 23);
+            this.buttonFoul.Size = new System.Drawing.Size(94, 29);
             this.buttonFoul.TabIndex = 13;
             this.buttonFoul.Text = "Foul";
             this.buttonFoul.UseVisualStyleBackColor = true;
@@ -141,10 +141,10 @@ partial class Tracker
             // 
             // buttonEnd
             // 
-            this.buttonEnd.Location = new System.Drawing.Point(655, 144);
+            this.buttonEnd.Location = new System.Drawing.Point(113, 632);
             this.buttonEnd.Margin = new System.Windows.Forms.Padding(2);
             this.buttonEnd.Name = "buttonEnd";
-            this.buttonEnd.Size = new System.Drawing.Size(75, 23);
+            this.buttonEnd.Size = new System.Drawing.Size(94, 29);
             this.buttonEnd.TabIndex = 14;
             this.buttonEnd.Text = "End";
             this.buttonEnd.UseVisualStyleBackColor = true;
@@ -152,10 +152,10 @@ partial class Tracker
             // 
             // buttonRestart
             // 
-            this.buttonRestart.Location = new System.Drawing.Point(643, 237);
+            this.buttonRestart.Location = new System.Drawing.Point(112, 531);
             this.buttonRestart.Margin = new System.Windows.Forms.Padding(2);
             this.buttonRestart.Name = "buttonRestart";
-            this.buttonRestart.Size = new System.Drawing.Size(75, 23);
+            this.buttonRestart.Size = new System.Drawing.Size(94, 29);
             this.buttonRestart.TabIndex = 16;
             this.buttonRestart.Text = "Restart";
             this.buttonRestart.UseVisualStyleBackColor = true;
@@ -163,9 +163,10 @@ partial class Tracker
             // 
             // buttonSettings
             // 
-            this.buttonSettings.Location = new System.Drawing.Point(332, 75);
+            this.buttonSettings.Location = new System.Drawing.Point(13, 632);
+            this.buttonSettings.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.buttonSettings.Name = "buttonSettings";
-            this.buttonSettings.Size = new System.Drawing.Size(75, 23);
+            this.buttonSettings.Size = new System.Drawing.Size(94, 29);
             this.buttonSettings.TabIndex = 17;
             this.buttonSettings.Text = "Settings";
             this.buttonSettings.UseVisualStyleBackColor = true;
@@ -176,10 +177,10 @@ partial class Tracker
             this.label_BlueBG.AutoSize = true;
             this.label_BlueBG.BackColor = System.Drawing.Color.Blue;
             this.label_BlueBG.Font = new System.Drawing.Font("Segoe UI", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label_BlueBG.Location = new System.Drawing.Point(742, 12);
+            this.label_BlueBG.Location = new System.Drawing.Point(14, 100);
             this.label_BlueBG.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label_BlueBG.Name = "label_BlueBG";
-            this.label_BlueBG.Size = new System.Drawing.Size(210, 65);
+            this.label_BlueBG.Size = new System.Drawing.Size(259, 81);
             this.label_BlueBG.TabIndex = 6;
             this.label_BlueBG.Text = "              ";
             // 
@@ -188,28 +189,29 @@ partial class Tracker
             this.label_RedBG.AutoSize = true;
             this.label_RedBG.BackColor = System.Drawing.Color.Red;
             this.label_RedBG.Font = new System.Drawing.Font("Segoe UI", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label_RedBG.Location = new System.Drawing.Point(11, 9);
+            this.label_RedBG.Location = new System.Drawing.Point(14, 11);
             this.label_RedBG.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label_RedBG.Name = "label_RedBG";
-            this.label_RedBG.Size = new System.Drawing.Size(210, 65);
+            this.label_RedBG.Size = new System.Drawing.Size(259, 81);
             this.label_RedBG.TabIndex = 5;
             this.label_RedBG.Text = "              ";
             // 
             // GameTimeLabel
             // 
             this.GameTimeLabel.AutoSize = true;
-            this.GameTimeLabel.Location = new System.Drawing.Point(523, 18);
+            this.GameTimeLabel.Location = new System.Drawing.Point(14, 189);
+            this.GameTimeLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.GameTimeLabel.Name = "GameTimeLabel";
-            this.GameTimeLabel.Size = new System.Drawing.Size(92, 15);
+            this.GameTimeLabel.Size = new System.Drawing.Size(117, 20);
             this.GameTimeLabel.TabIndex = 18;
             this.GameTimeLabel.Text = "GameTimeLabel";
             // 
             // Tracker
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.SystemColors.Window;
-            this.ClientSize = new System.Drawing.Size(963, 539);
+            this.ClientSize = new System.Drawing.Size(1204, 674);
             this.Controls.Add(this.GameTimeLabel);
             this.Controls.Add(this.buttonSettings);
             this.Controls.Add(this.buttonRestart);
