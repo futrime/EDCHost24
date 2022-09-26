@@ -60,3 +60,5 @@ msbuild.wrn
 Data/*
 !Data/.keep
 *.resx
+Docs/*
+!Docs/.keep
