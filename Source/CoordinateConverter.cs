@@ -108,6 +108,16 @@ public class CoordinateConverter : IDisposable
     }
 
     /// <summary>
+    /// Convert the coordinates of a point from the monitor coordinate system to the camera coordinate system.
+    /// </summary>
+    /// <param name="points">The point in the monitor coordinate system</param>
+    /// <returns>The point in the camera coordinate system</returns>
+    public Point2f MonitorToCamera(Point2f point)
+    {
+        return Cv2.PerspectiveTransform(new Point2f[1] { point }, _transformationMonitorToCamera)[0];
+    }
+
+    /// <summary>
     /// Convert the coordinates of points from the monitor coordinate system to the camera coordinate system.
     /// </summary>
     /// <param name="points">The points in the monitor coordinate system</param>
@@ -115,6 +125,16 @@ public class CoordinateConverter : IDisposable
     public Point2f[] MonitorToCamera(Point2f[] points)
     {
         return Cv2.PerspectiveTransform(points, _transformationMonitorToCamera);
+    }
+
+    /// <summary>
+    /// Convert the coordinates of a point from the camera coordinate system to the monitor coordinate system.
+    /// </summary>
+    /// <param name="points">The point in the camera coordinate system</param>
+    /// <returns>The point in the monitor coordinate system</returns>
+    public Point2f CameraToMonitor(Point2f point)
+    {
+        return Cv2.PerspectiveTransform(new Point2f[1] { point }, _transformationCameraToMonitor)[0];
     }
 
     /// <summary>
@@ -128,6 +148,16 @@ public class CoordinateConverter : IDisposable
     }
 
     /// <summary>
+    /// Convert the coordinates of a point from the camera coordinate system to the court coordinate system.
+    /// </summary>
+    /// <param name="points">The point in the camera coordinate system</param>
+    /// <returns>The point in the court coordinate system</returns>
+    public Point2f CameraToCourt(Point2f point)
+    {
+        return Cv2.PerspectiveTransform(new Point2f[1] { point }, _transformationCameraToCourt)[0];
+    }
+
+    /// <summary>
     /// Convert the coordinates of points from the camera coordinate system to the court coordinate system.
     /// </summary>
     /// <param name="points">The points in the camera coordinate system</param>
@@ -135,6 +165,16 @@ public class CoordinateConverter : IDisposable
     public Point2f[] CameraToCourt(Point2f[] points)
     {
         return Cv2.PerspectiveTransform(points, _transformationCameraToCourt);
+    }
+
+    /// <summary>
+    /// Convert the coordinates of a point from the court coordinate system to the camera coordinate system.
+    /// </summary>
+    /// <param name="points">The point in the court coordinate system</param>
+    /// <returns>The point in the camera coordinate system</returns>
+    public Point2f CourtToCamera(Point2f point)
+    {
+        return Cv2.PerspectiveTransform(new Point2f[1] { point }, _transformationCourtToCamera)[0];
     }
 
     /// <summary>

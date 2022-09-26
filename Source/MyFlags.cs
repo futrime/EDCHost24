@@ -37,9 +37,6 @@ public class MyFlags
 
     // 调试颜色识别
     public bool showMask;
-    // 比赛是否正在进行
-    public bool running;
-
     public bool videomode;
     public int clickCount;   // 画面被点击的次数
 
@@ -53,7 +50,6 @@ public class MyFlags
     public MyFlags()
     {
         this.showMask = false;
-        this.running = false;
         this.videomode = false;
 
         // 初始化色彩识别参数
@@ -66,15 +62,5 @@ public class MyFlags
 
         // 点击显示画面的次数，用于校正画面
         this.clickCount = 0;
-    }
-
-    public void Start()
-    {
-        this.running = true;
-    }
-
-    public void End()
-    {
-        this.running = false;
     }
 }
