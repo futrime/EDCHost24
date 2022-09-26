@@ -148,8 +148,8 @@ public class Game
     private OrderGenerator _orderGenerator;
     private List<Order> _allOrderList;
     private List<Order> _pendingOrderList = new List<Order>();
-    private List<Barrier> _barrierList;
-    private List<Barrier> _wallList;
+    private List<Barrier> _barrierList = new List<Barrier>();
+    private List<Barrier> _wallList = new List<Barrier>();
     private List<ChargingPile> _chargingPileList = new List<ChargingPile>();
 
     #endregion
