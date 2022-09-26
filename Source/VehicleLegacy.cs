@@ -200,7 +200,6 @@ public class VehicleLegacy
             if (ord.Status == Order.StatusType.Pending && Dot.Distance(ord.DeparturePosition, _CarPos) <= COLLISION_RADIUS &&
                 _deliveringOrder.Count < MAX_PKG_COUNT)
             {
-                // ord.AddFirstCollisionTime(this.mGameTime);
                 ord.Take(mGameTime);
                 _deliveringOrder.Add(ord);
                 ordersRemain.Remove(ord);
@@ -225,15 +224,6 @@ public class VehicleLegacy
                 // 拾取后改变order的status
                 ord.Status = Order.StatusType.Delivered;
                 break;
-                // if (ord.DepartureFirstCollisionTime != -1 &&
-                //     this.mGameTime - ord.DepartureFirstCollisionTime > COLLISION_DETECTION_TIME)
-                // {
-                //     // 送达后改变pkg的packagestatus
-                //     ord.Status = Order.StatusType.Delivered;
-
-                //     _deliveringOrder.Remove(ord);
-                //     mScore += ord.GetScore(mGameTime);
-                // }
             }
         }
     }
