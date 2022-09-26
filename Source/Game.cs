@@ -117,12 +117,11 @@ public class Game
     private List<Barrier> _barrierList;
     private List<Barrier> _wallList;
     private List<ChargingPile> _chargingPileList = new List<ChargingPile>();
-    // { new ChargingPile(Camp.A, new Dot(100, 100)) };  测试时使用
 
 
     public Game()
     {
-        Debug.WriteLine("Constructing the Game object...");
+        // Empty
     }
 
     public void Refresh(Dot _CarPos)
@@ -177,11 +176,9 @@ public class Game
 
             this._timePenaltySum += TimePenalty;
 
-            //judge wether to end the game automatiacally
             if (RemainingTime <= 0)
             {
                 GameState = GameState.Ended;
-                Debug.WriteLine("Time remaining is up to 0. The End.");
             }
         }
     }
@@ -203,15 +200,8 @@ public class Game
     {
         if (GameState == GameState.Running)
         {
-            Debug.WriteLine("Failed! The current game is going on");
             return;
         }
-
-        if (_GameStage != GameStage.FirstHalf && _GameStage != GameStage.SecondHalf)
-        {
-            Debug.WriteLine("Failed to set game stage! Expect input to be GameStage.FIRST_HALF or GameStage.SECOND_HALF");
-        }
-
 
         // set state param of game
         GameState = GameState.Running;
@@ -318,12 +308,7 @@ public class Game
 
     public void Continue()
     {
-        if (GameState != GameState.Paused)
-        {
-            Debug.WriteLine("Continue Failed! No race is suspended");
-        }
-        GameState = GameState.Running;
-        // To fix the bug that time still runs when 'Pause' button is pressed  
+        GameState = GameState.Running; 
         this.ContinueTime = this.SystemTime;
     }
 

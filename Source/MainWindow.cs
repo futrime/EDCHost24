@@ -140,7 +140,7 @@ public partial class MainWindow : Form
         {
             return;
         }
-        
+
         this._vehicleLocalizer.Locate(cameraFrame, _flags);
 
         cameraFrame = this.Draw(cameraFrame, _vehicleLocalizer);
@@ -158,24 +158,29 @@ public partial class MainWindow : Form
     private Mat Draw(Mat image, Localiser localizer)
     {
         // Read icons
-        var iconCarA = new Mat(@"Assets\Icons\VehicleRed.png", ImreadModes.Color);
-        var iconCarB = new Mat(@"Assets\Icons\VehicleBlue.png", ImreadModes.Color);
-        var iconTakeawayDeparture = new Mat(@"Assets\Icons\Package.png", ImreadModes.Color);
-        var iconTakeawayDestination = new Mat(@"Assets\Icons\Zone.png", ImreadModes.Color);
-        var iconChargingPile = new Mat(@"Assets\Icons\ChargingPile.png", ImreadModes.Color);
+        var iconCarA = new Mat(@"Assets/Icons/VehicleRed.png", ImreadModes.Color);
+        var iconCarB = new Mat(@"Assets/Icons/VehicleBlue.png", ImreadModes.Color);
+        var iconChargingPileRed = new Mat(@"Assets/Icons/ChargingPileRed.png", ImreadModes.Color);
+        var iconChargingPileBlue = new Mat(@"Assets/Icons/ChargingPileBlue.png", ImreadModes.Color);
+        var iconOrderDeparture = new Mat(@"Assets/Icons/OrderDeparture.png", ImreadModes.Color);
+        var iconOrderDestination = new Mat(@"Assets/Icons/OrderDestination.png", ImreadModes.Color);
 
         Cv2.Resize(src: iconCarA, dst: iconCarA, dsize: new OpenCvSharp.Size(IconSize, IconSize));
         Cv2.Resize(src: iconCarB, dst: iconCarB, dsize: new OpenCvSharp.Size(IconSize, IconSize));
         Cv2.Resize(
-            src: iconTakeawayDeparture, dst: iconTakeawayDeparture,
+            src: iconChargingPileRed, dst: iconChargingPileRed,
             dsize: new OpenCvSharp.Size(IconSize, IconSize)
         );
         Cv2.Resize(
-            src: iconTakeawayDestination, dst: iconTakeawayDestination,
+            src: iconChargingPileBlue, dst: iconChargingPileBlue,
             dsize: new OpenCvSharp.Size(IconSize, IconSize)
         );
         Cv2.Resize(
-            src: iconChargingPile, dst: iconChargingPile,
+            src: iconOrderDeparture, dst: iconOrderDeparture,
+            dsize: new OpenCvSharp.Size(IconSize, IconSize)
+        );
+        Cv2.Resize(
+            src: iconOrderDestination, dst: iconOrderDestination,
             dsize: new OpenCvSharp.Size(IconSize, IconSize)
         );
 
@@ -235,67 +240,29 @@ public partial class MainWindow : Form
         }
 
         // Draw charging piles
-        if (this._game.GameState == GameState.Running || this._game.GameState == GameState.Paused)
+        foreach (var chargingPile in this._game.ChargingPileList)
         {
-            foreach (var chargingPile in this._game.ChargingPileList)
+            var position = new Dot((Point2i)this._coordinateConverter.CourtToCamera(chargingPile.Position.ToPoint()));
+
+            Mat icon = new Mat();
+            switch (chargingPile.Camp)
             {
-                // var color = Scalar.Black;
-                // switch (chargingPile.Camp)
-                // {
-                //     case Camp.A:
-                //         color = Scalar.Red;
-                //         break;
+                case Camp.A:
+                    icon = iconChargingPileRed;
+                    break;
 
-                //     case Camp.B:
-                //         color = Scalar.Blue;
-                //         break;
+                case Camp.B:
+                    icon = iconChargingPileBlue;
+                    break;
 
-                //     default:
-                //         break;
-                // }
-
-                Point2f[] pointsInCourtCoordination = { chargingPile.Position.ToPoint() };
-
-                Point2i[] pointsInCameraCoordination = Array.ConvertAll(
-                    _coordinateConverter.CourtToCamera(pointsInCourtCoordination), item => (Point2i)item
-                );
-
-                var position = pointsInCameraCoordination[0];
-
-                int Tcol = iconChargingPile.Cols;
-                int Trow = iconChargingPile.Rows;
-                int Tx = position.X - 10;
-                int Ty = position.Y - 10;
-                if (Tx < 0)
-                {
-                    Tx = 0;
-                }
-                if (Ty < 0)
-                {
-                    Ty = 0;
-                }
-                // 
-                if (Tx + Tcol > image.Cols)
-                {
-                    Tcol = image.Cols - Tx;
-                }
-                if (Ty + Trow > image.Rows)
-                {
-                    Trow = image.Rows - Ty;
-                }
-                // 可能会出错 位置生成不正确
-                Mat Pos = new Mat(image, new Rect(Tx, Ty, Tcol, Trow));
-                iconChargingPile.CopyTo(Pos);
-
-                // Cv2.Circle(
-                //     iconChargingPile,
-                //     position.X, position.Y,
-                //     radius: (int)ChargingPile.InfluenceScopeRadius,
-                //     color: color,
-                //     thickness: 2
-                // );
-
+                default:
+                    break;
             }
+            
+            int x = Math.Min(Math.Max(position.x - 10, 0), image.Cols - iconChargingPileRed.Cols);
+            int y = Math.Min(Math.Max(position.y - 10, 0), image.Cols - iconChargingPileRed.Cols);
+
+            icon.CopyTo(new Mat(image, new Rect(x, y, icon.Cols, icon.Rows)));
         }
 
         // Draw departures and destinations of orders
@@ -314,7 +281,7 @@ public partial class MainWindow : Form
                 Mat target_img = null;
                 if (Order.StatusType.Pending == currentOrderStatus)
                 {
-                    target_img = iconTakeawayDeparture;
+                    target_img = iconOrderDeparture;
                     //修正坐标
                     Point2f[] converted_cord = _coordinateConverter.CourtToCamera(new Point2f[] { (Point2f)ord.DeparturePosition.ToPoint() });
                     Tx = (int)converted_cord[0].X - 10;
@@ -324,7 +291,7 @@ public partial class MainWindow : Form
                 // 若小车装载此外卖，显示终点
                 else if (Order.StatusType.InDelivery == currentOrderStatus)
                 {
-                    target_img = iconTakeawayDestination;
+                    target_img = iconOrderDestination;
                     Point2f[] converted_cord = _coordinateConverter.CourtToCamera(new Point2f[] { (Point2f)ord.DestinationPosition.ToPoint() });
                     Tx = (int)converted_cord[0].X - 10;
                     Ty = (int)converted_cord[0].Y - 10;
