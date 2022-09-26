@@ -109,10 +109,10 @@ public partial class MainWindow : Form
         Camera.ConvertRgb = true;
 
         // 设置定时器的触发间隔为 100ms
-        timerMsg100ms.Interval = 100;
+        Timer.Interval = 100;
 
         // 启动计时器，执行给迷宫外的小车定时发信息的任务
-        timerMsg100ms.Start();
+        Timer.Start();
     }
 
     /// <summary>

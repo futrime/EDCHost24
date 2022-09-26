@@ -16,7 +16,7 @@ partial class MainWindow
     {
             this.components = new System.ComponentModel.Container();
             this.MonitorPictureBox = new System.Windows.Forms.PictureBox();
-            this.timerMsg100ms = new System.Windows.Forms.Timer(this.components);
+            this.Timer = new System.Windows.Forms.Timer(this.components);
             this.StartButton = new System.Windows.Forms.Button();
             this.PauseButton = new System.Windows.Forms.Button();
             this.ContinueButton = new System.Windows.Forms.Button();
@@ -47,7 +47,7 @@ partial class MainWindow
             // 
             // timerMsg100ms
             // 
-            this.timerMsg100ms.Tick += new System.EventHandler(this.OnTimerTick);
+            this.Timer.Tick += new System.EventHandler(this.OnTimerTick);
             // 
             // StartButton
             // 
@@ -258,7 +258,7 @@ partial class MainWindow
 
     private System.ComponentModel.IContainer components = null;
     private System.Windows.Forms.PictureBox MonitorPictureBox;
-    private System.Windows.Forms.Timer timerMsg100ms;
+    private System.Windows.Forms.Timer Timer;
     private System.Windows.Forms.Button StartButton;
     private System.Windows.Forms.Button PauseButton;
     private System.Windows.Forms.Button ContinueButton;
