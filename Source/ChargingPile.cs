@@ -5,11 +5,7 @@ namespace EdcHost;
 /// </summary>
 public class ChargingPile
 {
-    /// <summary>
-    /// The default influence scope radius in centimeters
-    /// </summary>
-    public const decimal DefaultInfluenceScopeRadius = 20;
-
+    #region Public properties
 
     /// <summary>
     /// The camp
@@ -21,10 +17,18 @@ public class ChargingPile
     /// </summary>
     public Dot Position => this._position;
 
+    #endregion
+
+    #region Private fields
+
     private CampType _camp;
     private decimal _influenceScopeRadius;
     private Dot _position;
 
+    #endregion
+
+
+    #region Public methods
 
     /// <summary>
     /// Construct a charging pile.
@@ -33,7 +37,7 @@ public class ChargingPile
     public ChargingPile(
         CampType camp,
         Dot position,
-        decimal influenceScopeRadius = ChargingPile.DefaultInfluenceScopeRadius)
+        long influenceScopeRadius)
     {
         this._camp = camp;
         this._influenceScopeRadius = influenceScopeRadius;
@@ -52,4 +56,6 @@ public class ChargingPile
         return Dot.Distance(position, this._position) <
             this._influenceScopeRadius;
     }
+
+    #endregion
 }

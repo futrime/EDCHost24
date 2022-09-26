@@ -3,10 +3,7 @@ using System.Linq;
 
 namespace EdcHost;
 
-/// <summary>
-/// A vehicle
-/// </summary>
-public class Vehicle
+public class VehicleLegacy
 {
     public const int RUN_CREDIT = 10;          //小车启动可以得到10分;
     public const int PICK_CREDIT = 5;          //接到一笔订单得5分;
@@ -51,7 +48,7 @@ public class Vehicle
     /********************************************
     Interface
     *********************************************/
-    public Vehicle(CampType c)
+    public VehicleLegacy(CampType c)
     {
         mQueuePos = new Queue<Dot>(10);
         mCamp = c;

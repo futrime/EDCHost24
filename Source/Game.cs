@@ -133,8 +133,8 @@ public class Game
     private long _timePenaltySum = 0;
     private long _gameDuration = GameDurationFirstHalf;
     private long _pauseTime;
-    private Vehicle _vehicleA = new Vehicle(CampType.A);
-    private Vehicle _vehicleB = new Vehicle(CampType.B);
+    private VehicleLegacy _vehicleA = new VehicleLegacy(CampType.A);
+    private VehicleLegacy _vehicleB = new VehicleLegacy(CampType.B);
     private int[] _scoreA = { 0, 0 };
     private int[] _scoreB = { 0, 0 };
     private OrderGenerator _orderGenerator;
@@ -388,7 +388,7 @@ public class Game
         return 0;
     }
 
-    public Vehicle GetCar(CampType c)
+    public VehicleLegacy GetCar(CampType c)
     {
         if (c == CampType.A)
         {
