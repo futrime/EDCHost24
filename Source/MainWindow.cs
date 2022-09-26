@@ -244,10 +244,11 @@ public partial class MainWindow : Form
             );
         }
 
-        // Draw Barriers
+        // Draw Barriers and Walls
         if (this._game.GameState == GameState.Running || this._game.GameState == GameState.Paused)
         {
-            foreach (var barrier in this._game.BarrierList)
+            // define a public function
+            void DrawBarrier(Barrier barrier, Scalar barrierColor, int edgeThickness)
             {
                 Dot topLeftPosition = barrier.TopLeftPosition;
                 Dot bottomRightPosition = barrier.BottomRightPosition;
@@ -258,14 +259,24 @@ public partial class MainWindow : Form
                     _coordinateConverter.CourtToCamera(pointsInCourtCoordination), item => (Point2i)item
                 );
 
-                Cv2.Rectangle(image, pointsInCameraCoordination[0], pointsInCameraCoordination[1], color: Scalar.Yellow, thickness: 2);
+                Cv2.Rectangle(image, pointsInCameraCoordination[0], pointsInCameraCoordination[1], color: barrierColor, thickness: edgeThickness);
 
                 for (int i = pointsInCameraCoordination[0].X; i < pointsInCameraCoordination[1].X; i += 2)
                 {
                     Point2i upperPoint = new Point2i(i, pointsInCameraCoordination[0].Y);
                     Point2i lowerPoint = new Point2i(i, pointsInCameraCoordination[1].Y);
-                    Cv2.Line(image, upperPoint, lowerPoint, color: Scalar.Yellow, 1);
+                    Cv2.Line(image, upperPoint, lowerPoint, color: barrierColor, 1);
                 }
+            }
+            // Draw Barriers 
+            foreach (var barrier in this._game.BarrierList)
+            {
+                DrawBarrier(barrier, Scalar.Yellow, 2);
+            }
+            // Draw Walls
+            foreach (var wall in this._game.WallList)
+            {
+                DrawBarrier(wall, Scalar.Black, 1);
             }
         }
 
