@@ -36,7 +36,7 @@ public partial class MainWindow : Form
     /// <summary>
     /// The configurations
     /// </summary>
-    public ConfigType Flags => this._flags;
+    public ConfigTypeLegacy Flags => this._flags;
     /// <summary>
     /// The serial port of the vehicle of camp A
     /// </summary>
@@ -57,7 +57,7 @@ public partial class MainWindow : Form
     private string[] _availableSerialPortList;
     private VideoCapture _camera = new VideoCapture();
     private CoordinateConverter _coordinateConverter;
-    private ConfigType _flags = new ConfigType();
+    private ConfigTypeLegacy _flags = new ConfigTypeLegacy();
     private Game _game = new Game();
     private Point2f[] _monitorCorners = new Point2f[4];
     private SerialPort _serialPortVehicleA = null;

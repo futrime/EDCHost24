@@ -3,12 +3,12 @@ namespace EdcHost;
 /// <summary>
 /// A collection of configurations
 /// </summary>
-public class ConfigType
+public class ConfigTypeLegacy
 {    
     /// <summary>
     /// The object detection configurations
     /// </summary>
-    public class LocatorConfigType
+    public class LocatorConfigTypeLegacy
     {
         public int MinHueVehicleA;
         public int MinHueVehicleB;
@@ -26,7 +26,7 @@ public class ConfigType
 
     public bool ShowMask = false;
     public int CalibrationClickCount = 4;
-    public LocatorConfigType LocatorConfig = new LocatorConfigType();
+    public LocatorConfigTypeLegacy LocatorConfig = new LocatorConfigTypeLegacy();
 
     public OpenCvSharp.Size MonitorFrameSize = new OpenCvSharp.Size();
     public OpenCvSharp.Size CameraFrameSize = new OpenCvSharp.Size();

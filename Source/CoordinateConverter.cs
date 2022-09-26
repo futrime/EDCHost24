@@ -27,7 +27,7 @@ public class CoordinateConverter : IDisposable
     /// Construct a coordinate converter.
     /// </summary>
     /// <param name="myFlags">The information of the game</param>
-    public CoordinateConverter(ConfigType myFlags)
+    public CoordinateConverter(ConfigTypeLegacy myFlags)
     {
         Point2f[] camCorners = {
             new Point2f(0, 0),

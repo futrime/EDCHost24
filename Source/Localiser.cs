@@ -49,7 +49,7 @@ public class Localiser
     }
 
     // 定位核心代码
-    public void Locate(Mat mat, ConfigType localiseFlags)
+    public void Locate(Mat mat, ConfigTypeLegacy localiseFlags)
     {
         // 如果没有传入摄像机拍摄的画面，则返回
         if (mat == null || mat.Empty()) return;
@@ -60,7 +60,7 @@ public class Localiser
         centres2.Clear();
 
         // 为了后面Scalar函数中参数写起来方便
-        ConfigType.LocatorConfigType configs = localiseFlags.LocatorConfig;
+        ConfigTypeLegacy.LocatorConfigTypeLegacy configs = localiseFlags.LocatorConfig;
 
         // 解释：
         // MatType的组成方式：CV_(位数）+（数据类型）+ C（通道数）

@@ -11,12 +11,12 @@ namespace EdcHost;
 /// </summary>
 public partial class SettingsWindow : Form
 {
-    private ConfigType _flags;
+    private ConfigTypeLegacy _flags;
     private Game _game;
     private MainWindow _tracker;
 
 
-    public SettingsWindow(ref ConfigType flags, ref Game game, MainWindow tracker)
+    public SettingsWindow(ref ConfigTypeLegacy flags, ref Game game, MainWindow tracker)
     {
         InitializeComponent();
 
