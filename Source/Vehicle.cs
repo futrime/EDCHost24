@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace EdcHost;
 
-class Vehicle
+public class Vehicle
 {
     #region Parameters
 

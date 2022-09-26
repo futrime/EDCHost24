@@ -301,9 +301,9 @@ public partial class MainWindow : Form
         if (this._game.GameState == GameStateType.Running || this._game.GameState == GameStateType.Paused)
         {
             // 找到当前的车队
-            VehicleLegacy current_car = this._game.GetCar(this._game.GetCamp());
+            Vehicle current_car = this._game.Vehicle[CampType.A];
             // 现在车上载有的外卖数量 
-            int order_number_on_car = current_car.GetOrderCount();
+            // int order_number_on_car = current_car.DeliveringOrderList.Count;
             foreach (Order ord in _game.AllOrderList)
             {
                 Order.StatusType currentOrderStatus = ord.Status;
