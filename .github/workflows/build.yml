@@ -46,7 +46,7 @@ jobs:
       - name: Upload the page artifact
         uses: actions/upload-pages-artifact@v1
         with:
-          path: Docs/
+          path: Docs/html
           
   deploy_documentation:
     name: Deploy the documentation
