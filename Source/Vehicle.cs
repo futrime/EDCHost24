@@ -1,17 +1,12 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace EdcHost;
 
-public class Vehicle
+class Vehicle
 {
     #region Parameters
-
-    /// <summary>
-    /// The default value of the charging rate in centimeters
-    /// per millisecond
-    /// </summary>
-    private const decimal DefaultChargingRate = 0.1M;
 
     /// <summary>
     /// The default value of the max distance in centimeters
@@ -23,10 +18,19 @@ public class Vehicle
 
     #region Public properties
 
+    /// <summary>
+    /// The camp
+    /// </summary>
     public CampType Camp => this._camp;
 
+    /// <summary>
+    /// A list of the orders carried by the vehicle
+    /// </summary>
     public List<Order> DeliveringOrderList => this._deliveringOrderList;
 
+    /// <summary>
+    /// The distance the vehicle has travelled
+    /// </summary>
     public int Distance
     {
         get
@@ -38,15 +42,37 @@ public class Vehicle
                 distance += Dot.Distance(this._path[i - 1], this._path[i]);
             }
 
+            // The distance should not exceed the max distance.
+            distance = Math.Min(distance, this._maxDistance);
+
             return distance;
         }
     }
 
-    public int MaxDistance =>
-        (int)(this._chargingTime * this._chargingRate) + this._initialMaxDistance;
+    /// <summary>
+    /// True if the power is exhausted; otherwise false
+    /// </summary>
+    public bool IsPowerExhausted
+    {
+        get
+        {
+            return (this.MaxDistance == this.Distance);
+        }
+    }
 
+    /// <summary>
+    /// The maximum distance the vehicle can travel
+    /// </summary>
+    public int MaxDistance => this._maxDistance;
+
+    /// <summary>
+    /// The path the vehicle has travelled
+    /// </summary>
     public List<Dot> Path => this._path;
 
+    /// <summary>
+    /// The position of the vehicle
+    /// </summary>
     public Dot Position
     {
         get
@@ -65,10 +91,9 @@ public class Vehicle
     #region Private fields
 
     private CampType _camp;
-    private decimal _chargingRate;
-    private long _chargingTime = 0;
     private List<Order> _deliveringOrderList = new List<Order>();
-    private int _initialMaxDistance;
+    private readonly int _initialMaxDistance;
+    private int _maxDistance;
     private List<Dot> _path = new List<Dot>();
 
     #endregion
@@ -76,20 +101,49 @@ public class Vehicle
 
     #region Public methods
 
+    /// <summary>
+    /// Construct a Vehicle object.
+    /// </summary>
+    /// <param name="camp">The camp</param>
+    /// <param name="initialMaxDistance">The initial maximum distance</param>
     public Vehicle(
         CampType camp,
-        decimal chargingRate = Vehicle.DefaultChargingRate,
         int initialMaxDistance = Vehicle.DefaultInitialMaxDistance
     )
     {
         this._camp = camp;
-        this._chargingRate = chargingRate;
         this._initialMaxDistance = initialMaxDistance;
+        this._maxDistance = this._initialMaxDistance;
     }
 
+    /// <summary>
+    /// Increase the maximum distance.
+    /// </summary>
+    /// <param name="increment">
+    /// The increment of the maximum distance
+    /// </param>
+    public void IncreaseMaxDistance(int increment)
+    {
+        this._maxDistance += increment;
+    }
+
+    /// <summary>
+    /// Reset the vehicle.
+    /// </summary>
     public void Reset()
     {
-        this._path.Clear();
+        this._deliveringOrderList = new List<Order>();
+        this._maxDistance = this._initialMaxDistance;
+        this.Path.Clear();
+    }
+
+    /// <summary>
+    /// Update the position of the vehicle.
+    /// </summary>
+    /// <param name="position">The position</param>
+    public void UpdatePosition(Dot position)
+    {
+        this.Path.Add(position);
     }
 
     #endregion
