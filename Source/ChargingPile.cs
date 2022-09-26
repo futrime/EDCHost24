@@ -6,7 +6,7 @@ namespace EdcHost;
 public class ChargingPile
 {
     /// <summary>
-    /// The charging range radius in centimeters
+    /// The default influence scope radius in centimeters
     /// </summary>
     public const decimal DefaultInfluenceScopeRadius = 20;
 

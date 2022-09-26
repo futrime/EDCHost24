@@ -30,15 +30,14 @@ public class Dot
 
 
     /// <summary>
-    /// Get the Euclidean distance between two dots.
+    /// Get the Manhattan distance between two dots.
     /// </summary>
     /// <param name="A"></param>
     /// <param name="B"></param>
     /// <returns>The distance</returns>
     public static int Distance(Dot A, Dot B)
     {
-        return (int)Math.Round(Math.Sqrt((A.x - B.x) * (A.x - B.x)
-            + (A.y - B.y) * (A.y - B.y)));
+        return Math.Abs(A.x - B.x) + Math.Abs(A.y - B.y);
     }
 
     public Dot(int x, int y)
