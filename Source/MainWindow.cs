@@ -46,7 +46,7 @@ public partial class MainWindow : Form
     /// </summary>
     public SerialPort SerialPortVehicleB
     {
-        get => this.SerialPortVehicleB;
+        get => this._serialPortVehicleB;
         set => this._serialPortVehicleB = value;
     }
 
