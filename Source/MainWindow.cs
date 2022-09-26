@@ -118,10 +118,11 @@ public partial class MainWindow : Form
         }
         else if (this._game.GameState == GameStateType.Running)
         {
-            var vehiclePositionList = this._vehicleLocalizer.GetCentres(this._game.GetCamp());
+            var vehiclePositionList = (this._vehicleLocalizer.GetCentres(this._game.GetCamp()));
             if (vehiclePositionList.Count > 0)
             {
-                this._game.Refresh(new Dot(vehiclePositionList[0]));
+                // Convert Camera Coordinate to Court Coordinate
+                this._game.Refresh(new Dot((Point2i)CoordinateConverter.CameraToCourt((Point2f)vehiclePositionList[0])));
             }
 
             this.buttonStart.Enabled = false;

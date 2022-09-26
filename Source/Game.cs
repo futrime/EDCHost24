@@ -39,8 +39,8 @@ public class Game
 
     // Parameters for barriers
     public const int MaxBarrierNum = 5;
-    public const int MinBarrierLength = 30;
-    public const int MaxBarrierLength = 50;
+    public const int MinBarrierLength = 20;
+    public const int MaxBarrierLength = 40;
     public const int MinDistanceBetweenBarriers = 40;
 
     #endregion
@@ -184,7 +184,7 @@ public class Game
         }
         else if (_camp == CampType.B)
         {
-            _vehicleA.Update(_CarPos, (int)GameTime,
+            _vehicleB.Update(_CarPos, (int)GameTime,
             IsInBarrier(_CarPos), this.IsInChargingPileInfluenceScope(CampType.A, _CarPos),
             this.IsInChargingPileInfluenceScope(CampType.B, _CarPos), ref _pendingOrderList, out TimePenalty);
         }
@@ -294,7 +294,7 @@ public class Game
         int currentBarrierNumber = 0;
         while (currentBarrierNumber < MaxBarrierNum)
         {
-            Barrier barrier = Barrier.GenerateRandomBarrier((new Dot(0, 0), new Dot(Game.CourtWidth, Game.CourtHeight)),
+            Barrier barrier = Barrier.GenerateRandomBarrier(CoreArea,
             (new Dot(MinBarrierLength, MinBarrierLength), new Dot(MaxBarrierLength, MaxBarrierLength)));
 
             if (AwayFromBarriers(barrier, _barrierList))
