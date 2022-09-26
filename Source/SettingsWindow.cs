@@ -31,33 +31,33 @@ public partial class SettingsWindow : Form
 
         cbPorts1.Items.Clear();
         cbPorts1.Items.Add("(None)");
-        foreach (string port in _tracker._availableSerialPortList)
+        foreach (string port in _tracker.AvailableSerialPortList)
         {
             cbPorts1.Items.Add(port);
         }
 
         cbPorts2.Items.Clear();
         cbPorts2.Items.Add("(None)");
-        foreach (string port in _tracker._availableSerialPortList)
+        foreach (string port in _tracker.AvailableSerialPortList)
         {
             cbPorts2.Items.Add(port);
         }
 
 
-        if (_tracker._serialPortCarA != null && _tracker._serialPortCarA.IsOpen)
+        if (_tracker.SerialPortVehicleA != null && _tracker.SerialPortVehicleA.IsOpen)
         {
-            cbPorts1.Text = _tracker._serialPortCarA.PortName;
-            nudBaudRate.Value = _tracker._serialPortCarA.BaudRate;
+            cbPorts1.Text = _tracker.SerialPortVehicleA.PortName;
+            nudBaudRate.Value = _tracker.SerialPortVehicleA.BaudRate;
         }
         else
         {
             cbPorts1.Text = "(None)";
             nudBaudRate.Value = 115200;
         }
-        if (_tracker._serialPortCarB != null && _tracker._serialPortCarB.IsOpen)
+        if (_tracker.SerialPortVehicleB != null && _tracker.SerialPortVehicleB.IsOpen)
         {
-            cbPorts2.Text = _tracker._serialPortCarB.PortName;
-            nudBaudRate.Value = _tracker._serialPortCarB.BaudRate;
+            cbPorts2.Text = _tracker.SerialPortVehicleB.PortName;
+            nudBaudRate.Value = _tracker.SerialPortVehicleB.BaudRate;
         }
         else
         {
@@ -147,40 +147,40 @@ public partial class SettingsWindow : Form
         if (tmpCamture.IsOpened() && tmpCamture.FrameWidth > 0 && tmpCamture.FrameHeight > 0)
         {
             tmpCamture.Release();
-            if (_tracker._camera.IsOpened())
-                _tracker._camera.Release();
-            _tracker._camera.Open((int)nudCapture.Value);
-            _tracker._flags.cameraSize.Width = _tracker._camera.FrameWidth;
-            _tracker._flags.cameraSize.Height = _tracker._camera.FrameHeight;
-            _tracker._coordinateConverter = new CoordinateConverter(_tracker._flags);
+            if (_tracker.Camera.IsOpened())
+                _tracker.Camera.Release();
+            _tracker.Camera.Open((int)nudCapture.Value);
+            _tracker.Flags.cameraSize.Width = _tracker.Camera.FrameWidth;
+            _tracker.Flags.cameraSize.Height = _tracker.Camera.FrameHeight;
+            _tracker.CoordinateConverter = new CoordinateConverter(_tracker.Flags);
         }
     }
 
     private void SetWindow_FormClosing(object sender, FormClosingEventArgs e)
     {
-        _tracker._flags.showMask = false;
+        _tracker.Flags.showMask = false;
     }
 
     private void checkBox_ShowMask_CheckedChanged(object sender, EventArgs e)
     {
-        _tracker._flags.showMask = checkBox_ShowMask.Checked;
+        _tracker.Flags.showMask = checkBox_ShowMask.Checked;
     }
 
     private void nudBaudRate_ValueChanged(object sender, EventArgs e)
     {
         try
         {
-            if (_tracker._serialPortCarA != null)
+            if (_tracker.SerialPortVehicleA != null)
             {
-                if (_tracker._serialPortCarA.IsOpen)
-                    _tracker._serialPortCarA.Close();
-                _tracker._serialPortCarA.BaudRate = (int)nudBaudRate.Value;
-                _tracker._serialPortCarA.Open();
+                if (_tracker.SerialPortVehicleA.IsOpen)
+                    _tracker.SerialPortVehicleA.Close();
+                _tracker.SerialPortVehicleA.BaudRate = (int)nudBaudRate.Value;
+                _tracker.SerialPortVehicleA.Open();
             }
             else
             {
-                _tracker._serialPortCarA = new SerialPort(cbPorts1.Text, (int)nudBaudRate.Value, Parity.None, 8, StopBits.One);
-                _tracker._serialPortCarA.Open();
+                _tracker.SerialPortVehicleA = new SerialPort(cbPorts1.Text, (int)nudBaudRate.Value, Parity.None, 8, StopBits.One);
+                _tracker.SerialPortVehicleA.Open();
             }
         }
         catch (UnauthorizedAccessException)
@@ -189,17 +189,17 @@ public partial class SettingsWindow : Form
         }
         try
         {
-            if (_tracker._serialPortCarB != null)
+            if (_tracker.SerialPortVehicleB != null)
             {
-                if (_tracker._serialPortCarB.IsOpen)
-                    _tracker._serialPortCarB.Close();
-                _tracker._serialPortCarB.BaudRate = (int)nudBaudRate.Value;
-                _tracker._serialPortCarB.Open();
+                if (_tracker.SerialPortVehicleB.IsOpen)
+                    _tracker.SerialPortVehicleB.Close();
+                _tracker.SerialPortVehicleB.BaudRate = (int)nudBaudRate.Value;
+                _tracker.SerialPortVehicleB.Open();
             }
             else
             {
-                _tracker._serialPortCarB = new SerialPort(cbPorts2.Text, (int)nudBaudRate.Value, Parity.None, 8, StopBits.One);
-                _tracker._serialPortCarB.Open();
+                _tracker.SerialPortVehicleB = new SerialPort(cbPorts2.Text, (int)nudBaudRate.Value, Parity.None, 8, StopBits.One);
+                _tracker.SerialPortVehicleB.Open();
             }
         }
         catch (UnauthorizedAccessException)
@@ -212,33 +212,33 @@ public partial class SettingsWindow : Form
     {
         if (cbPorts2.Text == "(None)")
         {
-            if (_tracker._serialPortCarB != null)
+            if (_tracker.SerialPortVehicleB != null)
             {
-                if (_tracker._serialPortCarB.IsOpen)
-                    _tracker._serialPortCarB.Close();
+                if (_tracker.SerialPortVehicleB.IsOpen)
+                    _tracker.SerialPortVehicleB.Close();
             }
         }
         else
         {
             try
             {
-                if (_tracker._serialPortCarB != null)
+                if (_tracker.SerialPortVehicleB != null)
                 {
-                    if (_tracker._serialPortCarB.IsOpen)
-                        _tracker._serialPortCarB.Close();
-                    _tracker._serialPortCarB.PortName = cbPorts2.Text;
-                    _tracker._serialPortCarB.Open();
+                    if (_tracker.SerialPortVehicleB.IsOpen)
+                        _tracker.SerialPortVehicleB.Close();
+                    _tracker.SerialPortVehicleB.PortName = cbPorts2.Text;
+                    _tracker.SerialPortVehicleB.Open();
                 }
                 else
                 {
-                    _tracker._serialPortCarB = new SerialPort(cbPorts2.Text, (int)nudBaudRate.Value, Parity.None, 8, StopBits.One);
-                    _tracker._serialPortCarB.Open();
+                    _tracker.SerialPortVehicleB = new SerialPort(cbPorts2.Text, (int)nudBaudRate.Value, Parity.None, 8, StopBits.One);
+                    _tracker.SerialPortVehicleB.Open();
                 }
             }
             catch (UnauthorizedAccessException)
             {
                 MessageBox.Show("串口设置无效！");
-                _tracker._serialPortCarB = null;
+                _tracker.SerialPortVehicleB = null;
             }
         }
     }
@@ -247,33 +247,33 @@ public partial class SettingsWindow : Form
     {
         if (cbPorts1.Text == "(None)")
         {
-            if (_tracker._serialPortCarA != null)
+            if (_tracker.SerialPortVehicleA != null)
             {
-                if (_tracker._serialPortCarA.IsOpen)
-                    _tracker._serialPortCarA.Close();
+                if (_tracker.SerialPortVehicleA.IsOpen)
+                    _tracker.SerialPortVehicleA.Close();
             }
         }
         else
         {
             try
             {
-                if (_tracker._serialPortCarA != null)
+                if (_tracker.SerialPortVehicleA != null)
                 {
-                    if (_tracker._serialPortCarA.IsOpen)
-                        _tracker._serialPortCarA.Close();
-                    _tracker._serialPortCarA.PortName = cbPorts1.Text;
-                    _tracker._serialPortCarA.Open();
+                    if (_tracker.SerialPortVehicleA.IsOpen)
+                        _tracker.SerialPortVehicleA.Close();
+                    _tracker.SerialPortVehicleA.PortName = cbPorts1.Text;
+                    _tracker.SerialPortVehicleA.Open();
                 }
                 else
                 {
-                    _tracker._serialPortCarA = new SerialPort(cbPorts1.Text, (int)nudBaudRate.Value, Parity.None, 8, StopBits.One);
-                    _tracker._serialPortCarA.Open();
+                    _tracker.SerialPortVehicleA = new SerialPort(cbPorts1.Text, (int)nudBaudRate.Value, Parity.None, 8, StopBits.One);
+                    _tracker.SerialPortVehicleA.Open();
                 }
             }
             catch (UnauthorizedAccessException)
             {
                 MessageBox.Show("串口设置无效！");
-                _tracker._serialPortCarA = null;
+                _tracker.SerialPortVehicleA = null;
             }
         }
     }

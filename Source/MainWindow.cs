@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.IO.Ports;
@@ -12,21 +10,56 @@ using Point2i = OpenCvSharp.Point;
 namespace EdcHost;
 public partial class MainWindow : Form
 {
+    /// <summary>
+    /// The size of icons shown on the monitor
+    /// </summary>
     private const int IconSize = 25;
 
 
-    public MyFlags _flags = new MyFlags();
-    public VideoCapture _camera = new VideoCapture();
+    /// <summary>
+    /// A list of available serial ports
+    /// </summary>
+    public string[] AvailableSerialPortList => this._availableSerialPortList;
+    public VideoCapture Camera => this._camera;
+    /// <summary>
+    /// The coordinate converter
+    /// </summary>
+    public CoordinateConverter CoordinateConverter
+    {
+        get => this._coordinateConverter;
+        set => this._coordinateConverter = value;
+    }
+    /// <summary>
+    /// The configurations
+    /// </summary>
+    public MyFlags Flags => this._flags;
+    /// <summary>
+    /// The serial port of the vehicle of camp A
+    /// </summary>
+    public SerialPort SerialPortVehicleA
+    {
+        get => this._serialPortVehicleA;
+        set => this._serialPortVehicleA = value;
+    }
+    /// <summary>
+    /// The serial port of the vehicle of camp B
+    /// </summary>
+    public SerialPort SerialPortVehicleB
+    {
+        get => this.SerialPortVehicleB;
+        set => this._serialPortVehicleB = value;
+    }
+
+    private string[] _availableSerialPortList;
+    private VideoCapture _camera = new VideoCapture();
+    private CoordinateConverter _coordinateConverter;
+    private MyFlags _flags = new MyFlags();
+    private Game _game = new Game();
     private Point2f[] _monitorCorners = new Point2f[4];
-    public CoordinateConverter _coordinateConverter;
+    private SerialPort _serialPortVehicleA = null;
+    private SerialPort _serialPortVehicleB = null;
     private Localiser _vehicleLocalizer = new Localiser();
 
-    private Point2i _carAPosition = new Point2i();
-    private Point2i _carBPosition = new Point2i();
-
-    private Game _game = new Game();
-    public SerialPort _serialPortCarA, _serialPortCarB;
-    public string[] _availableSerialPortList;
 
 
     public MainWindow()
@@ -39,24 +72,24 @@ public partial class MainWindow : Form
         label_GameCount.Text = "上半场";
 
         // Setup the monitor
-        _camera.Open(0);
+        Camera.Open(0);
 
         // 相机画面大小设为视频帧大小
-        _flags.cameraSize.Width = _camera.FrameWidth;
-        _flags.cameraSize.Height = _camera.FrameHeight;
+        Flags.cameraSize.Width = Camera.FrameWidth;
+        Flags.cameraSize.Height = Camera.FrameHeight;
 
         // 显示大小设为界面组件大小
-        _flags.showSize.Width = pbCamera.Width;
-        _flags.showSize.Height = pbCamera.Height;
+        Flags.showSize.Width = pbCamera.Width;
+        Flags.showSize.Height = pbCamera.Height;
 
         // 以既有的flags参数初始化坐标转换器
-        _coordinateConverter = new CoordinateConverter(_flags);
+        CoordinateConverter = new CoordinateConverter(Flags);
 
-        _availableSerialPortList = SerialPort.GetPortNames();
+        this._availableSerialPortList = SerialPort.GetPortNames();
 
-        _camera.FrameWidth = _flags.cameraSize.Width;
-        _camera.FrameHeight = _flags.cameraSize.Height;
-        _camera.ConvertRgb = true;
+        Camera.FrameWidth = Flags.cameraSize.Width;
+        Camera.FrameHeight = Flags.cameraSize.Height;
+        Camera.ConvertRgb = true;
 
         // 设置定时器的触发间隔为 100ms
         timerMsg100ms.Interval = 100;
@@ -81,17 +114,7 @@ public partial class MainWindow : Form
         }
         else if (this._game.GameState == GameState.Running)
         {
-            switch (this._game.GetCamp())
-            {
-                case Camp.A:
-                    this._game.Refresh(new Dot(this._carAPosition));
-                    break;
-                case Camp.B:
-                    this._game.Refresh(new Dot(this._carBPosition));
-                    break;
-                default:
-                    break;
-            }
+            this._game.Refresh(new Dot(this._vehicleLocalizer.GetCentres(this._game.GetCamp())[0]));
 
             this.buttonStart.Enabled = false;
             this.buttonPause.Enabled = true;
@@ -136,16 +159,16 @@ public partial class MainWindow : Form
         Mat cameraFrame = new Mat();
         Mat monitorFrame = new Mat();
         // 从视频流中读取一帧相机画面videoFrame
-        if (!_camera.Read(cameraFrame))
+        if (!Camera.Read(cameraFrame))
         {
             return;
         }
 
-        this._vehicleLocalizer.Locate(cameraFrame, _flags);
+        this._vehicleLocalizer.Locate(cameraFrame, Flags);
 
         cameraFrame = this.Draw(cameraFrame, _vehicleLocalizer);
 
-        Cv2.Resize(cameraFrame, monitorFrame, this._flags.showSize);
+        Cv2.Resize(cameraFrame, monitorFrame, this.Flags.showSize);
 
         this.BeginInvoke(new Action<Image>(RefreshMonitor), BitmapConverter.ToBitmap(monitorFrame));
     }
@@ -185,7 +208,7 @@ public partial class MainWindow : Form
         );
 
         // Draw crosses at the corners.
-        foreach (Point2f pt in this._coordinateConverter.MonitorToCamera(this._monitorCorners))
+        foreach (Point2f pt in this.CoordinateConverter.MonitorToCamera(this._monitorCorners))
         {
             Cv2.Line(
                 image,
@@ -215,7 +238,7 @@ public partial class MainWindow : Form
                 Point2f[] pointsInCourtCoordination = { topLeftPosition.ToPoint(), bottomRightPosition.ToPoint() };
 
                 Point2i[] pointsInCameraCoordination = Array.ConvertAll(
-                    _coordinateConverter.CourtToCamera(pointsInCourtCoordination), item => (Point2i)item
+                    CoordinateConverter.CourtToCamera(pointsInCourtCoordination), item => (Point2i)item
                 );
 
                 Cv2.Rectangle(image, pointsInCameraCoordination[0], pointsInCameraCoordination[1], color: barrierColor, thickness: edgeThickness);
@@ -242,7 +265,7 @@ public partial class MainWindow : Form
         // Draw charging piles
         foreach (var chargingPile in this._game.ChargingPileList)
         {
-            var position = new Dot((Point2i)this._coordinateConverter.CourtToCamera(chargingPile.Position.ToPoint()));
+            var position = new Dot((Point2i)this.CoordinateConverter.CourtToCamera(chargingPile.Position.ToPoint()));
 
             Mat icon = new Mat();
             switch (chargingPile.Camp)
@@ -258,7 +281,7 @@ public partial class MainWindow : Form
                 default:
                     break;
             }
-            
+
             int x = Math.Min(Math.Max(position.x - 10, 0), image.Cols - iconChargingPileRed.Cols);
             int y = Math.Min(Math.Max(position.y - 10, 0), image.Cols - iconChargingPileRed.Cols);
 
@@ -283,7 +306,7 @@ public partial class MainWindow : Form
                 {
                     target_img = iconOrderDeparture;
                     //修正坐标
-                    Point2f[] converted_cord = _coordinateConverter.CourtToCamera(new Point2f[] { (Point2f)ord.DeparturePosition.ToPoint() });
+                    Point2f[] converted_cord = CoordinateConverter.CourtToCamera(new Point2f[] { (Point2f)ord.DeparturePosition.ToPoint() });
                     Tx = (int)converted_cord[0].X - 10;
                     Ty = (int)converted_cord[0].Y - 10;
 
@@ -292,7 +315,7 @@ public partial class MainWindow : Form
                 else if (Order.StatusType.InDelivery == currentOrderStatus)
                 {
                     target_img = iconOrderDestination;
-                    Point2f[] converted_cord = _coordinateConverter.CourtToCamera(new Point2f[] { (Point2f)ord.DestinationPosition.ToPoint() });
+                    Point2f[] converted_cord = CoordinateConverter.CourtToCamera(new Point2f[] { (Point2f)ord.DestinationPosition.ToPoint() });
                     Tx = (int)converted_cord[0].X - 10;
                     Ty = (int)converted_cord[0].Y - 10;
                 }
@@ -385,14 +408,14 @@ public partial class MainWindow : Form
             string myStr = System.Text.Encoding.UTF8.GetString(heByte);
             string[] str = myStr.Split(' ');
 
-            _flags.configs.hue1Lower = Convert.ToInt32(str[0]);
-            _flags.configs.hue1Upper = Convert.ToInt32(str[1]);
-            _flags.configs.hue2Lower = Convert.ToInt32(str[2]);
-            _flags.configs.hue2Upper = Convert.ToInt32(str[3]);
-            _flags.configs.saturation1Lower = Convert.ToInt32(str[4]);
-            _flags.configs.saturation2Lower = Convert.ToInt32(str[5]);
-            _flags.configs.valueLower = Convert.ToInt32(str[6]);
-            _flags.configs.areaLower = Convert.ToInt32(str[7]);
+            Flags.configs.hue1Lower = Convert.ToInt32(str[0]);
+            Flags.configs.hue1Upper = Convert.ToInt32(str[1]);
+            Flags.configs.hue2Lower = Convert.ToInt32(str[2]);
+            Flags.configs.hue2Upper = Convert.ToInt32(str[3]);
+            Flags.configs.saturation1Lower = Convert.ToInt32(str[4]);
+            Flags.configs.saturation2Lower = Convert.ToInt32(str[5]);
+            Flags.configs.valueLower = Convert.ToInt32(str[6]);
+            Flags.configs.areaLower = Convert.ToInt32(str[7]);
 
             fsRead.Close();
         }
@@ -407,18 +430,18 @@ public partial class MainWindow : Form
     {
         timerMsg100ms.Stop();
         //threadCamera.Join();
-        _camera.Release();
-        if (_serialPortCarA != null && _serialPortCarA.IsOpen)
-            _serialPortCarA.Close();
-        if (_serialPortCarB != null && _serialPortCarB.IsOpen)
-            _serialPortCarB.Close();
+        Camera.Release();
+        if (SerialPortVehicleA != null && SerialPortVehicleA.IsOpen)
+            SerialPortVehicleA.Close();
+        if (SerialPortVehicleB != null && SerialPortVehicleB.IsOpen)
+            SerialPortVehicleB.Close();
     }
 
     private void OnCalibrateButtonClick(object sender, EventArgs e)
     {
-        lock (_flags)
+        lock (Flags)
         {
-            _flags.clickCount = 0;
+            Flags.clickCount = 0;
             for (int i = 0; i < 4; ++i)
                 _monitorCorners[i].X = _monitorCorners[i].Y = 0;
         }
@@ -440,12 +463,12 @@ public partial class MainWindow : Form
 
         int idx = -1;
 
-        lock (_flags)
+        lock (Flags)
         {
-            if (_flags.clickCount < 4)
+            if (Flags.clickCount < 4)
             {
-                _flags.clickCount++;
-                idx = _flags.clickCount - 1;
+                Flags.clickCount++;
+                idx = Flags.clickCount - 1;
             }
         }
 
@@ -458,7 +481,7 @@ public partial class MainWindow : Form
             _monitorCorners[idx].Y = yMouse;
             if (idx == 3)
             {
-                _coordinateConverter.Calibrate(_monitorCorners);
+                CoordinateConverter.Calibrate(_monitorCorners);
                 MessageBox.Show(
                       $"边界点设置完成\n"
                     + $"0: {_monitorCorners[0].X,5}, {_monitorCorners[0].Y,5}\t"
@@ -533,9 +556,9 @@ public partial class MainWindow : Form
     // 打开设置调试窗口
     private void OnSettingsButtonClick(object sender, EventArgs e)
     {
-        lock (_flags)
+        lock (Flags)
         {
-            SettingsWindow st = new SettingsWindow(ref _flags, ref _game, this);
+            SettingsWindow st = new SettingsWindow(ref this._flags, ref _game, this);
             st.Show();
         }
     }

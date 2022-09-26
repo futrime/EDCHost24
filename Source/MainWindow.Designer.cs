@@ -6,8 +6,8 @@ partial class MainWindow
         if (disposing && (components != null))
         {
             components.Dispose();
-            _camera.Dispose();
-            _coordinateConverter.Dispose();
+            Camera.Dispose();
+            CoordinateConverter.Dispose();
         }
         base.Dispose(disposing);
     }
