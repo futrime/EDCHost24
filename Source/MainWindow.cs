@@ -62,7 +62,7 @@ public partial class MainWindow : Form
     private Point2f[] _monitorCorners = new Point2f[4];
     private SerialPort _serialPortVehicleA = null;
     private SerialPort _serialPortVehicleB = null;
-    private Localiser _vehicleLocalizer = new Localiser();
+    private LocaliserLegacy _vehicleLocalizer = new LocaliserLegacy();
 
 
 
@@ -187,7 +187,7 @@ public partial class MainWindow : Form
     /// </summary>
     /// <param name="image">The background picture</param>
     /// <param name="localizer">The localiser</param>
-    private Mat Draw(Mat image, Localiser localizer)
+    private Mat Draw(Mat image, LocaliserLegacy localizer)
     {
         // Read icons
         var iconCarA = new Mat(@"Assets/Icons/VehicleRed.png", ImreadModes.Color);

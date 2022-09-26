@@ -5,14 +5,14 @@ using Point2i = OpenCvSharp.Point;
 
 namespace EdcHost;
 
-public class Localiser
+public class LocaliserLegacy
 {
     // 依次为车1、车2位置的中心点集
     // 均为 showMap 中的坐标
     private List<Point2i> centres1;
     private List<Point2i> centres2;
 
-    public Localiser()
+    public LocaliserLegacy()
     {
         centres1 = new List<Point2i>();
         centres2 = new List<Point2i>();
