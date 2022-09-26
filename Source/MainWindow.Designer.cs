@@ -31,16 +31,16 @@ partial class MainWindow
             this.ScoreBBackgroundLabel = new System.Windows.Forms.Label();
             this.ScoreABackgroundLabel = new System.Windows.Forms.Label();
             this.GameTimeLabel = new System.Windows.Forms.Label();
-            this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
+            this.DistanceLeftLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.MonitorPictureBox)).BeginInit();
             this.SuspendLayout();
             // 
             // MonitorPictureBox
             // 
-            this.MonitorPictureBox.Location = new System.Drawing.Point(277, 11);
+            this.MonitorPictureBox.Location = new System.Drawing.Point(508, 11);
             this.MonitorPictureBox.Margin = new System.Windows.Forms.Padding(2);
             this.MonitorPictureBox.Name = "MonitorPictureBox";
-            this.MonitorPictureBox.Size = new System.Drawing.Size(916, 650);
+            this.MonitorPictureBox.Size = new System.Drawing.Size(1063, 831);
             this.MonitorPictureBox.TabIndex = 0;
             this.MonitorPictureBox.TabStop = false;
             this.MonitorPictureBox.MouseClick += new System.Windows.Forms.MouseEventHandler(this.OnMonitorMouseClick);
@@ -51,10 +51,10 @@ partial class MainWindow
             // 
             // StartButton
             // 
-            this.StartButton.Location = new System.Drawing.Point(112, 531);
+            this.StartButton.Location = new System.Drawing.Point(220, 626);
             this.StartButton.Margin = new System.Windows.Forms.Padding(2);
             this.StartButton.Name = "StartButton";
-            this.StartButton.Size = new System.Drawing.Size(94, 29);
+            this.StartButton.Size = new System.Drawing.Size(200, 50);
             this.StartButton.TabIndex = 1;
             this.StartButton.Text = "Start";
             this.StartButton.UseVisualStyleBackColor = true;
@@ -63,10 +63,10 @@ partial class MainWindow
             // PauseButton
             // 
             this.PauseButton.Enabled = false;
-            this.PauseButton.Location = new System.Drawing.Point(112, 564);
+            this.PauseButton.Location = new System.Drawing.Point(220, 680);
             this.PauseButton.Margin = new System.Windows.Forms.Padding(2);
             this.PauseButton.Name = "PauseButton";
-            this.PauseButton.Size = new System.Drawing.Size(94, 29);
+            this.PauseButton.Size = new System.Drawing.Size(200, 50);
             this.PauseButton.TabIndex = 2;
             this.PauseButton.Text = "Pause";
             this.PauseButton.UseVisualStyleBackColor = true;
@@ -75,10 +75,10 @@ partial class MainWindow
             // ContinueButton
             // 
             this.ContinueButton.Enabled = false;
-            this.ContinueButton.Location = new System.Drawing.Point(112, 597);
+            this.ContinueButton.Location = new System.Drawing.Point(220, 734);
             this.ContinueButton.Margin = new System.Windows.Forms.Padding(2);
             this.ContinueButton.Name = "ContinueButton";
-            this.ContinueButton.Size = new System.Drawing.Size(94, 29);
+            this.ContinueButton.Size = new System.Drawing.Size(200, 50);
             this.ContinueButton.TabIndex = 3;
             this.ContinueButton.Text = "Continue";
             this.ContinueButton.UseVisualStyleBackColor = true;
@@ -123,10 +123,10 @@ partial class MainWindow
             // 
             // CalibrateButton
             // 
-            this.CalibrateButton.Location = new System.Drawing.Point(14, 597);
+            this.CalibrateButton.Location = new System.Drawing.Point(14, 734);
             this.CalibrateButton.Margin = new System.Windows.Forms.Padding(2);
             this.CalibrateButton.Name = "CalibrateButton";
-            this.CalibrateButton.Size = new System.Drawing.Size(94, 29);
+            this.CalibrateButton.Size = new System.Drawing.Size(200, 50);
             this.CalibrateButton.TabIndex = 11;
             this.CalibrateButton.Text = "Calibrate";
             this.CalibrateButton.UseVisualStyleBackColor = true;
@@ -134,10 +134,10 @@ partial class MainWindow
             // 
             // FoulButton
             // 
-            this.FoulButton.Location = new System.Drawing.Point(14, 564);
+            this.FoulButton.Location = new System.Drawing.Point(14, 680);
             this.FoulButton.Margin = new System.Windows.Forms.Padding(2);
             this.FoulButton.Name = "FoulButton";
-            this.FoulButton.Size = new System.Drawing.Size(94, 29);
+            this.FoulButton.Size = new System.Drawing.Size(200, 50);
             this.FoulButton.TabIndex = 13;
             this.FoulButton.Text = "Foul";
             this.FoulButton.UseVisualStyleBackColor = true;
@@ -146,10 +146,10 @@ partial class MainWindow
             // EndButton
             // 
             this.EndButton.Enabled = false;
-            this.EndButton.Location = new System.Drawing.Point(113, 632);
+            this.EndButton.Location = new System.Drawing.Point(220, 790);
             this.EndButton.Margin = new System.Windows.Forms.Padding(2);
             this.EndButton.Name = "EndButton";
-            this.EndButton.Size = new System.Drawing.Size(94, 29);
+            this.EndButton.Size = new System.Drawing.Size(200, 50);
             this.EndButton.TabIndex = 14;
             this.EndButton.Text = "End";
             this.EndButton.UseVisualStyleBackColor = true;
@@ -157,10 +157,10 @@ partial class MainWindow
             // 
             // ResetButton
             // 
-            this.ResetButton.Location = new System.Drawing.Point(14, 531);
+            this.ResetButton.Location = new System.Drawing.Point(14, 626);
             this.ResetButton.Margin = new System.Windows.Forms.Padding(2);
             this.ResetButton.Name = "ResetButton";
-            this.ResetButton.Size = new System.Drawing.Size(94, 29);
+            this.ResetButton.Size = new System.Drawing.Size(200, 50);
             this.ResetButton.TabIndex = 16;
             this.ResetButton.Text = "Reset";
             this.ResetButton.UseVisualStyleBackColor = true;
@@ -168,10 +168,10 @@ partial class MainWindow
             // 
             // SettingsButton
             // 
-            this.SettingsButton.Location = new System.Drawing.Point(13, 632);
+            this.SettingsButton.Location = new System.Drawing.Point(14, 790);
             this.SettingsButton.Margin = new System.Windows.Forms.Padding(4);
             this.SettingsButton.Name = "SettingsButton";
-            this.SettingsButton.Size = new System.Drawing.Size(94, 29);
+            this.SettingsButton.Size = new System.Drawing.Size(200, 50);
             this.SettingsButton.TabIndex = 17;
             this.SettingsButton.Text = "Settings";
             this.SettingsButton.UseVisualStyleBackColor = true;
@@ -212,20 +212,23 @@ partial class MainWindow
             this.GameTimeLabel.TabIndex = 18;
             this.GameTimeLabel.Text = "GameTimeLabel";
             // 
-            // dateTimePicker1
+            // DistanceLeftLabel
             // 
-            this.dateTimePicker1.Location = new System.Drawing.Point(453, 0);
-            this.dateTimePicker1.Name = "dateTimePicker1";
-            this.dateTimePicker1.Size = new System.Drawing.Size(250, 27);
-            this.dateTimePicker1.TabIndex = 19;
+            this.DistanceLeftLabel.AutoSize = true;
+            this.DistanceLeftLabel.Font = new System.Drawing.Font("Segoe UI", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.DistanceLeftLabel.Location = new System.Drawing.Point(14, 354);
+            this.DistanceLeftLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.DistanceLeftLabel.Name = "DistanceLeftLabel";
+            this.DistanceLeftLabel.Size = new System.Drawing.Size(499, 81);
+            this.DistanceLeftLabel.TabIndex = 19;
+            this.DistanceLeftLabel.Text = "DistanceLeftLabel";
             // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.SystemColors.Window;
-            this.ClientSize = new System.Drawing.Size(1204, 674);
-            this.Controls.Add(this.dateTimePicker1);
+            this.ClientSize = new System.Drawing.Size(1582, 853);
             this.Controls.Add(this.SettingsButton);
             this.Controls.Add(this.ResetButton);
             this.Controls.Add(this.EndButton);
@@ -241,6 +244,7 @@ partial class MainWindow
             this.Controls.Add(this.ScoreABackgroundLabel);
             this.Controls.Add(this.ScoreBLabel);
             this.Controls.Add(this.ScoreBBackgroundLabel);
+            this.Controls.Add(this.DistanceLeftLabel);
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "MainWindow";
             this.ShowIcon = false;
@@ -269,5 +273,5 @@ partial class MainWindow
     private System.Windows.Forms.Label ScoreBBackgroundLabel;
     private System.Windows.Forms.Label ScoreABackgroundLabel;
     private System.Windows.Forms.Label GameTimeLabel;
-    private System.Windows.Forms.DateTimePicker dateTimePicker1;
+    private System.Windows.Forms.Label DistanceLeftLabel;
 }

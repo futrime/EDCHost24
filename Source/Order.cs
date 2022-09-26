@@ -72,7 +72,10 @@ public class Order
             }
 
             var overtimeLength = Math.Max((long)this._deliveryTime - this.ScheduledDeliveryTime, 0);
-            return Order.MaxScore - (int)(overtimeLength / 1000) * Order.OvertimeScorePenaltyPerSecond;
+            return Math.Max(
+                Order.MaxScore - (int)(overtimeLength / 1000) * Order.OvertimeScorePenaltyPerSecond,
+                0
+            );
         }
     }
 
