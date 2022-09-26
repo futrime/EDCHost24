@@ -20,7 +20,7 @@ public partial class MainWindow : Form
     /// <summary>
     /// The size of icons shown on the monitor
     /// </summary>
-    private const int IconSize = 25;
+    private const int IconSize = 10;
 
     #endregion
 
