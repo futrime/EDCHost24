@@ -148,11 +148,12 @@ public class Game
     private OrderGenerator _orderGenerator;
     private List<Order> _allOrderList;
     private List<Order> _pendingOrderList = new List<Order>();
-    private List<Barrier> _barrierList;
+
+    private List<Barrier> _barrierList = new List<Barrier>();
     // The barrier only needs once generation. 
     private bool _haveInitializedBarrier = false;
 
-    private List<Barrier> _wallList;
+    private List<Barrier> _wallList = new List<Barrier>();
     private List<ChargingPile> _chargingPileList = new List<ChargingPile>();
 
     // SoundPlayer

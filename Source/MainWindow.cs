@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.IO.Ports;
@@ -19,7 +20,7 @@ public partial class MainWindow : Form
     /// <summary>
     /// The size of icons shown on the monitor
     /// </summary>
-    private const int IconSize = 25;
+    private const int IconSize = 10;
 
     #endregion
 
@@ -124,6 +125,9 @@ public partial class MainWindow : Form
 
         if (this._game.GameState == GameStateType.Unstarted)
         {
+            this.FoulButton.Enabled = false;
+            this.CalibrateButton.Enabled = true;
+            this.SettingsButton.Enabled = true;
             this.StartButton.Enabled = true;
             this.PauseButton.Enabled = false;
             this.ContinueButton.Enabled = false;
@@ -138,6 +142,9 @@ public partial class MainWindow : Form
                 this._game.Refresh(new Dot((Point2i)CoordinateConverter.CameraToCourt((Point2f)vehiclePositionList[0])));
             }
 
+            this.FoulButton.Enabled = true;
+            this.CalibrateButton.Enabled = false;
+            this.SettingsButton.Enabled = false;
             this.StartButton.Enabled = false;
             this.PauseButton.Enabled = true;
             this.ContinueButton.Enabled = false;
@@ -149,6 +156,9 @@ public partial class MainWindow : Form
         }
         else if (this._game.GameState == GameStateType.Paused)
         {
+            this.FoulButton.Enabled = true;
+            this.CalibrateButton.Enabled = true;
+            this.SettingsButton.Enabled = false;
             this.StartButton.Enabled = false;
             this.PauseButton.Enabled = false;
             this.ContinueButton.Enabled = true;
@@ -156,6 +166,9 @@ public partial class MainWindow : Form
         }
         else if (this._game.GameState == GameStateType.Ended)
         {
+            this.FoulButton.Enabled = false;
+            this.CalibrateButton.Enabled = true;
+            this.SettingsButton.Enabled = false;
             this.StartButton.Enabled = true;
             this.PauseButton.Enabled = false;
             this.ContinueButton.Enabled = false;
@@ -231,59 +244,55 @@ public partial class MainWindow : Form
             dsize: new OpenCvSharp.Size(IconSize, IconSize)
         );
 
-        // Draw crosses at the corners.
-        foreach (Point2f pt in this.CoordinateConverter.MonitorToCamera(this._monitorCorners))
+        // Draw court boundaries
+        var corners = this.CoordinateConverter.CourtToCamera(new Point2f[]{
+            new Point2f(0, 0),
+            new Point2f(0, this.Flags.CourtSize.Width),
+            new Point2f(this.Flags.CourtSize.Height, this.Flags.CourtSize.Height),
+            new Point2f(this.Flags.CourtSize.Height, 0)
+        });
+        for (int i = 0; i < 4; ++i)
         {
             Cv2.Line(
                 image,
-                (int)(pt.X - 10), (int)(pt.Y),
-                (int)(pt.X + 10), (int)(pt.Y),
-                color: new Scalar(0x00, 0x00, 0x00),
-                thickness: 2
-            );
-            Cv2.Line(
-                image,
-                (int)(pt.X), (int)(pt.Y - 10),
-                (int)(pt.X), (int)(pt.Y + 10),
-                color: new Scalar(0x00, 0x00, 0x00),
-                thickness: 2
+                (int)corners[i].X,
+                (int)corners[i].Y,
+                (int)corners[(i + 1) % 4].X,
+                (int)corners[(i + 1) % 4].Y,
+                color: new Scalar(0x00, 0x00, 0x00)
             );
         }
 
-        // Draw Barriers and Walls
-        if (this._game.GameState == GameStateType.Running || this._game.GameState == GameStateType.Paused)
+        // Draw corners when calibrating
+        if (this._flags.CalibrationClickCount < 4)
         {
-            // define a public function
-            void DrawBarrier(Barrier barrier, Scalar barrierColor, int edgeThickness)
+            var pointList = this.CoordinateConverter.MonitorToCamera(this._monitorCorners);
+            for (int i = 0; i < this._flags.CalibrationClickCount; ++i)
             {
-                Dot topLeftPosition = barrier.TopLeftPosition;
-                Dot bottomRightPosition = barrier.BottomRightPosition;
-
-                Point2f[] pointsInCourtCoordination = { topLeftPosition.ToPoint(), bottomRightPosition.ToPoint() };
-
-                Point2i[] pointsInCameraCoordination = Array.ConvertAll(
-                    CoordinateConverter.CourtToCamera(pointsInCourtCoordination), item => (Point2i)item
+                var point = pointList[i];
+                Cv2.Line(
+                    image,
+                    (int)(point.X - 10), (int)(point.Y),
+                    (int)(point.X + 10), (int)(point.Y),
+                    color: new Scalar(0x00, 0xff, 0x00)
                 );
+                Cv2.Line(
+                    image,
+                    (int)(point.X), (int)(point.Y - 10),
+                    (int)(point.X), (int)(point.Y + 10),
+                    color: new Scalar(0x00, 0xff, 0x00)
+                );
+            }
+        }
 
-                Cv2.Rectangle(image, pointsInCameraCoordination[0], pointsInCameraCoordination[1], color: barrierColor, thickness: edgeThickness);
-
-                for (int i = pointsInCameraCoordination[0].X; i < pointsInCameraCoordination[1].X; i += 2)
-                {
-                    Point2i upperPoint = new Point2i(i, pointsInCameraCoordination[0].Y);
-                    Point2i lowerPoint = new Point2i(i, pointsInCameraCoordination[1].Y);
-                    Cv2.Line(image, upperPoint, lowerPoint, color: barrierColor, 1);
-                }
-            }
-            // Draw Barriers 
-            foreach (var barrier in this._game.BarrierList)
-            {
-                DrawBarrier(barrier, Scalar.Yellow, 2);
-            }
-            // Draw Walls
-            foreach (var wall in this._game.WallList)
-            {
-                DrawBarrier(wall, Scalar.Black, 1);
-            }
+        // Draw Barriers and Walls
+        foreach (var barrier in this._game.BarrierList)
+        {
+            DrawBarrier(image, barrier, Scalar.Gray);
+        }
+        foreach (var wall in this._game.WallList)
+        {
+            DrawBarrier(image, wall, Scalar.Black);
         }
 
         // Draw charging piles
@@ -403,6 +412,27 @@ public partial class MainWindow : Form
         }
 
         return image;
+    }
+
+    private void DrawBarrier(Mat image, Barrier barrier, Scalar color)
+    {
+        Point2f[] cornerInCourtCoordinateList = {
+            barrier.TopLeftPosition.ToPoint(),
+            new Point2f(barrier.TopLeftPosition.x, barrier.BottomRightPosition.y),
+            barrier.BottomRightPosition.ToPoint(),
+            new Point2f(barrier.BottomRightPosition.x, barrier.TopLeftPosition.y),
+        };
+
+        var cornerInCameraCoordinateList = this.CoordinateConverter.CourtToCamera(cornerInCourtCoordinateList);
+
+        Cv2.FillConvexPoly(
+            image,
+            Array.ConvertAll(
+                cornerInCameraCoordinateList,
+                item => (Point2i)item
+            ),
+            color
+        );
     }
 
     /// <summary>
