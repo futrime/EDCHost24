@@ -8,7 +8,7 @@ public class ChargingPile
     /// <summary>
     /// The charging range radius in centimeters
     /// </summary>
-    public const decimal InfluenceScopeRadius = 20;
+    public const decimal DefaultInfluenceScopeRadius = 20;
 
 
     /// <summary>
@@ -22,6 +22,7 @@ public class ChargingPile
     public Dot Position => this._position;
 
     private Camp _camp;
+    private decimal _influenceScopeRadius;
     private Dot _position;
 
 
@@ -29,9 +30,13 @@ public class ChargingPile
     /// Construct a charging pile.
     /// </summary>
     /// <param name="position">The position</param>
-    public ChargingPile(Camp camp, Dot position)
+    public ChargingPile(
+        Camp camp,
+        Dot position,
+        decimal influenceScopeRadius = ChargingPile.DefaultInfluenceScopeRadius)
     {
         this._camp = camp;
+        this._influenceScopeRadius = influenceScopeRadius;
         this._position = position;
     }
 
@@ -45,6 +50,6 @@ public class ChargingPile
     public bool IsInInfluenceScope(Dot position)
     {
         return Dot.Distance(position, this._position) <
-            ChargingPile.InfluenceScopeRadius;
+            this._influenceScopeRadius;
     }
 }
