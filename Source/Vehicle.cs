@@ -4,6 +4,9 @@ using System.Linq;
 
 namespace EdcHost;
 
+/// <summary>
+/// A vehicle
+/// </summary>
 public class Vehicle
 {
     #region Parameters
