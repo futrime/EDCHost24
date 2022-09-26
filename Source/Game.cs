@@ -6,6 +6,8 @@ namespace EdcHost;
 
 public class Game
 {
+    #region Parameters
+
     // Parameters for the game
     public const int GameDurationFirstHalf = 60000;
     public const int GameDurationSecondHalf = 180000;
@@ -39,6 +41,21 @@ public class Game
     public const int MaxBarrierLength = 50;
     public const int MinDistanceBetweenBarriers = 40;
 
+    #endregion
+
+
+    #region Properties
+
+    /// <summary>
+    /// The game stage
+    /// </summary>
+    public GameStage GameStage => this._gameStage;
+
+    /// <summary>
+    /// The game state
+    /// </summary>
+    public GameState GameState => this._gameState;
+
     /// <summary>
     /// The system time
     /// </summary>
@@ -49,6 +66,7 @@ public class Game
             return DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
         }
     }
+
     /// <summary>
     /// The game time
     /// </summary>
@@ -62,9 +80,10 @@ public class Game
             }
             // To fix the bug that time still runs when 'Pause' button is pressed,
             // we should minus this.ContinueTime - this.PauseTime
-            return Math.Max(this.SystemTime - this._startTime - (this.ContinueTime - this.PauseTime), 0);
+            return Math.Max(this.SystemTime - this._startTime, 0);
         }
     }
+
     /// <summary>
     /// The remaining time
     /// </summary>
@@ -80,44 +99,53 @@ public class Game
             return Math.Max(this._gameDuration - this.GameTime, 0);
         }
     }
-    public long PauseTime;
-    public long ContinueTime;
-    public List<ChargingPile> ChargingPileList => this._chargingPileList;
 
+    /// <summary>
+    /// A list of all charging piles
+    /// </summary>
+    public List<ChargingPile> ChargingPileList => this._chargingPileList;
 
     /// <summary>
     /// A list of all orders
     /// </summary>
     public List<Order> AllOrderList => _allOrderList;
+
     /// <summary>
     /// A list of barriers
     /// </summary>
     public List<Barrier> BarrierList => _barrierList;
+
     /// <summary>
     /// A list of walls
     /// </summary>
     public List<Barrier> WallList => _wallList;
-    public GameStage GameStage = GameStage.None;
-    public GameState GameState = GameState.Unstarted;
+
+    #endregion
+
+    #region Private fields
+
+    private GameStage _gameStage = GameStage.None;
+    private GameState _gameState = GameState.Unstarted;
     private Camp _camp = Camp.None;
-
     private long _startTime = 0;
-    private int _timePenaltySum = 0;
-    private int _gameDuration = GameDurationFirstHalf;
-
+    private long _timePenaltySum = 0;
+    private long _gameDuration = GameDurationFirstHalf;
+    private long _pauseTime;
     private Vehicle _vehicleA = new Vehicle(Camp.A);
     private Vehicle _vehicleB = new Vehicle(Camp.B);
     private int[] _scoreA = { 0, 0 };
     private int[] _scoreB = { 0, 0 };
-
     private OrderGenerator _orderGenerator;
     private List<Order> _allOrderList;
     private List<Order> _pendingOrderList = new List<Order>();
-
     private List<Barrier> _barrierList;
     private List<Barrier> _wallList;
     private List<ChargingPile> _chargingPileList = new List<ChargingPile>();
 
+    #endregion
+
+
+    #region Public methods
 
     public Game()
     {
@@ -178,7 +206,7 @@ public class Game
 
             if (RemainingTime <= 0)
             {
-                GameState = GameState.Ended;
+                this._gameState = GameState.Ended;
             }
         }
     }
@@ -204,8 +232,8 @@ public class Game
         }
 
         // set state param of game
-        GameState = GameState.Running;
-        GameStage = _GameStage;
+        this._gameState = GameState.Running;
+        this._gameStage = _GameStage;
         this._camp = _camp;
 
         if (this._camp == Camp.A)
@@ -301,15 +329,15 @@ public class Game
         {
             return;
         }
-        this.GameState = GameState.Paused;
+        this._gameState = GameState.Paused;
         // To fix the bug that time still runs when 'Pause' button is pressed  
-        this.PauseTime = this.SystemTime;
+        this._pauseTime = this.SystemTime;
     }
 
     public void Continue()
     {
-        GameState = GameState.Running; 
-        this.ContinueTime = this.SystemTime;
+        this._gameState = GameState.Running;
+        this._startTime += this.SystemTime - this._pauseTime;
     }
 
     public void End()
@@ -319,7 +347,7 @@ public class Game
             return;
         }
 
-        GameState = GameState.Ended;
+        this._gameState = GameState.Ended;
     }
 
     public Camp GetCamp()
@@ -349,21 +377,6 @@ public class Game
         return 0;
     }
 
-    public int GetMileage()
-    {
-        if (_camp == Camp.A)
-        {
-            return _vehicleA.GetMileage();
-        }
-        else if (_camp == Camp.B)
-        {
-            return _vehicleB.GetMileage();
-        }
-        else
-        {
-            return 0;
-        }
-    }
     public Vehicle GetCar(Camp c)
     {
         if (c == Camp.A)
@@ -379,13 +392,10 @@ public class Game
             return null;
         }
     }
-    /***********************************************************************
-    Private Functions
-    ***********************************************************************/
 
-    /***********************************************
-    Initialize and Generate Package
-    ***********************************************/
+    #endregion
+
+    #region Private methods
 
     /// <summary>
     /// Check if a position is in a barrier.
@@ -422,4 +432,6 @@ public class Game
 
         return false;
     }
+
+    #endregion
 }
