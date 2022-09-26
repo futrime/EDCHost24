@@ -14,11 +14,17 @@ namespace EdcHost;
 /// </summary>
 public partial class MainWindow : Form
 {
+    #region Parameters
+
     /// <summary>
     /// The size of icons shown on the monitor
     /// </summary>
     private const int IconSize = 25;
 
+    #endregion
+
+
+    #region Public properties
 
     /// <summary>
     /// A list of available serial ports
@@ -54,6 +60,10 @@ public partial class MainWindow : Form
         set => this._serialPortVehicleB = value;
     }
 
+    #endregion
+
+    #region Private fields
+
     private string[] _availableSerialPortList;
     private VideoCapture _camera = new VideoCapture();
     private CoordinateConverter _coordinateConverter;
@@ -64,7 +74,10 @@ public partial class MainWindow : Form
     private SerialPort _serialPortVehicleB = null;
     private LocaliserLegacy _vehicleLocalizer = new LocaliserLegacy();
 
+    #endregion
 
+
+    #region Methods
 
     public MainWindow()
     {
@@ -96,10 +109,10 @@ public partial class MainWindow : Form
         Camera.ConvertRgb = true;
 
         // 设置定时器的触发间隔为 100ms
-        timerMsg100ms.Interval = 100;
+        Timer.Interval = 100;
 
         // 启动计时器，执行给迷宫外的小车定时发信息的任务
-        timerMsg100ms.Start();
+        Timer.Start();
     }
 
     /// <summary>
@@ -162,12 +175,13 @@ public partial class MainWindow : Form
 
     #region Methods related to the camera and the monitor
 
-    // 从视频帧中读取一帧，进行图像处理、绘图和数值更新
+    /// <summary>
+    /// Read, process and display a frame from the camera.
+    /// </summary>
     private void ProcessCameraFrame()
     {
         Mat cameraFrame = new Mat();
         Mat monitorFrame = new Mat();
-        // 从视频流中读取一帧相机画面videoFrame
         if (!Camera.Read(cameraFrame))
         {
             return;
@@ -187,6 +201,7 @@ public partial class MainWindow : Form
     /// </summary>
     /// <param name="image">The background picture</param>
     /// <param name="localizer">The localiser</param>
+    /// <return>The frame with patterns on it</return>
     private Mat Draw(Mat image, LocaliserLegacy localizer)
     {
         // Read icons
@@ -221,17 +236,17 @@ public partial class MainWindow : Form
         {
             Cv2.Line(
                 image,
-                (int)(pt.X - 20), (int)(pt.Y),
-                (int)(pt.X + 20), (int)(pt.Y),
-                color: new Scalar(0x00, 0xff, 0x00),
-                thickness: 3
+                (int)(pt.X - 10), (int)(pt.Y),
+                (int)(pt.X + 10), (int)(pt.Y),
+                color: new Scalar(0x00, 0x00, 0x00),
+                thickness: 2
             );
             Cv2.Line(
                 image,
-                (int)(pt.X), (int)(pt.Y - 20),
-                (int)(pt.X), (int)(pt.Y + 20),
-                color: new Scalar(0x00, 0xff, 0x00),
-                thickness: 3
+                (int)(pt.X), (int)(pt.Y - 10),
+                (int)(pt.X), (int)(pt.Y + 10),
+                color: new Scalar(0x00, 0x00, 0x00),
+                thickness: 2
             );
         }
 
@@ -430,15 +445,8 @@ public partial class MainWindow : Form
         }
     }
 
-    /// <summary>
-    /// OnFormClose
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
     private void OnFormClosed(object sender, FormClosedEventArgs e)
     {
-        timerMsg100ms.Stop();
-        //threadCamera.Join();
         Camera.Release();
         if (SerialPortVehicleA != null && SerialPortVehicleA.IsOpen)
             SerialPortVehicleA.Close();
@@ -457,10 +465,12 @@ public partial class MainWindow : Form
     }
 
     /// <summary>
-    /// Click the four corners to calibrate the capture.
+    /// Click the four corners to calibrate the capturing.
     /// </summary>
     /// <remarks>
-    /// Click on the top left corner, top right corner, 
+    /// Click on the top left corner, top right corner,
+    /// bottom left corner, and the bottom right corner
+    /// in turn to calibrate the capturing.
     /// </remarks>
     private void OnMonitorMouseClick(object sender, MouseEventArgs e)
     {
@@ -481,7 +491,6 @@ public partial class MainWindow : Form
             }
         }
 
-        // 如果画面已经被点击了4次，则不再重复校正
         if (idx == -1) return;
 
         if (xMouse >= 0 && xMouse < widthView && yMouse >= 0 && yMouse < heightView)
@@ -533,19 +542,16 @@ public partial class MainWindow : Form
         }
     }
 
-    // Pause
     private void OnPauseButtonClick(object sender, EventArgs e)
     {
         this._game.Pause();
     }
 
-    // Continue
     private void OnContinueButtonClick(object sender, EventArgs e)
     {
         _game.Continue();
     }
 
-    // End
     private void OnEndButtonClick(object sender, EventArgs e)
     {
         _game.End();
@@ -556,13 +562,11 @@ public partial class MainWindow : Form
         this._game = new Game();
     }
 
-    // Get foul mark
     private void OnFoulButtonClick(object sender, EventArgs e)
     {
         _game.GetMark();
     }
 
-    // 打开设置调试窗口
     private void OnSettingsButtonClick(object sender, EventArgs e)
     {
         lock (Flags)
@@ -577,6 +581,8 @@ public partial class MainWindow : Form
         this.RefreshAll();
         this.Communicate();
     }
+
+    #endregion
 
     #endregion
 }
