@@ -3,7 +3,7 @@ using System;
 namespace EdcHost;
 
 /// <summary>
-/// The order for the vehicles to deliver
+/// An order
 /// </summary>
 public class Order
 {

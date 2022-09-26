@@ -3,7 +3,7 @@ using System;
 namespace EdcHost;
 
 /// <summary>
-/// The packet for communication
+/// A packet for communication
 /// </summary>
 internal abstract class Packet
 {

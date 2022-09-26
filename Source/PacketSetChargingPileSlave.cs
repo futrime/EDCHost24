@@ -3,7 +3,7 @@ using System;
 namespace EdcHost;
 
 /// <summary>
-/// The packet for the slaves to set a charging pile
+/// A packet for slaves to set a charging pile
 /// </summary>
 internal class PacketSetChargingPileSlave : Packet
 {

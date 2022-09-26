@@ -1,4 +1,8 @@
 namespace EdcHost;
+
+/// <summary>
+/// A collection of configurations
+/// </summary>
 public class ConfigType
 {    
     /// <summary>

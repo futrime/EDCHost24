@@ -4,7 +4,7 @@ using OpenCvSharp;
 namespace EdcHost;
 
 /// <summary>
-/// The transformation between different coordinate systems
+/// A coordinate converter between coordinate systems
 /// </summary>
 /// <remarks>
 /// This is the transformation between camera frame coordinate, monitor frame coordinate,

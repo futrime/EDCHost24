@@ -3,6 +3,9 @@ using System.Linq;
 
 namespace EdcHost;
 
+/// <summary>
+/// A vehicle
+/// </summary>
 public class Vehicle
 {
     public const int RUN_CREDIT = 10;          //小车启动可以得到10分;
@@ -23,7 +26,7 @@ public class Vehicle
 
 
     private Queue<Dot> mQueuePos;   // series of location
-    public Camp mCamp;               //A or B get、set直接两个封装好的函数
+    public CampType mCamp;               //A or B get、set直接两个封装好的函数
     private int mScore;               //得分
     private int mMileage;              //小车续航里程
     private List<Order> _deliveringOrder; // orders that are being delivered by car
@@ -48,7 +51,7 @@ public class Vehicle
     /********************************************
     Interface
     *********************************************/
-    public Vehicle(Camp c)
+    public Vehicle(CampType c)
     {
         mQueuePos = new Queue<Dot>(10);
         mCamp = c;

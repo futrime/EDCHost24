@@ -8,7 +8,7 @@ internal class PacketGetSiteInformationHost : Packet
 
     private int _obstacleListLength;
     private List<Barrier> _obstacleList;
-    private GameStage _currentGameStage;
+    private GameStageType _currentGameStage;
     private int _duration;
     private int _ownChargingPilesLength;
     private List<Dot> _ownChargingPiles;
@@ -23,7 +23,7 @@ internal class PacketGetSiteInformationHost : Packet
     /// </remarks>
     public PacketGetSiteInformationHost(
         List<Barrier> obstacleList,
-        GameStage currentGameStage,
+        GameStageType currentGameStage,
         int duration,
         List<Dot> ownChargingPiles,
         List<Dot> opponentChargingPiles)
@@ -71,7 +71,7 @@ internal class PacketGetSiteInformationHost : Packet
         }
 
         // Gamestage 
-        this._currentGameStage = (GameStage)BitConverter.ToInt32(data, currentIndex);
+        this._currentGameStage = (GameStageType)BitConverter.ToInt32(data, currentIndex);
         currentIndex += 4;
 
         this._duration = BitConverter.ToInt32(data, currentIndex);

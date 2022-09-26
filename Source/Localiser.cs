@@ -18,13 +18,13 @@ public class Localiser
         centres2 = new List<Point2i>();
     }
 
-    public List<Point2i> GetCentres(Camp cmp)
+    public List<Point2i> GetCentres(CampType cmp)
     {
         List<Point2i> centres;
         switch (cmp)
         {
-            case Camp.A: centres = new List<Point2i>(centres1); break;
-            case Camp.B: centres = new List<Point2i>(centres2); break;
+            case CampType.A: centres = new List<Point2i>(centres1); break;
+            case CampType.B: centres = new List<Point2i>(centres2); break;
             default: centres = new List<Point2i>(); break;
         }
         return centres;

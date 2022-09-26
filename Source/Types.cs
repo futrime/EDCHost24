@@ -1,9 +1,9 @@
 namespace EdcHost;
 
 /// <summary>
-/// The camp
+/// The camp type
 /// </summary>
-public enum Camp
+public enum CampType
 {
     None,
     A,
@@ -11,9 +11,9 @@ public enum Camp
 };
 
 /// <summary>
-/// The game stage
+/// The game stage type
 /// </summary>
-public enum GameStage
+public enum GameStageType
 {
     /// <summary>
     /// Undefined stage
@@ -32,9 +32,9 @@ public enum GameStage
 };
 
 /// <summary>
-/// The game state
+/// The game state type
 /// </summary>
-public enum GameState
+public enum GameStateType
 {
     /// <summary>
     /// The game has not started yet

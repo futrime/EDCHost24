@@ -5,6 +5,10 @@ using System.IO.Ports;
 using OpenCvSharp;
 
 namespace EdcHost;
+
+/// <summary>
+/// A settings window
+/// </summary>
 public partial class SettingsWindow : Form
 {
     private ConfigType _flags;

@@ -3,7 +3,8 @@ using System.Collections.Generic;
 namespace EdcHost;
 
 /// <summary>
-/// The order generator for generating orders in a round of game
+/// An order generator to keep the consistency of the
+/// order generation in different rounds.
 /// </summary>
 public class OrderGenerator
 {

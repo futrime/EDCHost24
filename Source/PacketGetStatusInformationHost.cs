@@ -25,20 +25,20 @@ internal class PacketGetStatusInformationHost : Packet
     /// <remarks>
     /// Note that orederList represents the order ## remaining on the GUI ##
     /// </remarks>
-    public PacketGetStatusInformationHost(GameState currentState, long currentTime, int currentScore,
+    public PacketGetStatusInformationHost(GameStateType currentState, long currentTime, int currentScore,
         Dot carPos, int mileage, List<Order> orderList)
     {
         // convert Gamestate to Status
         switch (currentState)
         {
-            case GameState.Unstarted:
-            case GameState.Ended:
+            case GameStateType.Unstarted:
+            case GameStateType.Ended:
                 this._currentStatus = Status.Standby;
                 break;
-            case GameState.Running:
+            case GameStateType.Running:
                 this._currentStatus = Status.InProgress;
                 break;
-            case GameState.Paused:
+            case GameStateType.Paused:
                 this._currentStatus = Status.Paused;
                 break;
         }

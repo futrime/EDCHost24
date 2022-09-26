@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace EdcHost;
 
+/// <summary>
+/// A game
+/// </summary>
 public class Game
 {
     #region Parameters
@@ -48,12 +51,12 @@ public class Game
     /// <summary>
     /// The game stage
     /// </summary>
-    public GameStage GameStage => this._gameStage;
+    public GameStageType GameStage => this._gameStage;
 
     /// <summary>
     /// The game state
     /// </summary>
-    public GameState GameState => this._gameState;
+    public GameStateType GameState => this._gameState;
 
     /// <summary>
     /// The system time
@@ -73,7 +76,7 @@ public class Game
     {
         get
         {
-            if (this.GameState != GameState.Running)
+            if (this.GameState != GameStateType.Running)
             {
                 return 0;
             }
@@ -90,7 +93,7 @@ public class Game
     {
         get
         {
-            if (this.GameState != GameState.Running)
+            if (this.GameState != GameStateType.Running)
             {
                 return 0;
             }
@@ -123,15 +126,15 @@ public class Game
 
     #region Private fields
 
-    private GameStage _gameStage = GameStage.None;
-    private GameState _gameState = GameState.Unstarted;
-    private Camp _camp = Camp.None;
+    private GameStageType _gameStage = GameStageType.None;
+    private GameStateType _gameState = GameStateType.Unstarted;
+    private CampType _camp = CampType.None;
     private long _startTime = 0;
     private long _timePenaltySum = 0;
     private long _gameDuration = GameDurationFirstHalf;
     private long _pauseTime;
-    private Vehicle _vehicleA = new Vehicle(Camp.A);
-    private Vehicle _vehicleB = new Vehicle(Camp.B);
+    private Vehicle _vehicleA = new Vehicle(CampType.A);
+    private Vehicle _vehicleB = new Vehicle(CampType.B);
     private int[] _scoreA = { 0, 0 };
     private int[] _scoreB = { 0, 0 };
     private OrderGenerator _orderGenerator;
@@ -153,12 +156,12 @@ public class Game
 
     public void Refresh(Dot _CarPos)
     {
-        if (this.GameState != GameState.Running)
+        if (this.GameState != GameStateType.Running)
         {
             return;
         }
 
-        if (_camp == Camp.None)
+        if (_camp == CampType.None)
         {
             throw new Exception("The camp is invalid.");
         }
@@ -173,28 +176,28 @@ public class Game
         int TimePenalty = 0;
 
         // Update car's info on each frame
-        if (_camp == Camp.A)
+        if (_camp == CampType.A)
         {
             _vehicleA.Update(_CarPos, (int)GameTime,
-            IsInBarrier(_CarPos), this.IsInChargingPileInfluenceScope(Camp.B, _CarPos),
-            this.IsInChargingPileInfluenceScope(Camp.A, _CarPos), ref _pendingOrderList, out TimePenalty);
+            IsInBarrier(_CarPos), this.IsInChargingPileInfluenceScope(CampType.B, _CarPos),
+            this.IsInChargingPileInfluenceScope(CampType.A, _CarPos), ref _pendingOrderList, out TimePenalty);
         }
-        else if (_camp == Camp.B)
+        else if (_camp == CampType.B)
         {
             _vehicleA.Update(_CarPos, (int)GameTime,
-            IsInBarrier(_CarPos), this.IsInChargingPileInfluenceScope(Camp.A, _CarPos),
-            this.IsInChargingPileInfluenceScope(Camp.B, _CarPos), ref _pendingOrderList, out TimePenalty);
+            IsInBarrier(_CarPos), this.IsInChargingPileInfluenceScope(CampType.A, _CarPos),
+            this.IsInChargingPileInfluenceScope(CampType.B, _CarPos), ref _pendingOrderList, out TimePenalty);
         }
 
-        if (this.GameState == GameState.Running)
+        if (this.GameState == GameStateType.Running)
         {
             // Calculate the remaining time
             switch (this.GameStage)
             {
-                case GameStage.FirstHalf:
+                case GameStageType.FirstHalf:
                     this._gameDuration = Game.GameDurationFirstHalf;
                     break;
-                case GameStage.SecondHalf:
+                case GameStageType.SecondHalf:
                     this._gameDuration = Game.GameDurationSecondHalf;
                     break;
                 default:
@@ -205,50 +208,50 @@ public class Game
 
             if (RemainingTime <= 0)
             {
-                this._gameState = GameState.Ended;
+                this._gameState = GameStateType.Ended;
             }
         }
     }
 
     public void GetMark()
     {
-        if (_camp == Camp.A)
+        if (_camp == CampType.A)
         {
             _vehicleA.GetMark();
         }
-        else if (_camp == Camp.B)
+        else if (_camp == CampType.B)
         {
             _vehicleB.GetMark();
         }
     }
 
     // decide which team and stage is going on
-    public void Start(Camp _camp, GameStage _GameStage)
+    public void Start(CampType _camp, GameStageType _GameStage)
     {
-        if (GameState == GameState.Running)
+        if (GameState == GameStateType.Running)
         {
             return;
         }
 
         // set state param of game
-        this._gameState = GameState.Running;
+        this._gameState = GameStateType.Running;
         this._gameStage = _GameStage;
         this._camp = _camp;
 
-        if (this._camp == Camp.A)
+        if (this._camp == CampType.A)
         {
             _scoreA[(int)GameStage - 1] = 0;
         }
-        else if (this._camp == Camp.B)
+        else if (this._camp == CampType.B)
         {
             _scoreB[(int)GameStage - 1] = 0;
         }
 
-        if (GameStage == GameStage.FirstHalf)
+        if (GameStage == GameStageType.FirstHalf)
         {
             this._gameDuration = GameDurationFirstHalf;
         }
-        else if (GameStage == GameStage.SecondHalf)
+        else if (GameStage == GameStageType.SecondHalf)
         {
             this._gameDuration = GameDurationSecondHalf;
         }
@@ -324,49 +327,49 @@ public class Game
 
     public void Pause()
     {
-        if (GameState != GameState.Running)
+        if (GameState != GameStateType.Running)
         {
             return;
         }
-        this._gameState = GameState.Paused;
+        this._gameState = GameStateType.Paused;
         // To fix the bug that time still runs when 'Pause' button is pressed  
         this._pauseTime = this.SystemTime;
     }
 
     public void Continue()
     {
-        this._gameState = GameState.Running;
+        this._gameState = GameStateType.Running;
         this._startTime += this.SystemTime - this._pauseTime;
     }
 
     public void End()
     {
-        if (GameState != GameState.Running)
+        if (GameState != GameStateType.Running)
         {
             return;
         }
 
-        this._gameState = GameState.Ended;
+        this._gameState = GameStateType.Ended;
     }
 
-    public Camp GetCamp()
+    public CampType GetCamp()
     {
         return _camp;
     }
 
-    public int GetScore(Camp c, GameStage gs)
+    public int GetScore(CampType c, GameStageType gs)
     {
-        if (gs == GameStage.None)
+        if (gs == GameStageType.None)
         {
             return 0;
         }
 
         switch (c)
         {
-            case Camp.A:
+            case CampType.A:
                 return _scoreA[(int)gs - 1];
 
-            case Camp.B:
+            case CampType.B:
                 return _scoreB[(int)gs - 1];
 
             default:
@@ -376,13 +379,13 @@ public class Game
         return 0;
     }
 
-    public Vehicle GetCar(Camp c)
+    public Vehicle GetCar(CampType c)
     {
-        if (c == Camp.A)
+        if (c == CampType.A)
         {
             return _vehicleA;
         }
-        else if (c == Camp.B)
+        else if (c == CampType.B)
         {
             return _vehicleB;
         }
@@ -419,7 +422,7 @@ public class Game
     /// <param name="camp">The camp</param>
     /// <param name="position">The position</param>
     /// <returns>True if the position is in the scope; otherwise false</returns>
-    private bool IsInChargingPileInfluenceScope(Camp camp, Dot position)
+    private bool IsInChargingPileInfluenceScope(CampType camp, Dot position)
     {
         foreach (var chargingPile in this._chargingPileList)
         {

@@ -8,6 +8,10 @@ using OpenCvSharp.Extensions;
 using Point2i = OpenCvSharp.Point;
 
 namespace EdcHost;
+
+/// <summary>
+/// A main window
+/// </summary>
 public partial class MainWindow : Form
 {
     /// <summary>
@@ -105,14 +109,14 @@ public partial class MainWindow : Form
     {
         this.ProcessCameraFrame();
 
-        if (this._game.GameState == GameState.Unstarted)
+        if (this._game.GameState == GameStateType.Unstarted)
         {
             this.buttonStart.Enabled = true;
             this.buttonPause.Enabled = false;
             this.button_Continue.Enabled = false;
             this.buttonEnd.Enabled = false;
         }
-        else if (this._game.GameState == GameState.Running)
+        else if (this._game.GameState == GameStateType.Running)
         {
             var vehiclePositionList = this._vehicleLocalizer.GetCentres(this._game.GetCamp());
             if (vehiclePositionList.Count > 0)
@@ -125,18 +129,18 @@ public partial class MainWindow : Form
             this.button_Continue.Enabled = false;
             this.buttonEnd.Enabled = true;
 
-            this.labelAScore.Text = this._game.GetScore(Camp.A, this._game.GameStage).ToString();
-            this.labelBScore.Text = this._game.GetScore(Camp.B, this._game.GameStage).ToString();
+            this.labelAScore.Text = this._game.GetScore(CampType.A, this._game.GameStage).ToString();
+            this.labelBScore.Text = this._game.GetScore(CampType.B, this._game.GameStage).ToString();
             this.GameTimeLabel.Text = Math.Max((decimal)(this._game.RemainingTime) / 1000, (decimal)0).ToString("0.00");
         }
-        else if (this._game.GameState == GameState.Paused)
+        else if (this._game.GameState == GameStateType.Paused)
         {
             this.buttonStart.Enabled = false;
             this.buttonPause.Enabled = false;
             this.button_Continue.Enabled = true;
             this.buttonEnd.Enabled = true;
         }
-        else if (this._game.GameState == GameState.Ended)
+        else if (this._game.GameState == GameStateType.Ended)
         {
             this.buttonStart.Enabled = true;
             this.buttonPause.Enabled = false;
@@ -231,7 +235,7 @@ public partial class MainWindow : Form
         }
 
         // Draw Barriers and Walls
-        if (this._game.GameState == GameState.Running || this._game.GameState == GameState.Paused)
+        if (this._game.GameState == GameStateType.Running || this._game.GameState == GameStateType.Paused)
         {
             // define a public function
             void DrawBarrier(Barrier barrier, Scalar barrierColor, int edgeThickness)
@@ -274,11 +278,11 @@ public partial class MainWindow : Form
             Mat icon = new Mat();
             switch (chargingPile.Camp)
             {
-                case Camp.A:
+                case CampType.A:
                     icon = iconChargingPileRed;
                     break;
 
-                case Camp.B:
+                case CampType.B:
                     icon = iconChargingPileBlue;
                     break;
 
@@ -293,7 +297,7 @@ public partial class MainWindow : Form
         }
 
         // Draw departures and destinations of orders
-        if (this._game.GameState == GameState.Running || this._game.GameState == GameState.Paused)
+        if (this._game.GameState == GameStateType.Running || this._game.GameState == GameStateType.Paused)
         {
             // 找到当前的车队
             Vehicle current_car = this._game.GetCar(this._game.GetCamp());
@@ -355,7 +359,7 @@ public partial class MainWindow : Form
         }
 
         // Draw vehicles
-        foreach (Point2i c1 in localizer.GetCentres(Camp.A).ToArray())
+        foreach (Point2i c1 in localizer.GetCentres(CampType.A).ToArray())
         {
             var Tx = c1.X;
             Tx = Math.Max(Tx, 0);
@@ -368,7 +372,7 @@ public partial class MainWindow : Form
             Mat Pos = new Mat(image, new Rect(Tx, Ty, iconCarA.Cols, iconCarA.Rows));
             iconCarA.CopyTo(Pos);
         }
-        foreach (Point2i c2 in localizer.GetCentres(Camp.B).ToArray())
+        foreach (Point2i c2 in localizer.GetCentres(CampType.B).ToArray())
         {
             var Tx = c2.X;
             Tx = Math.Max(Tx, 0);
@@ -498,28 +502,28 @@ public partial class MainWindow : Form
 
     private void OnStartButtonClick(object sender, EventArgs e)
     {
-        if (this._game.GameStage == GameStage.None &&
-            this._game.GetCamp() == Camp.None)
+        if (this._game.GameStage == GameStageType.None &&
+            this._game.GetCamp() == CampType.None)
         {
-            _game.Start(Camp.A, GameStage.FirstHalf);
+            _game.Start(CampType.A, GameStageType.FirstHalf);
             label_GameCount.Text = "上半场";
         }
-        else if (this._game.GameStage == GameStage.FirstHalf &&
-            this._game.GetCamp() == Camp.A)
+        else if (this._game.GameStage == GameStageType.FirstHalf &&
+            this._game.GetCamp() == CampType.A)
         {
-            _game.Start(Camp.B, GameStage.FirstHalf);
+            _game.Start(CampType.B, GameStageType.FirstHalf);
             label_GameCount.Text = "上半场";
         }
-        else if (this._game.GameStage == GameStage.FirstHalf &&
-            this._game.GetCamp() == Camp.B)
+        else if (this._game.GameStage == GameStageType.FirstHalf &&
+            this._game.GetCamp() == CampType.B)
         {
-            _game.Start(Camp.A, GameStage.SecondHalf);
+            _game.Start(CampType.A, GameStageType.SecondHalf);
             label_GameCount.Text = "下半场";
         }
-        else if (this._game.GameStage == GameStage.SecondHalf &&
-            this._game.GetCamp() == Camp.A)
+        else if (this._game.GameStage == GameStageType.SecondHalf &&
+            this._game.GetCamp() == CampType.A)
         {
-            _game.Start(Camp.B, GameStage.SecondHalf);
+            _game.Start(CampType.B, GameStageType.SecondHalf);
             label_GameCount.Text = "下半场";
         }
         else

@@ -3,7 +3,7 @@ using System;
 namespace EdcHost;
 
 /// <summary>
-/// The packet for the slaves to get site information
+/// A packet for slaves to get site information
 /// </summary>
 internal class PacketGetSiteInformationSlave : Packet
 {

@@ -14,14 +14,14 @@ public class ChargingPile
     /// <summary>
     /// The camp
     /// </summary>
-    public Camp Camp => this._camp;
+    public CampType Camp => this._camp;
 
     /// <summary>
     /// The position
     /// </summary>
     public Dot Position => this._position;
 
-    private Camp _camp;
+    private CampType _camp;
     private decimal _influenceScopeRadius;
     private Dot _position;
 
@@ -31,7 +31,7 @@ public class ChargingPile
     /// </summary>
     /// <param name="position">The position</param>
     public ChargingPile(
-        Camp camp,
+        CampType camp,
         Dot position,
         decimal influenceScopeRadius = ChargingPile.DefaultInfluenceScopeRadius)
     {

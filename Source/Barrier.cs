@@ -3,7 +3,7 @@ using System;
 namespace EdcHost;
 
 /// <summary>
-/// The barrier on the court
+/// A barrier
 /// </summary>
 public class Barrier
 {
