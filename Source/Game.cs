@@ -20,9 +20,9 @@ public class Game
     public const int MaxDeliveryTime = 60;
 
     // Parameters for barriers
-    public const int MaxBarrierNum = 8;
-    public const int MinBarrierLength = 12;
-    public const int MaxBarrierLength = 16;
+    public const int MaxBarrierNum = 5;
+    public const int MinBarrierLength = 30;
+    public const int MaxBarrierLength = 50;
     public const int MinDistanceBetweenBarriers = 40;
 
 
@@ -100,6 +100,7 @@ public class Game
 
     private List<Barrier> _barrierList;
     private List<ChargingPile> _chargingPileList = new List<ChargingPile>();
+    // { new ChargingPile(Camp.A, new Dot(100, 100)) };  测试时使用
 
 
     public Game()

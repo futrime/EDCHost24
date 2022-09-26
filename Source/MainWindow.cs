@@ -12,7 +12,7 @@ using Point2i = OpenCvSharp.Point;
 namespace EdcHost;
 public partial class MainWindow : Form
 {
-    private const int IconSize = 20;
+    private const int IconSize = 25;
 
 
     public MyFlags _flags = new MyFlags();
@@ -208,6 +208,8 @@ public partial class MainWindow : Form
         var iconCarB = new Mat(@"Assets\Icons\VehicleBlue.png", ImreadModes.Color);
         var iconTakeawayDeparture = new Mat(@"Assets\Icons\Package.png", ImreadModes.Color);
         var iconTakeawayDestination = new Mat(@"Assets\Icons\Zone.png", ImreadModes.Color);
+        var iconChargingPile = new Mat(@"Assets\Icons\ChargingPile.png", ImreadModes.Color);
+
         Cv2.Resize(src: iconCarA, dst: iconCarA, dsize: new OpenCvSharp.Size(IconSize, IconSize));
         Cv2.Resize(src: iconCarB, dst: iconCarB, dsize: new OpenCvSharp.Size(IconSize, IconSize));
         Cv2.Resize(
@@ -216,6 +218,10 @@ public partial class MainWindow : Form
         );
         Cv2.Resize(
             src: iconTakeawayDestination, dst: iconTakeawayDestination,
+            dsize: new OpenCvSharp.Size(IconSize, IconSize)
+        );
+        Cv2.Resize(
+            src: iconChargingPile, dst: iconChargingPile,
             dsize: new OpenCvSharp.Size(IconSize, IconSize)
         );
 
@@ -268,20 +274,20 @@ public partial class MainWindow : Form
         {
             foreach (var chargingPile in this._game.ChargingPileList)
             {
-                var color = Scalar.Black;
-                switch (chargingPile.Camp)
-                {
-                    case Camp.A:
-                        color = Scalar.Red;
-                        break;
-                    
-                    case Camp.B:
-                        color = Scalar.Blue;
-                        break;
+                // var color = Scalar.Black;
+                // switch (chargingPile.Camp)
+                // {
+                //     case Camp.A:
+                //         color = Scalar.Red;
+                //         break;
 
-                    default:
-                        break;
-                }
+                //     case Camp.B:
+                //         color = Scalar.Blue;
+                //         break;
+
+                //     default:
+                //         break;
+                // }
 
                 Point2f[] pointsInCourtCoordination = { chargingPile.Position.ToPoint() };
 
@@ -291,13 +297,39 @@ public partial class MainWindow : Form
 
                 var position = pointsInCameraCoordination[0];
 
-                Cv2.Circle(
-                    image,
-                    position.X, position.Y,
-                    radius: (int)ChargingPile.InfluenceScopeRadius,
-                    color: color,
-                    thickness: 2
-                );
+                int Tcol = iconChargingPile.Cols;
+                int Trow = iconChargingPile.Rows;
+                int Tx = position.X - 10;
+                int Ty = position.Y - 10;
+                if (Tx < 0)
+                {
+                    Tx = 0;
+                }
+                if (Ty < 0)
+                {
+                    Ty = 0;
+                }
+                // 
+                if (Tx + Tcol > image.Cols)
+                {
+                    Tcol = image.Cols - Tx;
+                }
+                if (Ty + Trow > image.Rows)
+                {
+                    Trow = image.Rows - Ty;
+                }
+                // 可能会出错 位置生成不正确
+                Mat Pos = new Mat(image, new Rect(Tx, Ty, Tcol, Trow));
+                iconChargingPile.CopyTo(Pos);
+
+                // Cv2.Circle(
+                //     iconChargingPile,
+                //     position.X, position.Y,
+                //     radius: (int)ChargingPile.InfluenceScopeRadius,
+                //     color: color,
+                //     thickness: 2
+                // );
+
             }
         }
 
