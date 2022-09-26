@@ -5,6 +5,15 @@ namespace EdcHost;
 /// </summary>
 public class ChargingPile
 {
+    #region Parameters
+
+    /// <summary>
+    /// The default value for the radius of the influence scope
+    /// </summary>
+    const int DefaultInfluenceScopeRadius = 20;
+
+    #endregion
+
     #region Public properties
 
     /// <summary>
@@ -37,7 +46,7 @@ public class ChargingPile
     public ChargingPile(
         CampType camp,
         Dot position,
-        long influenceScopeRadius)
+        long influenceScopeRadius = ChargingPile.DefaultInfluenceScopeRadius)
     {
         this._camp = camp;
         this._influenceScopeRadius = influenceScopeRadius;
