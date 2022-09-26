@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  build_program:
     name: Build the Program
     runs-on: windows-latest
     
@@ -32,3 +32,33 @@ jobs:
       with:
         name: EdcHost-nightly-${{ github.ref_name }}-${{ github.sha }}
         path: build
+        
+  build_documentation:
+    name: Build the Documentation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v3
+        
+      - name: Generate the documentation
+        uses: mattnotmitt/doxygen-action@v1
+        
+      - name: Upload the page artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: Docs/
+          
+  deploy_documentation:
+    name: Deploy the documentation
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    needs: build_documentation
+    permissions:
+      id-token: write
+      pages: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy the pages
+        id: deployment
+        uses: actions/deploy-pages@v1
