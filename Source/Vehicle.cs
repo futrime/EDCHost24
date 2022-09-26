@@ -201,14 +201,14 @@ public class Vehicle
         {
             Order ord = ordersRemain[i];
             if (ord.Status == Order.StatusType.Pending && Dot.Distance(ord.DeparturePosition, _CarPos) <= COLLISION_RADIUS &&
-                _deliveringOrder.Count <= MAX_PKG_COUNT)
+                _deliveringOrder.Count < MAX_PKG_COUNT)
             {
                 // ord.AddFirstCollisionTime(this.mGameTime);
                 ord.Take(mGameTime);
                 _deliveringOrder.Add(ord);
                 ordersRemain.Remove(ord);
                 mScore += PICK_CREDIT;
-                // 拾取后改变pkg的packagestatus
+                // 拾取后改变order的status
                 ord.Status = Order.StatusType.InDelivery;
                 break;
             }
@@ -225,6 +225,9 @@ public class Vehicle
                 ord.Deliver(mGameTime);
                 _deliveringOrder.Remove(ord);
                 mScore += ord.Score;
+                // 拾取后改变order的status
+                ord.Status = Order.StatusType.Delivered;
+                break;
                 // if (ord.DepartureFirstCollisionTime != -1 &&
                 //     this.mGameTime - ord.DepartureFirstCollisionTime > COLLISION_DETECTION_TIME)
                 // {

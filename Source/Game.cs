@@ -178,15 +178,23 @@ public class Game
         // Update car's info on each frame
         if (_camp == CampType.A)
         {
+            // Update A's info
             _vehicleA.Update(_CarPos, (int)GameTime,
             IsInBarrier(_CarPos), this.IsInChargingPileInfluenceScope(CampType.B, _CarPos),
             this.IsInChargingPileInfluenceScope(CampType.A, _CarPos), ref _pendingOrderList, out TimePenalty);
+
+            // Refresh the score
+            _scoreA[(int)GameStage - 1] = _vehicleA.GetScore();
         }
         else if (_camp == CampType.B)
         {
+            // Update B's info
             _vehicleB.Update(_CarPos, (int)GameTime,
             IsInBarrier(_CarPos), this.IsInChargingPileInfluenceScope(CampType.A, _CarPos),
             this.IsInChargingPileInfluenceScope(CampType.B, _CarPos), ref _pendingOrderList, out TimePenalty);
+
+            // Refresh the score
+            _scoreB[(int)GameStage - 1] = _vehicleB.GetScore();
         }
 
         if (this.GameState == GameStateType.Running)
@@ -210,6 +218,7 @@ public class Game
             {
                 this._gameState = GameStateType.Ended;
             }
+
         }
     }
 
