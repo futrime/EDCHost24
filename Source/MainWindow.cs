@@ -32,7 +32,7 @@ public partial class MainWindow : Form
     /// <summary>
     /// The configurations
     /// </summary>
-    public MyFlags Flags => this._flags;
+    public ConfigType Flags => this._flags;
     /// <summary>
     /// The serial port of the vehicle of camp A
     /// </summary>
@@ -53,7 +53,7 @@ public partial class MainWindow : Form
     private string[] _availableSerialPortList;
     private VideoCapture _camera = new VideoCapture();
     private CoordinateConverter _coordinateConverter;
-    private MyFlags _flags = new MyFlags();
+    private ConfigType _flags = new ConfigType();
     private Game _game = new Game();
     private Point2f[] _monitorCorners = new Point2f[4];
     private SerialPort _serialPortVehicleA = null;
@@ -75,20 +75,20 @@ public partial class MainWindow : Form
         Camera.Open(0);
 
         // 相机画面大小设为视频帧大小
-        Flags.cameraSize.Width = Camera.FrameWidth;
-        Flags.cameraSize.Height = Camera.FrameHeight;
+        Flags.CameraFrameSize.Width = Camera.FrameWidth;
+        Flags.CameraFrameSize.Height = Camera.FrameHeight;
 
         // 显示大小设为界面组件大小
-        Flags.showSize.Width = pbCamera.Width;
-        Flags.showSize.Height = pbCamera.Height;
+        Flags.MonitorFrameSize.Width = pbCamera.Width;
+        Flags.MonitorFrameSize.Height = pbCamera.Height;
 
         // 以既有的flags参数初始化坐标转换器
         CoordinateConverter = new CoordinateConverter(Flags);
 
         this._availableSerialPortList = SerialPort.GetPortNames();
 
-        Camera.FrameWidth = Flags.cameraSize.Width;
-        Camera.FrameHeight = Flags.cameraSize.Height;
+        Camera.FrameWidth = Flags.CameraFrameSize.Width;
+        Camera.FrameHeight = Flags.CameraFrameSize.Height;
         Camera.ConvertRgb = true;
 
         // 设置定时器的触发间隔为 100ms
@@ -114,7 +114,11 @@ public partial class MainWindow : Form
         }
         else if (this._game.GameState == GameState.Running)
         {
-            this._game.Refresh(new Dot(this._vehicleLocalizer.GetCentres(this._game.GetCamp())[0]));
+            var vehiclePositionList = this._vehicleLocalizer.GetCentres(this._game.GetCamp());
+            if (vehiclePositionList.Count > 0)
+            {
+                this._game.Refresh(new Dot(vehiclePositionList[0]));
+            }
 
             this.buttonStart.Enabled = false;
             this.buttonPause.Enabled = true;
@@ -168,7 +172,7 @@ public partial class MainWindow : Form
 
         cameraFrame = this.Draw(cameraFrame, _vehicleLocalizer);
 
-        Cv2.Resize(cameraFrame, monitorFrame, this.Flags.showSize);
+        Cv2.Resize(cameraFrame, monitorFrame, this.Flags.MonitorFrameSize);
 
         this.BeginInvoke(new Action<Image>(RefreshMonitor), BitmapConverter.ToBitmap(monitorFrame));
     }
@@ -408,14 +412,14 @@ public partial class MainWindow : Form
             string myStr = System.Text.Encoding.UTF8.GetString(heByte);
             string[] str = myStr.Split(' ');
 
-            Flags.configs.hue1Lower = Convert.ToInt32(str[0]);
-            Flags.configs.hue1Upper = Convert.ToInt32(str[1]);
-            Flags.configs.hue2Lower = Convert.ToInt32(str[2]);
-            Flags.configs.hue2Upper = Convert.ToInt32(str[3]);
-            Flags.configs.saturation1Lower = Convert.ToInt32(str[4]);
-            Flags.configs.saturation2Lower = Convert.ToInt32(str[5]);
-            Flags.configs.valueLower = Convert.ToInt32(str[6]);
-            Flags.configs.areaLower = Convert.ToInt32(str[7]);
+            Flags.LocatorConfig.MinHueVehicleA = Convert.ToInt32(str[0]);
+            Flags.LocatorConfig.MaxHueVehicleA = Convert.ToInt32(str[1]);
+            Flags.LocatorConfig.MinHueVehicleB = Convert.ToInt32(str[2]);
+            Flags.LocatorConfig.MaxHueVehicleB = Convert.ToInt32(str[3]);
+            Flags.LocatorConfig.MinSaturationVehicleA = Convert.ToInt32(str[4]);
+            Flags.LocatorConfig.MinSaturationVehicleB = Convert.ToInt32(str[5]);
+            Flags.LocatorConfig.valueLower = Convert.ToInt32(str[6]);
+            Flags.LocatorConfig.MinArea = Convert.ToInt32(str[7]);
 
             fsRead.Close();
         }
@@ -441,7 +445,7 @@ public partial class MainWindow : Form
     {
         lock (Flags)
         {
-            Flags.clickCount = 0;
+            Flags.CalibrationClickCount = 0;
             for (int i = 0; i < 4; ++i)
                 _monitorCorners[i].X = _monitorCorners[i].Y = 0;
         }
@@ -465,10 +469,10 @@ public partial class MainWindow : Form
 
         lock (Flags)
         {
-            if (Flags.clickCount < 4)
+            if (Flags.CalibrationClickCount < 4)
             {
-                Flags.clickCount++;
-                idx = Flags.clickCount - 1;
+                Flags.CalibrationClickCount++;
+                idx = Flags.CalibrationClickCount - 1;
             }
         }
 

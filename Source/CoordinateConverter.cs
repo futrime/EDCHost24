@@ -27,26 +27,26 @@ public class CoordinateConverter : IDisposable
     /// Construct a coordinate converter.
     /// </summary>
     /// <param name="myFlags">The information of the game</param>
-    public CoordinateConverter(MyFlags myFlags)
+    public CoordinateConverter(ConfigType myFlags)
     {
         Point2f[] camCorners = {
             new Point2f(0, 0),
-            new Point2f(myFlags.cameraSize.Width, 0),
-            new Point2f(0, myFlags.cameraSize.Height),
-            new Point2f(myFlags.cameraSize.Width, myFlags.cameraSize.Height)
+            new Point2f(myFlags.CameraFrameSize.Width, 0),
+            new Point2f(0, myFlags.CameraFrameSize.Height),
+            new Point2f(myFlags.CameraFrameSize.Width, myFlags.CameraFrameSize.Height)
         };
         Point2f[] showCorners = {
             new Point2f(0, 0),
-            new Point2f(myFlags.showSize.Width, 0),
-            new Point2f(0, myFlags.showSize.Height),
-            new Point2f(myFlags.showSize.Width, myFlags.showSize.Height)
+            new Point2f(myFlags.MonitorFrameSize.Width, 0),
+            new Point2f(0, myFlags.MonitorFrameSize.Height),
+            new Point2f(myFlags.MonitorFrameSize.Width, myFlags.MonitorFrameSize.Height)
         };
 
         this._courtCorners = new Point2f[] {
             new Point2f(0, 0),
-            new Point2f(myFlags.logicSize.Width, 0),
-            new Point2f(0, myFlags.logicSize.Height),
-            new Point2f(myFlags.logicSize.Width, myFlags.logicSize.Height)
+            new Point2f(myFlags.CourtSize.Width, 0),
+            new Point2f(0, myFlags.CourtSize.Height),
+            new Point2f(myFlags.CourtSize.Width, myFlags.CourtSize.Height)
         };
 
         // Get the position transformations between camera frames and monitor frames

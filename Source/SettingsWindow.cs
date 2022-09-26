@@ -7,12 +7,12 @@ using OpenCvSharp;
 namespace EdcHost;
 public partial class SettingsWindow : Form
 {
-    private MyFlags _flags;
+    private ConfigType _flags;
     private Game _game;
     private MainWindow _tracker;
 
 
-    public SettingsWindow(ref MyFlags flags, ref Game game, MainWindow tracker)
+    public SettingsWindow(ref ConfigType flags, ref Game game, MainWindow tracker)
     {
         InitializeComponent();
 
@@ -20,14 +20,14 @@ public partial class SettingsWindow : Form
         this._game = game;
         this._tracker = tracker;
 
-        this.nudHue1L.Value = flags.configs.hue1Lower;
-        this.nudHue1H.Value = flags.configs.hue1Upper;
-        this.nudHue2L.Value = flags.configs.hue2Lower;
-        this.nudHue2H.Value = flags.configs.hue2Upper;
-        this.nudSat1L.Value = flags.configs.saturation1Lower;
-        this.nudSat2L.Value = flags.configs.saturation2Lower;
-        this.nudValueL.Value = flags.configs.valueLower;
-        this.nudAreaL.Value = flags.configs.areaLower;
+        this.nudHue1L.Value = flags.LocatorConfig.MinHueVehicleA;
+        this.nudHue1H.Value = flags.LocatorConfig.MaxHueVehicleA;
+        this.nudHue2L.Value = flags.LocatorConfig.MinHueVehicleB;
+        this.nudHue2H.Value = flags.LocatorConfig.MaxHueVehicleB;
+        this.nudSat1L.Value = flags.LocatorConfig.MinSaturationVehicleA;
+        this.nudSat2L.Value = flags.LocatorConfig.MinSaturationVehicleB;
+        this.nudValueL.Value = flags.LocatorConfig.valueLower;
+        this.nudAreaL.Value = flags.LocatorConfig.MinArea;
 
         cbPorts1.Items.Clear();
         cbPorts1.Items.Add("(None)");
@@ -71,51 +71,51 @@ public partial class SettingsWindow : Form
 
     private void nudHue1L_ValueChanged(object sender, EventArgs e)
     {
-        _flags.configs.hue1Lower = (int)nudHue1L.Value;
+        _flags.LocatorConfig.MinHueVehicleA = (int)nudHue1L.Value;
     }
 
     private void nudHue1H_ValueChanged(object sender, EventArgs e)
     {
-        _flags.configs.hue1Upper = (int)nudHue1H.Value;
+        _flags.LocatorConfig.MaxHueVehicleA = (int)nudHue1H.Value;
     }
 
     private void nudHue2L_ValueChanged(object sender, EventArgs e)
     {
-        _flags.configs.hue2Lower = (int)nudHue2L.Value;
+        _flags.LocatorConfig.MinHueVehicleB = (int)nudHue2L.Value;
     }
 
     private void nudHue2H_ValueChanged(object sender, EventArgs e)
     {
-        _flags.configs.hue2Upper = (int)nudHue2H.Value;
+        _flags.LocatorConfig.MaxHueVehicleB = (int)nudHue2H.Value;
     }
 
 
     private void nudSat1L_ValueChanged(object sender, EventArgs e)
     {
-        _flags.configs.saturation1Lower = (int)nudSat1L.Value;
+        _flags.LocatorConfig.MinSaturationVehicleA = (int)nudSat1L.Value;
     }
 
     private void nudSat2L_ValueChanged(object sender, EventArgs e)
     {
-        _flags.configs.saturation2Lower = (int)nudSat2L.Value;
+        _flags.LocatorConfig.MinSaturationVehicleB = (int)nudSat2L.Value;
     }
 
     private void nudValueL_ValueChanged(object sender, EventArgs e)
     {
-        _flags.configs.valueLower = (int)nudValueL.Value;
+        _flags.LocatorConfig.valueLower = (int)nudValueL.Value;
     }
 
     private void nudAreaL_ValueChanged(object sender, EventArgs e)
     {
-        _flags.configs.areaLower = (int)nudAreaL.Value;
+        _flags.LocatorConfig.MinArea = (int)nudAreaL.Value;
     }
 
     private void button_ConfigSave_Click(object sender, EventArgs e)
     {
-        string arrStr = String.Format("{0} {1} {2} {3} {4} {5} {6} {7}", _flags.configs.hue1Lower,
-                                    _flags.configs.hue1Upper, _flags.configs.hue2Lower, _flags.configs.hue2Upper,
-                                    _flags.configs.saturation1Lower, _flags.configs.saturation2Lower,
-                                    _flags.configs.valueLower, _flags.configs.areaLower);
+        string arrStr = String.Format("{0} {1} {2} {3} {4} {5} {6} {7}", _flags.LocatorConfig.MinHueVehicleA,
+                                    _flags.LocatorConfig.MaxHueVehicleA, _flags.LocatorConfig.MinHueVehicleB, _flags.LocatorConfig.MaxHueVehicleB,
+                                    _flags.LocatorConfig.MinSaturationVehicleA, _flags.LocatorConfig.MinSaturationVehicleB,
+                                    _flags.LocatorConfig.valueLower, _flags.LocatorConfig.MinArea);
         File.WriteAllText(@"Data/data.txt", arrStr);
     }
 
@@ -129,14 +129,14 @@ public partial class SettingsWindow : Form
             int r = fsRead.Read(heByte, 0, heByte.Length);
             string myStr = System.Text.Encoding.UTF8.GetString(heByte);
             string[] str = myStr.Split(' ');
-            nudHue1L.Value = (_flags.configs.hue1Lower = Convert.ToInt32(str[0]));
-            nudHue1H.Value = (_flags.configs.hue1Upper = Convert.ToInt32(str[1]));
-            nudHue2L.Value = (_flags.configs.hue2Lower = Convert.ToInt32(str[2]));
-            nudHue2H.Value = (_flags.configs.hue2Upper = Convert.ToInt32(str[3]));
-            nudSat1L.Value = (_flags.configs.saturation1Lower = Convert.ToInt32(str[4]));
-            nudSat2L.Value = (_flags.configs.saturation2Lower = Convert.ToInt32(str[5]));
-            nudValueL.Value = (_flags.configs.valueLower = Convert.ToInt32(str[6]));
-            nudAreaL.Value = (_flags.configs.areaLower = Convert.ToInt32(str[7]));
+            nudHue1L.Value = (_flags.LocatorConfig.MinHueVehicleA = Convert.ToInt32(str[0]));
+            nudHue1H.Value = (_flags.LocatorConfig.MaxHueVehicleA = Convert.ToInt32(str[1]));
+            nudHue2L.Value = (_flags.LocatorConfig.MinHueVehicleB = Convert.ToInt32(str[2]));
+            nudHue2H.Value = (_flags.LocatorConfig.MaxHueVehicleB = Convert.ToInt32(str[3]));
+            nudSat1L.Value = (_flags.LocatorConfig.MinSaturationVehicleA = Convert.ToInt32(str[4]));
+            nudSat2L.Value = (_flags.LocatorConfig.MinSaturationVehicleB = Convert.ToInt32(str[5]));
+            nudValueL.Value = (_flags.LocatorConfig.valueLower = Convert.ToInt32(str[6]));
+            nudAreaL.Value = (_flags.LocatorConfig.MinArea = Convert.ToInt32(str[7]));
             fsRead.Close();
         }
     }
@@ -150,20 +150,20 @@ public partial class SettingsWindow : Form
             if (_tracker.Camera.IsOpened())
                 _tracker.Camera.Release();
             _tracker.Camera.Open((int)nudCapture.Value);
-            _tracker.Flags.cameraSize.Width = _tracker.Camera.FrameWidth;
-            _tracker.Flags.cameraSize.Height = _tracker.Camera.FrameHeight;
+            _tracker.Flags.CameraFrameSize.Width = _tracker.Camera.FrameWidth;
+            _tracker.Flags.CameraFrameSize.Height = _tracker.Camera.FrameHeight;
             _tracker.CoordinateConverter = new CoordinateConverter(_tracker.Flags);
         }
     }
 
     private void SetWindow_FormClosing(object sender, FormClosingEventArgs e)
     {
-        _tracker.Flags.showMask = false;
+        _tracker.Flags.ShowMask = false;
     }
 
     private void checkBox_ShowMask_CheckedChanged(object sender, EventArgs e)
     {
-        _tracker.Flags.showMask = checkBox_ShowMask.Checked;
+        _tracker.Flags.ShowMask = checkBox_ShowMask.Checked;
     }
 
     private void nudBaudRate_ValueChanged(object sender, EventArgs e)

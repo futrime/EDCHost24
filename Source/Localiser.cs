@@ -49,7 +49,7 @@ public class Localiser
     }
 
     // 定位核心代码
-    public void Locate(Mat mat, MyFlags localiseFlags)
+    public void Locate(Mat mat, ConfigType localiseFlags)
     {
         // 如果没有传入摄像机拍摄的画面，则返回
         if (mat == null || mat.Empty()) return;
@@ -60,7 +60,7 @@ public class Localiser
         centres2.Clear();
 
         // 为了后面Scalar函数中参数写起来方便
-        MyFlags.LocConfigs configs = localiseFlags.configs;
+        ConfigType.LocatorConfigType configs = localiseFlags.LocatorConfig;
 
         // 解释：
         // MatType的组成方式：CV_(位数）+（数据类型）+ C（通道数）
@@ -96,18 +96,18 @@ public class Localiser
 
             //针对小车1颜色的二值化
             Cv2.InRange(hsv,
-                new Scalar(configs.hue1Lower, configs.saturation1Lower, configs.valueLower),
-                new Scalar(configs.hue1Upper, 255, 255),
+                new Scalar(configs.MinHueVehicleA, configs.MinSaturationVehicleA, configs.valueLower),
+                new Scalar(configs.MaxHueVehicleA, 255, 255),
                 car1);
             //针对小车2颜色的二值化
             Cv2.InRange(hsv,
-                new Scalar(configs.hue2Lower, configs.saturation2Lower, configs.valueLower),
-                new Scalar(configs.hue2Upper, 255, 255),
+                new Scalar(configs.MinHueVehicleB, configs.MinSaturationVehicleB, configs.valueLower),
+                new Scalar(configs.MaxHueVehicleB, 255, 255),
                 car2);
 
             // “显示调试蒙版”选项在SetWindow窗口中可以勾选，勾选后 showmask 为 true
             // 若被勾选，则将二值化图像打印到窗口，以便调试
-            if (localiseFlags.showMask)
+            if (localiseFlags.ShowMask)
             {
                 Cv2.ImShow("CarA", car1);
                 Cv2.ImShow("CarB", car2);
@@ -145,7 +145,7 @@ public class Localiser
                 centre.Y = (int)(moments.M01 / moments.M00);
                 double area = moments.M00;
                 // 如果计算出的面积太小，则认为是噪声点，不计入统计
-                if (area <= configs.areaLower) continue;
+                if (area <= configs.MinArea) continue;
                 centres1.Add(centre);
             }
             //小车2
@@ -156,7 +156,7 @@ public class Localiser
                 centre.X = (int)(moments.M10 / moments.M00);
                 centre.Y = (int)(moments.M01 / moments.M00);
                 double area = moments.M00;
-                if (area <= configs.areaLower) continue;
+                if (area <= configs.MinArea) continue;
                 centres2.Add(centre);
             }
         }
