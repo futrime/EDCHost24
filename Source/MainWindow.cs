@@ -71,9 +71,9 @@ public partial class MainWindow : Form
         InitializeComponent();
 
         // Setup Windows Forms controls
-        label_RedBG.SendToBack();
-        label_BlueBG.SendToBack();
-        label_GameCount.Text = "上半场";
+        ScoreABackgroundLabel.SendToBack();
+        ScoreBBackgroundLabel.SendToBack();
+        GameRoundLabel.Text = "上半场";
 
         // Setup the monitor
         Camera.Open(0);
@@ -83,8 +83,8 @@ public partial class MainWindow : Form
         Flags.CameraFrameSize.Height = Camera.FrameHeight;
 
         // 显示大小设为界面组件大小
-        Flags.MonitorFrameSize.Width = pbCamera.Width;
-        Flags.MonitorFrameSize.Height = pbCamera.Height;
+        Flags.MonitorFrameSize.Width = MonitorPictureBox.Width;
+        Flags.MonitorFrameSize.Height = MonitorPictureBox.Height;
 
         // 以既有的flags参数初始化坐标转换器
         CoordinateConverter = new CoordinateConverter(Flags);
@@ -111,10 +111,10 @@ public partial class MainWindow : Form
 
         if (this._game.GameState == GameStateType.Unstarted)
         {
-            this.buttonStart.Enabled = true;
-            this.buttonPause.Enabled = false;
-            this.button_Continue.Enabled = false;
-            this.buttonEnd.Enabled = false;
+            this.StartButton.Enabled = true;
+            this.PauseButton.Enabled = false;
+            this.ContinueButton.Enabled = false;
+            this.EndButton.Enabled = false;
         }
         else if (this._game.GameState == GameStateType.Running)
         {
@@ -125,28 +125,28 @@ public partial class MainWindow : Form
                 this._game.Refresh(new Dot((Point2i)CoordinateConverter.CameraToCourt((Point2f)vehiclePositionList[0])));
             }
 
-            this.buttonStart.Enabled = false;
-            this.buttonPause.Enabled = true;
-            this.button_Continue.Enabled = false;
-            this.buttonEnd.Enabled = true;
+            this.StartButton.Enabled = false;
+            this.PauseButton.Enabled = true;
+            this.ContinueButton.Enabled = false;
+            this.EndButton.Enabled = true;
 
-            this.labelAScore.Text = this._game.GetScore(CampType.A, this._game.GameStage).ToString();
-            this.labelBScore.Text = this._game.GetScore(CampType.B, this._game.GameStage).ToString();
+            this.ScoreALabel.Text = this._game.GetScore(CampType.A, this._game.GameStage).ToString();
+            this.ScoreBLabel.Text = this._game.GetScore(CampType.B, this._game.GameStage).ToString();
             this.GameTimeLabel.Text = Math.Max((decimal)(this._game.RemainingTime) / 1000, (decimal)0).ToString("0.00");
         }
         else if (this._game.GameState == GameStateType.Paused)
         {
-            this.buttonStart.Enabled = false;
-            this.buttonPause.Enabled = false;
-            this.button_Continue.Enabled = true;
-            this.buttonEnd.Enabled = true;
+            this.StartButton.Enabled = false;
+            this.PauseButton.Enabled = false;
+            this.ContinueButton.Enabled = true;
+            this.EndButton.Enabled = true;
         }
         else if (this._game.GameState == GameStateType.Ended)
         {
-            this.buttonStart.Enabled = true;
-            this.buttonPause.Enabled = false;
-            this.button_Continue.Enabled = false;
-            this.buttonEnd.Enabled = false;
+            this.StartButton.Enabled = true;
+            this.PauseButton.Enabled = false;
+            this.ContinueButton.Enabled = false;
+            this.EndButton.Enabled = false;
         }
 
         this.Refresh();
@@ -398,7 +398,7 @@ public partial class MainWindow : Form
     /// </param>
     private void RefreshMonitor(Image img)
     {
-        pbCamera.Image = img;
+        MonitorPictureBox.Image = img;
     }
 
     #endregion
@@ -464,8 +464,8 @@ public partial class MainWindow : Form
     /// </remarks>
     private void OnMonitorMouseClick(object sender, MouseEventArgs e)
     {
-        int widthView = pbCamera.Width;
-        int heightView = pbCamera.Height;
+        int widthView = MonitorPictureBox.Width;
+        int heightView = MonitorPictureBox.Height;
 
         int xMouse = e.X;
         int yMouse = e.Y;
@@ -507,25 +507,25 @@ public partial class MainWindow : Form
             this._game.GetCamp() == CampType.None)
         {
             _game.Start(CampType.A, GameStageType.FirstHalf);
-            label_GameCount.Text = "上半场";
+            GameRoundLabel.Text = "上半场";
         }
         else if (this._game.GameStage == GameStageType.FirstHalf &&
             this._game.GetCamp() == CampType.A)
         {
             _game.Start(CampType.B, GameStageType.FirstHalf);
-            label_GameCount.Text = "上半场";
+            GameRoundLabel.Text = "上半场";
         }
         else if (this._game.GameStage == GameStageType.FirstHalf &&
             this._game.GetCamp() == CampType.B)
         {
             _game.Start(CampType.A, GameStageType.SecondHalf);
-            label_GameCount.Text = "下半场";
+            GameRoundLabel.Text = "下半场";
         }
         else if (this._game.GameStage == GameStageType.SecondHalf &&
             this._game.GetCamp() == CampType.A)
         {
             _game.Start(CampType.B, GameStageType.SecondHalf);
-            label_GameCount.Text = "下半场";
+            GameRoundLabel.Text = "下半场";
         }
         else
         {

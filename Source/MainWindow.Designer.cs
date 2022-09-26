@@ -15,110 +15,111 @@ partial class MainWindow
     private void InitializeComponent()
     {
             this.components = new System.ComponentModel.Container();
-            this.pbCamera = new System.Windows.Forms.PictureBox();
+            this.MonitorPictureBox = new System.Windows.Forms.PictureBox();
             this.timerMsg100ms = new System.Windows.Forms.Timer(this.components);
-            this.buttonStart = new System.Windows.Forms.Button();
-            this.buttonPause = new System.Windows.Forms.Button();
-            this.button_Continue = new System.Windows.Forms.Button();
-            this.label_GameCount = new System.Windows.Forms.Label();
-            this.labelAScore = new System.Windows.Forms.Label();
-            this.labelBScore = new System.Windows.Forms.Label();
+            this.StartButton = new System.Windows.Forms.Button();
+            this.PauseButton = new System.Windows.Forms.Button();
+            this.ContinueButton = new System.Windows.Forms.Button();
+            this.GameRoundLabel = new System.Windows.Forms.Label();
+            this.ScoreALabel = new System.Windows.Forms.Label();
+            this.ScoreBLabel = new System.Windows.Forms.Label();
             this.CalibrateButton = new System.Windows.Forms.Button();
-            this.buttonFoul = new System.Windows.Forms.Button();
-            this.buttonEnd = new System.Windows.Forms.Button();
-            this.buttonReset = new System.Windows.Forms.Button();
-            this.buttonSettings = new System.Windows.Forms.Button();
-            this.label_BlueBG = new System.Windows.Forms.Label();
-            this.label_RedBG = new System.Windows.Forms.Label();
+            this.FoulButton = new System.Windows.Forms.Button();
+            this.EndButton = new System.Windows.Forms.Button();
+            this.ResetButton = new System.Windows.Forms.Button();
+            this.SettingsButton = new System.Windows.Forms.Button();
+            this.ScoreBBackgroundLabel = new System.Windows.Forms.Label();
+            this.ScoreABackgroundLabel = new System.Windows.Forms.Label();
             this.GameTimeLabel = new System.Windows.Forms.Label();
-            ((System.ComponentModel.ISupportInitialize)(this.pbCamera)).BeginInit();
+            this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
+            ((System.ComponentModel.ISupportInitialize)(this.MonitorPictureBox)).BeginInit();
             this.SuspendLayout();
             // 
-            // pbCamera
+            // MonitorPictureBox
             // 
-            this.pbCamera.Location = new System.Drawing.Point(277, 11);
-            this.pbCamera.Margin = new System.Windows.Forms.Padding(2);
-            this.pbCamera.Name = "pbCamera";
-            this.pbCamera.Size = new System.Drawing.Size(916, 650);
-            this.pbCamera.TabIndex = 0;
-            this.pbCamera.TabStop = false;
-            this.pbCamera.MouseClick += new System.Windows.Forms.MouseEventHandler(this.OnMonitorMouseClick);
+            this.MonitorPictureBox.Location = new System.Drawing.Point(277, 11);
+            this.MonitorPictureBox.Margin = new System.Windows.Forms.Padding(2);
+            this.MonitorPictureBox.Name = "MonitorPictureBox";
+            this.MonitorPictureBox.Size = new System.Drawing.Size(916, 650);
+            this.MonitorPictureBox.TabIndex = 0;
+            this.MonitorPictureBox.TabStop = false;
+            this.MonitorPictureBox.MouseClick += new System.Windows.Forms.MouseEventHandler(this.OnMonitorMouseClick);
             // 
             // timerMsg100ms
             // 
             this.timerMsg100ms.Tick += new System.EventHandler(this.OnTimerTick);
             // 
-            // buttonStart
+            // StartButton
             // 
-            this.buttonStart.Location = new System.Drawing.Point(112, 531);
-            this.buttonStart.Margin = new System.Windows.Forms.Padding(2);
-            this.buttonStart.Name = "buttonStart";
-            this.buttonStart.Size = new System.Drawing.Size(94, 29);
-            this.buttonStart.TabIndex = 1;
-            this.buttonStart.Text = "Start";
-            this.buttonStart.UseVisualStyleBackColor = true;
-            this.buttonStart.Click += new System.EventHandler(this.OnStartButtonClick);
+            this.StartButton.Location = new System.Drawing.Point(112, 531);
+            this.StartButton.Margin = new System.Windows.Forms.Padding(2);
+            this.StartButton.Name = "StartButton";
+            this.StartButton.Size = new System.Drawing.Size(94, 29);
+            this.StartButton.TabIndex = 1;
+            this.StartButton.Text = "Start";
+            this.StartButton.UseVisualStyleBackColor = true;
+            this.StartButton.Click += new System.EventHandler(this.OnStartButtonClick);
             // 
-            // buttonPause
+            // PauseButton
             // 
-            this.buttonPause.Enabled = false;
-            this.buttonPause.Location = new System.Drawing.Point(112, 564);
-            this.buttonPause.Margin = new System.Windows.Forms.Padding(2);
-            this.buttonPause.Name = "buttonPause";
-            this.buttonPause.Size = new System.Drawing.Size(94, 29);
-            this.buttonPause.TabIndex = 2;
-            this.buttonPause.Text = "Pause";
-            this.buttonPause.UseVisualStyleBackColor = true;
-            this.buttonPause.Click += new System.EventHandler(this.OnPauseButtonClick);
+            this.PauseButton.Enabled = false;
+            this.PauseButton.Location = new System.Drawing.Point(112, 564);
+            this.PauseButton.Margin = new System.Windows.Forms.Padding(2);
+            this.PauseButton.Name = "PauseButton";
+            this.PauseButton.Size = new System.Drawing.Size(94, 29);
+            this.PauseButton.TabIndex = 2;
+            this.PauseButton.Text = "Pause";
+            this.PauseButton.UseVisualStyleBackColor = true;
+            this.PauseButton.Click += new System.EventHandler(this.OnPauseButtonClick);
             // 
-            // button_Continue
+            // ContinueButton
             // 
-            this.button_Continue.Enabled = false;
-            this.button_Continue.Location = new System.Drawing.Point(112, 597);
-            this.button_Continue.Margin = new System.Windows.Forms.Padding(2);
-            this.button_Continue.Name = "button_Continue";
-            this.button_Continue.Size = new System.Drawing.Size(94, 29);
-            this.button_Continue.TabIndex = 3;
-            this.button_Continue.Text = "Continue";
-            this.button_Continue.UseVisualStyleBackColor = true;
-            this.button_Continue.Click += new System.EventHandler(this.OnContinueButtonClick);
+            this.ContinueButton.Enabled = false;
+            this.ContinueButton.Location = new System.Drawing.Point(112, 597);
+            this.ContinueButton.Margin = new System.Windows.Forms.Padding(2);
+            this.ContinueButton.Name = "ContinueButton";
+            this.ContinueButton.Size = new System.Drawing.Size(94, 29);
+            this.ContinueButton.TabIndex = 3;
+            this.ContinueButton.Text = "Continue";
+            this.ContinueButton.UseVisualStyleBackColor = true;
+            this.ContinueButton.Click += new System.EventHandler(this.OnContinueButtonClick);
             // 
-            // label_GameCount
+            // GameRoundLabel
             // 
-            this.label_GameCount.AutoSize = true;
-            this.label_GameCount.Font = new System.Drawing.Font("Segoe UI", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label_GameCount.Location = new System.Drawing.Point(14, 273);
-            this.label_GameCount.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label_GameCount.Name = "label_GameCount";
-            this.label_GameCount.Size = new System.Drawing.Size(194, 81);
-            this.label_GameCount.TabIndex = 4;
-            this.label_GameCount.Text = "label1";
+            this.GameRoundLabel.AutoSize = true;
+            this.GameRoundLabel.Font = new System.Drawing.Font("Segoe UI", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.GameRoundLabel.Location = new System.Drawing.Point(14, 273);
+            this.GameRoundLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.GameRoundLabel.Name = "GameRoundLabel";
+            this.GameRoundLabel.Size = new System.Drawing.Size(502, 81);
+            this.GameRoundLabel.TabIndex = 4;
+            this.GameRoundLabel.Text = "GameRoundLabel";
             // 
-            // labelAScore
+            // ScoreALabel
             // 
-            this.labelAScore.AutoSize = true;
-            this.labelAScore.BackColor = System.Drawing.Color.Red;
-            this.labelAScore.Font = new System.Drawing.Font("Segoe UI", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.labelAScore.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.labelAScore.Location = new System.Drawing.Point(14, 11);
-            this.labelAScore.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.labelAScore.Name = "labelAScore";
-            this.labelAScore.Size = new System.Drawing.Size(237, 81);
-            this.labelAScore.TabIndex = 8;
-            this.labelAScore.Text = "A Score";
+            this.ScoreALabel.AutoSize = true;
+            this.ScoreALabel.BackColor = System.Drawing.Color.Red;
+            this.ScoreALabel.Font = new System.Drawing.Font("Segoe UI", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.ScoreALabel.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.ScoreALabel.Location = new System.Drawing.Point(14, 11);
+            this.ScoreALabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.ScoreALabel.Name = "ScoreALabel";
+            this.ScoreALabel.Size = new System.Drawing.Size(361, 81);
+            this.ScoreALabel.TabIndex = 8;
+            this.ScoreALabel.Text = "ScoreALabel";
             // 
-            // labelBScore
+            // ScoreBLabel
             // 
-            this.labelBScore.AutoSize = true;
-            this.labelBScore.BackColor = System.Drawing.Color.Blue;
-            this.labelBScore.Font = new System.Drawing.Font("Segoe UI", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.labelBScore.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.labelBScore.Location = new System.Drawing.Point(14, 100);
-            this.labelBScore.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.labelBScore.Name = "labelBScore";
-            this.labelBScore.Size = new System.Drawing.Size(232, 81);
-            this.labelBScore.TabIndex = 10;
-            this.labelBScore.Text = "B Score";
+            this.ScoreBLabel.AutoSize = true;
+            this.ScoreBLabel.BackColor = System.Drawing.Color.Blue;
+            this.ScoreBLabel.Font = new System.Drawing.Font("Segoe UI", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.ScoreBLabel.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.ScoreBLabel.Location = new System.Drawing.Point(14, 100);
+            this.ScoreBLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.ScoreBLabel.Name = "ScoreBLabel";
+            this.ScoreBLabel.Size = new System.Drawing.Size(356, 81);
+            this.ScoreBLabel.TabIndex = 10;
+            this.ScoreBLabel.Text = "ScoreBLabel";
             // 
             // CalibrateButton
             // 
@@ -131,74 +132,74 @@ partial class MainWindow
             this.CalibrateButton.UseVisualStyleBackColor = true;
             this.CalibrateButton.Click += new System.EventHandler(this.OnCalibrateButtonClick);
             // 
-            // buttonFoul
+            // FoulButton
             // 
-            this.buttonFoul.Location = new System.Drawing.Point(14, 564);
-            this.buttonFoul.Margin = new System.Windows.Forms.Padding(2);
-            this.buttonFoul.Name = "buttonFoul";
-            this.buttonFoul.Size = new System.Drawing.Size(94, 29);
-            this.buttonFoul.TabIndex = 13;
-            this.buttonFoul.Text = "Foul";
-            this.buttonFoul.UseVisualStyleBackColor = true;
-            this.buttonFoul.Click += new System.EventHandler(this.OnFoulButtonClick);
+            this.FoulButton.Location = new System.Drawing.Point(14, 564);
+            this.FoulButton.Margin = new System.Windows.Forms.Padding(2);
+            this.FoulButton.Name = "FoulButton";
+            this.FoulButton.Size = new System.Drawing.Size(94, 29);
+            this.FoulButton.TabIndex = 13;
+            this.FoulButton.Text = "Foul";
+            this.FoulButton.UseVisualStyleBackColor = true;
+            this.FoulButton.Click += new System.EventHandler(this.OnFoulButtonClick);
             // 
-            // buttonEnd
+            // EndButton
             // 
-            this.buttonEnd.Enabled = false;
-            this.buttonEnd.Location = new System.Drawing.Point(113, 632);
-            this.buttonEnd.Margin = new System.Windows.Forms.Padding(2);
-            this.buttonEnd.Name = "buttonEnd";
-            this.buttonEnd.Size = new System.Drawing.Size(94, 29);
-            this.buttonEnd.TabIndex = 14;
-            this.buttonEnd.Text = "End";
-            this.buttonEnd.UseVisualStyleBackColor = true;
-            this.buttonEnd.Click += new System.EventHandler(this.OnEndButtonClick);
+            this.EndButton.Enabled = false;
+            this.EndButton.Location = new System.Drawing.Point(113, 632);
+            this.EndButton.Margin = new System.Windows.Forms.Padding(2);
+            this.EndButton.Name = "EndButton";
+            this.EndButton.Size = new System.Drawing.Size(94, 29);
+            this.EndButton.TabIndex = 14;
+            this.EndButton.Text = "End";
+            this.EndButton.UseVisualStyleBackColor = true;
+            this.EndButton.Click += new System.EventHandler(this.OnEndButtonClick);
             // 
-            // buttonReset
+            // ResetButton
             // 
-            this.buttonReset.Location = new System.Drawing.Point(14, 531);
-            this.buttonReset.Margin = new System.Windows.Forms.Padding(2);
-            this.buttonReset.Name = "buttonReset";
-            this.buttonReset.Size = new System.Drawing.Size(94, 29);
-            this.buttonReset.TabIndex = 16;
-            this.buttonReset.Text = "Reset";
-            this.buttonReset.UseVisualStyleBackColor = true;
-            this.buttonReset.Click += new System.EventHandler(this.OnResetButtonClick);
+            this.ResetButton.Location = new System.Drawing.Point(14, 531);
+            this.ResetButton.Margin = new System.Windows.Forms.Padding(2);
+            this.ResetButton.Name = "ResetButton";
+            this.ResetButton.Size = new System.Drawing.Size(94, 29);
+            this.ResetButton.TabIndex = 16;
+            this.ResetButton.Text = "Reset";
+            this.ResetButton.UseVisualStyleBackColor = true;
+            this.ResetButton.Click += new System.EventHandler(this.OnResetButtonClick);
             // 
-            // buttonSettings
+            // SettingsButton
             // 
-            this.buttonSettings.Location = new System.Drawing.Point(13, 632);
-            this.buttonSettings.Margin = new System.Windows.Forms.Padding(4);
-            this.buttonSettings.Name = "buttonSettings";
-            this.buttonSettings.Size = new System.Drawing.Size(94, 29);
-            this.buttonSettings.TabIndex = 17;
-            this.buttonSettings.Text = "Settings";
-            this.buttonSettings.UseVisualStyleBackColor = true;
-            this.buttonSettings.Click += new System.EventHandler(this.OnSettingsButtonClick);
+            this.SettingsButton.Location = new System.Drawing.Point(13, 632);
+            this.SettingsButton.Margin = new System.Windows.Forms.Padding(4);
+            this.SettingsButton.Name = "SettingsButton";
+            this.SettingsButton.Size = new System.Drawing.Size(94, 29);
+            this.SettingsButton.TabIndex = 17;
+            this.SettingsButton.Text = "Settings";
+            this.SettingsButton.UseVisualStyleBackColor = true;
+            this.SettingsButton.Click += new System.EventHandler(this.OnSettingsButtonClick);
             // 
-            // label_BlueBG
+            // ScoreBBackgroundLabel
             // 
-            this.label_BlueBG.AutoSize = true;
-            this.label_BlueBG.BackColor = System.Drawing.Color.Blue;
-            this.label_BlueBG.Font = new System.Drawing.Font("Segoe UI", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label_BlueBG.Location = new System.Drawing.Point(14, 100);
-            this.label_BlueBG.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label_BlueBG.Name = "label_BlueBG";
-            this.label_BlueBG.Size = new System.Drawing.Size(259, 81);
-            this.label_BlueBG.TabIndex = 6;
-            this.label_BlueBG.Text = "              ";
+            this.ScoreBBackgroundLabel.AutoSize = true;
+            this.ScoreBBackgroundLabel.BackColor = System.Drawing.Color.Blue;
+            this.ScoreBBackgroundLabel.Font = new System.Drawing.Font("Segoe UI", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.ScoreBBackgroundLabel.Location = new System.Drawing.Point(14, 100);
+            this.ScoreBBackgroundLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.ScoreBBackgroundLabel.Name = "ScoreBBackgroundLabel";
+            this.ScoreBBackgroundLabel.Size = new System.Drawing.Size(259, 81);
+            this.ScoreBBackgroundLabel.TabIndex = 6;
+            this.ScoreBBackgroundLabel.Text = "              ";
             // 
-            // label_RedBG
+            // ScoreABackgroundLabel
             // 
-            this.label_RedBG.AutoSize = true;
-            this.label_RedBG.BackColor = System.Drawing.Color.Red;
-            this.label_RedBG.Font = new System.Drawing.Font("Segoe UI", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label_RedBG.Location = new System.Drawing.Point(14, 11);
-            this.label_RedBG.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label_RedBG.Name = "label_RedBG";
-            this.label_RedBG.Size = new System.Drawing.Size(259, 81);
-            this.label_RedBG.TabIndex = 5;
-            this.label_RedBG.Text = "              ";
+            this.ScoreABackgroundLabel.AutoSize = true;
+            this.ScoreABackgroundLabel.BackColor = System.Drawing.Color.Red;
+            this.ScoreABackgroundLabel.Font = new System.Drawing.Font("Segoe UI", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.ScoreABackgroundLabel.Location = new System.Drawing.Point(14, 11);
+            this.ScoreABackgroundLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.ScoreABackgroundLabel.Name = "ScoreABackgroundLabel";
+            this.ScoreABackgroundLabel.Size = new System.Drawing.Size(259, 81);
+            this.ScoreABackgroundLabel.TabIndex = 5;
+            this.ScoreABackgroundLabel.Text = "              ";
             // 
             // GameTimeLabel
             // 
@@ -211,53 +212,62 @@ partial class MainWindow
             this.GameTimeLabel.TabIndex = 18;
             this.GameTimeLabel.Text = "GameTimeLabel";
             // 
+            // dateTimePicker1
+            // 
+            this.dateTimePicker1.Location = new System.Drawing.Point(453, 0);
+            this.dateTimePicker1.Name = "dateTimePicker1";
+            this.dateTimePicker1.Size = new System.Drawing.Size(250, 27);
+            this.dateTimePicker1.TabIndex = 19;
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.SystemColors.Window;
             this.ClientSize = new System.Drawing.Size(1204, 674);
-            this.Controls.Add(this.buttonSettings);
-            this.Controls.Add(this.buttonReset);
-            this.Controls.Add(this.buttonEnd);
-            this.Controls.Add(this.buttonFoul);
+            this.Controls.Add(this.dateTimePicker1);
+            this.Controls.Add(this.SettingsButton);
+            this.Controls.Add(this.ResetButton);
+            this.Controls.Add(this.EndButton);
+            this.Controls.Add(this.FoulButton);
             this.Controls.Add(this.CalibrateButton);
-            this.Controls.Add(this.labelBScore);
-            this.Controls.Add(this.labelAScore);
-            this.Controls.Add(this.label_BlueBG);
-            this.Controls.Add(this.label_RedBG);
-            this.Controls.Add(this.label_GameCount);
-            this.Controls.Add(this.button_Continue);
-            this.Controls.Add(this.buttonPause);
-            this.Controls.Add(this.buttonStart);
-            this.Controls.Add(this.pbCamera);
+            this.Controls.Add(this.ContinueButton);
+            this.Controls.Add(this.PauseButton);
+            this.Controls.Add(this.StartButton);
+            this.Controls.Add(this.MonitorPictureBox);
             this.Controls.Add(this.GameTimeLabel);
+            this.Controls.Add(this.GameRoundLabel);
+            this.Controls.Add(this.ScoreALabel);
+            this.Controls.Add(this.ScoreABackgroundLabel);
+            this.Controls.Add(this.ScoreBLabel);
+            this.Controls.Add(this.ScoreBBackgroundLabel);
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "MainWindow";
             this.ShowIcon = false;
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
             this.Load += new System.EventHandler(this.OnLoad);
-            ((System.ComponentModel.ISupportInitialize)(this.pbCamera)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.MonitorPictureBox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
     }
 
     private System.ComponentModel.IContainer components = null;
-    private System.Windows.Forms.PictureBox pbCamera;
+    private System.Windows.Forms.PictureBox MonitorPictureBox;
     private System.Windows.Forms.Timer timerMsg100ms;
-    private System.Windows.Forms.Button buttonStart;
-    private System.Windows.Forms.Button buttonPause;
-    private System.Windows.Forms.Button button_Continue;
-    private System.Windows.Forms.Label label_GameCount;
-    private System.Windows.Forms.Label labelAScore;
-    private System.Windows.Forms.Label labelBScore;
+    private System.Windows.Forms.Button StartButton;
+    private System.Windows.Forms.Button PauseButton;
+    private System.Windows.Forms.Button ContinueButton;
+    private System.Windows.Forms.Label GameRoundLabel;
+    private System.Windows.Forms.Label ScoreALabel;
+    private System.Windows.Forms.Label ScoreBLabel;
     private System.Windows.Forms.Button CalibrateButton;
-    private System.Windows.Forms.Button buttonFoul;
-    private System.Windows.Forms.Button buttonEnd;
-    private System.Windows.Forms.Button buttonReset;
-    private System.Windows.Forms.Button buttonSettings;
-    private System.Windows.Forms.Label label_BlueBG;
-    private System.Windows.Forms.Label label_RedBG;
+    private System.Windows.Forms.Button FoulButton;
+    private System.Windows.Forms.Button EndButton;
+    private System.Windows.Forms.Button ResetButton;
+    private System.Windows.Forms.Button SettingsButton;
+    private System.Windows.Forms.Label ScoreBBackgroundLabel;
+    private System.Windows.Forms.Label ScoreABackgroundLabel;
     private System.Windows.Forms.Label GameTimeLabel;
+    private System.Windows.Forms.DateTimePicker dateTimePicker1;
 }

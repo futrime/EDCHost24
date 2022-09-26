@@ -64,6 +64,8 @@ partial class SettingsWindow
             this.label9 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
+            this.label11 = new System.Windows.Forms.Label();
+            this.label12 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.nudAreaL)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudValueL)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudSat2L)).BeginInit();
@@ -79,7 +81,7 @@ partial class SettingsWindow
             // nudAreaL
             // 
             this.nudAreaL.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.nudAreaL.Location = new System.Drawing.Point(132, 457);
+            this.nudAreaL.Location = new System.Drawing.Point(117, 457);
             this.nudAreaL.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.nudAreaL.Maximum = new decimal(new int[] {
             1000,
@@ -97,14 +99,14 @@ partial class SettingsWindow
             this.lblAreaL.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.lblAreaL.Location = new System.Drawing.Point(23, 459);
             this.lblAreaL.Name = "lblAreaL";
-            this.lblAreaL.Size = new System.Drawing.Size(103, 20);
+            this.lblAreaL.Size = new System.Drawing.Size(79, 20);
             this.lblAreaL.TabIndex = 89;
-            this.lblAreaL.Text = "噪点识别阈值:";
+            this.lblAreaL.Text = "Min Area:";
             // 
             // nudValueL
             // 
             this.nudValueL.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.nudValueL.Location = new System.Drawing.Point(88, 396);
+            this.nudValueL.Location = new System.Drawing.Point(117, 396);
             this.nudValueL.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.nudValueL.Maximum = new decimal(new int[] {
             255,
@@ -122,14 +124,14 @@ partial class SettingsWindow
             this.lblValueL.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.lblValueL.Location = new System.Drawing.Point(23, 398);
             this.lblValueL.Name = "lblValueL";
-            this.lblValueL.Size = new System.Drawing.Size(61, 20);
+            this.lblValueL.Size = new System.Drawing.Size(89, 20);
             this.lblValueL.TabIndex = 87;
-            this.lblValueL.Text = "ValueL:";
+            this.lblValueL.Text = "Brightness:";
             // 
             // nudSat2L
             // 
             this.nudSat2L.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.nudSat2L.Location = new System.Drawing.Point(83, 331);
+            this.nudSat2L.Location = new System.Drawing.Point(117, 329);
             this.nudSat2L.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.nudSat2L.Maximum = new decimal(new int[] {
             255,
@@ -147,14 +149,14 @@ partial class SettingsWindow
             this.lblSat2L.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.lblSat2L.Location = new System.Drawing.Point(23, 331);
             this.lblSat2L.Name = "lblSat2L";
-            this.lblSat2L.Size = new System.Drawing.Size(69, 20);
+            this.lblSat2L.Size = new System.Drawing.Size(88, 20);
             this.lblSat2L.TabIndex = 85;
-            this.lblSat2L.Text = "饱和度：";
+            this.lblSat2L.Text = "Saturation:";
             // 
             // nudSat1L
             // 
             this.nudSat1L.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.nudSat1L.Location = new System.Drawing.Point(83, 176);
+            this.nudSat1L.Location = new System.Drawing.Point(117, 169);
             this.nudSat1L.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.nudSat1L.Maximum = new decimal(new int[] {
             255,
@@ -170,16 +172,16 @@ partial class SettingsWindow
             // 
             this.lblSat1L.AutoSize = true;
             this.lblSat1L.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.lblSat1L.Location = new System.Drawing.Point(23, 176);
+            this.lblSat1L.Location = new System.Drawing.Point(23, 169);
             this.lblSat1L.Name = "lblSat1L";
-            this.lblSat1L.Size = new System.Drawing.Size(69, 20);
+            this.lblSat1L.Size = new System.Drawing.Size(88, 20);
             this.lblSat1L.TabIndex = 83;
-            this.lblSat1L.Text = "饱和度：";
+            this.lblSat1L.Text = "Saturation:";
             // 
             // nudHue2H
             // 
             this.nudHue2H.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.nudHue2H.Location = new System.Drawing.Point(204, 272);
+            this.nudHue2H.Location = new System.Drawing.Point(238, 270);
             this.nudHue2H.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.nudHue2H.Maximum = new decimal(new int[] {
             180,
@@ -194,7 +196,7 @@ partial class SettingsWindow
             // nudHue2L
             // 
             this.nudHue2L.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.nudHue2L.Location = new System.Drawing.Point(83, 272);
+            this.nudHue2L.Location = new System.Drawing.Point(117, 270);
             this.nudHue2L.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.nudHue2L.Maximum = new decimal(new int[] {
             180,
@@ -212,14 +214,14 @@ partial class SettingsWindow
             this.lblHue2L.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.lblHue2L.Location = new System.Drawing.Point(23, 272);
             this.lblHue2L.Name = "lblHue2L";
-            this.lblHue2L.Size = new System.Drawing.Size(54, 20);
+            this.lblHue2L.Size = new System.Drawing.Size(43, 20);
             this.lblHue2L.TabIndex = 79;
-            this.lblHue2L.Text = "色相：";
+            this.lblHue2L.Text = "Hue:";
             // 
             // nudHue1H
             // 
             this.nudHue1H.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.nudHue1H.Location = new System.Drawing.Point(203, 122);
+            this.nudHue1H.Location = new System.Drawing.Point(237, 115);
             this.nudHue1H.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.nudHue1H.Maximum = new decimal(new int[] {
             180,
@@ -237,14 +239,14 @@ partial class SettingsWindow
             this.lblHue1H.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.lblHue1H.Location = new System.Drawing.Point(23, 122);
             this.lblHue1H.Name = "lblHue1H";
-            this.lblHue1H.Size = new System.Drawing.Size(54, 20);
+            this.lblHue1H.Size = new System.Drawing.Size(43, 20);
             this.lblHue1H.TabIndex = 77;
-            this.lblHue1H.Text = "色相：";
+            this.lblHue1H.Text = "Hue:";
             // 
             // nudHue1L
             // 
             this.nudHue1L.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.nudHue1L.Location = new System.Drawing.Point(83, 122);
+            this.nudHue1L.Location = new System.Drawing.Point(117, 115);
             this.nudHue1L.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.nudHue1L.Maximum = new decimal(new int[] {
             180,
@@ -262,31 +264,31 @@ partial class SettingsWindow
             this.lblHue1L.Font = new System.Drawing.Font("SimSun", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.lblHue1L.Location = new System.Drawing.Point(23, 83);
             this.lblHue1L.Name = "lblHue1L";
-            this.lblHue1L.Size = new System.Drawing.Size(53, 18);
+            this.lblHue1L.Size = new System.Drawing.Size(89, 18);
             this.lblHue1L.TabIndex = 75;
-            this.lblHue1L.Text = "小车A";
+            this.lblHue1L.Text = "Vehicle A";
             // 
             // button_ConfigSave
             // 
             this.button_ConfigSave.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.button_ConfigSave.Location = new System.Drawing.Point(321, 309);
+            this.button_ConfigSave.Location = new System.Drawing.Point(382, 307);
             this.button_ConfigSave.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.button_ConfigSave.Name = "button_ConfigSave";
             this.button_ConfigSave.Size = new System.Drawing.Size(71, 47);
             this.button_ConfigSave.TabIndex = 91;
-            this.button_ConfigSave.Text = "导出";
+            this.button_ConfigSave.Text = "Save";
             this.button_ConfigSave.UseVisualStyleBackColor = true;
             this.button_ConfigSave.Click += new System.EventHandler(this.button_ConfigSave_Click);
             // 
             // button_ConfigLoad
             // 
             this.button_ConfigLoad.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.button_ConfigLoad.Location = new System.Drawing.Point(398, 309);
+            this.button_ConfigLoad.Location = new System.Drawing.Point(459, 307);
             this.button_ConfigLoad.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.button_ConfigLoad.Name = "button_ConfigLoad";
             this.button_ConfigLoad.Size = new System.Drawing.Size(73, 47);
             this.button_ConfigLoad.TabIndex = 92;
-            this.button_ConfigLoad.Text = "导入";
+            this.button_ConfigLoad.Text = "Load";
             this.button_ConfigLoad.UseVisualStyleBackColor = true;
             this.button_ConfigLoad.Click += new System.EventHandler(this.button_ConfigLoad_Click);
             // 
@@ -294,7 +296,7 @@ partial class SettingsWindow
             // 
             this.cbPorts1.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.cbPorts1.FormattingEnabled = true;
-            this.cbPorts1.Location = new System.Drawing.Point(423, 79);
+            this.cbPorts1.Location = new System.Drawing.Point(574, 78);
             this.cbPorts1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.cbPorts1.Name = "cbPorts1";
             this.cbPorts1.Size = new System.Drawing.Size(77, 28);
@@ -305,11 +307,11 @@ partial class SettingsWindow
             // 
             this.lblPort1.AutoSize = true;
             this.lblPort1.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.lblPort1.Location = new System.Drawing.Point(322, 83);
+            this.lblPort1.Location = new System.Drawing.Point(383, 81);
             this.lblPort1.Name = "lblPort1";
-            this.lblPort1.Size = new System.Drawing.Size(95, 20);
+            this.lblPort1.Size = new System.Drawing.Size(185, 20);
             this.lblPort1.TabIndex = 100;
-            this.lblPort1.Text = "小车A串口：";
+            this.lblPort1.Text = "Serial Port for Vehicle A:";
             // 
             // lblCapture
             // 
@@ -317,14 +319,14 @@ partial class SettingsWindow
             this.lblCapture.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.lblCapture.Location = new System.Drawing.Point(23, 504);
             this.lblCapture.Name = "lblCapture";
-            this.lblCapture.Size = new System.Drawing.Size(99, 20);
+            this.lblCapture.Size = new System.Drawing.Size(68, 20);
             this.lblCapture.TabIndex = 102;
-            this.lblCapture.Text = "摄像头选择：";
+            this.lblCapture.Text = "Camera:";
             // 
             // nudCapture
             // 
             this.nudCapture.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.nudCapture.Location = new System.Drawing.Point(130, 502);
+            this.nudCapture.Location = new System.Drawing.Point(117, 502);
             this.nudCapture.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.nudCapture.Maximum = new decimal(new int[] {
             1000,
@@ -343,16 +345,16 @@ partial class SettingsWindow
             this.checkBox_ShowMask.Location = new System.Drawing.Point(23, 555);
             this.checkBox_ShowMask.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.checkBox_ShowMask.Name = "checkBox_ShowMask";
-            this.checkBox_ShowMask.Size = new System.Drawing.Size(121, 24);
+            this.checkBox_ShowMask.Size = new System.Drawing.Size(187, 24);
             this.checkBox_ShowMask.TabIndex = 104;
-            this.checkBox_ShowMask.Text = "显示识别蒙版";
+            this.checkBox_ShowMask.Text = "Show detection mask";
             this.checkBox_ShowMask.UseVisualStyleBackColor = true;
             this.checkBox_ShowMask.CheckedChanged += new System.EventHandler(this.checkBox_ShowMask_CheckedChanged);
             // 
             // nudBaudRate
             // 
             this.nudBaudRate.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.nudBaudRate.Location = new System.Drawing.Point(423, 181);
+            this.nudBaudRate.Location = new System.Drawing.Point(573, 178);
             this.nudBaudRate.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.nudBaudRate.Maximum = new decimal(new int[] {
             1000000,
@@ -378,27 +380,27 @@ partial class SettingsWindow
             // 
             this.lblBaudRate.AutoSize = true;
             this.lblBaudRate.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.lblBaudRate.Location = new System.Drawing.Point(323, 182);
+            this.lblBaudRate.Location = new System.Drawing.Point(384, 180);
             this.lblBaudRate.Name = "lblBaudRate";
-            this.lblBaudRate.Size = new System.Drawing.Size(69, 20);
+            this.lblBaudRate.Size = new System.Drawing.Size(78, 20);
             this.lblBaudRate.TabIndex = 105;
-            this.lblBaudRate.Text = "波特率：";
+            this.lblBaudRate.Text = "Baudrate:";
             // 
             // lblPort2
             // 
             this.lblPort2.AutoSize = true;
             this.lblPort2.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.lblPort2.Location = new System.Drawing.Point(321, 131);
+            this.lblPort2.Location = new System.Drawing.Point(382, 129);
             this.lblPort2.Name = "lblPort2";
-            this.lblPort2.Size = new System.Drawing.Size(93, 20);
+            this.lblPort2.Size = new System.Drawing.Size(183, 20);
             this.lblPort2.TabIndex = 108;
-            this.lblPort2.Text = "小车B串口：";
+            this.lblPort2.Text = "Serial Port for Vehicle B:";
             // 
             // cbPorts2
             // 
             this.cbPorts2.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.cbPorts2.FormattingEnabled = true;
-            this.cbPorts2.Location = new System.Drawing.Point(423, 131);
+            this.cbPorts2.Location = new System.Drawing.Point(573, 126);
             this.cbPorts2.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.cbPorts2.Name = "cbPorts2";
             this.cbPorts2.Size = new System.Drawing.Size(78, 28);
@@ -409,7 +411,7 @@ partial class SettingsWindow
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("SimSun", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label1.Location = new System.Drawing.Point(169, 139);
+            this.label1.Location = new System.Drawing.Point(203, 132);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(22, 23);
             this.label1.TabIndex = 109;
@@ -419,7 +421,7 @@ partial class SettingsWindow
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("SimSun", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label2.Location = new System.Drawing.Point(169, 189);
+            this.label2.Location = new System.Drawing.Point(203, 182);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(22, 23);
             this.label2.TabIndex = 110;
@@ -431,15 +433,15 @@ partial class SettingsWindow
             this.label3.Font = new System.Drawing.Font("SimSun", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.label3.Location = new System.Drawing.Point(23, 228);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(53, 18);
+            this.label3.Size = new System.Drawing.Size(89, 18);
             this.label3.TabIndex = 111;
-            this.label3.Text = "小车B";
+            this.label3.Text = "Vehicle B";
             // 
             // label4
             // 
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("SimSun", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label4.Location = new System.Drawing.Point(170, 286);
+            this.label4.Location = new System.Drawing.Point(204, 284);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(22, 23);
             this.label4.TabIndex = 112;
@@ -449,7 +451,7 @@ partial class SettingsWindow
             // 
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("SimSun", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label5.Location = new System.Drawing.Point(198, 178);
+            this.label5.Location = new System.Drawing.Point(232, 171);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(46, 23);
             this.label5.TabIndex = 113;
@@ -459,7 +461,7 @@ partial class SettingsWindow
             // 
             this.label6.AutoSize = true;
             this.label6.Font = new System.Drawing.Font("SimSun", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label6.Location = new System.Drawing.Point(199, 333);
+            this.label6.Location = new System.Drawing.Point(233, 331);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(46, 23);
             this.label6.TabIndex = 114;
@@ -469,7 +471,7 @@ partial class SettingsWindow
             // 
             this.label7.AutoSize = true;
             this.label7.Font = new System.Drawing.Font("SimSun", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label7.Location = new System.Drawing.Point(170, 347);
+            this.label7.Location = new System.Drawing.Point(204, 345);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(22, 23);
             this.label7.TabIndex = 115;
@@ -479,12 +481,12 @@ partial class SettingsWindow
             // 
             this.label9.AutoSize = true;
             this.label9.Font = new System.Drawing.Font("SimSun", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label9.Location = new System.Drawing.Point(323, 32);
+            this.label9.Location = new System.Drawing.Point(382, 32);
             this.label9.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(89, 20);
+            this.label9.Size = new System.Drawing.Size(249, 20);
             this.label9.TabIndex = 118;
-            this.label9.Text = "通信参数";
+            this.label9.Text = "Communication Parameters";
             // 
             // label10
             // 
@@ -493,26 +495,48 @@ partial class SettingsWindow
             this.label10.Location = new System.Drawing.Point(23, 32);
             this.label10.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(89, 20);
+            this.label10.Size = new System.Drawing.Size(189, 20);
             this.label10.TabIndex = 119;
-            this.label10.Text = "识别参数";
+            this.label10.Text = "Locator Parameters";
             // 
             // label8
             // 
             this.label8.AutoSize = true;
             this.label8.Font = new System.Drawing.Font("SimSun", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label8.Location = new System.Drawing.Point(323, 258);
+            this.label8.Location = new System.Drawing.Point(384, 256);
             this.label8.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(129, 20);
+            this.label8.Size = new System.Drawing.Size(329, 20);
             this.label8.TabIndex = 120;
-            this.label8.Text = "参数导入导出";
+            this.label8.Text = "Configuration Saving and Loading";
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Font = new System.Drawing.Font("SimSun", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.label11.Location = new System.Drawing.Point(204, 408);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(22, 23);
+            this.label11.TabIndex = 122;
+            this.label11.Text = "~";
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Font = new System.Drawing.Font("SimSun", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.label12.Location = new System.Drawing.Point(233, 394);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(46, 23);
+            this.label12.TabIndex = 121;
+            this.label12.Text = "255";
             // 
             // SettingsWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(535, 601);
+            this.ClientSize = new System.Drawing.Size(736, 601);
+            this.Controls.Add(this.label11);
+            this.Controls.Add(this.label12);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.label9);
@@ -609,4 +633,6 @@ partial class SettingsWindow
     private System.Windows.Forms.Label label9;
     private System.Windows.Forms.Label label10;
     private System.Windows.Forms.Label label8;
+    private System.Windows.Forms.Label label11;
+    private System.Windows.Forms.Label label12;
 }
