@@ -172,4 +172,11 @@ public class Order
         this._status = StatusType.InDelivery;
         this._departureTime = time;
     }
+
+    public void Reset()
+    {
+        this._departureTime = null;
+        this._deliveryTime = null;
+        this._status = StatusType.Ungenerated;
+    }
 }

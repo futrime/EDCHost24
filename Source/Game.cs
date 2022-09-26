@@ -149,8 +149,17 @@ public class Game
     private List<Order> _allOrderList;
     private List<Order> _pendingOrderList = new List<Order>();
     private List<Barrier> _barrierList;
+    // The barrier only needs once generation. 
+    private bool _haveInitializedBarrier = false;
+
     private List<Barrier> _wallList;
     private List<ChargingPile> _chargingPileList = new List<ChargingPile>();
+
+    // SoundPlayer
+    private System.Media.SoundPlayer _deliverOrderSound = new System.Media.SoundPlayer(
+        System.IO.Directory.GetCurrentDirectory() + @"\Assets\Sounds\Deliver.wav");
+    private System.Media.SoundPlayer _takeOrderSound = new System.Media.SoundPlayer(
+        System.IO.Directory.GetCurrentDirectory() + @"\Assets\Sounds\Order.wav");
 
     #endregion
 
@@ -274,6 +283,10 @@ public class Game
 
                 // 拾取后改变order的status
                 ord.Status = Order.StatusType.InDelivery;
+
+                // play sound
+                _takeOrderSound.Load();
+                _takeOrderSound.Play();
                 break;
             }
         }
@@ -298,6 +311,8 @@ public class Game
 
                 // 拾取后改变order的status
                 ord.Status = Order.StatusType.Delivered;
+                _deliverOrderSound.Load();
+                _deliverOrderSound.Play();
                 break;
             }
         }
@@ -316,16 +331,29 @@ public class Game
         this._camp = _camp;
 
         //reset the vehicle
-        _vehicle[CampType.A].Reset();
-        _vehicle[CampType.B].Reset();
+        this._vehicle[CampType.A].Reset();
+        this._vehicle[CampType.B].Reset();
 
         if (this._camp == CampType.A)
         {
-            _score[CampType.A][(int)GameStage - 1] = 0;
+            this._score[CampType.A][(int)GameStage - 1] = 0;
+
+            // Initial orders on the field, which is only implemented per half game
+            this._orderGenerator = new OrderGenerator(MaxOrderNumber, CoreArea,
+                                    (0, _gameDuration), (MinDeliveryTime, MaxDeliveryTime), out _allOrderList);
         }
         else if (this._camp == CampType.B)
         {
-            _score[CampType.B][(int)GameStage - 1] = 0;
+            this._score[CampType.B][(int)GameStage - 1] = 0;
+
+            // Reset each order
+            foreach (Order order in _allOrderList)
+            {
+                order.Reset();
+            }
+
+            // Reset _orderGenerator
+            this._orderGenerator.Reset();
         }
 
         if (GameStage == GameStageType.FirstHalf)
@@ -337,51 +365,52 @@ public class Game
             this._gameDuration = GameDurationSecondHalf;
         }
 
-        _startTime = this.SystemTime;
+        this._startTime = this.SystemTime;
 
-        // initial packages on the field
-        _orderGenerator = new OrderGenerator(MaxOrderNumber, CoreArea,
-                                            (0, _gameDuration), (MinDeliveryTime, MaxDeliveryTime), out _allOrderList);
-
+        // Clear the order list
         this._pendingOrderList.Clear();
 
-        // 在生成包裹后生成障碍物 保证障碍物与包裹有一定距离
-        _barrierList = new List<Barrier>();
-
-        // Check if the new barrier is valid: Every Barrier should be away from the others.
-        bool AwayFromBarriers(Barrier targetBarrier, List<Barrier> barrierList)
+        if (!this._haveInitializedBarrier)
         {
-            int centerX = (targetBarrier.TopLeftPosition.x + targetBarrier.BottomRightPosition.x) / 2;
-            int centerY = (targetBarrier.TopLeftPosition.y + targetBarrier.BottomRightPosition.y) / 2;
+            _haveInitializedBarrier = true;
 
-            foreach (Barrier barrier in barrierList)
+            _barrierList = new List<Barrier>();
+
+            // Check if the new barrier is valid: Every Barrier should be away from the others.
+            bool AwayFromBarriers(Barrier targetBarrier, List<Barrier> barrierList)
             {
-                if (barrier != null)
-                {
-                    int currentCenterX = (barrier.TopLeftPosition.x + barrier.BottomRightPosition.x) / 2;
-                    int currentCenterY = (barrier.TopLeftPosition.y + barrier.BottomRightPosition.y) / 2;
+                int centerX = (targetBarrier.TopLeftPosition.x + targetBarrier.BottomRightPosition.x) / 2;
+                int centerY = (targetBarrier.TopLeftPosition.y + targetBarrier.BottomRightPosition.y) / 2;
 
-                    //判断与障碍物的距离
-                    if (Math.Sqrt((centerX - currentCenterX) * (centerX - currentCenterX) +
-                        (centerY - currentCenterY) * (centerY - currentCenterY)) < MinDistanceBetweenBarriers)
+                foreach (Barrier barrier in barrierList)
+                {
+                    if (barrier != null)
                     {
-                        return false;
+                        int currentCenterX = (barrier.TopLeftPosition.x + barrier.BottomRightPosition.x) / 2;
+                        int currentCenterY = (barrier.TopLeftPosition.y + barrier.BottomRightPosition.y) / 2;
+
+                        //判断与障碍物的距离
+                        if (Math.Sqrt((centerX - currentCenterX) * (centerX - currentCenterX) +
+                            (centerY - currentCenterY) * (centerY - currentCenterY)) < MinDistanceBetweenBarriers)
+                        {
+                            return false;
+                        }
                     }
                 }
+                return true;
             }
-            return true;
-        }
-        // the number of valid barrier
-        int currentBarrierNumber = 0;
-        while (currentBarrierNumber < MaxBarrierNum)
-        {
-            Barrier barrier = Barrier.GenerateRandomBarrier(CoreArea,
-            (new Dot(MinBarrierLength, MinBarrierLength), new Dot(MaxBarrierLength, MaxBarrierLength)));
-
-            if (AwayFromBarriers(barrier, _barrierList))
+            // the number of valid barrier
+            int currentBarrierNumber = 0;
+            while (currentBarrierNumber < MaxBarrierNum)
             {
-                currentBarrierNumber += 1;
-                this._barrierList.Add(barrier);
+                Barrier barrier = Barrier.GenerateRandomBarrier(CoreArea,
+                (new Dot(MinBarrierLength, MinBarrierLength), new Dot(MaxBarrierLength, MaxBarrierLength)));
+
+                if (AwayFromBarriers(barrier, _barrierList))
+                {
+                    currentBarrierNumber += 1;
+                    this._barrierList.Add(barrier);
+                }
             }
         }
 
