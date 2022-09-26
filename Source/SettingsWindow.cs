@@ -10,20 +10,24 @@ public partial class SettingsWindow : Form
     private MyFlags _flags;
     private Game _game;
     private MainWindow _tracker;
+
+
     public SettingsWindow(ref MyFlags flags, ref Game game, MainWindow tracker)
     {
         InitializeComponent();
-        _flags = flags;
-        _game = game;
-        _tracker = tracker;
-        nudHue1L.Value = flags.configs.hue1Lower;
-        nudHue1H.Value = flags.configs.hue1Upper;
-        nudHue2L.Value = flags.configs.hue2Lower;
-        nudHue2H.Value = flags.configs.hue2Upper;
-        nudSat1L.Value = flags.configs.saturation1Lower;
-        nudSat2L.Value = flags.configs.saturation2Lower;
-        nudValueL.Value = flags.configs.valueLower;
-        nudAreaL.Value = flags.configs.areaLower;
+
+        this._flags = flags;
+        this._game = game;
+        this._tracker = tracker;
+
+        this.nudHue1L.Value = flags.configs.hue1Lower;
+        this.nudHue1H.Value = flags.configs.hue1Upper;
+        this.nudHue2L.Value = flags.configs.hue2Lower;
+        this.nudHue2H.Value = flags.configs.hue2Upper;
+        this.nudSat1L.Value = flags.configs.saturation1Lower;
+        this.nudSat2L.Value = flags.configs.saturation2Lower;
+        this.nudValueL.Value = flags.configs.valueLower;
+        this.nudAreaL.Value = flags.configs.areaLower;
 
         cbPorts1.Items.Clear();
         cbPorts1.Items.Add("(None)");
@@ -112,14 +116,14 @@ public partial class SettingsWindow : Form
                                     _flags.configs.hue1Upper, _flags.configs.hue2Lower, _flags.configs.hue2Upper,
                                     _flags.configs.saturation1Lower, _flags.configs.saturation2Lower,
                                     _flags.configs.valueLower, _flags.configs.areaLower);
-        File.WriteAllText(@"Data\data.txt", arrStr);
+        File.WriteAllText(@"Data/data.txt", arrStr);
     }
 
     private void button_ConfigLoad_Click(object sender, EventArgs e)
     {
-        if (File.Exists(@"Data\data.txt"))
+        if (File.Exists(@"Data/data.txt"))
         {
-            FileStream fsRead = new FileStream(@"Data\data.txt", FileMode.Open);
+            FileStream fsRead = new FileStream(@"Data/data.txt", FileMode.Open);
             int fsLen = (int)fsRead.Length;
             byte[] heByte = new byte[fsLen];
             int r = fsRead.Read(heByte, 0, heByte.Length);
@@ -273,30 +277,4 @@ public partial class SettingsWindow : Form
             }
         }
     }
-
-    private void SetWindow_Load(object sender, EventArgs e)
-    {
-
-    }
-
-    private void cbPorts2_SelectedIndexChanged(object sender, EventArgs e)
-    {
-
-    }
-
-    private void cbPorts1_SelectedIndexChanged(object sender, EventArgs e)
-    {
-
-    }
-
-    private void lblPort1_Click(object sender, EventArgs e)
-    {
-
-    }
-
-    private void lblPort2_Click(object sender, EventArgs e)
-    {
-
-    }
-
 }

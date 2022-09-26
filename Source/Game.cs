@@ -13,6 +13,20 @@ public class Game
     // Parameters for the court
     public const int CourtWidth = 254;
     public const int CourtHeight = 254;
+    public const int BufferAreaLength = 28;
+    public const int BufferEdgeLength = 2;
+    public const int WallLength = 80;
+    public const int WallWidth = 2;
+    public static readonly (Dot TopLeft, Dot BottomRight) CoreArea = (
+        new Dot(
+            BufferEdgeLength + BufferAreaLength + WallWidth,
+            BufferEdgeLength + BufferAreaLength + WallWidth
+        ),
+        new Dot(
+            CourtWidth - (BufferEdgeLength + BufferAreaLength + WallWidth),
+            CourtHeight - (BufferEdgeLength + BufferAreaLength + WallWidth)
+        )
+    );
 
     // Parameters for orders
     public const int MaxOrderNumber = 20;
@@ -25,18 +39,6 @@ public class Game
     public const int MaxBarrierLength = 50;
     public const int MinDistanceBetweenBarriers = 40;
 
-    // 缓冲区长度
-    public const int BufferAreaLength = 28;
-    public const int BufferEdgeLength = 2;
-
-    // Parameters for walls
-    public const int WallLength = 80;
-    public const int WallWidth = 2;
-
-    // The range of orders' generation area
-    public readonly Dot CoreAreaTopLeft = new Dot(BufferEdgeLength + BufferAreaLength + WallWidth, BufferEdgeLength + BufferAreaLength + WallWidth);
-    public readonly Dot CoreAreaBottomRight = new Dot(CourtWidth - (BufferEdgeLength + BufferAreaLength + WallWidth), CourtHeight - (BufferEdgeLength + BufferAreaLength + WallWidth));
-    public static (Dot, Dot) CoreArea;
     /// <summary>
     /// The system time
     /// </summary>
@@ -183,19 +185,6 @@ public class Game
             }
         }
     }
-    public void SetChargeStation()
-    {
-        if (_camp == Camp.A)
-        {
-            _vehicleA.SetChargeStation();
-            Station.Add(_vehicleA.CurrentPos(), 0);
-        }
-        else if (_camp == Camp.B)
-        {
-            _vehicleB.SetChargeStation();
-            Station.Add(_vehicleB.CurrentPos(), 1);
-        }
-    }
 
     public void GetMark()
     {
@@ -249,8 +238,6 @@ public class Game
 
         _startTime = this.SystemTime;
 
-        // Assign CoreArea
-        CoreArea = (CoreAreaTopLeft, CoreAreaBottomRight);
         // initial packages on the field
         _orderGenerator = new OrderGenerator(MaxOrderNumber, CoreArea,
                                             (0, _gameDuration), (MinDeliveryTime, MaxDeliveryTime), out _allOrderList);
@@ -300,21 +287,21 @@ public class Game
         // Generate walls  不得不分开处理，循环实在不好写
         this._wallList = new List<Barrier>();
         //左上竖墙
-        this._wallList.Add(new Barrier(new Dot(CoreAreaTopLeft.x - WallWidth, CoreAreaTopLeft.y - WallWidth), new Dot(CoreAreaTopLeft.x, CoreAreaTopLeft.y + WallLength - WallWidth)));
+        this._wallList.Add(new Barrier(new Dot(CoreArea.TopLeft.x - WallWidth, CoreArea.TopLeft.y - WallWidth), new Dot(CoreArea.TopLeft.x, CoreArea.TopLeft.y + WallLength - WallWidth)));
         //左上横墙
-        this._wallList.Add(new Barrier(new Dot(CoreAreaTopLeft.x - WallWidth, CoreAreaTopLeft.y - WallWidth), new Dot(CoreAreaTopLeft.x + WallLength - WallWidth, CoreAreaTopLeft.y)));
+        this._wallList.Add(new Barrier(new Dot(CoreArea.TopLeft.x - WallWidth, CoreArea.TopLeft.y - WallWidth), new Dot(CoreArea.TopLeft.x + WallLength - WallWidth, CoreArea.TopLeft.y)));
         //右上竖墙
-        this._wallList.Add(new Barrier(new Dot(CoreAreaBottomRight.x, CoreAreaTopLeft.y - WallWidth), new Dot(CoreAreaBottomRight.x + WallWidth, CoreAreaTopLeft.y + WallLength - WallWidth)));
+        this._wallList.Add(new Barrier(new Dot(CoreArea.BottomRight.x, CoreArea.TopLeft.y - WallWidth), new Dot(CoreArea.BottomRight.x + WallWidth, CoreArea.TopLeft.y + WallLength - WallWidth)));
         //右上横墙
-        this._wallList.Add(new Barrier(new Dot(CoreAreaBottomRight.x - WallLength + WallWidth, CoreAreaTopLeft.y - WallWidth), new Dot(CoreAreaBottomRight.x + WallWidth, CoreAreaTopLeft.y)));
+        this._wallList.Add(new Barrier(new Dot(CoreArea.BottomRight.x - WallLength + WallWidth, CoreArea.TopLeft.y - WallWidth), new Dot(CoreArea.BottomRight.x + WallWidth, CoreArea.TopLeft.y)));
         //左下竖墙
-        this._wallList.Add(new Barrier(new Dot(CoreAreaTopLeft.x - WallWidth, CoreAreaBottomRight.y - WallLength + WallWidth), new Dot(CoreAreaTopLeft.x, CoreAreaBottomRight.y + WallWidth)));
+        this._wallList.Add(new Barrier(new Dot(CoreArea.TopLeft.x - WallWidth, CoreArea.BottomRight.y - WallLength + WallWidth), new Dot(CoreArea.TopLeft.x, CoreArea.BottomRight.y + WallWidth)));
         //左下横墙
-        this._wallList.Add(new Barrier(new Dot(CoreAreaTopLeft.x - WallWidth, CoreAreaBottomRight.y), new Dot(CoreAreaTopLeft.x + WallLength - WallWidth, CoreAreaBottomRight.y + WallWidth)));
+        this._wallList.Add(new Barrier(new Dot(CoreArea.TopLeft.x - WallWidth, CoreArea.BottomRight.y), new Dot(CoreArea.TopLeft.x + WallLength - WallWidth, CoreArea.BottomRight.y + WallWidth)));
         //右下竖墙
-        this._wallList.Add(new Barrier(new Dot(CoreAreaBottomRight.x, CoreAreaBottomRight.y - WallLength + WallWidth), new Dot(CoreAreaBottomRight.x + WallWidth, CoreAreaBottomRight.y + WallWidth)));
+        this._wallList.Add(new Barrier(new Dot(CoreArea.BottomRight.x, CoreArea.BottomRight.y - WallLength + WallWidth), new Dot(CoreArea.BottomRight.x + WallWidth, CoreArea.BottomRight.y + WallWidth)));
         //右下横墙
-        this._wallList.Add(new Barrier(new Dot(CoreAreaBottomRight.x - WallLength + WallWidth, CoreAreaBottomRight.y), new Dot(CoreAreaBottomRight.x + WallWidth, CoreAreaBottomRight.y + WallWidth)));
+        this._wallList.Add(new Barrier(new Dot(CoreArea.BottomRight.x - WallLength + WallWidth, CoreArea.BottomRight.y), new Dot(CoreArea.BottomRight.x + WallWidth, CoreArea.BottomRight.y + WallWidth)));
 
     }
 
@@ -348,11 +335,6 @@ public class Game
         }
 
         GameState = GameState.Ended;
-    }
-
-    public List<Order> OrdersRemain()
-    {
-        return _pendingOrderList;
     }
 
     public Camp GetCamp()

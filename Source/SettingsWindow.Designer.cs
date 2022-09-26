@@ -299,7 +299,6 @@ partial class SettingsWindow
             this.cbPorts1.Name = "cbPorts1";
             this.cbPorts1.Size = new System.Drawing.Size(77, 28);
             this.cbPorts1.TabIndex = 99;
-            this.cbPorts1.SelectedIndexChanged += new System.EventHandler(this.cbPorts1_SelectedIndexChanged);
             this.cbPorts1.TextChanged += new System.EventHandler(this.cbPorts1_TextChanged);
             // 
             // lblPort1
@@ -311,7 +310,6 @@ partial class SettingsWindow
             this.lblPort1.Size = new System.Drawing.Size(95, 20);
             this.lblPort1.TabIndex = 100;
             this.lblPort1.Text = "小车A串口：";
-            this.lblPort1.Click += new System.EventHandler(this.lblPort1_Click);
             // 
             // lblCapture
             // 
@@ -395,7 +393,6 @@ partial class SettingsWindow
             this.lblPort2.Size = new System.Drawing.Size(93, 20);
             this.lblPort2.TabIndex = 108;
             this.lblPort2.Text = "小车B串口：";
-            this.lblPort2.Click += new System.EventHandler(this.lblPort2_Click);
             // 
             // cbPorts2
             // 
@@ -406,7 +403,6 @@ partial class SettingsWindow
             this.cbPorts2.Name = "cbPorts2";
             this.cbPorts2.Size = new System.Drawing.Size(78, 28);
             this.cbPorts2.TabIndex = 107;
-            this.cbPorts2.SelectedIndexChanged += new System.EventHandler(this.cbPorts2_SelectedIndexChanged);
             this.cbPorts2.TextChanged += new System.EventHandler(this.cbPorts2_TextChanged);
             // 
             // label1
@@ -561,7 +557,6 @@ partial class SettingsWindow
             this.ShowInTaskbar = false;
             this.TopMost = true;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SetWindow_FormClosing);
-            this.Load += new System.EventHandler(this.SetWindow_Load);
             ((System.ComponentModel.ISupportInitialize)(this.nudAreaL)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudValueL)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudSat2L)).EndInit();
