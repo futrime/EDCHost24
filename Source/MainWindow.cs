@@ -82,7 +82,7 @@ public partial class MainWindow : Form
     /// <summary>
     /// The refresh rate in hertz
     /// </summary>
-    private const int RefreshRate = 10;
+    private const int RefreshRate = 60;
 
     private const int SerialPortBufferLength = 1024;
 
