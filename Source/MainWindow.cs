@@ -18,9 +18,48 @@ public partial class MainWindow : Form
 {
     #region Parameters
 
-    private static readonly CampType[] AllCampList = {
+    public static readonly CampType[] AllCampList = {
         CampType.A,
         CampType.B
+    };
+
+    public static readonly ConfigType DefaultConfig = new ConfigType
+    {
+        Vehicles = new Dictionary<CampType, ConfigType.PerVehicleConfigType> {
+            {
+                CampType.A,
+                new ConfigType.PerVehicleConfigType
+                {
+                    Locator = new Locator.ConfigType
+                    {
+                        Hue = (0, 40),
+                        Saturation = (100, 255),
+                        Value = (100, 255),
+                        MinArea = 4M
+                    },
+                    ShowMask = false,
+                    SerialPort = "",
+                    Baudrate = 115200
+                }
+            },
+            {
+                CampType.B,
+                new ConfigType.PerVehicleConfigType
+                {
+                    Locator = new Locator.ConfigType
+                    {
+                        Hue = (0, 40),
+                        Saturation = (100, 255),
+                        Value = (100, 255),
+                        MinArea = 4M
+                    },
+                    ShowMask = false,
+                    SerialPort = "",
+                    Baudrate = 115200
+                }
+            }
+        },
+        Camera = 0
     };
 
     /// <summary>
@@ -62,6 +101,15 @@ public partial class MainWindow : Form
     public VideoCapture Camera => this._camera;
 
     /// <summary>
+    /// The configurations
+    /// </summary>
+    public ConfigType Config
+    {
+        get => this._config;
+        set => this._config = value;
+    }
+
+    /// <summary>
     /// The coordinate converter
     /// </summary>
     public CoordinateConverter CoordinateConverter
@@ -74,6 +122,11 @@ public partial class MainWindow : Form
     /// The configurations
     /// </summary>
     public ConfigTypeLegacy Flags => this._flags;
+
+    /// <summary>
+    /// The game
+    /// </summary>
+    public Game Game => this._game;
 
     /// <summary>
     /// The serial port of the vehicle of camp A
@@ -99,6 +152,7 @@ public partial class MainWindow : Form
 
     private string[] _availableSerialPortList = SerialPort.GetPortNames();
     private VideoCapture _camera = new VideoCapture();
+    private ConfigType _config = MainWindow.DefaultConfig;
     private CoordinateConverter _coordinateConverter;
     private ConfigTypeLegacy _flags = new ConfigTypeLegacy();
     private Game _game = new Game();
@@ -599,11 +653,8 @@ public partial class MainWindow : Form
 
     private void OnSettingsButtonClick(object sender, EventArgs e)
     {
-        lock (Flags)
-        {
-            SettingsWindowLegacy st = new SettingsWindowLegacy(ref this._flags, ref _game, this);
-            st.Show();
-        }
+        var settingsWindow = new SettingsWindow(this);
+        settingsWindow.Show();
     }
 
     private void OnTimerTick(object sender, EventArgs e)

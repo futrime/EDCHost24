@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace EdcHost;
 
 /// <summary>
@@ -56,3 +58,20 @@ public enum GameStateType
     /// </summary>
     Ended
 };
+
+/// <summary>
+/// The configuration type
+/// </summary>
+public struct ConfigType
+{
+    public struct PerVehicleConfigType
+    {
+        public Locator.ConfigType Locator;
+        public bool ShowMask;
+        public string SerialPort;
+        public int Baudrate;
+    }
+
+    public Dictionary<CampType, PerVehicleConfigType> Vehicles;
+    public int Camera;
+}
