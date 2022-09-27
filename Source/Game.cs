@@ -157,6 +157,7 @@ public class Game
     private long _timePenaltySum = 0;
     private long _gameDuration = GameDurationFirstHalf;
     private long _pauseTime;
+    private long _lastTickTime = Utility.SystemTime - 1;
     private Dictionary<CampType, Vehicle> _vehicle;
 
     private Dictionary<CampType, int> _score = new Dictionary<CampType, int>
@@ -241,6 +242,8 @@ public class Game
                 this._gameState = GameStateType.Ended;
             }
         }
+
+        this._lastTickTime = Utility.SystemTime;
     }
     /// <summary>
     /// Get the penalty when the vehicle is out of the court
@@ -319,7 +322,7 @@ public class Game
         // is in opponent camp's charging piles
         if (IsInChargingPileInfluenceScope(opponentCamp, vehiclePosition))
         {
-            this._vehicle[this._camp].DecreaseMaxDistance(OpponentChargingPileDecreaseRate);
+            this._vehicle[this._camp].IncreaseMaxDistance(-OpponentChargingPileDecreaseRate);
         }
     }
     /// <summary>
@@ -328,7 +331,7 @@ public class Game
     private void BarrierPenalty(Dot vehiclePosition)
     {
         if (IsInBarrier(vehiclePosition))
-            this._vehicle[this._camp].DecreaseMaxDistance(BarrierDecreasePowerRate);
+            this._vehicle[this._camp].IncreaseMaxDistance(-BarrierDecreasePowerRate);
     }
     // decide which team and stage is going on
     public void Start(CampType _camp, GameStageType _GameStage)
