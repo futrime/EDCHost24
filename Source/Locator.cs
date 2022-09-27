@@ -102,9 +102,9 @@ public class Locator
                 if ((decimal)moments.M00 >= this._config.MinArea)
                 {
                     // The barycenter of the ending points
-                    this._targetPosition = new Dot(
-                        (int)(moments.M10 / moments.M00),
-                        (int)(moments.M01 / moments.M00)
+                    this._targetPosition = new Point2f(
+                        (float)(moments.M10 / moments.M00),
+                        (float)(moments.M01 / moments.M00)
                     );
 
                     isTargetFound = true;
@@ -113,15 +113,15 @@ public class Locator
 
             if (!isTargetFound)
             {
-                this._targetPosition = new Dot(0, 0);
+                this._targetPosition = null;
             }
         }
     }
 
     /// <summary>
-    /// The position of the target
+    /// The position of the target. Null if not detected.
     /// </summary>
-    public Dot TargetPosition => this._targetPosition;
+    public Point2f? TargetPosition => this._targetPosition;
 
     #endregion
 
@@ -129,7 +129,7 @@ public class Locator
 
     private ConfigType _config;
     private bool _showMask;
-    private Dot _targetPosition = new Dot(0, 0);
+    private Point2f? _targetPosition = null;
 
     #endregion
 

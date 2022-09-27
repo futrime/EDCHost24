@@ -6,6 +6,7 @@ using System.IO.Ports;
 using System.Windows.Forms;
 using OpenCvSharp;
 using OpenCvSharp.Extensions;
+
 using Point2i = OpenCvSharp.Point;
 
 namespace EdcHost;
@@ -17,10 +18,20 @@ public partial class MainWindow : Form
 {
     #region Parameters
 
+    private static readonly CampType[] AllCampList = {
+        CampType.A,
+        CampType.B
+    };
+
     /// <summary>
     /// The size of icons shown on the monitor
     /// </summary>
     private const int IconSize = 10;
+
+    /// <summary>
+    /// The refresh rate in hertz
+    /// </summary>
+    private const int RefreshRate = 10;
 
     #endregion
 
@@ -31,7 +42,12 @@ public partial class MainWindow : Form
     /// A list of available serial ports
     /// </summary>
     public string[] AvailableSerialPortList => this._availableSerialPortList;
+
+    /// <summary>
+    /// The camera
+    /// </summary>
     public VideoCapture Camera => this._camera;
+
     /// <summary>
     /// The coordinate converter
     /// </summary>
@@ -40,10 +56,12 @@ public partial class MainWindow : Form
         get => this._coordinateConverter;
         set => this._coordinateConverter = value;
     }
+
     /// <summary>
     /// The configurations
     /// </summary>
     public ConfigTypeLegacy Flags => this._flags;
+
     /// <summary>
     /// The serial port of the vehicle of camp A
     /// </summary>
@@ -52,6 +70,7 @@ public partial class MainWindow : Form
         get => this._serialPortVehicleA;
         set => this._serialPortVehicleA = value;
     }
+
     /// <summary>
     /// The serial port of the vehicle of camp B
     /// </summary>
@@ -65,15 +84,15 @@ public partial class MainWindow : Form
 
     #region Private fields
 
-    private string[] _availableSerialPortList;
+    private string[] _availableSerialPortList = SerialPort.GetPortNames();
     private VideoCapture _camera = new VideoCapture();
     private CoordinateConverter _coordinateConverter;
     private ConfigTypeLegacy _flags = new ConfigTypeLegacy();
     private Game _game = new Game();
+    private Dictionary<CampType, Locator> _locatorDict = new Dictionary<CampType, Locator>();
     private Point2f[] _monitorCorners = new Point2f[4];
     private SerialPort _serialPortVehicleA = null;
     private SerialPort _serialPortVehicleB = null;
-    private LocaliserLegacy _vehicleLocalizer = new LocaliserLegacy();
 
     #endregion
 
@@ -84,36 +103,28 @@ public partial class MainWindow : Form
     {
         InitializeComponent();
 
-        // Setup Windows Forms controls
-        ScoreABackgroundLabel.SendToBack();
-        ScoreBBackgroundLabel.SendToBack();
-        GameRoundLabel.Text = "上半场";
-
-        // Setup the monitor
-        Camera.Open(0);
-
-        // 相机画面大小设为视频帧大小
-        Flags.CameraFrameSize.Width = Camera.FrameWidth;
-        Flags.CameraFrameSize.Height = Camera.FrameHeight;
-
-        // 显示大小设为界面组件大小
+        // Setup the camera
+        this._camera.Open(0);
+        Flags.CameraFrameSize.Width = this._camera.FrameWidth;
+        Flags.CameraFrameSize.Height = this._camera.FrameHeight;
         Flags.MonitorFrameSize.Width = MonitorPictureBox.Width;
         Flags.MonitorFrameSize.Height = MonitorPictureBox.Height;
-
-        // 以既有的flags参数初始化坐标转换器
         CoordinateConverter = new CoordinateConverter(Flags);
+        this._camera.FrameWidth = Flags.CameraFrameSize.Width;
+        this._camera.FrameHeight = Flags.CameraFrameSize.Height;
+        this._camera.ConvertRgb = true;
 
-        this._availableSerialPortList = SerialPort.GetPortNames();
+        // Setup the timer
+        this.Timer.Interval = 1000 / MainWindow.RefreshRate;
+        this.Timer.Start();
 
-        Camera.FrameWidth = Flags.CameraFrameSize.Width;
-        Camera.FrameHeight = Flags.CameraFrameSize.Height;
-        Camera.ConvertRgb = true;
-
-        // 设置定时器的触发间隔为 100ms
-        Timer.Interval = 100;
-
-        // 启动计时器，执行给迷宫外的小车定时发信息的任务
-        Timer.Start();
+        // Setup locators
+        foreach (var camp in MainWindow.AllCampList)
+        {
+            this._locatorDict.Add(
+                camp, new Locator(new Locator.ConfigType(), false)
+            );
+        }
     }
 
     /// <summary>
@@ -135,11 +146,11 @@ public partial class MainWindow : Form
         }
         else if (this._game.GameState == GameStateType.Running)
         {
-            var vehiclePositionList = (this._vehicleLocalizer.GetCentres(this._game.GetCamp()));
-            if (vehiclePositionList.Count > 0)
+            if (this._locatorDict[this._game.GetCamp()].TargetPosition != null)
             {
-                // Convert Camera Coordinate to Court Coordinate
-                this._game.Refresh(new Dot((Point2i)CoordinateConverter.CameraToCourt((Point2f)vehiclePositionList[0])));
+                this._game.Refresh(
+                    new Dot((Point2i)CoordinateConverter.CameraToCourt((Point2f)this._locatorDict[this._game.GetCamp()].TargetPosition))
+                );
             }
 
             this.FoulButton.Enabled = true;
@@ -193,20 +204,27 @@ public partial class MainWindow : Form
     /// </summary>
     private void ProcessCameraFrame()
     {
+        // Read the camera frame.
         Mat cameraFrame = new Mat();
-        Mat monitorFrame = new Mat();
         if (!Camera.Read(cameraFrame))
         {
             return;
         }
 
-        this._vehicleLocalizer.Locate(cameraFrame, Flags);
+        // Update locator images.
+        foreach (var locator in this._locatorDict.Values)
+        {
+            locator.Image = cameraFrame;
+        }
 
-        cameraFrame = this.Draw(cameraFrame, _vehicleLocalizer);
+        // Draw patterns on the monitor.
+        cameraFrame = this.Draw(cameraFrame);
 
-        Cv2.Resize(cameraFrame, monitorFrame, this.Flags.MonitorFrameSize);
+        // Resize to the size of the monitor
+        Cv2.Resize(cameraFrame, cameraFrame, this.Flags.MonitorFrameSize);
 
-        this.BeginInvoke(new Action<Image>(RefreshMonitor), BitmapConverter.ToBitmap(monitorFrame));
+        // Update the monitor frame
+        this.BeginInvoke(new Action<Image>(RefreshMonitor), BitmapConverter.ToBitmap(cameraFrame));
     }
 
     /// <summary>
@@ -215,11 +233,15 @@ public partial class MainWindow : Form
     /// <param name="image">The background picture</param>
     /// <param name="localizer">The localiser</param>
     /// <return>The frame with patterns on it</return>
-    private Mat Draw(Mat image, LocaliserLegacy localizer)
+    private Mat Draw(Mat image)
     {
         // Read icons
         var iconCarA = new Mat(@"Assets/Icons/VehicleRed.png", ImreadModes.Color);
         var iconCarB = new Mat(@"Assets/Icons/VehicleBlue.png", ImreadModes.Color);
+        var iconCarDict = new Dictionary<CampType, Mat> {
+            {CampType.A, iconCarA},
+            {CampType.B, iconCarB}
+        };
         var iconChargingPileRed = new Mat(@"Assets/Icons/ChargingPileRed.png", ImreadModes.Color);
         var iconChargingPileBlue = new Mat(@"Assets/Icons/ChargingPileBlue.png", ImreadModes.Color);
         var iconOrderDeparture = new Mat(@"Assets/Icons/OrderDeparture.png", ImreadModes.Color);
@@ -384,31 +406,23 @@ public partial class MainWindow : Form
         }
 
         // Draw vehicles
-        foreach (Point2i c1 in localizer.GetCentres(CampType.A).ToArray())
+        foreach (var camp in MainWindow.AllCampList)
         {
-            var Tx = c1.X;
-            Tx = Math.Max(Tx, 0);
-            Tx = Math.Min(Tx, image.Cols - iconCarB.Cols);
+            // If the vehicle cannot be detected
+            if (this._locatorDict[camp].TargetPosition == null)
+            {
+                continue;
+            }
 
-            var Ty = c1.Y;
-            Ty = Math.Max(Ty, 0);
-            Ty = Math.Min(Ty, image.Rows - iconCarB.Rows);
+            var position = (Point2i)this._locatorDict[camp].TargetPosition;
 
-            Mat Pos = new Mat(image, new Rect(Tx, Ty, iconCarA.Cols, iconCarA.Rows));
-            iconCarA.CopyTo(Pos);
-        }
-        foreach (Point2i c2 in localizer.GetCentres(CampType.B).ToArray())
-        {
-            var Tx = c2.X;
-            Tx = Math.Max(Tx, 0);
-            Tx = Math.Min(Tx, image.Cols - iconCarB.Cols);
+            position.X = Math.Max(position.X, 0);
+            position.X = Math.Min(position.X, image.Cols - iconCarB.Cols);
 
-            var Ty = c2.Y;
-            Ty = Math.Max(Ty, 0);
-            Ty = Math.Min(Ty, image.Rows - iconCarB.Rows);
+            position.Y = Math.Max(position.Y, 0);
+            position.Y = Math.Min(position.Y, image.Rows - iconCarB.Rows);
 
-            Mat Pos = new Mat(image, new Rect(Tx, Ty, iconCarB.Cols, iconCarB.Rows));
-            iconCarB.CopyTo(Pos);
+            iconCarDict[camp].CopyTo(new Mat(image, new Rect(position.X, position.Y, iconCarA.Cols, iconCarA.Rows)));
         }
 
         return image;
