@@ -224,7 +224,7 @@ public partial class MainWindow : Form
         );
 
         // Setup the coordinate converter
-        CoordinateConverter = new CoordinateConverter(
+        this._coordinateConverter = new CoordinateConverter(
             cameraFrameSize: this._cameraFrameSize,
             monitorFrameSize: this._monitorFrameSize,
             courtSize: this._courtSize
