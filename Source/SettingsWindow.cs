@@ -65,6 +65,22 @@ public partial class SettingsWindow : Form
     private void ApplyConfig()
     {
         this._mainWindow.Config = this._config;
+
+        // Apply the camera configurations
+        this._mainWindow.Camera.Release();
+        this._mainWindow.Camera.Open(this._mainWindow.Config.Camera);
+
+        // Apply the locator configurations
+        foreach (var vehicleConfigPair in this._mainWindow.Config.Vehicles)
+        {
+            var camp = vehicleConfigPair.Key;
+            var vehicleConfig = vehicleConfigPair.Value;
+            var locatorConfig = vehicleConfig.Locator;
+            this._mainWindow.LocatorDict[camp] = new Locator(
+                config: locatorConfig,
+                showMask: vehicleConfig.ShowMask
+            );
+        }
     }
 
     private void LoadConfig()
@@ -237,7 +253,8 @@ public partial class SettingsWindow : Form
     private void buttonApply_Click(object sender, EventArgs e)
     {
         this.SyncFormToConfig();
-        this.ApplyConfig();
+        Thread thread = new Thread(this.ApplyConfig);
+        thread.Start();
     }
 
     private void buttonLoad_Click(object sender, EventArgs e)

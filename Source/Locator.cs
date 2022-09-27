@@ -75,11 +75,11 @@ public class Locator
                     mat: image
                 );
             }
-            else
-            {
-                // Close all windows opened by OpenCv
-                Cv2.DestroyAllWindows();
-            }
+            // else
+            // {
+            //     // Close all windows opened by OpenCv
+            //     Cv2.DestroyAllWindows();
+            // }
 
             var contourList = Cv2.FindContoursAsArray(
                 image: image,

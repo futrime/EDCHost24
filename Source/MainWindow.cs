@@ -100,6 +100,11 @@ public partial class MainWindow : Form
     public VideoCapture Camera => this._camera;
 
     /// <summary>
+    /// The size of the camera frame
+    /// </summary>
+    public OpenCvSharp.Size CameraFrameSize => this._cameraFrameSize;
+
+    /// <summary>
     /// The configurations
     /// </summary>
     public ConfigType Config
@@ -121,6 +126,11 @@ public partial class MainWindow : Form
     /// The game
     /// </summary>
     public Game Game => this._game;
+
+    /// <summary>
+    /// The locators
+    /// </summary>
+    public Dictionary<CampType, Locator> LocatorDict => this._locatorDict;
 
     /// <summary>
     /// The serial port of the vehicle of camp A
