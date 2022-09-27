@@ -69,6 +69,16 @@ public partial class SettingsWindow : Form
         // Apply the camera configurations
         this._mainWindow.Camera.Release();
         this._mainWindow.Camera.Open(this._mainWindow.Config.Camera);
+        this._mainWindow.CameraFrameSize = new OpenCvSharp.Size(
+            this._mainWindow.Camera.FrameWidth,
+            this._mainWindow.Camera.FrameHeight
+        );
+        this._mainWindow.CoordinateConverter = new CoordinateConverter(
+            cameraFrameSize: this._mainWindow.CameraFrameSize,
+            monitorFrameSize: this._mainWindow.MonitorFrameSize,
+            courtSize: this._mainWindow.CourtSize,
+            calibrationCorners: this._mainWindow.CoordinateConverter.CalibrationCorners
+        );
 
         // Apply the vehicle specific configurations
         foreach (var vehicleConfigPair in this._mainWindow.Config.Vehicles)

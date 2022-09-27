@@ -88,10 +88,6 @@ public class Locator
             // If any contour detected
             if (contourList.Length > 0)
             {
-                // The moments of the contour, a mathematical
-                // concept
-                // Refer to https://docs.opencv.org/4.6.0/d8/d23/classcv_1_1Moments.html
-
                 // Find the max length of contour in the contourList
                 int maxLength = 0;
                 int maxLengthIndex = 0;
@@ -105,6 +101,9 @@ public class Locator
                     }
                 }
 
+                // The moments of the contour, a mathematical
+                // concept
+                // Refer to https://docs.opencv.org/4.6.0/d8/d23/classcv_1_1Moments.html
                 var moments = Cv2.Moments(contourList[maxLengthIndex]);
                 // If the area detected is larger than the threshold
                 if ((decimal)moments.M00 >= this._config.MinArea)

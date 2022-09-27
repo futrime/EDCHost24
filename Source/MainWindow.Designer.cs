@@ -7,7 +7,7 @@ partial class MainWindow
         {
             components.Dispose();
             Camera.Dispose();
-            CoordinateConverter.Dispose();
+            this._coordinateConverter.Dispose();
         }
         base.Dispose(disposing);
     }
