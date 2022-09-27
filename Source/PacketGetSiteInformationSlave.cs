@@ -5,7 +5,7 @@ namespace EdcHost;
 /// <summary>
 /// A packet for slaves to get site information
 /// </summary>
-internal class PacketGetSiteInformationSlave : Packet
+public class PacketGetSiteInformationSlave : Packet
 {
     private readonly byte PacketId = 0x00;
 

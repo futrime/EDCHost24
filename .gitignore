@@ -57,8 +57,4 @@ msbuild.wrn
 
 
 ## Project specific ignored files
-Data/*
-!Data/.keep
 *.resx
-Docs/*
-!Docs/.keep

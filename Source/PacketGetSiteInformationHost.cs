@@ -2,7 +2,7 @@ using System;
 namespace EdcHost;
 using System.Collections.Generic;
 
-internal class PacketGetSiteInformationHost : Packet
+public class PacketGetSiteInformationHost : Packet
 {
     private readonly byte PacketId = 0x01;
 
