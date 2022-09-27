@@ -292,6 +292,7 @@ partial class MainWindow
             this.Name = "MainWindow";
             this.Padding = new System.Windows.Forms.Padding(10);
             this.ShowIcon = false;
+            this.Text = "EDC Host";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
             ((System.ComponentModel.ISupportInitialize)(this.MonitorPictureBox)).EndInit();
             this.panel1.ResumeLayout(false);
