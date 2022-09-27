@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 namespace EdcHost;
 
-internal class PacketGetStatusInformationHost : Packet
+public class PacketGetStatusInformationHost : Packet
 {
     public enum Status
     {

@@ -5,7 +5,7 @@ namespace EdcHost;
 /// <summary>
 /// A packet for communication
 /// </summary>
-internal abstract class Packet
+public abstract class Packet
 {
     /// <summary>
     /// Calculate the checksum of a raw byte array.

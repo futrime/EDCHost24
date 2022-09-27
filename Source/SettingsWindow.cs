@@ -14,7 +14,7 @@ public partial class SettingsWindow : Form
 {
     #region Parameters
 
-    private const string DefaultConfigFilePath = @"Data/Config.yml";
+    private const string DefaultConfigFilePath = @"Config.yml";
 
     #endregion
 

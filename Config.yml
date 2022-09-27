@@ -1,0 +1,32 @@
+vehicles:
+  A:
+    locator:
+      hue:
+        item1: 0
+        item2: 40
+      saturation:
+        item1: 100
+        item2: 255
+      value:
+        item1: 100
+        item2: 255
+      minArea: 4
+    showMask: false
+    serialPort: ''
+    baudrate: 115200
+  B:
+    locator:
+      hue:
+        item1: 0
+        item2: 40
+      saturation:
+        item1: 100
+        item2: 255
+      value:
+        item1: 100
+        item2: 255
+      minArea: 4
+    showMask: false
+    serialPort: ''
+    baudrate: 115200
+camera: 0
