@@ -26,7 +26,20 @@ public partial class MainWindow : Form
     /// <summary>
     /// The size of icons shown on the monitor
     /// </summary>
-    private const int IconSize = 10;
+    private static readonly OpenCvSharp.Size IconSize = new OpenCvSharp.Size(10, 10);
+
+    private static readonly Dictionary<CampType, Mat> IconCarDict = new Dictionary<CampType, Mat> {
+            {CampType.A, new Mat(@"Assets/Icons/VehicleRed.png", ImreadModes.Color)},
+            {CampType.B, new Mat(@"Assets/Icons/VehicleBlue.png", ImreadModes.Color)}
+        };
+    private static readonly Dictionary<CampType, Mat> IconChargingPileDict = new Dictionary<CampType, Mat> {
+            {CampType.A, new Mat(@"Assets/Icons/ChargingPileRed.png", ImreadModes.Color)},
+            {CampType.B, new Mat(@"Assets/Icons/ChargingPileBlue.png", ImreadModes.Color)}
+        };
+    private static readonly (Mat Departure, Mat Destination) IconOrder = (
+        new Mat(@"Assets/Icons/OrderDeparture.png", ImreadModes.Color),
+        new Mat(@"Assets/Icons/OrderDestination.png", ImreadModes.Color)
+    );
 
     /// <summary>
     /// The refresh rate in hertz
@@ -103,6 +116,34 @@ public partial class MainWindow : Form
     {
         InitializeComponent();
 
+        // Resize icons
+        foreach (var icon in IconCarDict.Values)
+        {
+            Cv2.Resize(
+                src: icon,
+                dst: icon,
+                dsize: MainWindow.IconSize
+            );
+        }
+        foreach (var icon in IconChargingPileDict.Values)
+        {
+            Cv2.Resize(
+                src: icon,
+                dst: icon,
+                dsize: MainWindow.IconSize
+            );
+        }
+        Cv2.Resize(
+            src: IconOrder.Departure,
+            dst: IconOrder.Departure,
+            dsize: MainWindow.IconSize
+        );
+        Cv2.Resize(
+            src: IconOrder.Destination,
+            dst: IconOrder.Destination,
+            dsize: MainWindow.IconSize
+        );
+
         // Setup the camera
         this._camera.Open(0);
         Flags.CameraFrameSize.Width = this._camera.FrameWidth;
@@ -118,7 +159,7 @@ public partial class MainWindow : Form
         this.Timer.Interval = 1000 / MainWindow.RefreshRate;
         this.Timer.Start();
 
-        // Setup locators
+        // Setup the locators
         foreach (var camp in MainWindow.AllCampList)
         {
             this._locatorDict.Add(
@@ -182,7 +223,17 @@ public partial class MainWindow : Form
             this.FoulButton.Enabled = false;
             this.CalibrateButton.Enabled = true;
             this.SettingsButton.Enabled = false;
-            this.StartButton.Enabled = true;
+            if (
+                this._game.GameStage == GameStageType.SecondHalf &&
+                this._game.GetCamp() == CampType.B
+            )
+            {
+                this.StartButton.Enabled = false;
+            }
+            else
+            {
+                this.StartButton.Enabled = true;
+            }
             this.PauseButton.Enabled = false;
             this.ContinueButton.Enabled = false;
             this.EndButton.Enabled = false;
@@ -220,7 +271,7 @@ public partial class MainWindow : Form
         }
 
         // Draw patterns on the monitor.
-        cameraFrame = this.Draw(cameraFrame);
+        this.Draw(ref cameraFrame);
 
         // Resize to the size of the monitor
         Cv2.Resize(cameraFrame, cameraFrame, this.Flags.MonitorFrameSize);
@@ -235,39 +286,8 @@ public partial class MainWindow : Form
     /// <param name="image">The background picture</param>
     /// <param name="localizer">The localiser</param>
     /// <return>The frame with patterns on it</return>
-    private Mat Draw(Mat image)
+    private void Draw(ref Mat image)
     {
-        // Read icons
-        var iconCarA = new Mat(@"Assets/Icons/VehicleRed.png", ImreadModes.Color);
-        var iconCarB = new Mat(@"Assets/Icons/VehicleBlue.png", ImreadModes.Color);
-        var iconCarDict = new Dictionary<CampType, Mat> {
-            {CampType.A, iconCarA},
-            {CampType.B, iconCarB}
-        };
-        var iconChargingPileRed = new Mat(@"Assets/Icons/ChargingPileRed.png", ImreadModes.Color);
-        var iconChargingPileBlue = new Mat(@"Assets/Icons/ChargingPileBlue.png", ImreadModes.Color);
-        var iconOrderDeparture = new Mat(@"Assets/Icons/OrderDeparture.png", ImreadModes.Color);
-        var iconOrderDestination = new Mat(@"Assets/Icons/OrderDestination.png", ImreadModes.Color);
-
-        Cv2.Resize(src: iconCarA, dst: iconCarA, dsize: new OpenCvSharp.Size(IconSize, IconSize));
-        Cv2.Resize(src: iconCarB, dst: iconCarB, dsize: new OpenCvSharp.Size(IconSize, IconSize));
-        Cv2.Resize(
-            src: iconChargingPileRed, dst: iconChargingPileRed,
-            dsize: new OpenCvSharp.Size(IconSize, IconSize)
-        );
-        Cv2.Resize(
-            src: iconChargingPileBlue, dst: iconChargingPileBlue,
-            dsize: new OpenCvSharp.Size(IconSize, IconSize)
-        );
-        Cv2.Resize(
-            src: iconOrderDeparture, dst: iconOrderDeparture,
-            dsize: new OpenCvSharp.Size(IconSize, IconSize)
-        );
-        Cv2.Resize(
-            src: iconOrderDestination, dst: iconOrderDestination,
-            dsize: new OpenCvSharp.Size(IconSize, IconSize)
-        );
-
         // Draw court boundaries
         var corners = this.CoordinateConverter.CourtToCamera(new Point2f[]{
             new Point2f(0, 0),
@@ -287,8 +307,70 @@ public partial class MainWindow : Form
             );
         }
 
+        // Draw Barriers and Walls
+        foreach (var barrier in this._game.BarrierList)
+        {
+            DrawBarrier(ref image, barrier, Scalar.Gray);
+        }
+        foreach (var wall in this._game.WallList)
+        {
+            DrawBarrier(ref image, wall, Scalar.Black);
+        }
+
+        // Draw charging piles
+        foreach (var chargingPile in this._game.ChargingPileList)
+        {
+            this.DrawIcon(
+                image: ref image,
+                icon: IconChargingPileDict[chargingPile.Camp],
+                position: (Point2i)this.CoordinateConverter.CourtToCamera(chargingPile.Position.ToPoint())
+            );
+        }
+
+        // Draw departures and destinations of orders
+        if (this._game.GameState == GameStateType.Running || this._game.GameState == GameStateType.Paused)
+        {
+            Vehicle vehicle = this._game.Vehicle[this._game.GetCamp()];
+
+            foreach (Order order in _game.AllOrderList)
+            {
+                if (order.Status == Order.StatusType.Pending)
+                {
+                    this.DrawIcon(
+                        image: ref image,
+                        icon: IconOrder.Departure,
+                        position: (Point2i)this.CoordinateConverter.CourtToCamera(order.DeparturePosition.ToPoint())
+                    );
+                }
+                else if (order.Status == Order.StatusType.InDelivery)
+                {
+                    this.DrawIcon(
+                        image: ref image,
+                        icon: IconOrder.Destination,
+                        position: (Point2i)this.CoordinateConverter.CourtToCamera(order.DestinationPosition.ToPoint())
+                    );
+                }
+            }
+        }
+
+        // Draw vehicles
+        foreach (var camp in MainWindow.AllCampList)
+        {
+            // If the vehicle cannot be detected
+            if (this._locatorDict[camp].TargetPosition == null)
+            {
+                continue;
+            }
+
+            this.DrawIcon(
+                image: ref image,
+                icon: IconCarDict[camp],
+                position: (Point2i)this._locatorDict[camp].TargetPosition
+            );
+        }
+
         // Draw corners when calibrating
-        if (this._flags.CalibrationClickCount < 4)
+        if (this._flags.CalibrationClickCount < 4) // When calibrating
         {
             var pointList = this.CoordinateConverter.MonitorToCamera(this._monitorCorners);
             for (int i = 0; i < this._flags.CalibrationClickCount; ++i)
@@ -308,129 +390,15 @@ public partial class MainWindow : Form
                 );
             }
         }
-
-        // Draw Barriers and Walls
-        foreach (var barrier in this._game.BarrierList)
-        {
-            DrawBarrier(image, barrier, Scalar.Gray);
-        }
-        foreach (var wall in this._game.WallList)
-        {
-            DrawBarrier(image, wall, Scalar.Black);
-        }
-
-        // Draw charging piles
-        foreach (var chargingPile in this._game.ChargingPileList)
-        {
-            var position = new Dot((Point2i)this.CoordinateConverter.CourtToCamera(chargingPile.Position.ToPoint()));
-
-            Mat icon = new Mat();
-            switch (chargingPile.Camp)
-            {
-                case CampType.A:
-                    icon = iconChargingPileRed;
-                    break;
-
-                case CampType.B:
-                    icon = iconChargingPileBlue;
-                    break;
-
-                default:
-                    break;
-            }
-
-            int x = Math.Min(Math.Max(position.x - 10, 0), image.Cols - iconChargingPileRed.Cols);
-            int y = Math.Min(Math.Max(position.y - 10, 0), image.Cols - iconChargingPileRed.Cols);
-
-            icon.CopyTo(new Mat(image, new Rect(x, y, icon.Cols, icon.Rows)));
-        }
-
-        // Draw departures and destinations of orders
-        if (this._game.GameState == GameStateType.Running || this._game.GameState == GameStateType.Paused)
-        {
-            // 找到当前的车队
-            Vehicle current_car = this._game.Vehicle[CampType.A];
-            // 现在车上载有的外卖数量 
-            // int order_number_on_car = current_car.DeliveringOrderList.Count;
-            foreach (Order ord in _game.AllOrderList)
-            {
-                Order.StatusType currentOrderStatus = ord.Status;
-                //判断此外卖是否在车上
-                int Tx, Ty, Tcol, Trow;
-                // 若小车没有接收外卖，显示起点
-                Mat target_img = null;
-                if (Order.StatusType.Pending == currentOrderStatus)
-                {
-                    target_img = iconOrderDeparture;
-                    //修正坐标
-                    Point2f[] converted_cord = CoordinateConverter.CourtToCamera(new Point2f[] { (Point2f)ord.DeparturePosition.ToPoint() });
-                    Tx = (int)converted_cord[0].X - 10;
-                    Ty = (int)converted_cord[0].Y - 10;
-
-                }
-                // 若小车装载此外卖，显示终点
-                else if (Order.StatusType.InDelivery == currentOrderStatus)
-                {
-                    target_img = iconOrderDestination;
-                    Point2f[] converted_cord = CoordinateConverter.CourtToCamera(new Point2f[] { (Point2f)ord.DestinationPosition.ToPoint() });
-                    Tx = (int)converted_cord[0].X - 10;
-                    Ty = (int)converted_cord[0].Y - 10;
-                }
-                else
-                {
-                    continue;
-                }
-                // 修正位置
-                Tcol = target_img.Cols;
-                Trow = target_img.Rows;
-                if (Tx < 0)
-                {
-                    Tx = 0;
-                }
-                if (Ty < 0)
-                {
-                    Ty = 0;
-                }
-                // 
-                if (Tx + Tcol > image.Cols)
-                {
-                    Tcol = image.Cols - Tx;
-                }
-                if (Ty + Trow > image.Rows)
-                {
-                    Trow = image.Rows - Ty;
-                }
-                // 可能会出错 位置生成不正确
-                Mat Pos = new Mat(image, new Rect(Tx, Ty, Tcol, Trow));
-                target_img.CopyTo(Pos);
-
-            }
-        }
-
-        // Draw vehicles
-        foreach (var camp in MainWindow.AllCampList)
-        {
-            // If the vehicle cannot be detected
-            if (this._locatorDict[camp].TargetPosition == null)
-            {
-                continue;
-            }
-
-            var position = (Point2i)this._locatorDict[camp].TargetPosition;
-
-            position.X = Math.Max(position.X, 0);
-            position.X = Math.Min(position.X, image.Cols - iconCarB.Cols);
-
-            position.Y = Math.Max(position.Y, 0);
-            position.Y = Math.Min(position.Y, image.Rows - iconCarB.Rows);
-
-            iconCarDict[camp].CopyTo(new Mat(image, new Rect(position.X, position.Y, iconCarA.Cols, iconCarA.Rows)));
-        }
-
-        return image;
     }
 
-    private void DrawBarrier(Mat image, Barrier barrier, Scalar color)
+    /// <summary>
+    /// Draw a barrier on an image
+    /// </summary>
+    /// <param name="image">The image</param>
+    /// <param name="barrier">The barrier</param>
+    /// <param name="color">The color of the barrier</param>
+    private void DrawBarrier(ref Mat image, Barrier barrier, Scalar color)
     {
         Point2f[] cornerInCourtCoordinateList = {
             barrier.TopLeftPosition.ToPoint(),
@@ -449,6 +417,22 @@ public partial class MainWindow : Form
             ),
             color
         );
+    }
+
+    /// <summary>
+    /// Draw an icon on an image
+    /// </summary>
+    /// <param name="image">The image</param>
+    /// <param name="icon">The icon</param>
+    /// <param name="position">
+    /// The position of the icon in the camera coordinate
+    /// </param>
+    private void DrawIcon(ref Mat image, Mat icon, Point2i position)
+    {
+        var x = Math.Min(Math.Max(position.X - icon.Cols / 2, 0), image.Cols - icon.Cols);
+        var y = Math.Min(Math.Max(position.Y - icon.Cols / 2, 0), image.Rows - icon.Rows);
+
+        icon.CopyTo(new Mat(image, new Rect(x, y, icon.Cols, icon.Rows)));
     }
 
     /// <summary>
