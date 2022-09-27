@@ -594,6 +594,16 @@ public partial class MainWindow : Form
         }
     }
 
+    private void OnMonitorPictureBoxResize(object sender, EventArgs e)
+    {
+        this.Flags.MonitorFrameSize.Width = MonitorPictureBox.Width;
+        this.Flags.MonitorFrameSize.Height = MonitorPictureBox.Height;
+        this.CoordinateConverter = new CoordinateConverter(
+            this.Flags,
+            this.CoordinateConverter.CalibrationCorners
+        );
+    }
+
     private void OnStartButtonClick(object sender, EventArgs e)
     {
         if (this._game.GameStage == GameStageType.None &&

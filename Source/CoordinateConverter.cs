@@ -12,6 +12,14 @@ namespace EdcHost;
 /// </remarks>
 public class CoordinateConverter : IDisposable
 {
+    #region Public properties
+
+    public Point2f[] CalibrationCorners => this._calibrationCorners;
+
+    #endregion
+
+    #region Private fields
+
     // The transformation matrices
     private Mat _transformationCameraToCourt;
     private Mat _transformationCourtToCamera;
@@ -19,15 +27,26 @@ public class CoordinateConverter : IDisposable
     private Mat _transformationCameraToMonitor;
 
     /// <summary>
-    /// The positions of the corners of the court in the court coordinate system
+    /// The corners of the court in the camera coordinate system
+    /// in the last calibration
     /// </summary>
-    private Point2f[] _courtCorners;
+    private Point2f[] _calibrationCorners;
+
+    /// <summary>
+    /// The corners of the court in the court coordinate system
+    /// </summary>
+    private readonly Point2f[] _courtCorners;
+
+    #endregion
 
     /// <summary>
     /// Construct a coordinate converter.
     /// </summary>
     /// <param name="myFlags">The information of the game</param>
-    public CoordinateConverter(ConfigTypeLegacy myFlags)
+    /// <param name="Point2f[]">
+    /// The calibration information to initialize the converter
+    /// </param>
+    public CoordinateConverter(ConfigTypeLegacy myFlags, Point2f[] calibrationCorners = null)
     {
         Point2f[] camCorners = {
             new Point2f(0, 0),
@@ -49,13 +68,24 @@ public class CoordinateConverter : IDisposable
             new Point2f(myFlags.CourtSize.Width, myFlags.CourtSize.Height)
         };
 
+        // By default, the court corners are at the same positions as the camera corners
+        // in the camera coordinate system.
+        if (calibrationCorners != null)
+        {
+            this._calibrationCorners = calibrationCorners;
+        }
+        else
+        {
+            this._calibrationCorners = camCorners;
+        }
+
         // Get the position transformations between camera frames and monitor frames
         this._transformationCameraToMonitor = Cv2.GetPerspectiveTransform(camCorners, showCorners);
         this._transformationMonitorToCamera = Cv2.GetPerspectiveTransform(showCorners, camCorners);
 
         // Get the position transformations between camera frames and the court
-        this._transformationCameraToCourt = Cv2.GetPerspectiveTransform(camCorners, _courtCorners);
-        this._transformationCourtToCamera = Cv2.GetPerspectiveTransform(_courtCorners, camCorners);
+        this._transformationCameraToCourt = Cv2.GetPerspectiveTransform(this._calibrationCorners, _courtCorners);
+        this._transformationCourtToCamera = Cv2.GetPerspectiveTransform(_courtCorners, this._calibrationCorners);
     }
 
     /// <summary>
@@ -105,7 +135,11 @@ public class CoordinateConverter : IDisposable
         // Get the position transformations between camera frames and the court
         this._transformationCameraToCourt = Cv2.GetPerspectiveTransform(corners, this._courtCorners);
         this._transformationCourtToCamera = Cv2.GetPerspectiveTransform(this._courtCorners, corners);
+
+        this._calibrationCorners = corners;
     }
+
+    #region Transformations
 
     /// <summary>
     /// Convert the coordinates of a point from the monitor coordinate system to the camera coordinate system.
@@ -186,4 +220,6 @@ public class CoordinateConverter : IDisposable
     {
         return Cv2.PerspectiveTransform(points, _transformationCourtToCamera);
     }
+
+    #endregion
 }

@@ -48,10 +48,10 @@ partial class MainWindow
             this.MonitorPictureBox.Margin = new System.Windows.Forms.Padding(2);
             this.MonitorPictureBox.Name = "MonitorPictureBox";
             this.MonitorPictureBox.Size = new System.Drawing.Size(905, 652);
-            this.MonitorPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.MonitorPictureBox.TabIndex = 0;
             this.MonitorPictureBox.TabStop = false;
             this.MonitorPictureBox.MouseClick += new System.Windows.Forms.MouseEventHandler(this.OnMonitorMouseClick);
+            this.MonitorPictureBox.Resize += new System.EventHandler(this.OnMonitorPictureBoxResize);
             // 
             // Timer
             // 
