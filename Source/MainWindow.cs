@@ -601,7 +601,7 @@ public partial class MainWindow : Form
     {
         lock (Flags)
         {
-            SettingsWindow st = new SettingsWindow(ref this._flags, ref _game, this);
+            SettingsWindowLegacy st = new SettingsWindowLegacy(ref this._flags, ref _game, this);
             st.Show();
         }
     }

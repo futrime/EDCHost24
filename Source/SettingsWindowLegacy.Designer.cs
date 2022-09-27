@@ -1,6 +1,6 @@
 namespace EdcHost;
 
-partial class SettingsWindow
+partial class SettingsWindowLegacy
 {
     /// <summary>
     /// Required designer variable.
