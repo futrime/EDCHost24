@@ -89,6 +89,29 @@ public class Vehicle
         }
     }
 
+    /// <summary>
+    /// The distance remaining the vehicle can go
+    /// </summary>
+    public int RemainingDistance
+    {
+        get
+        {
+            return this.MaxDistance - this.Distance;
+        }
+    }
+
+    /// <summary>
+    /// The ratio of the remaining power to the full
+    /// power
+    /// </summary>
+    public decimal RemainingPowerRatio
+    {
+        get
+        {
+            return (decimal)this.RemainingDistance / this._initialMaxDistance;
+        }
+    }
+
     #endregion
 
     #region Private fields
@@ -128,6 +151,7 @@ public class Vehicle
     public void IncreaseMaxDistance(int increment)
     {
         this._maxDistance += increment;
+        this._maxDistance = Math.Min(this._maxDistance, this.Distance + this._initialMaxDistance);
     }
 
     /// <summary>
