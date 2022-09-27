@@ -1,5 +1,5 @@
 using OpenCvSharp;
-
+using System.Collections.Generic;
 namespace EdcHost;
 
 /// <summary>
@@ -91,8 +91,21 @@ public class Locator
                 // The moments of the contour, a mathematical
                 // concept
                 // Refer to https://docs.opencv.org/4.6.0/d8/d23/classcv_1_1Moments.html
-                var moments = Cv2.Moments(contourList[0]);
 
+                // Find the max length of contour in the contourList
+                int maxLength = 0;
+                int maxLengthIndex = 0;
+                for (int i = 0; i < contourList.Length; i++)
+                {
+                    int currentLength = contourList[i].Length;
+                    if (currentLength > maxLength)
+                    {
+                        maxLength = currentLength;
+                        maxLengthIndex = i;
+                    }
+                }
+
+                var moments = Cv2.Moments(contourList[maxLengthIndex]);
                 // If the area detected is larger than the threshold
                 if ((decimal)moments.M00 >= this._config.MinArea)
                 {
@@ -105,7 +118,6 @@ public class Locator
                     isTargetFound = true;
                 }
             }
-
             if (!isTargetFound)
             {
                 this._targetPosition = null;

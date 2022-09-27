@@ -155,6 +155,16 @@ public class Vehicle
     }
 
     /// <summary>
+    /// Decrease the maximum distance.
+    /// </summary>
+    /// <param name="increment">
+    /// The increment should be positive!
+    /// </param>
+    public void DecreaseMaxDistance(int increment)
+    {
+        this._maxDistance = Math.Max(this._maxDistance - increment, this.Distance);
+    }
+    /// <summary>
     /// Update the position of the vehicle.
     /// </summary>
     /// <param name="position">The position</param>
