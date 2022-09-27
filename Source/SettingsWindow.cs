@@ -70,16 +70,50 @@ public partial class SettingsWindow : Form
         this._mainWindow.Camera.Release();
         this._mainWindow.Camera.Open(this._mainWindow.Config.Camera);
 
-        // Apply the locator configurations
+        // Apply the vehicle specific configurations
         foreach (var vehicleConfigPair in this._mainWindow.Config.Vehicles)
         {
             var camp = vehicleConfigPair.Key;
             var vehicleConfig = vehicleConfigPair.Value;
+
+            // Apply the locator configurations.
             var locatorConfig = vehicleConfig.Locator;
             this._mainWindow.LocatorDict[camp] = new Locator(
                 config: locatorConfig,
                 showMask: vehicleConfig.ShowMask
             );
+
+            // Apply the serial port configurations.
+            // If the serial port is open, close it.
+            if (
+                this._mainWindow.SerialPortDict[camp] != null &&
+                this._mainWindow.SerialPortDict[camp].IsOpen
+            )
+            {
+                this._mainWindow.SerialPortDict[camp].Close();
+            }
+            // The port name should not be empty.
+            if (vehicleConfig.SerialPort != "")
+            {
+                this._mainWindow.SerialPortDict[camp] = new SerialPort(
+                    portName: vehicleConfig.SerialPort,
+                    baudRate: vehicleConfig.Baudrate
+                );
+                try
+                {
+                    this._mainWindow.SerialPortDict[camp].Open();
+                }
+                catch (System.Exception)
+                {
+                    MessageBox.Show(
+                        "Cannot open the serial port.",
+                        "Error",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error
+                    );
+                    this._mainWindow.SerialPortDict[camp] = null;
+                }
+            }
         }
     }
 

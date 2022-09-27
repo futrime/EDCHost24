@@ -84,6 +84,8 @@ public partial class MainWindow : Form
     /// </summary>
     private const int RefreshRate = 10;
 
+    private const int SerialPortBufferLength = 1024;
+
     #endregion
 
 
@@ -133,22 +135,14 @@ public partial class MainWindow : Form
     public Dictionary<CampType, Locator> LocatorDict => this._locatorDict;
 
     /// <summary>
-    /// The serial port of the vehicle of camp A
+    /// The serial ports
     /// </summary>
-    public SerialPort SerialPortVehicleA
+    public Dictionary<CampType, SerialPort> SerialPortDict
     {
-        get => this._serialPortVehicleA;
-        set => this._serialPortVehicleA = value;
+        get => this._serialPortDict;
+        set => this._serialPortDict = value;
     }
 
-    /// <summary>
-    /// The serial port of the vehicle of camp B
-    /// </summary>
-    public SerialPort SerialPortVehicleB
-    {
-        get => this._serialPortVehicleB;
-        set => this._serialPortVehicleB = value;
-    }
 
     #endregion
 
@@ -165,8 +159,10 @@ public partial class MainWindow : Form
     private Dictionary<CampType, Locator> _locatorDict = new Dictionary<CampType, Locator>();
     private Point2f[] _monitorCorners = new Point2f[4];
     private OpenCvSharp.Size _monitorFrameSize;
-    private SerialPort _serialPortVehicleA = null;
-    private SerialPort _serialPortVehicleB = null;
+    private Dictionary<CampType, SerialPort> _serialPortDict = new Dictionary<CampType, SerialPort> {
+        {CampType.A, null},
+        {CampType.B, null}
+    };
 
     #endregion
 
@@ -207,6 +203,16 @@ public partial class MainWindow : Form
 
         // Setup the camera
         this._camera.Open(this.Config.Camera);
+        if (!this._camera.IsOpened())
+        {
+            MessageBox.Show(
+                "No camera found!",
+                "Error",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Error
+            );
+            Application.Exit();
+        }
         this._camera.ConvertRgb = true;
 
         // Load the sizes of camera frames, monitor frames and the court.
@@ -334,7 +340,29 @@ public partial class MainWindow : Form
     /// </summary>
     private void Communicate()
     {
-        // To be implemented
+        foreach (var camp in MainWindow.AllCampList)
+        {
+            if (
+                this._serialPortDict[camp] == null ||
+                !this._serialPortDict[camp].IsOpen
+            )
+            {
+                continue;
+            }
+
+            // Read the message
+            var buffer = new byte[MainWindow.SerialPortBufferLength];
+            var length = this._serialPortDict[camp].Read(
+                buffer: buffer,
+                offset: 0,
+                count: MainWindow.SerialPortBufferLength
+            );
+
+            if (length > 0)
+            {
+                // To be implemented
+            }
+        }
     }
 
     #region Methods related to the camera and the monitor
@@ -540,11 +568,21 @@ public partial class MainWindow : Form
 
     private void OnFormClosed(object sender, FormClosedEventArgs e)
     {
-        Camera.Release();
-        if (SerialPortVehicleA != null && SerialPortVehicleA.IsOpen)
-            SerialPortVehicleA.Close();
-        if (SerialPortVehicleB != null && SerialPortVehicleB.IsOpen)
-            SerialPortVehicleB.Close();
+        this._camera.Release();
+
+        // Close serial ports
+        foreach (var serialPort in this._serialPortDict.Values)
+        {
+            if (
+                serialPort == null ||
+                !serialPort.IsOpen
+            )
+            {
+                continue;
+            }
+
+            serialPort.Close();
+        }
     }
 
     private void OnCalibrateButtonClick(object sender, EventArgs e)
