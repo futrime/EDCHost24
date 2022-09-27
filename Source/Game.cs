@@ -47,7 +47,7 @@ public class Game
     /// <summary>
     /// The decreasing speed in the barrier: 20cm per second
     /// </summary>
-    public const int BarrierDecreaseEnergyRate = 2;
+    public const int BarrierDecreasePowerRate = 2;
 
     // Parameters for charging piles
     /// <summary>
@@ -58,6 +58,12 @@ public class Game
     /// The decreasing speed in opponent charging piles: 200cm per second
     /// </summary>
     public const int OpponentChargingPileDecreaseRate = 20;
+
+    // parameters for scores
+    public const int OutOfCourtPenalty = 50;
+    public const int StartVehicleScore = 10;
+    public const int TakeOrderScore = 5;
+    public const int DeliverOrderScore = 10;
 
     #endregion
 
@@ -153,9 +159,9 @@ public class Game
     private long _pauseTime;
     private Dictionary<CampType, Vehicle> _vehicle;
 
-    private Dictionary<CampType, int[]> _score = new Dictionary<CampType, int[]>
-        {{CampType.A,new int[]{0,0}},
-         {CampType.B,new int[]{0,0}}};
+    private Dictionary<CampType, int> _score = new Dictionary<CampType, int>
+        {{CampType.A,0},
+         {CampType.B,0}};
 
     private OrderGenerator _orderGenerator;
     private List<Order> _allOrderList;
@@ -206,33 +212,12 @@ public class Game
         int TimePenalty = 0;
         Dot vehiclePosition = this._vehicle[this._camp].Position;
 
-        // Update car's info on each frame
-        if (_camp == CampType.A)
-        {
-            // Update A's info
+        // Update vehicle's info on each frame
+        TakeOrders(vehiclePosition, _vehicle[this._camp].DeliveringOrderList, _pendingOrderList);
+        DeliverOrders(vehiclePosition, _vehicle[this._camp].DeliveringOrderList);
+        Charge(vehiclePosition);
+        BarrierPenalty(vehiclePosition);
 
-            // _vehicle[CampType.A].Update(_CarPos, (int)GameTime,
-            // IsInBarrier(_CarPos), this.IsInChargingPileInfluenceScope(CampType.B, _CarPos),
-            // this.IsInChargingPileInfluenceScope(CampType.A, _CarPos), ref _pendingOrderList, out TimePenalty);
-            TakeOrders(vehiclePosition, _vehicle[CampType.A].DeliveringOrderList, _pendingOrderList);
-            DeliverOrders(vehiclePosition, _vehicle[CampType.A].DeliveringOrderList);
-            Charge(vehiclePosition, CampType.A);
-            // Refresh the score: wait the class 'Score' to be completed
-            // _score[CampType.A][(int)GameStage - 1] = _vehicle[CampType.A].GetScore();
-        }
-        else if (_camp == CampType.B)
-        {
-            // Update B's info
-
-            // _vehicle[CampType.B].Update(_CarPos, (int)GameTime,
-            // IsInBarrier(_CarPos), this.IsInChargingPileInfluenceScope(CampType.A, _CarPos),
-            // this.IsInChargingPileInfluenceScope(CampType.B, _CarPos), ref _pendingOrderList, out TimePenalty);
-            TakeOrders(vehiclePosition, _vehicle[CampType.B].DeliveringOrderList, _pendingOrderList);
-            DeliverOrders(vehiclePosition, _vehicle[CampType.B].DeliveringOrderList);
-            Charge(vehiclePosition, CampType.B);
-            // Refresh the score: wait the class 'Score' to be completed
-            // _score[CampType.B][(int)GameStage - 1] = _vehicle[CampType.B].GetScore();
-        }
 
         if (this.GameState == GameStateType.Running)
         {
@@ -257,18 +242,12 @@ public class Game
             }
         }
     }
-
-    public void GetMark()
+    /// <summary>
+    /// Get the penalty when the vehicle is out of the court
+    /// </summary>
+    public void GetPenalty()
     {
-        // Get the penalty
-        if (_camp == CampType.A)
-        {
-            // _vehicle[CampType.A].GetMark();
-        }
-        else if (_camp == CampType.B)
-        {
-            // _vehicle[CampType.B].GetMark();
-        }
+        _score[this._camp] -= OutOfCourtPenalty;
     }
     /// <summary>
     /// Take the order
@@ -288,8 +267,7 @@ public class Game
                 deliveringOrder.Add(order);
                 ordersRemain.Remove(order);
 
-                // Wait for the class 'Score' to be updated
-                // mScore += PICK_CREDIT;
+                this._score[this._camp] += TakeOrderScore;
 
                 // 拾取后改变order的status
                 order.Status = Order.StatusType.InDelivery;
@@ -316,8 +294,7 @@ public class Game
                 order.Deliver(this.GameTime);
                 deliveringOrder.Remove(order);
 
-                // Wait for the class 'Score' to be updated
-                // mScore += order.Score;
+                this._score[this._camp] += DeliverOrderScore;
 
                 // 拾取后改变order的status
                 order.Status = Order.StatusType.Delivered;
@@ -330,22 +307,29 @@ public class Game
     /// <summary>
     /// Charge the vehicle
     /// </summary>
-    private void Charge(Dot vehiclePosition, CampType camp)
+    private void Charge(Dot vehiclePosition)
     {
-        CampType opponentCamp = (camp == CampType.A ? CampType.B : CampType.A);
+        CampType opponentCamp = (this._camp == CampType.A ? CampType.B : CampType.A);
         // judge whether the vehicle is in the range of charging piles
 
-        if (IsInChargingPileInfluenceScope(camp, vehiclePosition))
+        if (IsInChargingPileInfluenceScope(this._camp, vehiclePosition))
         {
-            this._vehicle[camp].IncreaseMaxDistance(OwnChargingPileIncreaseRate);
+            this._vehicle[this._camp].IncreaseMaxDistance(OwnChargingPileIncreaseRate);
         }
         // is in opponent camp's charging piles
         if (IsInChargingPileInfluenceScope(opponentCamp, vehiclePosition))
         {
-            this._vehicle[camp].DecreaseMaxDistance(OpponentChargingPileDecreaseRate);
+            this._vehicle[this._camp].DecreaseMaxDistance(OpponentChargingPileDecreaseRate);
         }
     }
-
+    /// <summary>
+    /// Decrease the power when the vehicle is in the range of barriers
+    /// </summary>
+    private void BarrierPenalty(Dot vehiclePosition)
+    {
+        if (IsInBarrier(vehiclePosition))
+            this._vehicle[this._camp].DecreaseMaxDistance(BarrierDecreasePowerRate);
+    }
     // decide which team and stage is going on
     public void Start(CampType _camp, GameStageType _GameStage)
     {
@@ -368,16 +352,12 @@ public class Game
 
         if (this._camp == CampType.A)
         {
-            this._score[CampType.A][(int)GameStage - 1] = 0;
-
             // Initial orders on the field, which is only implemented per half game
             this._orderGenerator = new OrderGenerator(MaxOrderNumber, CoreArea,
                                     (0, _gameDuration), (MinDeliveryTime, MaxDeliveryTime), out _allOrderList);
         }
         else if (this._camp == CampType.B)
         {
-            this._score[CampType.B][(int)GameStage - 1] = 0;
-
             this._orderGenerator.Reset();
         }
 
@@ -501,10 +481,10 @@ public class Game
         switch (c)
         {
             case CampType.A:
-                return _score[CampType.A][(int)gs - 1];
+                return _score[CampType.A];
 
             case CampType.B:
-                return _score[CampType.B][(int)gs - 1];
+                return _score[CampType.B];
 
             default:
                 break;
@@ -512,23 +492,10 @@ public class Game
 
         return 0;
     }
-
-    // public Vehicle GetCar(CampType c)
-    // {
-    //     if (c == CampType.A)
-    //     {
-    //         return _vehicle[CampType.A];
-    //     }
-    //     else if (c == CampType.B)
-    //     {
-    //         return _vehicle[CampType.B];
-    //     }
-    //     else
-    //     {
-    //         return null;
-    //     }
-    // }
-
+    public decimal GetPowerRatio()
+    {
+        return this._vehicle[this._camp].RemainingPowerRatio;
+    }
     #endregion
 
     #region Private methods

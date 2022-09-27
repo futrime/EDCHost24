@@ -287,6 +287,7 @@ public partial class MainWindow : Form
             this.ScoreALabel.Text = this._game.GetScore(CampType.A, this._game.GameStage).ToString();
             this.ScoreBLabel.Text = this._game.GetScore(CampType.B, this._game.GameStage).ToString();
             this.GameTimeLabel.Text = Math.Max((decimal)(this._game.RemainingTime) / 1000, (decimal)0).ToString("0.00");
+            this.DistanceLeftLabel.Text = "Power: " + ((int)(this._game.GetPowerRatio() * 100)).ToString() + " %";
         }
         else if (this._game.GameState == GameStateType.Paused)
         {
@@ -658,7 +659,7 @@ public partial class MainWindow : Form
 
     private void OnFoulButtonClick(object sender, EventArgs e)
     {
-        _game.GetMark();
+        _game.GetPenalty();
     }
 
     private void OnSettingsButtonClick(object sender, EventArgs e)
