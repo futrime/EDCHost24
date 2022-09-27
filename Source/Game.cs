@@ -190,7 +190,6 @@ public class Game
         }
 
         int TimePenalty = 0;
-
         Dot vehiclePosition = this._vehicle[this._camp].Position;
         // Update car's info on each frame
         if (_camp == CampType.A)
@@ -200,7 +199,6 @@ public class Game
             // _vehicle[CampType.A].Update(_CarPos, (int)GameTime,
             // IsInBarrier(_CarPos), this.IsInChargingPileInfluenceScope(CampType.B, _CarPos),
             // this.IsInChargingPileInfluenceScope(CampType.A, _CarPos), ref _pendingOrderList, out TimePenalty);
-            _vehicle[CampType.A].UpdatePosition(vehiclePosition);
             TakeOrders(vehiclePosition, _vehicle[CampType.A].DeliveringOrderList, _pendingOrderList);
             DeliverOrders(vehiclePosition, _vehicle[CampType.A].DeliveringOrderList);
 
@@ -215,7 +213,6 @@ public class Game
             // _vehicle[CampType.B].Update(_CarPos, (int)GameTime,
             // IsInBarrier(_CarPos), this.IsInChargingPileInfluenceScope(CampType.A, _CarPos),
             // this.IsInChargingPileInfluenceScope(CampType.B, _CarPos), ref _pendingOrderList, out TimePenalty);
-            _vehicle[CampType.B].UpdatePosition(vehiclePosition);
             TakeOrders(vehiclePosition, _vehicle[CampType.B].DeliveringOrderList, _pendingOrderList);
             DeliverOrders(vehiclePosition, _vehicle[CampType.B].DeliveringOrderList);
 

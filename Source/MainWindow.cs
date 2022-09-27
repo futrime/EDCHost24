@@ -146,11 +146,12 @@ public partial class MainWindow : Form
         }
         else if (this._game.GameState == GameStateType.Running)
         {
-            // update Car_pos;
-            this._game.Vehicle[this._game.GetCamp()].Position = new Dot((Point2i)CoordinateConverter.CameraToCourt((Point2f)this._locatorDict[this._game.GetCamp()].TargetPosition))
+
 
             if (this._locatorDict[this._game.GetCamp()].TargetPosition != null)
             {
+                // update Car_pos;
+                this._game.Vehicle[this._game.GetCamp()].UpdatePosition(new Dot((Point2i)CoordinateConverter.CameraToCourt((Point2f)this._locatorDict[this._game.GetCamp()].TargetPosition)));
                 this._game.Refresh();
             }
 
