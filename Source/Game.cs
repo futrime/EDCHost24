@@ -137,9 +137,7 @@ public class Game
     private long _timePenaltySum = 0;
     private long _gameDuration = GameDurationFirstHalf;
     private long _pauseTime;
-    private Dictionary<CampType, Vehicle> _vehicle = new Dictionary<CampType, Vehicle>
-        {{CampType.A, new Vehicle(CampType.A)},
-         {CampType.B,new Vehicle(CampType.B)}};
+    private Dictionary<CampType, Vehicle> _vehicle;
 
     private Dictionary<CampType, int[]> _score = new Dictionary<CampType, int[]>
         {{CampType.A,new int[]{0,0}},
@@ -172,7 +170,7 @@ public class Game
         // Empty
     }
 
-    public void Refresh(Dot _CarPos)
+    public void Refresh()
     {
         if (this.GameState != GameStateType.Running)
         {
@@ -193,6 +191,7 @@ public class Game
 
         int TimePenalty = 0;
 
+        Dot vehiclePosition = this._vehicle[this._camp].Position;
         // Update car's info on each frame
         if (_camp == CampType.A)
         {
@@ -201,9 +200,9 @@ public class Game
             // _vehicle[CampType.A].Update(_CarPos, (int)GameTime,
             // IsInBarrier(_CarPos), this.IsInChargingPileInfluenceScope(CampType.B, _CarPos),
             // this.IsInChargingPileInfluenceScope(CampType.A, _CarPos), ref _pendingOrderList, out TimePenalty);
-            _vehicle[CampType.A].UpdatePosition(_CarPos);
-            TakeOrders(_CarPos, _vehicle[CampType.A].DeliveringOrderList, _pendingOrderList);
-            DeliverOrders(_CarPos, _vehicle[CampType.A].DeliveringOrderList);
+            _vehicle[CampType.A].UpdatePosition(vehiclePosition);
+            TakeOrders(vehiclePosition, _vehicle[CampType.A].DeliveringOrderList, _pendingOrderList);
+            DeliverOrders(vehiclePosition, _vehicle[CampType.A].DeliveringOrderList);
 
 
             // Refresh the score: wait the class 'Score' to be completed
@@ -216,9 +215,9 @@ public class Game
             // _vehicle[CampType.B].Update(_CarPos, (int)GameTime,
             // IsInBarrier(_CarPos), this.IsInChargingPileInfluenceScope(CampType.A, _CarPos),
             // this.IsInChargingPileInfluenceScope(CampType.B, _CarPos), ref _pendingOrderList, out TimePenalty);
-            _vehicle[CampType.B].UpdatePosition(_CarPos);
-            TakeOrders(_CarPos, _vehicle[CampType.B].DeliveringOrderList, _pendingOrderList);
-            DeliverOrders(_CarPos, _vehicle[CampType.B].DeliveringOrderList);
+            _vehicle[CampType.B].UpdatePosition(vehiclePosition);
+            TakeOrders(vehiclePosition, _vehicle[CampType.B].DeliveringOrderList, _pendingOrderList);
+            DeliverOrders(vehiclePosition, _vehicle[CampType.B].DeliveringOrderList);
 
             // Refresh the score: wait the class 'Score' to be completed
             // _score[CampType.B][(int)GameStage - 1] = _vehicle[CampType.B].GetScore();
@@ -332,8 +331,11 @@ public class Game
         this._camp = _camp;
 
         //reset the vehicle
-        this._vehicle[CampType.A].Reset();
-        this._vehicle[CampType.B].Reset();
+        this._vehicle = new Dictionary<CampType, Vehicle>
+        {{CampType.A, new Vehicle(CampType.A)},
+         {CampType.B,new Vehicle(CampType.B)}};
+        // this._vehicle[CampType.A].Reset();
+        // this._vehicle[CampType.B].Reset();
 
         if (this._camp == CampType.A)
         {

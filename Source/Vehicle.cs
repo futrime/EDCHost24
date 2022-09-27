@@ -131,16 +131,6 @@ public class Vehicle
     }
 
     /// <summary>
-    /// Reset the vehicle.
-    /// </summary>
-    public void Reset()
-    {
-        this._deliveringOrderList = new List<Order>();
-        this._maxDistance = this._initialMaxDistance;
-        this.Path.Clear();
-    }
-
-    /// <summary>
     /// Update the position of the vehicle.
     /// </summary>
     /// <param name="position">The position</param>
