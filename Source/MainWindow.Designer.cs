@@ -43,6 +43,7 @@ partial class MainWindow
             // 
             // MonitorPictureBox
             // 
+            this.MonitorPictureBox.Cursor = System.Windows.Forms.Cursors.Cross;
             this.MonitorPictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.MonitorPictureBox.Location = new System.Drawing.Point(5, 5);
             this.MonitorPictureBox.Margin = new System.Windows.Forms.Padding(2);
@@ -59,6 +60,7 @@ partial class MainWindow
             // 
             // StartButton
             // 
+            this.StartButton.Cursor = System.Windows.Forms.Cursors.Hand;
             this.StartButton.Location = new System.Drawing.Point(168, 4);
             this.StartButton.Margin = new System.Windows.Forms.Padding(2);
             this.StartButton.Name = "StartButton";
@@ -70,6 +72,7 @@ partial class MainWindow
             // 
             // PauseButton
             // 
+            this.PauseButton.Cursor = System.Windows.Forms.Cursors.Hand;
             this.PauseButton.Enabled = false;
             this.PauseButton.Location = new System.Drawing.Point(168, 47);
             this.PauseButton.Margin = new System.Windows.Forms.Padding(2);
@@ -82,6 +85,7 @@ partial class MainWindow
             // 
             // ContinueButton
             // 
+            this.ContinueButton.Cursor = System.Windows.Forms.Cursors.Hand;
             this.ContinueButton.Enabled = false;
             this.ContinueButton.Location = new System.Drawing.Point(168, 90);
             this.ContinueButton.Margin = new System.Windows.Forms.Padding(2);
@@ -131,6 +135,7 @@ partial class MainWindow
             // 
             // CalibrateButton
             // 
+            this.CalibrateButton.Cursor = System.Windows.Forms.Cursors.Hand;
             this.CalibrateButton.Location = new System.Drawing.Point(3, 90);
             this.CalibrateButton.Margin = new System.Windows.Forms.Padding(2);
             this.CalibrateButton.Name = "CalibrateButton";
@@ -142,6 +147,7 @@ partial class MainWindow
             // 
             // FoulButton
             // 
+            this.FoulButton.Cursor = System.Windows.Forms.Cursors.Hand;
             this.FoulButton.Location = new System.Drawing.Point(3, 47);
             this.FoulButton.Margin = new System.Windows.Forms.Padding(2);
             this.FoulButton.Name = "FoulButton";
@@ -153,6 +159,7 @@ partial class MainWindow
             // 
             // EndButton
             // 
+            this.EndButton.Cursor = System.Windows.Forms.Cursors.Hand;
             this.EndButton.Enabled = false;
             this.EndButton.Location = new System.Drawing.Point(168, 135);
             this.EndButton.Margin = new System.Windows.Forms.Padding(2);
@@ -165,6 +172,7 @@ partial class MainWindow
             // 
             // ResetButton
             // 
+            this.ResetButton.Cursor = System.Windows.Forms.Cursors.Hand;
             this.ResetButton.Location = new System.Drawing.Point(3, 4);
             this.ResetButton.Margin = new System.Windows.Forms.Padding(2);
             this.ResetButton.Name = "ResetButton";
@@ -176,6 +184,7 @@ partial class MainWindow
             // 
             // SettingsButton
             // 
+            this.SettingsButton.Cursor = System.Windows.Forms.Cursors.Hand;
             this.SettingsButton.Location = new System.Drawing.Point(3, 135);
             this.SettingsButton.Name = "SettingsButton";
             this.SettingsButton.Size = new System.Drawing.Size(160, 40);
