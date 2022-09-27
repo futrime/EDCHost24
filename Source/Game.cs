@@ -347,13 +347,6 @@ public class Game
         {
             this._score[CampType.B][(int)GameStage - 1] = 0;
 
-            // Reset each order
-            foreach (Order order in _allOrderList)
-            {
-                order.Reset();
-            }
-
-            // Reset _orderGenerator
             this._orderGenerator.Reset();
         }
 

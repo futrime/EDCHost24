@@ -7,6 +7,8 @@ namespace EdcHost;
 /// </summary>
 public class Order
 {
+    #region Types
+
     /// <summary>
     /// The order status enum type
     /// </summary>
@@ -30,10 +32,10 @@ public class Order
         Delivered
     }
 
+    #endregion
 
-    private const int OvertimeScorePenaltyPerSecond = 5;
-    private const int MaxScore = 25;
 
+    #region Public properties
 
     /// <summary>
     /// The departure position
@@ -59,25 +61,10 @@ public class Order
         get => this._status;
         set => this._status = value;
     }
-    /// <summary>
-    /// The score obtained in the order
-    /// </summary>
-    public int Score
-    {
-        get
-        {
-            if (this._deliveryTime == null)
-            {
-                return 0;
-            }
 
-            var overtimeLength = Math.Max((long)this._deliveryTime - this.ScheduledDeliveryTime, 0);
-            return Math.Max(
-                Order.MaxScore - (int)(overtimeLength / 1000) * Order.OvertimeScorePenaltyPerSecond,
-                0
-            );
-        }
-    }
+    #endregion
+
+    #region Private fields
 
     private Dot _departurePosition;
     private Dot _destinationPosition;
@@ -87,6 +74,10 @@ public class Order
     private long? _deliveryTime = null;
     private StatusType _status = StatusType.Ungenerated;
 
+    #endregion
+
+
+    #region Public methods
 
     /// <summary>
     /// Generate a random order.
@@ -173,10 +164,5 @@ public class Order
         this._departureTime = time;
     }
 
-    public void Reset()
-    {
-        this._departureTime = null;
-        this._deliveryTime = null;
-        this._status = StatusType.Ungenerated;
-    }
+    #endregion
 }

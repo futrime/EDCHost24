@@ -8,14 +8,15 @@ namespace EdcHost;
 /// </summary>
 public class OrderGenerator
 {
-    /// <summary>
-    /// The number of orders generated
-    /// </summary>
-    public int Count => this._orderList.Count;
+    #region Private fields
 
     private int _nextGeneratedOrderIndex = 0;
     private List<Order> _orderList = new List<Order>();
 
+    #endregion
+
+
+    #region Public methods
 
     /// <summary>
     /// Construct an OrderGenerator object.
@@ -89,6 +90,19 @@ public class OrderGenerator
     /// </summary>
     public void Reset()
     {
+        for (int i = 0; i < this._orderList.Count; ++i)
+        {
+            this._orderList[i] = new Order(
+                this._orderList[i].DeparturePosition,
+                this._orderList[i].DestinationPosition,
+                this._orderList[i].GenerationTime,
+                deliveryTimeLimit: this._orderList[i].ScheduledDeliveryTime -
+                    this._orderList[i].GenerationTime
+            );
+        }
+
         this._nextGeneratedOrderIndex = 0;
     }
+
+    #endregion
 }
