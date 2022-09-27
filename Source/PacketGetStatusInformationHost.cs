@@ -154,27 +154,27 @@ internal class PacketGetStatusInformationHost : Packet
         currentIndex += 4;
 
         // orderList
-        foreach (Order ord in this._orderList)
+        foreach (Order order in this._orderList)
         {
             // Departure Position
-            BitConverter.GetBytes(ord.DeparturePosition.x).CopyTo(data, currentIndex);
+            BitConverter.GetBytes(order.DeparturePosition.x).CopyTo(data, currentIndex);
             currentIndex += 4;
-            BitConverter.GetBytes(ord.DeparturePosition.y).CopyTo(data, currentIndex);
+            BitConverter.GetBytes(order.DeparturePosition.y).CopyTo(data, currentIndex);
             currentIndex += 4;
 
             // Destination Position
-            BitConverter.GetBytes(ord.DestinationPosition.x).CopyTo(data, currentIndex);
+            BitConverter.GetBytes(order.DestinationPosition.x).CopyTo(data, currentIndex);
             currentIndex += 4;
-            BitConverter.GetBytes(ord.DestinationPosition.y).CopyTo(data, currentIndex);
+            BitConverter.GetBytes(order.DestinationPosition.y).CopyTo(data, currentIndex);
             currentIndex += 4;
 
             // Scheduled time
-            BitConverter.GetBytes(ord.ScheduledDeliveryTime).CopyTo(data, currentIndex);
+            BitConverter.GetBytes(order.ScheduledDeliveryTime).CopyTo(data, currentIndex);
             currentIndex += 8;
 
-            // isTaken is based on 'ord.Status'
+            // isTaken is based on 'order.Status'
             bool isTaken = false;
-            switch (ord.Status)
+            switch (order.Status)
             {
                 case Order.StatusType.Pending:
                 case Order.StatusType.Ungenerated:

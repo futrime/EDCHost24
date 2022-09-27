@@ -267,19 +267,19 @@ public class Game
     {
         for (int i = 0; i < ordersRemain.Count; i++)
         {
-            Order ord = ordersRemain[i];
-            if (ord.Status == Order.StatusType.Pending && Dot.Distance(ord.DeparturePosition, VehiclePosition) <= OrderRadius &&
+            Order order = ordersRemain[i];
+            if (order.Status == Order.StatusType.Pending && Dot.Distance(order.DeparturePosition, VehiclePosition) <= OrderRadius &&
                 deliveringOrder.Count < MaxDeliveringOrderNumber)
             {
-                ord.Take(this.GameTime);
-                deliveringOrder.Add(ord);
-                ordersRemain.Remove(ord);
+                order.Take(this.GameTime);
+                deliveringOrder.Add(order);
+                ordersRemain.Remove(order);
 
                 // Wait for the class 'Score' to be updated
                 // mScore += PICK_CREDIT;
 
                 // 拾取后改变order的status
-                ord.Status = Order.StatusType.InDelivery;
+                order.Status = Order.StatusType.InDelivery;
 
                 // play sound
                 _takeOrderSound.Load();
@@ -297,17 +297,17 @@ public class Game
     {
         for (int i = 0; i < deliveringOrder.Count; i++)
         {
-            Order ord = deliveringOrder[i];
-            if (ord.Status == Order.StatusType.InDelivery && Dot.Distance(ord.DestinationPosition, VehiclePosition) <= OrderRadius)
+            Order order = deliveringOrder[i];
+            if (order.Status == Order.StatusType.InDelivery && Dot.Distance(order.DestinationPosition, VehiclePosition) <= OrderRadius)
             {
-                ord.Deliver(this.GameTime);
-                deliveringOrder.Remove(ord);
+                order.Deliver(this.GameTime);
+                deliveringOrder.Remove(order);
 
                 // Wait for the class 'Score' to be updated
-                // mScore += ord.Score;
+                // mScore += order.Score;
 
                 // 拾取后改变order的status
-                ord.Status = Order.StatusType.Delivered;
+                order.Status = Order.StatusType.Delivered;
                 _deliverOrderSound.Load();
                 _deliverOrderSound.Play();
                 break;
