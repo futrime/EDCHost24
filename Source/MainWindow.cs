@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
 using System.IO.Ports;
 using System.Windows.Forms;
 using OpenCvSharp;
@@ -119,11 +118,6 @@ public partial class MainWindow : Form
     }
 
     /// <summary>
-    /// The configurations
-    /// </summary>
-    public ConfigTypeLegacy Flags => this._flags;
-
-    /// <summary>
     /// The game
     /// </summary>
     public Game Game => this._game;
@@ -151,13 +145,16 @@ public partial class MainWindow : Form
     #region Private fields
 
     private string[] _availableSerialPortList = SerialPort.GetPortNames();
+    private int _calibrationClickCount = 4;
     private VideoCapture _camera = new VideoCapture();
+    private OpenCvSharp.Size _cameraFrameSize;
     private ConfigType _config = MainWindow.DefaultConfig;
+    private OpenCvSharp.Size _courtSize;
     private CoordinateConverter _coordinateConverter;
-    private ConfigTypeLegacy _flags = new ConfigTypeLegacy();
     private Game _game = new Game();
     private Dictionary<CampType, Locator> _locatorDict = new Dictionary<CampType, Locator>();
     private Point2f[] _monitorCorners = new Point2f[4];
+    private OpenCvSharp.Size _monitorFrameSize;
     private SerialPort _serialPortVehicleA = null;
     private SerialPort _serialPortVehicleB = null;
 
@@ -199,15 +196,29 @@ public partial class MainWindow : Form
         );
 
         // Setup the camera
-        this._camera.Open(0);
-        Flags.CameraFrameSize.Width = this._camera.FrameWidth;
-        Flags.CameraFrameSize.Height = this._camera.FrameHeight;
-        Flags.MonitorFrameSize.Width = MonitorPictureBox.Width;
-        Flags.MonitorFrameSize.Height = MonitorPictureBox.Height;
-        CoordinateConverter = new CoordinateConverter(Flags);
-        this._camera.FrameWidth = Flags.CameraFrameSize.Width;
-        this._camera.FrameHeight = Flags.CameraFrameSize.Height;
+        this._camera.Open(this.Config.Camera);
         this._camera.ConvertRgb = true;
+
+        // Load the sizes of camera frames, monitor frames and the court.
+        this._cameraFrameSize = new OpenCvSharp.Size(
+            this._camera.FrameWidth,
+            this._camera.FrameHeight
+        );
+        this._monitorFrameSize = new OpenCvSharp.Size(
+            this.MonitorPictureBox.Width,
+            this.MonitorPictureBox.Height
+        );
+        this._courtSize = new OpenCvSharp.Size(
+            Game.CourtWidth,
+            Game.CourtHeight
+        );
+
+        // Setup the coordinate converter
+        CoordinateConverter = new CoordinateConverter(
+            cameraFrameSize: this._cameraFrameSize,
+            monitorFrameSize: this._monitorFrameSize,
+            courtSize: this._courtSize
+        );
 
         // Setup the timer
         this.Timer.Interval = 1000 / MainWindow.RefreshRate;
@@ -217,7 +228,11 @@ public partial class MainWindow : Form
         foreach (var camp in MainWindow.AllCampList)
         {
             this._locatorDict.Add(
-                camp, new Locator(new Locator.ConfigType(), false)
+                camp,
+                new Locator(
+                    config: this.Config.Vehicles[camp].Locator,
+                    showMask: this.Config.Vehicles[camp].ShowMask
+                )
             );
         }
     }
@@ -232,7 +247,10 @@ public partial class MainWindow : Form
         if (this._game.GameState == GameStateType.Unstarted)
         {
             this.FoulButton.Enabled = false;
-            this.CalibrateButton.Enabled = true;
+            if (this._calibrationClickCount >= 4)
+            {
+                this.CalibrateButton.Enabled = true;
+            }
             this.SettingsButton.Enabled = true;
             this.StartButton.Enabled = true;
             this.PauseButton.Enabled = false;
@@ -241,8 +259,6 @@ public partial class MainWindow : Form
         }
         else if (this._game.GameState == GameStateType.Running)
         {
-
-
             if (this._locatorDict[this._game.GetCamp()].TargetPosition != null)
             {
                 // update Car_pos;
@@ -265,7 +281,10 @@ public partial class MainWindow : Form
         else if (this._game.GameState == GameStateType.Paused)
         {
             this.FoulButton.Enabled = true;
-            this.CalibrateButton.Enabled = true;
+            if (this._calibrationClickCount >= 4)
+            {
+                this.CalibrateButton.Enabled = true;
+            }
             this.SettingsButton.Enabled = false;
             this.StartButton.Enabled = false;
             this.PauseButton.Enabled = false;
@@ -275,7 +294,10 @@ public partial class MainWindow : Form
         else if (this._game.GameState == GameStateType.Ended)
         {
             this.FoulButton.Enabled = false;
-            this.CalibrateButton.Enabled = true;
+            if (this._calibrationClickCount >= 4)
+            {
+                this.CalibrateButton.Enabled = true;
+            }
             this.SettingsButton.Enabled = false;
             if (
                 this._game.GameStage == GameStageType.SecondHalf &&
@@ -328,7 +350,7 @@ public partial class MainWindow : Form
         this.Draw(ref cameraFrame);
 
         // Resize to the size of the monitor
-        Cv2.Resize(cameraFrame, cameraFrame, this.Flags.MonitorFrameSize);
+        Cv2.Resize(cameraFrame, cameraFrame, this._monitorFrameSize);
 
         // Update the monitor frame
         this.BeginInvoke(new Action<Image>(RefreshMonitor), BitmapConverter.ToBitmap(cameraFrame));
@@ -345,9 +367,9 @@ public partial class MainWindow : Form
         // Draw court boundaries
         var corners = this.CoordinateConverter.CourtToCamera(new Point2f[]{
             new Point2f(0, 0),
-            new Point2f(0, this.Flags.CourtSize.Width),
-            new Point2f(this.Flags.CourtSize.Height, this.Flags.CourtSize.Height),
-            new Point2f(this.Flags.CourtSize.Height, 0)
+            new Point2f(0, this._courtSize.Width),
+            new Point2f(this._courtSize.Height, this._courtSize.Height),
+            new Point2f(this._courtSize.Height, 0)
         });
         for (int i = 0; i < 4; ++i)
         {
@@ -424,10 +446,10 @@ public partial class MainWindow : Form
         }
 
         // Draw corners when calibrating
-        if (this._flags.CalibrationClickCount < 4) // When calibrating
+        if (this._calibrationClickCount < 4) // When calibrating
         {
             var pointList = this.CoordinateConverter.MonitorToCamera(this._monitorCorners);
-            for (int i = 0; i < this._flags.CalibrationClickCount; ++i)
+            for (int i = 0; i < this._calibrationClickCount; ++i)
             {
                 var point = pointList[i];
                 Cv2.Line(
@@ -505,30 +527,6 @@ public partial class MainWindow : Form
 
     #region Methods related to the Windows Form
 
-    private void OnLoad(object sender, EventArgs e)
-    {
-        if (File.Exists(@"Data/data.txt"))
-        {
-            FileStream fsRead = new FileStream(@"Data/data.txt", FileMode.Open);
-            int fsLen = (int)fsRead.Length;
-            byte[] heByte = new byte[fsLen];
-            fsRead.Read(heByte, 0, heByte.Length);
-            string myStr = System.Text.Encoding.UTF8.GetString(heByte);
-            string[] str = myStr.Split(' ');
-
-            Flags.LocatorConfig.MinHueVehicleA = Convert.ToInt32(str[0]);
-            Flags.LocatorConfig.MaxHueVehicleA = Convert.ToInt32(str[1]);
-            Flags.LocatorConfig.MinHueVehicleB = Convert.ToInt32(str[2]);
-            Flags.LocatorConfig.MaxHueVehicleB = Convert.ToInt32(str[3]);
-            Flags.LocatorConfig.MinSaturationVehicleA = Convert.ToInt32(str[4]);
-            Flags.LocatorConfig.MinSaturationVehicleB = Convert.ToInt32(str[5]);
-            Flags.LocatorConfig.valueLower = Convert.ToInt32(str[6]);
-            Flags.LocatorConfig.MinArea = Convert.ToInt32(str[7]);
-
-            fsRead.Close();
-        }
-    }
-
     private void OnFormClosed(object sender, FormClosedEventArgs e)
     {
         Camera.Release();
@@ -540,12 +538,8 @@ public partial class MainWindow : Form
 
     private void OnCalibrateButtonClick(object sender, EventArgs e)
     {
-        lock (Flags)
-        {
-            Flags.CalibrationClickCount = 0;
-            for (int i = 0; i < 4; ++i)
-                _monitorCorners[i].X = _monitorCorners[i].Y = 0;
-        }
+        this._calibrationClickCount = 0;
+        this.CalibrateButton.Enabled = false;
     }
 
     /// <summary>
@@ -558,49 +552,44 @@ public partial class MainWindow : Form
     /// </remarks>
     private void OnMonitorMouseClick(object sender, MouseEventArgs e)
     {
-        int widthView = MonitorPictureBox.Width;
-        int heightView = MonitorPictureBox.Height;
-
-        int xMouse = e.X;
-        int yMouse = e.Y;
-
-        int idx = -1;
-
-        lock (Flags)
+        // Return if the mouse does not click in the monitor picture box.
+        if (
+            e.X < 0 || e.X >= this.MonitorPictureBox.Width ||
+            e.Y < 0 || e.Y >= this.MonitorPictureBox.Height
+        )
         {
-            if (Flags.CalibrationClickCount < 4)
-            {
-                Flags.CalibrationClickCount++;
-                idx = Flags.CalibrationClickCount - 1;
-            }
+            return;
         }
 
-        if (idx == -1) return;
-
-        if (xMouse >= 0 && xMouse < widthView && yMouse >= 0 && yMouse < heightView)
+        // Return if it is not in calibration mode.
+        if (this._calibrationClickCount >= 4)
         {
-            _monitorCorners[idx].X = xMouse;
-            _monitorCorners[idx].Y = yMouse;
-            if (idx == 3)
-            {
-                CoordinateConverter.Calibrate(_monitorCorners);
-                MessageBox.Show(
-                      $"边界点设置完成\n"
-                    + $"0: {_monitorCorners[0].X,5}, {_monitorCorners[0].Y,5}\t"
-                    + $"1: {_monitorCorners[1].X,5}, {_monitorCorners[1].Y,5}\n"
-                    + $"2: {_monitorCorners[2].X,5}, {_monitorCorners[2].Y,5}\t"
-                    + $"3: {_monitorCorners[3].X,5}, {_monitorCorners[3].Y,5}");
-            }
+            return;
+        }
+
+        this._monitorCorners[this._calibrationClickCount] = new Point2f(e.X, e.Y);
+
+        ++this._calibrationClickCount;
+
+        // Calibrate if the four corners are confirmed.
+        if (this._calibrationClickCount >= 4)
+        {
+            this._coordinateConverter.Calibrate(_monitorCorners);
+            this.CalibrateButton.Enabled = true;
         }
     }
 
     private void OnMonitorPictureBoxResize(object sender, EventArgs e)
     {
-        this.Flags.MonitorFrameSize.Width = MonitorPictureBox.Width;
-        this.Flags.MonitorFrameSize.Height = MonitorPictureBox.Height;
+        this._monitorFrameSize = new OpenCvSharp.Size(
+            this.MonitorPictureBox.Width,
+            this.MonitorPictureBox.Height
+        );
         this.CoordinateConverter = new CoordinateConverter(
-            this.Flags,
-            this.CoordinateConverter.CalibrationCorners
+            cameraFrameSize: this._cameraFrameSize,
+            monitorFrameSize: this._monitorFrameSize,
+            courtSize: this._courtSize,
+            calibrationCorners: this.CoordinateConverter.CalibrationCorners
         );
     }
 

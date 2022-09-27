@@ -42,30 +42,44 @@ public class CoordinateConverter : IDisposable
     /// <summary>
     /// Construct a coordinate converter.
     /// </summary>
-    /// <param name="myFlags">The information of the game</param>
+    /// <param name="config">The information of the game</param>
+    /// <param name="cameraFrameSize">
+    /// The size of the camera frame
+    /// </param>
+    /// <param name="monitorFrameSize">
+    /// The size of the monitor frame
+    /// </param>
+    /// <param name="courtSize">
+    /// The size of the court
+    /// </param>
     /// <param name="Point2f[]">
     /// The calibration information to initialize the converter
     /// </param>
-    public CoordinateConverter(ConfigTypeLegacy myFlags, Point2f[] calibrationCorners = null)
+    public CoordinateConverter(
+        OpenCvSharp.Size cameraFrameSize,
+        OpenCvSharp.Size monitorFrameSize,
+        OpenCvSharp.Size courtSize,
+        Point2f[] calibrationCorners = null
+    )
     {
         Point2f[] camCorners = {
             new Point2f(0, 0),
-            new Point2f(myFlags.CameraFrameSize.Width, 0),
-            new Point2f(0, myFlags.CameraFrameSize.Height),
-            new Point2f(myFlags.CameraFrameSize.Width, myFlags.CameraFrameSize.Height)
+            new Point2f(cameraFrameSize.Width, 0),
+            new Point2f(0, cameraFrameSize.Height),
+            new Point2f(cameraFrameSize.Width, cameraFrameSize.Height)
         };
         Point2f[] showCorners = {
             new Point2f(0, 0),
-            new Point2f(myFlags.MonitorFrameSize.Width, 0),
-            new Point2f(0, myFlags.MonitorFrameSize.Height),
-            new Point2f(myFlags.MonitorFrameSize.Width, myFlags.MonitorFrameSize.Height)
+            new Point2f(monitorFrameSize.Width, 0),
+            new Point2f(0, monitorFrameSize.Height),
+            new Point2f(monitorFrameSize.Width, monitorFrameSize.Height)
         };
 
         this._courtCorners = new Point2f[] {
             new Point2f(0, 0),
-            new Point2f(myFlags.CourtSize.Width, 0),
-            new Point2f(0, myFlags.CourtSize.Height),
-            new Point2f(myFlags.CourtSize.Width, myFlags.CourtSize.Height)
+            new Point2f(courtSize.Width, 0),
+            new Point2f(0, courtSize.Height),
+            new Point2f(courtSize.Width, courtSize.Height)
         };
 
         // By default, the court corners are at the same positions as the camera corners

@@ -293,7 +293,6 @@ partial class MainWindow
             this.Padding = new System.Windows.Forms.Padding(10);
             this.ShowIcon = false;
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
-            this.Load += new System.EventHandler(this.OnLoad);
             ((System.ComponentModel.ISupportInitialize)(this.MonitorPictureBox)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
