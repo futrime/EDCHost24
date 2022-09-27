@@ -595,12 +595,13 @@ public partial class MainWindow : Form
             this.MonitorPictureBox.Width,
             this.MonitorPictureBox.Height
         );
-        this.CoordinateConverter = new CoordinateConverter(
-            cameraFrameSize: this._cameraFrameSize,
-            monitorFrameSize: this._monitorFrameSize,
-            courtSize: this._courtSize,
-            calibrationCorners: this.CoordinateConverter.CalibrationCorners
-        );
+        if (this.CoordinateConverter != null)
+            this.CoordinateConverter = new CoordinateConverter(
+                cameraFrameSize: this._cameraFrameSize,
+                monitorFrameSize: this._monitorFrameSize,
+                courtSize: this._courtSize,
+                calibrationCorners: this.CoordinateConverter.CalibrationCorners
+            );
     }
 
     private void OnStartButtonClick(object sender, EventArgs e)
