@@ -64,7 +64,7 @@ public partial class MainWindow : Form
     /// <summary>
     /// The size of icons shown on the monitor
     /// </summary>
-    private static readonly OpenCvSharp.Size IconSize = new OpenCvSharp.Size(10, 10);
+    private static readonly OpenCvSharp.Size IconSize = new OpenCvSharp.Size(25, 25);
 
     private static readonly Dictionary<CampType, Mat> IconCarDict = new Dictionary<CampType, Mat> {
             {CampType.A, new Mat(@"Assets/Icons/VehicleRed.png", ImreadModes.Color)},
@@ -397,7 +397,7 @@ public partial class MainWindow : Form
         // Draw Barriers and Walls
         foreach (var barrier in this._game.BarrierList)
         {
-            DrawBarrier(ref image, barrier, Scalar.Gray);
+            DrawBarrier(ref image, barrier, Scalar.Orange);
         }
         foreach (var wall in this._game.WallList)
         {

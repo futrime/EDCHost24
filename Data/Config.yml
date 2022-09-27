@@ -8,23 +8,23 @@ vehicles:
         item1: 100
         item2: 255
       value:
-        item1: 100
+        item1: 190
         item2: 255
-      minArea: 4
+      minArea: 3
     showMask: false
     serialPort: ''
     baudrate: 115200
   B:
     locator:
       hue:
-        item1: 0
-        item2: 40
+        item1: 90
+        item2: 120
       saturation:
         item1: 100
-        item2: 255
+        item2: 150
       value:
         item1: 100
-        item2: 255
+        item2: 150
       minArea: 4
     showMask: false
     serialPort: ''
