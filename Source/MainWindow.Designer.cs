@@ -20,7 +20,6 @@ partial class MainWindow
             this.StartButton = new System.Windows.Forms.Button();
             this.PauseButton = new System.Windows.Forms.Button();
             this.ContinueButton = new System.Windows.Forms.Button();
-            this.GameRoundLabel = new System.Windows.Forms.Label();
             this.ScoreALabel = new System.Windows.Forms.Label();
             this.ScoreBLabel = new System.Windows.Forms.Label();
             this.CalibrateButton = new System.Windows.Forms.Button();
@@ -31,10 +30,11 @@ partial class MainWindow
             this.ScoreBBackgroundLabel = new System.Windows.Forms.Label();
             this.ScoreABackgroundLabel = new System.Windows.Forms.Label();
             this.GameTimeLabel = new System.Windows.Forms.Label();
-            this.DistanceLeftLabel = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel3 = new System.Windows.Forms.Panel();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.progressBarRemainingPowerRatio = new System.Windows.Forms.ProgressBar();
+            this.GameRoundLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.MonitorPictureBox)).BeginInit();
             this.panel1.SuspendLayout();
             this.panel3.SuspendLayout();
@@ -95,17 +95,6 @@ partial class MainWindow
             this.ContinueButton.Text = "Continue";
             this.ContinueButton.UseVisualStyleBackColor = true;
             this.ContinueButton.Click += new System.EventHandler(this.OnContinueButtonClick);
-            // 
-            // GameRoundLabel
-            // 
-            this.GameRoundLabel.AutoSize = true;
-            this.GameRoundLabel.Font = new System.Drawing.Font("Segoe UI", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.GameRoundLabel.Location = new System.Drawing.Point(3, 195);
-            this.GameRoundLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.GameRoundLabel.Name = "GameRoundLabel";
-            this.GameRoundLabel.Size = new System.Drawing.Size(401, 65);
-            this.GameRoundLabel.TabIndex = 4;
-            this.GameRoundLabel.Text = "GameRoundLabel";
             // 
             // ScoreALabel
             // 
@@ -227,19 +216,9 @@ partial class MainWindow
             this.GameTimeLabel.TabIndex = 18;
             this.GameTimeLabel.Text = "GameTimeLabel";
             // 
-            // DistanceLeftLabel
-            // 
-            this.DistanceLeftLabel.AutoSize = true;
-            this.DistanceLeftLabel.Font = new System.Drawing.Font("Segoe UI", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.DistanceLeftLabel.Location = new System.Drawing.Point(3, 260);
-            this.DistanceLeftLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.DistanceLeftLabel.Name = "DistanceLeftLabel";
-            this.DistanceLeftLabel.Size = new System.Drawing.Size(399, 65);
-            this.DistanceLeftLabel.TabIndex = 19;
-            this.DistanceLeftLabel.Text = "DistanceLeftLabel";
-            // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.progressBarRemainingPowerRatio);
             this.panel1.Controls.Add(this.panel3);
             this.panel1.Controls.Add(this.ScoreALabel);
             this.panel1.Controls.Add(this.ScoreABackgroundLabel);
@@ -247,7 +226,6 @@ partial class MainWindow
             this.panel1.Controls.Add(this.ScoreBBackgroundLabel);
             this.panel1.Controls.Add(this.GameTimeLabel);
             this.panel1.Controls.Add(this.GameRoundLabel);
-            this.panel1.Controls.Add(this.DistanceLeftLabel);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel1.Location = new System.Drawing.Point(10, 10);
             this.panel1.Name = "panel1";
@@ -280,6 +258,24 @@ partial class MainWindow
             this.panel2.Size = new System.Drawing.Size(915, 662);
             this.panel2.TabIndex = 21;
             // 
+            // progressBarRemainingPowerRatio
+            // 
+            this.progressBarRemainingPowerRatio.Location = new System.Drawing.Point(3, 263);
+            this.progressBarRemainingPowerRatio.Name = "progressBarRemainingPowerRatio";
+            this.progressBarRemainingPowerRatio.Size = new System.Drawing.Size(328, 23);
+            this.progressBarRemainingPowerRatio.TabIndex = 20;
+            // 
+            // GameRoundLabel
+            // 
+            this.GameRoundLabel.AutoSize = true;
+            this.GameRoundLabel.Font = new System.Drawing.Font("Segoe UI", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.GameRoundLabel.Location = new System.Drawing.Point(3, 195);
+            this.GameRoundLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.GameRoundLabel.Name = "GameRoundLabel";
+            this.GameRoundLabel.Size = new System.Drawing.Size(401, 65);
+            this.GameRoundLabel.TabIndex = 4;
+            this.GameRoundLabel.Text = "GameRoundLabel";
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -309,7 +305,6 @@ partial class MainWindow
     private System.Windows.Forms.Button StartButton;
     private System.Windows.Forms.Button PauseButton;
     private System.Windows.Forms.Button ContinueButton;
-    private System.Windows.Forms.Label GameRoundLabel;
     private System.Windows.Forms.Label ScoreALabel;
     private System.Windows.Forms.Label ScoreBLabel;
     private System.Windows.Forms.Button CalibrateButton;
@@ -320,8 +315,9 @@ partial class MainWindow
     private System.Windows.Forms.Label ScoreBBackgroundLabel;
     private System.Windows.Forms.Label ScoreABackgroundLabel;
     private System.Windows.Forms.Label GameTimeLabel;
-    private System.Windows.Forms.Label DistanceLeftLabel;
     private System.Windows.Forms.Panel panel1;
     private System.Windows.Forms.Panel panel3;
     private System.Windows.Forms.Panel panel2;
+    private System.Windows.Forms.ProgressBar progressBarRemainingPowerRatio;
+    private System.Windows.Forms.Label GameRoundLabel;
 }

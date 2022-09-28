@@ -72,10 +72,13 @@ partial class SettingsWindow
             this.numericUpDownVehicleBHueLower = new System.Windows.Forms.NumericUpDown();
             this.label21 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.buttonRevert = new System.Windows.Forms.Button();
-            this.buttonApply = new System.Windows.Forms.Button();
-            this.buttonLoad = new System.Windows.Forms.Button();
+            this.panel2 = new System.Windows.Forms.Panel();
             this.buttonSave = new System.Windows.Forms.Button();
+            this.labelApplying = new System.Windows.Forms.Label();
+            this.buttonLoad = new System.Windows.Forms.Button();
+            this.buttonApply = new System.Windows.Forms.Button();
+            this.buttonRevert = new System.Windows.Forms.Button();
+            this.labelLoading = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
             this.comboBoxCamera = new System.Windows.Forms.ComboBox();
             this.tabControl1.SuspendLayout();
@@ -96,6 +99,7 @@ partial class SettingsWindow
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownVehicleBHueUpper)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownVehicleBHueLower)).BeginInit();
             this.panel1.SuspendLayout();
+            this.panel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -155,7 +159,7 @@ partial class SettingsWindow
             "115200"});
             this.comboBoxVehicleABaudrate.Location = new System.Drawing.Point(120, 234);
             this.comboBoxVehicleABaudrate.Name = "comboBoxVehicleABaudrate";
-            this.comboBoxVehicleABaudrate.Size = new System.Drawing.Size(56, 23);
+            this.comboBoxVehicleABaudrate.Size = new System.Drawing.Size(139, 23);
             this.comboBoxVehicleABaudrate.TabIndex = 40;
             // 
             // label10
@@ -172,7 +176,7 @@ partial class SettingsWindow
             this.comboBoxVehicleASerialPort.FormattingEnabled = true;
             this.comboBoxVehicleASerialPort.Location = new System.Drawing.Point(120, 196);
             this.comboBoxVehicleASerialPort.Name = "comboBoxVehicleASerialPort";
-            this.comboBoxVehicleASerialPort.Size = new System.Drawing.Size(56, 23);
+            this.comboBoxVehicleASerialPort.Size = new System.Drawing.Size(139, 23);
             this.comboBoxVehicleASerialPort.TabIndex = 38;
             // 
             // label1
@@ -586,10 +590,8 @@ partial class SettingsWindow
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.buttonRevert);
-            this.panel1.Controls.Add(this.buttonApply);
-            this.panel1.Controls.Add(this.buttonLoad);
-            this.panel1.Controls.Add(this.buttonSave);
+            this.panel1.Controls.Add(this.panel2);
+            this.panel1.Controls.Add(this.labelLoading);
             this.panel1.Controls.Add(this.label11);
             this.panel1.Controls.Add(this.comboBoxCamera);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -598,29 +600,43 @@ partial class SettingsWindow
             this.panel1.Size = new System.Drawing.Size(170, 302);
             this.panel1.TabIndex = 3;
             // 
-            // buttonRevert
+            // panel2
             // 
-            this.buttonRevert.Location = new System.Drawing.Point(87, 258);
-            this.buttonRevert.Name = "buttonRevert";
-            this.buttonRevert.Size = new System.Drawing.Size(75, 23);
-            this.buttonRevert.TabIndex = 25;
-            this.buttonRevert.Text = "Revert";
-            this.buttonRevert.UseVisualStyleBackColor = true;
-            this.buttonRevert.Click += new System.EventHandler(this.buttonRevert_Click);
+            this.panel2.Controls.Add(this.buttonSave);
+            this.panel2.Controls.Add(this.labelApplying);
+            this.panel2.Controls.Add(this.buttonLoad);
+            this.panel2.Controls.Add(this.buttonApply);
+            this.panel2.Controls.Add(this.buttonRevert);
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel2.Location = new System.Drawing.Point(0, 208);
+            this.panel2.Name = "panel2";
+            this.panel2.Padding = new System.Windows.Forms.Padding(5);
+            this.panel2.Size = new System.Drawing.Size(170, 94);
+            this.panel2.TabIndex = 28;
             // 
-            // buttonApply
+            // buttonSave
             // 
-            this.buttonApply.Location = new System.Drawing.Point(6, 258);
-            this.buttonApply.Name = "buttonApply";
-            this.buttonApply.Size = new System.Drawing.Size(75, 23);
-            this.buttonApply.TabIndex = 24;
-            this.buttonApply.Text = "Apply";
-            this.buttonApply.UseVisualStyleBackColor = true;
-            this.buttonApply.Click += new System.EventHandler(this.buttonApply_Click);
+            this.buttonSave.Location = new System.Drawing.Point(3, 8);
+            this.buttonSave.Name = "buttonSave";
+            this.buttonSave.Size = new System.Drawing.Size(75, 23);
+            this.buttonSave.TabIndex = 22;
+            this.buttonSave.Text = "Save";
+            this.buttonSave.UseVisualStyleBackColor = true;
+            this.buttonSave.Click += new System.EventHandler(this.buttonSave_Click);
+            // 
+            // labelApplying
+            // 
+            this.labelApplying.AutoSize = true;
+            this.labelApplying.ForeColor = System.Drawing.SystemColors.GrayText;
+            this.labelApplying.Location = new System.Drawing.Point(3, 68);
+            this.labelApplying.Name = "labelApplying";
+            this.labelApplying.Size = new System.Drawing.Size(64, 15);
+            this.labelApplying.TabIndex = 27;
+            this.labelApplying.Text = "Applying...";
             // 
             // buttonLoad
             // 
-            this.buttonLoad.Location = new System.Drawing.Point(87, 220);
+            this.buttonLoad.Location = new System.Drawing.Point(84, 8);
             this.buttonLoad.Name = "buttonLoad";
             this.buttonLoad.Size = new System.Drawing.Size(75, 23);
             this.buttonLoad.TabIndex = 23;
@@ -628,15 +644,35 @@ partial class SettingsWindow
             this.buttonLoad.UseVisualStyleBackColor = true;
             this.buttonLoad.Click += new System.EventHandler(this.buttonLoad_Click);
             // 
-            // buttonSave
+            // buttonApply
             // 
-            this.buttonSave.Location = new System.Drawing.Point(6, 220);
-            this.buttonSave.Name = "buttonSave";
-            this.buttonSave.Size = new System.Drawing.Size(75, 23);
-            this.buttonSave.TabIndex = 22;
-            this.buttonSave.Text = "Save";
-            this.buttonSave.UseVisualStyleBackColor = true;
-            this.buttonSave.Click += new System.EventHandler(this.buttonSave_Click);
+            this.buttonApply.Location = new System.Drawing.Point(3, 37);
+            this.buttonApply.Name = "buttonApply";
+            this.buttonApply.Size = new System.Drawing.Size(75, 23);
+            this.buttonApply.TabIndex = 24;
+            this.buttonApply.Text = "Apply";
+            this.buttonApply.UseVisualStyleBackColor = true;
+            this.buttonApply.Click += new System.EventHandler(this.buttonApply_Click);
+            // 
+            // buttonRevert
+            // 
+            this.buttonRevert.Location = new System.Drawing.Point(84, 37);
+            this.buttonRevert.Name = "buttonRevert";
+            this.buttonRevert.Size = new System.Drawing.Size(75, 23);
+            this.buttonRevert.TabIndex = 25;
+            this.buttonRevert.Text = "Revert";
+            this.buttonRevert.UseVisualStyleBackColor = true;
+            this.buttonRevert.Click += new System.EventHandler(this.buttonRevert_Click);
+            // 
+            // labelLoading
+            // 
+            this.labelLoading.AutoSize = true;
+            this.labelLoading.ForeColor = System.Drawing.SystemColors.GrayText;
+            this.labelLoading.Location = new System.Drawing.Point(6, 15);
+            this.labelLoading.Name = "labelLoading";
+            this.labelLoading.Size = new System.Drawing.Size(117, 15);
+            this.labelLoading.TabIndex = 26;
+            this.labelLoading.Text = "Scanning hardware...";
             // 
             // label11
             // 
@@ -649,6 +685,7 @@ partial class SettingsWindow
             // 
             // comboBoxCamera
             // 
+            this.comboBoxCamera.Enabled = false;
             this.comboBoxCamera.FormattingEnabled = true;
             this.comboBoxCamera.Location = new System.Drawing.Point(63, 42);
             this.comboBoxCamera.Name = "comboBoxCamera";
@@ -693,6 +730,8 @@ partial class SettingsWindow
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownVehicleBHueLower)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            this.panel2.ResumeLayout(false);
+            this.panel2.PerformLayout();
             this.ResumeLayout(false);
 
     }
@@ -748,4 +787,7 @@ partial class SettingsWindow
     private System.Windows.Forms.Button buttonSave;
     private System.Windows.Forms.Label label11;
     private System.Windows.Forms.ComboBox comboBoxCamera;
+    private System.Windows.Forms.Label labelLoading;
+    private System.Windows.Forms.Panel panel2;
+    private System.Windows.Forms.Label labelApplying;
 }
