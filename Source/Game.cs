@@ -107,7 +107,7 @@ public class Game
     /// The range of the areas of the barriers.
     /// </summary>
     public static readonly (int Min, int Max) BarrierAreaRange = (
-        400, 4000
+        250, 2500
     );
 
     /// <summary>
@@ -119,7 +119,7 @@ public class Game
     /// The range of the side lengths of the barriers.
     /// </summary>
     public static readonly (int Min, int Max) BarrierSideLengthRange = (
-        5, 200
+        10, 180
     );
 
     /// <summary>
@@ -340,7 +340,8 @@ public class Game
 
     private long _lastTickDuration
     {
-        get {
+        get
+        {
             return Utility.SystemTime - this._lastTickTime;
         }
     }
@@ -363,6 +364,7 @@ public class Game
 
         // Generate barriers
         this._barrierList = new List<Barrier>();
+
         for (int i = 0; i < Game.BarrierNumber; ++i)
         {
             bool isGenerated = false;
@@ -402,6 +404,7 @@ public class Game
                 isGenerated = true;
             }
         }
+
     }
 
     /// <summary>
@@ -489,21 +492,23 @@ public class Game
             { CampType.B, new Vehicle(CampType.B) }
         };
 
+        // Set the start time
+        this._startTime = Utility.SystemTime;
         // Set the order generator.
         switch (this._camp)
         {
             case CampType.A:
-                var tmp = new List<Order>();
+                this._orderList.Clear();
                 this._orderGenerator = new OrderGenerator(
                     count: (int)Game.OrderNumber[this._gameStage],
                     area: Game.InnerCourtArea,
                     generationTimeRange: (0, (long)Game.GameDuration[this._gameStage]),
-                    timeLimitRange: Game.OrderDeliveryDurationRange,
-                    out tmp // ???
+                    timeLimitRange: Game.OrderDeliveryDurationRange
                 );
                 break;
 
             case CampType.B:
+                this._orderList.Clear();
                 if (this._orderGenerator == null)
                 {
                     throw new Exception("The order generator is null.");
@@ -556,10 +561,10 @@ public class Game
     /// </summary>
     public void End()
     {
-        if (this._gameState != GameStateType.Running)
-        {
-            throw new Exception("The game is not running.");
-        }
+        // if (this._gameState != GameStateType.Running)
+        // {
+        //     throw new Exception("The game is not running.");
+        // }
 
         this._gameState = GameStateType.Ended;
     }
@@ -890,7 +895,7 @@ public class Game
                         }
 
                         this._score[(CampType)this._camp] +=
-                            Math.Max(Game.ScoreDeliverOrder - Game.ScoreDeliveryOvertimeRate * (long)order.OvertimeDuration, 0);
+                            Math.Max(Game.ScoreDeliverOrder + Game.ScoreDeliveryOvertimeRate * (long)order.OvertimeDuration, 0);
 
                         // Player the deliver sound.
                         Game.OrderSoundDeliver.Play();
@@ -900,5 +905,12 @@ public class Game
         }
     }
 
+    /// <summary>
+    /// Take and deliver orders.
+    /// </summary>
+    public void SetFoul()
+    {
+        this._score[(CampType)this._camp] += ScoreFoul;
+    }
     #endregion
 }

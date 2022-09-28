@@ -159,7 +159,7 @@ public class GameLegacy
 
     private GameStageType _gameStage = GameStageType.PreMatch;
     private GameStateType _gameState = GameStateType.Unstarted;
-    private CampType _camp = CampType.None;
+    private CampType? _camp = null;
     private long _startTime = 0;
     private long _timePenaltySum = 0;
     private long _gameDuration = GameDurationFirstHalf;
@@ -208,7 +208,7 @@ public class GameLegacy
             return;
         }
 
-        if (_camp == CampType.None)
+        if (_camp == null)
         {
             throw new Exception("The camp is invalid.");
         }
@@ -221,12 +221,12 @@ public class GameLegacy
         }
 
         int TimePenalty = 0;
-        Dot vehiclePosition = (Dot)this._vehicle[this._camp].Position;
-        this._parkingDuration = this._vehicle[this._camp].ParkingDuration;
+        Dot vehiclePosition = (Dot)this._vehicle[(CampType)this._camp].Position;
+        this._parkingDuration = this._vehicle[(CampType)this._camp].ParkingDuration;
 
         // Update vehicle's info on each frame
-        TakeOrders(vehiclePosition, this._parkingDuration, _vehicle[this._camp].DeliveringOrderList, _pendingOrderList);
-        DeliverOrders(vehiclePosition, this._parkingDuration, _vehicle[this._camp].DeliveringOrderList);
+        TakeOrders(vehiclePosition, this._parkingDuration, _vehicle[(CampType)this._camp].DeliveringOrderList, _pendingOrderList);
+        DeliverOrders(vehiclePosition, this._parkingDuration, _vehicle[(CampType)this._camp].DeliveringOrderList);
         ParkingPenalty(vehiclePosition, this._parkingDuration, this._lastParkingDuration);
         Charge(vehiclePosition);
         BarrierPenalty(vehiclePosition);
@@ -263,7 +263,7 @@ public class GameLegacy
     /// </summary>
     public void GetPenalty()
     {
-        _score[this._camp] -= OutOfCourtPenalty;
+        _score[(CampType)this._camp] -= OutOfCourtPenalty;
     }
     /// <summary>
     /// Take the order
@@ -285,7 +285,7 @@ public class GameLegacy
                 ordersRemain.Remove(order);
 
                 // add score
-                this._score[this._camp] += TakeOrderScore;
+                this._score[(CampType)this._camp] += TakeOrderScore;
 
                 // 拾取后改变order的status
                 order.Status = OrderStatusType.InDelivery;
@@ -314,7 +314,7 @@ public class GameLegacy
                 order.Deliver(this.GameTime);
                 deliveringOrder.Remove(order);
 
-                this._score[this._camp] += DeliverOrderScore;
+                this._score[(CampType)this._camp] += DeliverOrderScore;
 
                 // 拾取后改变order的status
                 order.Status = OrderStatusType.Delivered;
@@ -332,14 +332,14 @@ public class GameLegacy
         CampType opponentCamp = (this._camp == CampType.A ? CampType.B : CampType.A);
         // judge whether the vehicle is in the range of charging piles
 
-        if (IsInChargingPileInfluenceScope(this._camp, vehiclePosition))
+        if (IsInChargingPileInfluenceScope((CampType)this._camp, vehiclePosition))
         {
-            this._vehicle[this._camp].IncreaseMaxDistance(OwnChargingPileIncreaseRate);
+            this._vehicle[(CampType)this._camp].IncreaseMaxDistance(OwnChargingPileIncreaseRate);
         }
         // is in opponent camp's charging piles
         if (IsInChargingPileInfluenceScope(opponentCamp, vehiclePosition))
         {
-            this._vehicle[this._camp].IncreaseMaxDistance(-OpponentChargingPileDecreaseRate);
+            this._vehicle[(CampType)this._camp].IncreaseMaxDistance(-OpponentChargingPileDecreaseRate);
         }
     }
     /// <summary>
@@ -348,7 +348,7 @@ public class GameLegacy
     private void BarrierPenalty(Dot vehiclePosition)
     {
         if (IsInBarrier(vehiclePosition))
-            this._vehicle[this._camp].IncreaseMaxDistance(-BarrierDecreasePowerRate);
+            this._vehicle[(CampType)this._camp].IncreaseMaxDistance(-BarrierDecreasePowerRate);
     }
     /// <summary>
     /// Decrease the power when the vehicle is in the range of barriers
@@ -356,7 +356,7 @@ public class GameLegacy
     private void WallPenalty(Dot vehiclePosition)
     {
         if (IsInWall(vehiclePosition))
-            this._score[this._camp] -= CollideWallPenalty;
+            this._score[(CampType)this._camp] -= CollideWallPenalty;
     }
     /// <summary>
     /// Parking Penalty
@@ -368,9 +368,9 @@ public class GameLegacy
     {
         if (parkingDuration != null && lastParkingDuration != null)
             if (parkingDuration / MaxParkingTime != lastParkingDuration / MaxParkingTime &&
-                !IsInChargingPileInfluenceScope(this._camp, vehiclePosition))
+                !IsInChargingPileInfluenceScope((CampType)this._camp, vehiclePosition))
             {
-                this._score[this._camp] -= LongParkingPenalty;
+                this._score[(CampType)this._camp] -= LongParkingPenalty;
             }
     }
     // decide which team and stage is going on
@@ -409,7 +409,7 @@ public class GameLegacy
         {
             // Initial orders on the field, which is only implemented per half game
             this._orderGenerator = new OrderGenerator(this._maxOrderNumber, CoreArea,
-                                    (0, _gameDuration), (MinDeliveryTime, MaxDeliveryTime), out _allOrderList);
+                                    (0, _gameDuration), (MinDeliveryTime, MaxDeliveryTime));
         }
         else if (this._camp == CampType.B)
         {
@@ -514,7 +514,7 @@ public class GameLegacy
 
     public CampType GetCamp()
     {
-        return _camp;
+        return (CampType)_camp;
     }
 
     public decimal GetScore(CampType c, GameStageType gs)
@@ -540,7 +540,7 @@ public class GameLegacy
     }
     public decimal GetPowerRatio()
     {
-        return this._vehicle[this._camp].RemainingPowerRatio;
+        return this._vehicle[(CampType)this._camp].RemainingPowerRatio;
     }
     #endregion
 

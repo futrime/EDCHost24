@@ -7,7 +7,6 @@ namespace EdcHost;
 /// </summary>
 public enum CampType
 {
-    None,
     A,
     B
 };

@@ -187,7 +187,7 @@ public class Vehicle
     /// </summary>
     /// <param name="position">The position</param>
     /// <param name="gameTime">The game time</param>
-    public void UpdatePosition(Dot position, long gameTime)
+    public void UpdatePosition(Dot position, long? gameTime)
     {
         this.Path.Add(position);
 
