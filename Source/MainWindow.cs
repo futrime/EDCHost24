@@ -285,7 +285,10 @@ public partial class MainWindow : Form
             if (this._locatorDict[this._game.GetCamp()].TargetPosition != null)
             {
                 // Update the position of the current vehicle.
-                this._game.Vehicle[this._game.GetCamp()].UpdatePosition(new Dot((Point2i)this._coordinateConverter.CameraToCourt((Point2f)this._locatorDict[this._game.GetCamp()].TargetPosition)));
+                this._game.Vehicle[this._game.GetCamp()].UpdatePosition(
+                    new Dot((Point2i)this._coordinateConverter.CameraToCourt((Point2f)this._locatorDict[this._game.GetCamp()].TargetPosition)),
+                    this._game.GameTime
+                );
                 this._game.Refresh();
             }
 

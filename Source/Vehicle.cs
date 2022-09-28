@@ -69,6 +69,26 @@ public class Vehicle
     public int MaxDistance => this._maxDistance;
 
     /// <summary>
+    /// The duration that the vehicle has not moved.
+    /// </summary>
+    public long? ParkingDuration
+    {
+        get {
+            if (
+                this._lastGameTime != null &&
+                this._lastStartParkingTime != null
+            )
+            {
+                return ((long)this._lastGameTime - (long)this._lastStartParkingTime);
+            }
+            else
+            {
+                return null;
+            }
+        }
+    }
+
+    /// <summary>
     /// The path the vehicle has travelled
     /// </summary>
     public List<Dot> Path => this._path;
@@ -119,6 +139,8 @@ public class Vehicle
     private CampType _camp;
     private List<Order> _deliveringOrderList = new List<Order>();
     private readonly int _initialMaxDistance;
+    private long? _lastGameTime = null;
+    private long? _lastStartParkingTime = null;
     private int _maxDistance;
     private List<Dot> _path = new List<Dot>();
 
@@ -159,9 +181,25 @@ public class Vehicle
     /// Update the position of the vehicle.
     /// </summary>
     /// <param name="position">The position</param>
-    public void UpdatePosition(Dot position)
+    /// <param name="gameTime">The game time</param>
+    public void UpdatePosition(Dot position, long gameTime)
     {
         this.Path.Add(position);
+
+        this._lastGameTime = gameTime;
+
+        // If there are at least two positions in the path.
+        if (
+            this.Path.Count > 1 &&
+            this.Path[this.Path.Count - 1] == this.Path[this.Path.Count - 2]
+        )
+        {
+            // If the vehicle starts to park, update the last start parking time.
+            if (this._lastStartParkingTime == null)
+            {
+                this._lastStartParkingTime = gameTime;
+            }
+        }
     }
 
     #endregion
