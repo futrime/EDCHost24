@@ -323,12 +323,20 @@ public partial class SettingsWindow : Form
                 Action safeWrite = delegate
                 {
                     this.comboBoxCamera.Items.Add(cameraPort);
+                    if (this.comboBoxCamera.Items.Count > 0)
+                    {
+                        this.comboBoxCamera.SelectedIndex = 0;
+                    }
                 };
                 this.comboBoxCamera.Invoke(safeWrite);
             }
             else
             {
                 this.comboBoxCamera.Items.Add(cameraPort);
+                if (this.comboBoxCamera.Items.Count > 0)
+                {
+                    this.comboBoxCamera.SelectedIndex = 0;
+                }
             }
 
             ++cameraPort;
