@@ -60,6 +60,9 @@ public partial class SettingsWindow : Form
             this.comboBoxVehicleASerialPort.Items.Add(serialPort);
             this.comboBoxVehicleBSerialPort.Items.Add(serialPort);
         }
+
+        // Hide the label showing "Applying..."
+        this.labelApplying.Hide();
     }
 
     private void ApplyConfig()
@@ -127,6 +130,34 @@ public partial class SettingsWindow : Form
                     this._mainWindow.SerialPortDict[camp] = null;
                 }
             }
+        }
+
+        // Re-enable the apply button.
+        if (this.buttonApply.InvokeRequired)
+        {
+            Action safeWrite = delegate
+            {
+                this.buttonApply.Enabled = true;
+            };
+            this.buttonApply.Invoke(safeWrite);
+        }
+        else
+        {
+            this.buttonApply.Enabled = true;
+        }
+
+        // Hide the applying label.
+        if (this.labelApplying.InvokeRequired)
+        {
+            Action safeWrite = delegate
+            {
+                this.labelApplying.Hide();
+            };
+            this.labelApplying.Invoke(safeWrite);
+        }
+        else
+        {
+            this.labelApplying.Hide();
         }
     }
 
@@ -293,6 +324,34 @@ public partial class SettingsWindow : Form
 
             ++cameraPort;
         }
+
+        // Hide the notice label when done.
+        if (this.labelLoading.InvokeRequired)
+        {
+            Action safeWrite = delegate
+            {
+                this.labelLoading.Hide();
+            };
+            this.labelLoading.Invoke(safeWrite);
+        }
+        else
+        {
+            this.labelLoading.Hide();
+        }
+
+        // Enable the camera selection box.
+        if (this.comboBoxCamera.InvokeRequired)
+        {
+            Action safeWrite = delegate
+            {
+                this.comboBoxCamera.Enabled = true;
+            };
+            this.comboBoxCamera.Invoke(safeWrite);
+        }
+        else
+        {
+            this.comboBoxCamera.Enabled = true;
+        }
     }
 
     #region Windows Forms event handlers
@@ -300,6 +359,10 @@ public partial class SettingsWindow : Form
     private void buttonApply_Click(object sender, EventArgs e)
     {
         this.SyncFormToConfig();
+
+        this.buttonApply.Enabled = false;
+        this.labelApplying.Show();
+
         Thread thread = new Thread(this.ApplyConfig);
         thread.Start();
         // this.ApplyConfig();
