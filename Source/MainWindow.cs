@@ -157,7 +157,7 @@ public partial class MainWindow : Form
     private ConfigType _config = MainWindow.DefaultConfig;
     private OpenCvSharp.Size _courtSize;
     private CoordinateConverter _coordinateConverter;
-    private Game _game = new Game();
+    private GameLegacy _game = new GameLegacy();
     private Dictionary<CampType, Locator> _locatorDict = new Dictionary<CampType, Locator>();
     private Point2f[] _monitorCorners = new Point2f[4];
     private OpenCvSharp.Size _monitorFrameSize;
@@ -227,8 +227,8 @@ public partial class MainWindow : Form
             this.pictureBoxMonitor.Height
         );
         this._courtSize = new OpenCvSharp.Size(
-            Game.CourtWidth,
-            Game.CourtHeight
+            GameLegacy.CourtWidth,
+            GameLegacy.CourtHeight
         );
 
         // Setup the coordinate converter
@@ -703,7 +703,7 @@ public partial class MainWindow : Form
 
     private void buttonReset_Click(object sender, EventArgs e)
     {
-        this._game = new Game();
+        this._game = new GameLegacy();
     }
 
     private void buttonFoul_Click(object sender, EventArgs e)

@@ -6,7 +6,7 @@ namespace EdcHost;
 /// <summary>
 /// A game
 /// </summary>
-public class Game
+public class GameLegacy
 {
     #region Parameters
 
@@ -196,7 +196,7 @@ public class Game
 
     #region Public methods
 
-    public Game()
+    public GameLegacy()
     {
         // Empty
     }
@@ -239,10 +239,10 @@ public class Game
             switch (this.GameStage)
             {
                 case GameStageType.FirstHalf:
-                    this._gameDuration = Game.GameDurationFirstHalf;
+                    this._gameDuration = GameLegacy.GameDurationFirstHalf;
                     break;
                 case GameStageType.SecondHalf:
-                    this._gameDuration = Game.GameDurationSecondHalf;
+                    this._gameDuration = GameLegacy.GameDurationSecondHalf;
                     break;
                 default:
                     break;
