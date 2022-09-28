@@ -18,9 +18,9 @@ vehicles:
     locator:
       hue:
         item1: 0
-        item2: 40
+        item2: 50
       saturation:
-        item1: 100
+        item1: 50
         item2: 255
       value:
         item1: 100
