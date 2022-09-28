@@ -157,7 +157,7 @@ public partial class MainWindow : Form
     private ConfigType _config = MainWindow.DefaultConfig;
     private OpenCvSharp.Size _courtSize;
     private CoordinateConverter _coordinateConverter;
-    private GameLegacy _game = new GameLegacy();
+    private GameLegacy _gameLegacy = new GameLegacy();
     private Dictionary<CampType, Locator> _locatorDict = new Dictionary<CampType, Locator>();
     private Point2f[] _monitorCorners = new Point2f[4];
     private OpenCvSharp.Size _monitorFrameSize;
@@ -268,7 +268,7 @@ public partial class MainWindow : Form
 
         this.ProcessCameraFrame();
 
-        if (this._game.GameState == GameStateType.Unstarted)
+        if (this._gameLegacy.GameState == GameStateType.Unstarted)
         {
             this.buttonFoul.Enabled = false;
             if (this._calibrationClickCount >= 4)
@@ -281,16 +281,16 @@ public partial class MainWindow : Form
             this.buttonContinue.Enabled = false;
             this.buttonEnd.Enabled = false;
         }
-        else if (this._game.GameState == GameStateType.Running)
+        else if (this._gameLegacy.GameState == GameStateType.Running)
         {
-            if (this._locatorDict[this._game.GetCamp()].TargetPosition != null)
+            if (this._locatorDict[this._gameLegacy.GetCamp()].TargetPosition != null)
             {
                 // Update the position of the current vehicle.
-                this._game.Vehicle[this._game.GetCamp()].UpdatePosition(
-                    new Dot((Point2i)this._coordinateConverter.CameraToCourt((Point2f)this._locatorDict[this._game.GetCamp()].TargetPosition)),
-                    this._game.GameTime
+                this._gameLegacy.Vehicle[this._gameLegacy.GetCamp()].UpdatePosition(
+                    new Dot((Point2i)this._coordinateConverter.CameraToCourt((Point2f)this._locatorDict[this._gameLegacy.GetCamp()].TargetPosition)),
+                    this._gameLegacy.GameTime
                 );
-                this._game.Refresh();
+                this._gameLegacy.Refresh();
             }
 
             this.buttonFoul.Enabled = true;
@@ -301,12 +301,12 @@ public partial class MainWindow : Form
             this.buttonContinue.Enabled = false;
             this.buttonEnd.Enabled = true;
 
-            this.labelScoreVehicleA.Text = ((int)this._game.GetScore(CampType.A, this._game.GameStage)).ToString();
-            this.labelScoreVehicleB.Text = ((int)this._game.GetScore(CampType.B, this._game.GameStage)).ToString();
-            this.labelGameTime.Text = Math.Max((decimal)(this._game.RemainingTime) / 1000, (decimal)0).ToString("0.00");
-            this.progressBarRemainingPowerRatio.Value = (int)(this._game.GetPowerRatio() * 100);
+            this.labelScoreVehicleA.Text = ((int)this._gameLegacy.GetScore(CampType.A, this._gameLegacy.GameStage)).ToString();
+            this.labelScoreVehicleB.Text = ((int)this._gameLegacy.GetScore(CampType.B, this._gameLegacy.GameStage)).ToString();
+            this.labelGameTime.Text = Math.Max((decimal)(this._gameLegacy.RemainingTime) / 1000, (decimal)0).ToString("0.00");
+            this.progressBarRemainingPowerRatio.Value = (int)(this._gameLegacy.GetPowerRatio() * 100);
         }
-        else if (this._game.GameState == GameStateType.Paused)
+        else if (this._gameLegacy.GameState == GameStateType.Paused)
         {
             this.buttonFoul.Enabled = true;
             if (this._calibrationClickCount >= 4)
@@ -319,7 +319,7 @@ public partial class MainWindow : Form
             this.buttonContinue.Enabled = true;
             this.buttonEnd.Enabled = true;
         }
-        else if (this._game.GameState == GameStateType.Ended)
+        else if (this._gameLegacy.GameState == GameStateType.Ended)
         {
             this.buttonFoul.Enabled = false;
             if (this._calibrationClickCount >= 4)
@@ -328,8 +328,8 @@ public partial class MainWindow : Form
             }
             this.buttonSettings.Enabled = false;
             if (
-                this._game.GameStage == GameStageType.SecondHalf &&
-                this._game.GetCamp() == CampType.B
+                this._gameLegacy.GameStage == GameStageType.SecondHalf &&
+                this._gameLegacy.GetCamp() == CampType.B
             )
             {
                 this.buttonStart.Enabled = false;
@@ -434,17 +434,17 @@ public partial class MainWindow : Form
         }
 
         // Draw Barriers and Walls
-        foreach (var barrier in this._game.BarrierList)
+        foreach (var barrier in this._gameLegacy.BarrierList)
         {
             DrawBarrier(ref image, barrier, Scalar.Orange);
         }
-        foreach (var wall in this._game.WallList)
+        foreach (var wall in this._gameLegacy.WallList)
         {
             DrawBarrier(ref image, wall, Scalar.Black);
         }
 
         // Draw charging piles
-        foreach (var chargingPile in this._game.ChargingPileList)
+        foreach (var chargingPile in this._gameLegacy.ChargingPileList)
         {
             this.DrawIcon(
                 image: ref image,
@@ -454,11 +454,11 @@ public partial class MainWindow : Form
         }
 
         // Draw departures and destinations of orders
-        if (this._game.GameState == GameStateType.Running || this._game.GameState == GameStateType.Paused)
+        if (this._gameLegacy.GameState == GameStateType.Running || this._gameLegacy.GameState == GameStateType.Paused)
         {
-            Vehicle vehicle = this._game.Vehicle[this._game.GetCamp()];
+            Vehicle vehicle = this._gameLegacy.Vehicle[this._gameLegacy.GetCamp()];
 
-            foreach (Order order in _game.AllOrderList)
+            foreach (Order order in _gameLegacy.AllOrderList)
             {
                 if (order.Status == OrderStatusType.Pending)
                 {
@@ -656,28 +656,28 @@ public partial class MainWindow : Form
 
     private void buttonStart_Click(object sender, EventArgs e)
     {
-        if (this._game.GameStage == GameStageType.PreMatch &&
-            this._game.GetCamp() == CampType.None)
+        if (this._gameLegacy.GameStage == GameStageType.PreMatch &&
+            this._gameLegacy.GetCamp() == CampType.None)
         {
-            _game.Start(CampType.A, GameStageType.FirstHalf);
+            _gameLegacy.Start(CampType.A, GameStageType.FirstHalf);
             labelGameHalf.Text = "上半场";
         }
-        else if (this._game.GameStage == GameStageType.FirstHalf &&
-            this._game.GetCamp() == CampType.A)
+        else if (this._gameLegacy.GameStage == GameStageType.FirstHalf &&
+            this._gameLegacy.GetCamp() == CampType.A)
         {
-            _game.Start(CampType.B, GameStageType.FirstHalf);
+            _gameLegacy.Start(CampType.B, GameStageType.FirstHalf);
             labelGameHalf.Text = "上半场";
         }
-        else if (this._game.GameStage == GameStageType.FirstHalf &&
-            this._game.GetCamp() == CampType.B)
+        else if (this._gameLegacy.GameStage == GameStageType.FirstHalf &&
+            this._gameLegacy.GetCamp() == CampType.B)
         {
-            _game.Start(CampType.A, GameStageType.SecondHalf);
+            _gameLegacy.Start(CampType.A, GameStageType.SecondHalf);
             labelGameHalf.Text = "下半场";
         }
-        else if (this._game.GameStage == GameStageType.SecondHalf &&
-            this._game.GetCamp() == CampType.A)
+        else if (this._gameLegacy.GameStage == GameStageType.SecondHalf &&
+            this._gameLegacy.GetCamp() == CampType.A)
         {
-            _game.Start(CampType.B, GameStageType.SecondHalf);
+            _gameLegacy.Start(CampType.B, GameStageType.SecondHalf);
             labelGameHalf.Text = "下半场";
         }
         else
@@ -688,27 +688,27 @@ public partial class MainWindow : Form
 
     private void buttonPause_Click(object sender, EventArgs e)
     {
-        this._game.Pause();
+        this._gameLegacy.Pause();
     }
 
     private void buttonContinue_Click(object sender, EventArgs e)
     {
-        _game.Continue();
+        _gameLegacy.Continue();
     }
 
     private void buttonEnd_Click(object sender, EventArgs e)
     {
-        _game.End();
+        _gameLegacy.End();
     }
 
     private void buttonReset_Click(object sender, EventArgs e)
     {
-        this._game = new GameLegacy();
+        this._gameLegacy = new GameLegacy();
     }
 
     private void buttonFoul_Click(object sender, EventArgs e)
     {
-        _game.GetPenalty();
+        _gameLegacy.GetPenalty();
     }
 
     private void buttonSettings_Click(object sender, EventArgs e)
