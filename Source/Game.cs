@@ -356,7 +356,7 @@ public class Game
     private void WallPenalty(Dot vehiclePosition)
     {
         if (IsInWall(vehiclePosition))
-            this._vehicle[this._camp].IncreaseMaxDistance(-CollideWallPenalty);
+            this._score[this._camp] -= CollideWallPenalty;
     }
     /// <summary>
     /// Parking Penalty
@@ -369,7 +369,7 @@ public class Game
         if (parkingDuration / MaxParkingTime != lastParkingDuration / MaxParkingTime &&
             !IsInChargingPileInfluenceScope(this._camp, vehiclePosition))
         {
-            this._vehicle[this._camp].IncreaseMaxDistance(-LongParkingPenalty);
+            this._score[this._camp] -= LongParkingPenalty;
         }
     }
     // decide which team and stage is going on
