@@ -399,7 +399,7 @@ partial class SettingsWindow
             "115200"});
             this.comboBoxVehicleBBaudrate.Location = new System.Drawing.Point(120, 234);
             this.comboBoxVehicleBBaudrate.Name = "comboBoxVehicleBBaudrate";
-            this.comboBoxVehicleBBaudrate.Size = new System.Drawing.Size(56, 23);
+            this.comboBoxVehicleBBaudrate.Size = new System.Drawing.Size(139, 23);
             this.comboBoxVehicleBBaudrate.TabIndex = 40;
             // 
             // label12
@@ -416,7 +416,7 @@ partial class SettingsWindow
             this.comboBoxVehicleBSerialPort.FormattingEnabled = true;
             this.comboBoxVehicleBSerialPort.Location = new System.Drawing.Point(120, 196);
             this.comboBoxVehicleBSerialPort.Name = "comboBoxVehicleBSerialPort";
-            this.comboBoxVehicleBSerialPort.Size = new System.Drawing.Size(56, 23);
+            this.comboBoxVehicleBSerialPort.Size = new System.Drawing.Size(139, 23);
             this.comboBoxVehicleBSerialPort.TabIndex = 38;
             // 
             // label13
