@@ -81,11 +81,6 @@ public partial class MainWindow : Form
     );
 
     /// <summary>
-    /// The refresh rate in hertz
-    /// </summary>
-    private const int RefreshRate = 60;
-
-    /// <summary>
     /// The length of the buffer for serial ports.
     /// </summary>
     private const int SerialPortBufferLength = 1024;
@@ -244,7 +239,7 @@ public partial class MainWindow : Form
         );
 
         // Setup the timer
-        this.timer.Interval = 1000 / MainWindow.RefreshRate;
+        this.timer.Interval = (int)(1000 / this._camera.Fps);
         this.timer.Start();
 
         // Setup the locators
@@ -265,6 +260,12 @@ public partial class MainWindow : Form
     /// </summary>
     private void RefreshAll()
     {
+        // Update the timer interval.
+        if (this.timer.Interval != (int)(this._camera.Fps))
+        {
+            this.timer.Interval = Math.Max((int)(this._camera.Fps), 1);
+        }
+
         this.ProcessCameraFrame();
 
         if (this._game.GameState == GameStateType.Unstarted)
