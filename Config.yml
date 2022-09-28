@@ -20,7 +20,7 @@ vehicles:
         item1: 0
         item2: 50
       saturation:
-        item1: 50
+        item1: 150
         item2: 255
       value:
         item1: 100
