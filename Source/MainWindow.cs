@@ -300,8 +300,8 @@ public partial class MainWindow : Form
             this.ContinueButton.Enabled = false;
             this.EndButton.Enabled = true;
 
-            this.ScoreALabel.Text = this._game.GetScore(CampType.A, this._game.GameStage).ToString();
-            this.ScoreBLabel.Text = this._game.GetScore(CampType.B, this._game.GameStage).ToString();
+            this.ScoreALabel.Text = ((int)this._game.GetScore(CampType.A, this._game.GameStage)).ToString();
+            this.ScoreBLabel.Text = ((int)this._game.GetScore(CampType.B, this._game.GameStage)).ToString();
             this.GameTimeLabel.Text = Math.Max((decimal)(this._game.RemainingTime) / 1000, (decimal)0).ToString("0.00");
             this.progressBarRemainingPowerRatio.Value = (int)(this._game.GetPowerRatio() * 100);
         }

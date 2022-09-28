@@ -39,6 +39,9 @@ public class Game
     public const int MinDeliveryTime = 20;
     public const int MaxDeliveryTime = 60;
     public const int OrderRadius = 8;
+    public const long MinTakeOrdersTime = 1000;
+    public const long MinDeliverOrdersTime = 1000;
+
 
     // Parameters for barriers
     public const int MaxBarrierNum = 5;
@@ -59,13 +62,16 @@ public class Game
     /// The decreasing speed in opponent charging piles: 200cm per second
     /// </summary>
     public const int OpponentChargingPileDecreaseRate = 20;
-
+    // parameters for parking
+    public const long MaxParkingTime = 5000;
+    // parameters for walls
+    public const int LongParkingPenalty = 5;
     // parameters for scores
     public const int OutOfCourtPenalty = 50;
+    public const int CollideWallPenalty = 5;
     public const int StartVehicleScore = 10;
     public const int TakeOrderScore = 5;
     public const int DeliverOrderScore = 10;
-
     #endregion
 
 
@@ -161,7 +167,7 @@ public class Game
     private long _lastTickTime = Utility.SystemTime - 1;
     private Dictionary<CampType, Vehicle> _vehicle;
 
-    private Dictionary<CampType, int> _score = new Dictionary<CampType, int>
+    private Dictionary<CampType, decimal> _score = new Dictionary<CampType, decimal>
         {{CampType.A,0},
          {CampType.B,0}};
 
@@ -176,6 +182,8 @@ public class Game
 
     private List<Barrier> _wallList = new List<Barrier>();
     private List<ChargingPile> _chargingPileList = new List<ChargingPile>();
+    private long? _parkingDuration = 0;
+    private long? _lastParkingDuration = 0;
 
     // SoundPlayer
     private System.Media.SoundPlayer _deliverOrderSound = new System.Media.SoundPlayer(
@@ -214,13 +222,16 @@ public class Game
 
         int TimePenalty = 0;
         Dot vehiclePosition = this._vehicle[this._camp].Position;
+        this._parkingDuration = this._vehicle[this._camp].ParkingDuration;
 
         // Update vehicle's info on each frame
-        TakeOrders(vehiclePosition, _vehicle[this._camp].DeliveringOrderList, _pendingOrderList);
-        DeliverOrders(vehiclePosition, _vehicle[this._camp].DeliveringOrderList);
+        TakeOrders(vehiclePosition, this._parkingDuration, _vehicle[this._camp].DeliveringOrderList, _pendingOrderList);
+        DeliverOrders(vehiclePosition, this._parkingDuration, _vehicle[this._camp].DeliveringOrderList);
+        ParkingPenalty(vehiclePosition, this._parkingDuration, this._lastParkingDuration);
         Charge(vehiclePosition);
         BarrierPenalty(vehiclePosition);
-
+        WallPenalty(vehiclePosition);
+        this._lastParkingDuration = this._parkingDuration;
 
         if (this.GameState == GameStateType.Running)
         {
@@ -257,21 +268,23 @@ public class Game
     /// <summary>
     /// Take the order
     /// </summary>
-    /// <param name="VehiclePosition"></param>
+    /// <param name="vehiclePosition"></param>
+    /// <param name="parkingDuration">The parking time should be more than MinTakeOrdersTime</param>
     /// <param name="deliveringOrder">The current orders on the vehicle</param>
     /// <param name="ordersRemain">The orders that remain on the GUI</param>
-    private void TakeOrders(Dot VehiclePosition, List<Order> deliveringOrder, List<Order> ordersRemain)      //拾取外卖
+    private void TakeOrders(Dot vehiclePosition, long? parkingDuration, List<Order> deliveringOrder, List<Order> ordersRemain)      //拾取外卖
     {
         for (int i = 0; i < ordersRemain.Count; i++)
         {
             Order order = ordersRemain[i];
-            if (order.Status == Order.StatusType.Pending && Dot.Distance(order.DeparturePosition, VehiclePosition) <= OrderRadius &&
-                deliveringOrder.Count < MaxDeliveringOrderNumber)
+            if (order.Status == Order.StatusType.Pending && Dot.Distance(order.DeparturePosition, vehiclePosition) <= OrderRadius &&
+                deliveringOrder.Count < MaxDeliveringOrderNumber && parkingDuration >= MinTakeOrdersTime)
             {
                 order.Take(this.GameTime);
                 deliveringOrder.Add(order);
                 ordersRemain.Remove(order);
 
+                // add score
                 this._score[this._camp] += TakeOrderScore;
 
                 // 拾取后改变order的status
@@ -287,14 +300,16 @@ public class Game
     /// <summary>
     /// Deliver the order
     /// </summary>
-    /// <param name="VehiclePosition"></param>
+    /// <param name="vehiclePosition"></param>
+    /// <param name="parkingDuration">The parking time should be more than MinDeliverOrdersTime</param>
     /// <param name="deliveringOrder">The current orders on the vehicle</param>
-    private void DeliverOrders(Dot VehiclePosition, List<Order> deliveringOrder)      //送达外卖 
+    private void DeliverOrders(Dot vehiclePosition, long? parkingDuration, List<Order> deliveringOrder)      //送达外卖 
     {
         for (int i = 0; i < deliveringOrder.Count; i++)
         {
             Order order = deliveringOrder[i];
-            if (order.Status == Order.StatusType.InDelivery && Dot.Distance(order.DestinationPosition, VehiclePosition) <= OrderRadius)
+            if (order.Status == Order.StatusType.InDelivery && Dot.Distance(order.DestinationPosition, vehiclePosition) <= OrderRadius &&
+                parkingDuration >= MinDeliverOrdersTime)
             {
                 order.Deliver(this.GameTime);
                 deliveringOrder.Remove(order);
@@ -334,6 +349,28 @@ public class Game
     {
         if (IsInBarrier(vehiclePosition))
             this._vehicle[this._camp].IncreaseMaxDistance(-BarrierDecreasePowerRate);
+    }
+    /// <summary>
+    /// Decrease the power when the vehicle is in the range of barriers
+    /// </summary>
+    private void WallPenalty(Dot vehiclePosition)
+    {
+        if (IsInWall(vehiclePosition))
+            this._vehicle[this._camp].IncreaseMaxDistance(-CollideWallPenalty);
+    }
+    /// <summary>
+    /// Parking Penalty
+    /// </summary>
+    /// <param name="vehiclePosition"></param>
+    /// <param name="parkingDuration">The parking time in this frame</param>
+    /// <param name="lastParkingDuration">The parking time in last frame</param>
+    private void ParkingPenalty(Dot vehiclePosition, long? parkingDuration, long? lastParkingDuration)
+    {
+        if (parkingDuration / MaxParkingTime != lastParkingDuration / MaxParkingTime &&
+            !IsInChargingPileInfluenceScope(this._camp, vehiclePosition))
+        {
+            this._vehicle[this._camp].IncreaseMaxDistance(-LongParkingPenalty);
+        }
     }
     // decide which team and stage is going on
     public void Start(CampType _camp, GameStageType _GameStage)
@@ -377,8 +414,6 @@ public class Game
         {
             this._orderGenerator.Reset();
         }
-
-
 
         this._startTime = this.SystemTime;
 
@@ -481,7 +516,7 @@ public class Game
         return _camp;
     }
 
-    public int GetScore(CampType c, GameStageType gs)
+    public decimal GetScore(CampType c, GameStageType gs)
     {
         if (gs == GameStageType.None)
         {
@@ -527,6 +562,22 @@ public class Game
         return false;
     }
 
+    /// <summary>
+    /// Check if a position is in the walls.
+    /// </summary>
+    /// <param name="position">The position</param>
+    /// <returns>True if the position is in the walls; otherwise false</returns>
+    private bool IsInWall(Dot position)
+    {
+        foreach (var wall in this._wallList)
+        {
+            if (wall.IsIn(position))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
     /// <summary>
     /// Check if a position is in the influence scope of the charging piles of a camp.
     /// </summary>

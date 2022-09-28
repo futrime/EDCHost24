@@ -73,7 +73,8 @@ public class Vehicle
     /// </summary>
     public long? ParkingDuration
     {
-        get {
+        get
+        {
             if (
                 this._lastGameTime != null &&
                 this._lastStartParkingTime != null
@@ -189,17 +190,25 @@ public class Vehicle
         this._lastGameTime = gameTime;
 
         // If there are at least two positions in the path.
-        if (
-            this.Path.Count > 1 &&
-            this.Path[this.Path.Count - 1] == this.Path[this.Path.Count - 2]
-        )
+        if (this.Path.Count > 1)
         {
+            if (this.Path[this.Path.Count - 1] == this.Path[this.Path.Count - 2])
             // If the vehicle starts to park, update the last start parking time.
-            if (this._lastStartParkingTime == null)
             {
-                this._lastStartParkingTime = gameTime;
+                if (this._lastStartParkingTime == null)
+                {
+                    this._lastStartParkingTime = gameTime;
+                }
+            }
+            else
+            {
+                if (this._lastStartParkingTime != null)
+                {
+                    this._lastStartParkingTime = null;
+                }
             }
         }
+
     }
 
     #endregion
