@@ -67,25 +67,22 @@ public partial class SettingsWindow : Form
 
     private void ApplyConfig()
     {
-        int originalCameraConfig = this._mainWindow.Config.Camera;
         this._mainWindow.Config = this._config;
 
         // Apply the camera configurations
-        if (this._config.Camera != originalCameraConfig)
-        {
-            this._mainWindow.Camera.Release();
-            this._mainWindow.Camera.Open(this._mainWindow.Config.Camera);
-            this._mainWindow.CameraFrameSize = new OpenCvSharp.Size(
-                this._mainWindow.Camera.FrameWidth,
-                this._mainWindow.Camera.FrameHeight
-            );
-            this._mainWindow.CoordinateConverter = new CoordinateConverter(
-                cameraFrameSize: this._mainWindow.CameraFrameSize,
-                monitorFrameSize: this._mainWindow.MonitorFrameSize,
-                courtSize: this._mainWindow.CourtSize,
-                calibrationCorners: this._mainWindow.CoordinateConverter.CalibrationCorners
-            );
-        }
+        this._mainWindow.Camera.Release();
+        this._mainWindow.Camera.Open(this._mainWindow.Config.Camera);
+        this._mainWindow.CameraFrameSize = new OpenCvSharp.Size(
+            this._mainWindow.Camera.FrameWidth,
+            this._mainWindow.Camera.FrameHeight
+        );
+        this._mainWindow.CoordinateConverter = new CoordinateConverter(
+            cameraFrameSize: this._mainWindow.CameraFrameSize,
+            monitorFrameSize: this._mainWindow.MonitorFrameSize,
+            courtSize: this._mainWindow.CourtSize,
+            calibrationCorners: this._mainWindow.CoordinateConverter.CalibrationCorners
+        );
+
         // Apply the vehicle specific configurations
         foreach (var vehicleConfigPair in this._mainWindow.Config.Vehicles)
         {
@@ -365,7 +362,6 @@ public partial class SettingsWindow : Form
 
         Thread thread = new Thread(this.ApplyConfig);
         thread.Start();
-        // this.ApplyConfig();
     }
 
     private void buttonLoad_Click(object sender, EventArgs e)
