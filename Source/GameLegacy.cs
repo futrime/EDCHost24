@@ -277,7 +277,7 @@ public class GameLegacy
         for (int i = 0; i < ordersRemain.Count; i++)
         {
             Order order = ordersRemain[i];
-            if (order.Status == Order.StatusType.Pending && Dot.Distance(order.DeparturePosition, vehiclePosition) <= OrderRadius &&
+            if (order.Status == OrderStatusType.Pending && Dot.Distance(order.DeparturePosition, vehiclePosition) <= OrderRadius &&
                 deliveringOrder.Count < MaxDeliveringOrderNumber && parkingDuration >= MinTakeOrdersTime)
             {
                 order.Take(this.GameTime);
@@ -288,7 +288,7 @@ public class GameLegacy
                 this._score[this._camp] += TakeOrderScore;
 
                 // 拾取后改变order的status
-                order.Status = Order.StatusType.InDelivery;
+                order.Status = OrderStatusType.InDelivery;
 
                 // play sound
                 _takeOrderSound.Load();
@@ -308,7 +308,7 @@ public class GameLegacy
         for (int i = 0; i < deliveringOrder.Count; i++)
         {
             Order order = deliveringOrder[i];
-            if (order.Status == Order.StatusType.InDelivery && Dot.Distance(order.DestinationPosition, vehiclePosition) <= OrderRadius &&
+            if (order.Status == OrderStatusType.InDelivery && Dot.Distance(order.DestinationPosition, vehiclePosition) <= OrderRadius &&
                 parkingDuration >= MinDeliverOrdersTime)
             {
                 order.Deliver(this.GameTime);
@@ -317,7 +317,7 @@ public class GameLegacy
                 this._score[this._camp] += DeliverOrderScore;
 
                 // 拾取后改变order的status
-                order.Status = Order.StatusType.Delivered;
+                order.Status = OrderStatusType.Delivered;
                 _deliverOrderSound.Load();
                 _deliverOrderSound.Play();
                 break;
@@ -430,15 +430,15 @@ public class GameLegacy
             // Check if the new barrier is valid: Every Barrier should be away from the others.
             bool AwayFromBarriers(Barrier targetBarrier, List<Barrier> barrierList)
             {
-                int centerX = (targetBarrier.TopLeftPosition.x + targetBarrier.BottomRightPosition.x) / 2;
-                int centerY = (targetBarrier.TopLeftPosition.y + targetBarrier.BottomRightPosition.y) / 2;
+                int centerX = (targetBarrier.TopLeftPosition.X + targetBarrier.BottomRightPosition.X) / 2;
+                int centerY = (targetBarrier.TopLeftPosition.Y + targetBarrier.BottomRightPosition.Y) / 2;
 
                 foreach (Barrier barrier in barrierList)
                 {
                     if (barrier != null)
                     {
-                        int currentCenterX = (barrier.TopLeftPosition.x + barrier.BottomRightPosition.x) / 2;
-                        int currentCenterY = (barrier.TopLeftPosition.y + barrier.BottomRightPosition.y) / 2;
+                        int currentCenterX = (barrier.TopLeftPosition.X + barrier.BottomRightPosition.X) / 2;
+                        int currentCenterY = (barrier.TopLeftPosition.Y + barrier.BottomRightPosition.Y) / 2;
 
                         //判断与障碍物的距离
                         if (Dot.Distance(new Dot(currentCenterX, currentCenterY), new Dot(centerX, centerY)) < MinDistanceBetweenBarriers)
@@ -467,21 +467,21 @@ public class GameLegacy
         // Generate walls  不得不分开处理，循环实在不好写
         this._wallList = new List<Barrier>();
         //左上竖墙
-        this._wallList.Add(new Barrier(new Dot(CoreArea.TopLeft.x - WallWidth, CoreArea.TopLeft.y - WallWidth), new Dot(CoreArea.TopLeft.x, CoreArea.TopLeft.y + WallLength - WallWidth)));
+        this._wallList.Add(new Barrier(new Dot(CoreArea.TopLeft.X - WallWidth, CoreArea.TopLeft.Y - WallWidth), new Dot(CoreArea.TopLeft.X, CoreArea.TopLeft.Y + WallLength - WallWidth)));
         //左上横墙
-        this._wallList.Add(new Barrier(new Dot(CoreArea.TopLeft.x - WallWidth, CoreArea.TopLeft.y - WallWidth), new Dot(CoreArea.TopLeft.x + WallLength - WallWidth, CoreArea.TopLeft.y)));
+        this._wallList.Add(new Barrier(new Dot(CoreArea.TopLeft.X - WallWidth, CoreArea.TopLeft.Y - WallWidth), new Dot(CoreArea.TopLeft.X + WallLength - WallWidth, CoreArea.TopLeft.Y)));
         //右上竖墙
-        this._wallList.Add(new Barrier(new Dot(CoreArea.BottomRight.x, CoreArea.TopLeft.y - WallWidth), new Dot(CoreArea.BottomRight.x + WallWidth, CoreArea.TopLeft.y + WallLength - WallWidth)));
+        this._wallList.Add(new Barrier(new Dot(CoreArea.BottomRight.X, CoreArea.TopLeft.Y - WallWidth), new Dot(CoreArea.BottomRight.X + WallWidth, CoreArea.TopLeft.Y + WallLength - WallWidth)));
         //右上横墙
-        this._wallList.Add(new Barrier(new Dot(CoreArea.BottomRight.x - WallLength + WallWidth, CoreArea.TopLeft.y - WallWidth), new Dot(CoreArea.BottomRight.x + WallWidth, CoreArea.TopLeft.y)));
+        this._wallList.Add(new Barrier(new Dot(CoreArea.BottomRight.X - WallLength + WallWidth, CoreArea.TopLeft.Y - WallWidth), new Dot(CoreArea.BottomRight.X + WallWidth, CoreArea.TopLeft.Y)));
         //左下竖墙
-        this._wallList.Add(new Barrier(new Dot(CoreArea.TopLeft.x - WallWidth, CoreArea.BottomRight.y - WallLength + WallWidth), new Dot(CoreArea.TopLeft.x, CoreArea.BottomRight.y + WallWidth)));
+        this._wallList.Add(new Barrier(new Dot(CoreArea.TopLeft.X - WallWidth, CoreArea.BottomRight.Y - WallLength + WallWidth), new Dot(CoreArea.TopLeft.X, CoreArea.BottomRight.Y + WallWidth)));
         //左下横墙
-        this._wallList.Add(new Barrier(new Dot(CoreArea.TopLeft.x - WallWidth, CoreArea.BottomRight.y), new Dot(CoreArea.TopLeft.x + WallLength - WallWidth, CoreArea.BottomRight.y + WallWidth)));
+        this._wallList.Add(new Barrier(new Dot(CoreArea.TopLeft.X - WallWidth, CoreArea.BottomRight.Y), new Dot(CoreArea.TopLeft.X + WallLength - WallWidth, CoreArea.BottomRight.Y + WallWidth)));
         //右下竖墙
-        this._wallList.Add(new Barrier(new Dot(CoreArea.BottomRight.x, CoreArea.BottomRight.y - WallLength + WallWidth), new Dot(CoreArea.BottomRight.x + WallWidth, CoreArea.BottomRight.y + WallWidth)));
+        this._wallList.Add(new Barrier(new Dot(CoreArea.BottomRight.X, CoreArea.BottomRight.Y - WallLength + WallWidth), new Dot(CoreArea.BottomRight.X + WallWidth, CoreArea.BottomRight.Y + WallWidth)));
         //右下横墙
-        this._wallList.Add(new Barrier(new Dot(CoreArea.BottomRight.x - WallLength + WallWidth, CoreArea.BottomRight.y), new Dot(CoreArea.BottomRight.x + WallWidth, CoreArea.BottomRight.y + WallWidth)));
+        this._wallList.Add(new Barrier(new Dot(CoreArea.BottomRight.X - WallLength + WallWidth, CoreArea.BottomRight.Y), new Dot(CoreArea.BottomRight.X + WallWidth, CoreArea.BottomRight.Y + WallWidth)));
 
     }
 

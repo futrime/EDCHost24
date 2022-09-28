@@ -78,9 +78,9 @@ public class PacketGetStatusInformationHost : Packet
         this._currentScore = BitConverter.ToInt32(data, currentIndex);
         currentIndex += 4;
         // car
-        this._carPos.x = BitConverter.ToInt32(data, currentIndex);
+        this._carPos.X = BitConverter.ToInt32(data, currentIndex);
         currentIndex += 4;
-        this._carPos.y = BitConverter.ToInt32(data, currentIndex);
+        this._carPos.Y = BitConverter.ToInt32(data, currentIndex);
         currentIndex += 4;
         // mileage
         this._mileage = BitConverter.ToInt32(data, currentIndex);
@@ -140,9 +140,9 @@ public class PacketGetStatusInformationHost : Packet
         currentIndex += 4;
 
         // carPos
-        BitConverter.GetBytes(this._carPos.x).CopyTo(data, currentIndex);
+        BitConverter.GetBytes(this._carPos.X).CopyTo(data, currentIndex);
         currentIndex += 4;
-        BitConverter.GetBytes(this._carPos.y).CopyTo(data, currentIndex);
+        BitConverter.GetBytes(this._carPos.Y).CopyTo(data, currentIndex);
         currentIndex += 4;
 
         // mileage
@@ -157,15 +157,15 @@ public class PacketGetStatusInformationHost : Packet
         foreach (Order order in this._orderList)
         {
             // Departure Position
-            BitConverter.GetBytes(order.DeparturePosition.x).CopyTo(data, currentIndex);
+            BitConverter.GetBytes(order.DeparturePosition.X).CopyTo(data, currentIndex);
             currentIndex += 4;
-            BitConverter.GetBytes(order.DeparturePosition.y).CopyTo(data, currentIndex);
+            BitConverter.GetBytes(order.DeparturePosition.Y).CopyTo(data, currentIndex);
             currentIndex += 4;
 
             // Destination Position
-            BitConverter.GetBytes(order.DestinationPosition.x).CopyTo(data, currentIndex);
+            BitConverter.GetBytes(order.DestinationPosition.X).CopyTo(data, currentIndex);
             currentIndex += 4;
-            BitConverter.GetBytes(order.DestinationPosition.y).CopyTo(data, currentIndex);
+            BitConverter.GetBytes(order.DestinationPosition.Y).CopyTo(data, currentIndex);
             currentIndex += 4;
 
             // Scheduled time
@@ -176,14 +176,14 @@ public class PacketGetStatusInformationHost : Packet
             bool isTaken = false;
             switch (order.Status)
             {
-                case Order.StatusType.Pending:
-                case Order.StatusType.Ungenerated:
+                case OrderStatusType.Pending:
+                case OrderStatusType.Ungenerated:
                     isTaken = false;
                     break;
-                case Order.StatusType.InDelivery:
+                case OrderStatusType.InDelivery:
                     isTaken = true;
                     break;
-                // Error: Order.StatusType.Delivered
+                // Error: OrderStatusType.Delivered
                 default:
                     throw new Exception("Input delivered orders to the PacketGetStatusInformationHost!");
             }

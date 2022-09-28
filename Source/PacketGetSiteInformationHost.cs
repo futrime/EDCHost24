@@ -124,10 +124,10 @@ public class PacketGetSiteInformationHost : Packet
         for (int i = 0; i < this._obstacleListLength; i++)
         {
             // 2 Dots —— 16 Bytes per Obstacle
-            BitConverter.GetBytes(this._obstacleList[i].TopLeftPosition.x).CopyTo(data, currentIndex);
-            BitConverter.GetBytes(this._obstacleList[i].TopLeftPosition.y).CopyTo(data, currentIndex + 4);
-            BitConverter.GetBytes(this._obstacleList[i].BottomRightPosition.x).CopyTo(data, currentIndex + 8);
-            BitConverter.GetBytes(this._obstacleList[i].BottomRightPosition.y).CopyTo(data, currentIndex + 12);
+            BitConverter.GetBytes(this._obstacleList[i].TopLeftPosition.X).CopyTo(data, currentIndex);
+            BitConverter.GetBytes(this._obstacleList[i].TopLeftPosition.Y).CopyTo(data, currentIndex + 4);
+            BitConverter.GetBytes(this._obstacleList[i].BottomRightPosition.X).CopyTo(data, currentIndex + 8);
+            BitConverter.GetBytes(this._obstacleList[i].BottomRightPosition.Y).CopyTo(data, currentIndex + 12);
             currentIndex += 4 * 4;
         }
 

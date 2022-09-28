@@ -30,7 +30,7 @@ public partial class MainWindow : Form
                 CampType.A,
                 new ConfigType.PerVehicleConfigType
                 {
-                    Locator = new Locator.ConfigType
+                    Locator = new LocatorConfigType
                     {
                         Hue = (0, 40),
                         Saturation = (100, 255),
@@ -46,7 +46,7 @@ public partial class MainWindow : Form
                 CampType.B,
                 new ConfigType.PerVehicleConfigType
                 {
-                    Locator = new Locator.ConfigType
+                    Locator = new LocatorConfigType
                     {
                         Hue = (0, 40),
                         Saturation = (100, 255),
@@ -460,7 +460,7 @@ public partial class MainWindow : Form
 
             foreach (Order order in _game.AllOrderList)
             {
-                if (order.Status == Order.StatusType.Pending)
+                if (order.Status == OrderStatusType.Pending)
                 {
                     this.DrawIcon(
                         image: ref image,
@@ -468,7 +468,7 @@ public partial class MainWindow : Form
                         position: (Point2i)this._coordinateConverter.CourtToMonitor(order.DeparturePosition.ToPoint())
                     );
                 }
-                else if (order.Status == Order.StatusType.InDelivery)
+                else if (order.Status == OrderStatusType.InDelivery)
                 {
                     this.DrawIcon(
                         image: ref image,
@@ -528,9 +528,9 @@ public partial class MainWindow : Form
     {
         Point2f[] cornerInCourtCoordinateList = {
             barrier.TopLeftPosition.ToPoint(),
-            new Point2f(barrier.TopLeftPosition.x, barrier.BottomRightPosition.y),
+            new Point2f(barrier.TopLeftPosition.X, barrier.BottomRightPosition.Y),
             barrier.BottomRightPosition.ToPoint(),
-            new Point2f(barrier.BottomRightPosition.x, barrier.TopLeftPosition.y),
+            new Point2f(barrier.BottomRightPosition.X, barrier.TopLeftPosition.Y),
         };
 
         var cornerInMonitorCoordinateList = this._coordinateConverter.CourtToMonitor(cornerInCourtCoordinateList);

@@ -7,34 +7,6 @@ namespace EdcHost;
 /// </summary>
 public class Order
 {
-    #region Types
-
-    /// <summary>
-    /// The order status enum type
-    /// </summary>
-    public enum StatusType
-    {
-        /// <summary>
-        /// The order is not generated.
-        /// </summary>
-        Ungenerated,
-        /// <summary>
-        /// The order is ready for picking up.
-        /// </summary>
-        Pending,
-        /// <summary>
-        /// The order is in delivery.
-        /// </summary>
-        InDelivery,
-        /// <summary>
-        /// The order is delivered.
-        /// </summary>
-        Delivered
-    }
-
-    #endregion
-
-
     #region Public properties
 
     /// <summary>
@@ -56,7 +28,7 @@ public class Order
     /// <summary>
     /// The order status
     /// </summary>
-    public StatusType Status
+    public OrderStatusType Status
     {
         get => this._status;
         set => this._status = value;
@@ -72,7 +44,7 @@ public class Order
     private long _deliveryTimeLimit;
     private long? _departureTime = null;
     private long? _deliveryTime = null;
-    private StatusType _status = StatusType.Ungenerated;
+    private OrderStatusType _status = OrderStatusType.Ungenerated;
 
     #endregion
 
@@ -95,12 +67,12 @@ public class Order
         var random = new Random((int)DateTime.Now.Ticks);
 
         var departurePosition = new Dot(
-            random.Next(area.TopLeft.x, area.BottomRight.x),
-            random.Next(area.TopLeft.y, area.BottomRight.y)
+            random.Next(area.TopLeft.X, area.BottomRight.X),
+            random.Next(area.TopLeft.Y, area.BottomRight.Y)
         );
         var destinationPosition = new Dot(
-            random.Next(area.TopLeft.x, area.BottomRight.x),
-            random.Next(area.TopLeft.y, area.BottomRight.y)
+            random.Next(area.TopLeft.X, area.BottomRight.X),
+            random.Next(area.TopLeft.Y, area.BottomRight.Y)
         );
         var generationTime = random.NextInt64(generationTimeRange.Lower, generationTimeRange.Upper);
         var timeLimit = random.NextInt64(timeLimitRange.Lower, timeLimitRange.Upper);
@@ -140,12 +112,12 @@ public class Order
     /// <param name="time">The current time</param>
     public void Deliver(long time)
     {
-        if (this._status != StatusType.InDelivery)
+        if (this._status != OrderStatusType.InDelivery)
         {
             throw new Exception("The order cannot be delivered.");
         }
 
-        this._status = StatusType.Delivered;
+        this._status = OrderStatusType.Delivered;
         this._deliveryTime = time;
     }
 
@@ -155,12 +127,12 @@ public class Order
     /// <param name="time">The current time</param>
     public void Take(long time)
     {
-        if (this._status != StatusType.Pending)
+        if (this._status != OrderStatusType.Pending)
         {
             throw new Exception("The order cannot be taken.");
         }
 
-        this._status = StatusType.InDelivery;
+        this._status = OrderStatusType.InDelivery;
         this._departureTime = time;
     }
 

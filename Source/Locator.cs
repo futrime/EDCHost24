@@ -7,22 +7,6 @@ namespace EdcHost;
 /// </summary>
 public class Locator
 {
-    #region Types
-
-    /// <summary>
-    /// The configuration type
-    /// </summary>
-    public struct ConfigType
-    {
-        public (int Min, int Max) Hue;
-        public (int Min, int Max) Saturation;
-        public (int Min, int Max) Value;
-        public decimal MinArea;
-    }
-
-    #endregion
-
-
     #region Public properties
 
     /// <summary>
@@ -133,7 +117,7 @@ public class Locator
 
     #region Private fields
 
-    private ConfigType _config;
+    private LocatorConfigType _config;
     private bool _showMask;
     private Point2f? _targetPosition = null;
 
@@ -149,7 +133,7 @@ public class Locator
     /// <param name="showMask">
     /// True if to show the mask
     /// </param>
-    public Locator(ConfigType config, bool showMask)
+    public Locator(LocatorConfigType config, bool showMask)
     {
         this._config = config;
         this._showMask = showMask;

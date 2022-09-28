@@ -13,6 +13,32 @@ public enum CampType
 };
 
 /// <summary>
+/// The configuration type
+/// </summary>
+public struct ConfigType
+{
+    public struct PerVehicleConfigType
+    {
+        public LocatorConfigType Locator;
+        public bool ShowMask;
+        public string SerialPort;
+        public int Baudrate;
+    }
+
+    public Dictionary<CampType, PerVehicleConfigType> Vehicles;
+    public int Camera;
+}
+
+/// <summary>
+/// The type of the distance between two dots.
+/// </summary>
+public enum DotDistanceType
+{
+    Euclidean,
+    Manhattan
+}
+
+/// <summary>
 /// The game stage type
 /// </summary>
 public enum GameStageType
@@ -62,16 +88,33 @@ public enum GameStateType
 /// <summary>
 /// The configuration type
 /// </summary>
-public struct ConfigType
+public struct LocatorConfigType
 {
-    public struct PerVehicleConfigType
-    {
-        public Locator.ConfigType Locator;
-        public bool ShowMask;
-        public string SerialPort;
-        public int Baudrate;
-    }
+    public (int Min, int Max) Hue;
+    public (int Min, int Max) Saturation;
+    public (int Min, int Max) Value;
+    public decimal MinArea;
+}
 
-    public Dictionary<CampType, PerVehicleConfigType> Vehicles;
-    public int Camera;
+/// <summary>
+/// The order status enum type
+/// </summary>
+public enum OrderStatusType
+{
+    /// <summary>
+    /// The order is not generated.
+    /// </summary>
+    Ungenerated,
+    /// <summary>
+    /// The order is ready for picking up.
+    /// </summary>
+    Pending,
+    /// <summary>
+    /// The order is in delivery.
+    /// </summary>
+    InDelivery,
+    /// <summary>
+    /// The order is delivered.
+    /// </summary>
+    Delivered
 }

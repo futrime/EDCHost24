@@ -39,8 +39,8 @@ public class Barrier
     {
         // Check if the area is valid
         if (
-            area.TopLeft.x >= area.BottomRight.x ||
-            area.TopLeft.y >= area.BottomRight.y
+            area.TopLeft.X >= area.BottomRight.X ||
+            area.TopLeft.Y >= area.BottomRight.Y
         )
         {
             throw new Exception("The area is invalid.");
@@ -48,8 +48,8 @@ public class Barrier
 
         // Check if the size range is valid
         if (
-            sizeRange.Min.x >= sizeRange.Max.x ||
-            sizeRange.Min.y >= sizeRange.Max.y
+            sizeRange.Min.X >= sizeRange.Max.X ||
+            sizeRange.Min.Y >= sizeRange.Max.Y
         )
         {
             throw new Exception("The size range is invalid.");
@@ -57,8 +57,8 @@ public class Barrier
 
         // Check if the area is large enough
         if (
-            area.TopLeft.x + sizeRange.Max.x > area.BottomRight.x ||
-            area.TopLeft.y + sizeRange.Max.y > area.BottomRight.y
+            area.TopLeft.X + sizeRange.Max.X > area.BottomRight.X ||
+            area.TopLeft.Y + sizeRange.Max.Y > area.BottomRight.Y
         )
         {
             throw new Exception("The area is too small to generate.");
@@ -69,18 +69,18 @@ public class Barrier
         // The size of the barrier
         // Note that the range for random.Next() is in [a, b) form.
         var size = new Dot(
-            random.Next(sizeRange.Min.x, sizeRange.Max.x + 1),
-            random.Next(sizeRange.Min.y, sizeRange.Max.y + 1)
+            random.Next(sizeRange.Min.X, sizeRange.Max.X + 1),
+            random.Next(sizeRange.Min.Y, sizeRange.Max.Y + 1)
         );
 
         var topLeftPosition = new Dot(
-            random.Next(area.TopLeft.x, area.BottomRight.x - size.x + 1),
-            random.Next(area.TopLeft.y, area.BottomRight.y - size.y + 1)
+            random.Next(area.TopLeft.X, area.BottomRight.X - size.X + 1),
+            random.Next(area.TopLeft.Y, area.BottomRight.Y - size.Y + 1)
         );
 
         var bottomRightPosition = new Dot(
-            topLeftPosition.x + size.x,
-            topLeftPosition.y + size.y
+            topLeftPosition.X + size.X,
+            topLeftPosition.Y + size.Y
         );
 
         return new Barrier(topLeftPosition, bottomRightPosition);
@@ -98,8 +98,8 @@ public class Barrier
     public Barrier(Dot topLeftPosition, Dot bottomRightPosition)
     {
         if (
-            topLeftPosition.x >= bottomRightPosition.x ||
-            topLeftPosition.y >= bottomRightPosition.y
+            topLeftPosition.X >= bottomRightPosition.X ||
+            topLeftPosition.Y >= bottomRightPosition.Y
         ) // If the area of the barrier is not positive
         {
             throw new Exception("The corners are invalid.");
@@ -118,10 +118,10 @@ public class Barrier
     /// </returns>
     public bool IsIn(Dot position)
     {
-        if (position.x >= this._topLeftPosition.x &&
-            position.y >= this._topLeftPosition.y &&
-            position.x <= this._bottomRightPosition.x &&
-            position.y <= this._bottomRightPosition.y
+        if (position.X >= this._topLeftPosition.X &&
+            position.Y >= this._topLeftPosition.Y &&
+            position.X <= this._bottomRightPosition.X &&
+            position.Y <= this._bottomRightPosition.Y
         )
         {
             return true;

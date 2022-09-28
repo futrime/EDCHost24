@@ -192,7 +192,7 @@ public partial class SettingsWindow : Form
                     CampType.A,
                     new ConfigType.PerVehicleConfigType
                     {
-                        Locator = new Locator.ConfigType
+                        Locator = new LocatorConfigType
                         {
                             Hue = (
                                 (int)this.numericUpDownHueLowerVehicleA.Value,
@@ -217,7 +217,7 @@ public partial class SettingsWindow : Form
                     CampType.B,
                     new ConfigType.PerVehicleConfigType
                     {
-                        Locator = new Locator.ConfigType
+                        Locator = new LocatorConfigType
                         {
                             Hue = (
                                 (int)this.numericUpDownHueLowerVehicleB.Value,

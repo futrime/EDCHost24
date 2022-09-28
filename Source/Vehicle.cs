@@ -42,7 +42,11 @@ public class Vehicle
 
             for (int i = 1; i < this._path.Count; ++i)
             {
-                distance += Dot.Distance(this._path[i - 1], this._path[i]);
+                distance += (int)Dot.Distance(
+                    this._path[i - 1],
+                    this._path[i],
+                    distanceType: DotDistanceType.Manhattan
+                );
             }
 
             // The distance should not exceed the max distance.

@@ -11,7 +11,7 @@ public class Dot
     /// <summary>
     /// The x-coordinate of the dot
     /// </summary>
-    public int x
+    public int X
     {
         get => this._x;
         set => this._x = value;
@@ -19,7 +19,7 @@ public class Dot
     /// <summary>
     /// The y-coordinate of the dot
     /// </summary>
-    public int y
+    public int Y
     {
         get => this._y;
         set => this._y = value;
@@ -34,10 +34,32 @@ public class Dot
     /// </summary>
     /// <param name="A"></param>
     /// <param name="B"></param>
-    /// <returns>The distance</returns>
-    public static int Distance(Dot A, Dot B)
+    /// <returns>
+    /// The distance. Null if the distance type is wrong.
+    /// </returns>
+    public static int? Distance(
+        Dot A,
+        Dot B,
+        DotDistanceType distanceType = DotDistanceType.Euclidean
+    )
     {
-        return Math.Abs(A.x - B.x) + Math.Abs(A.y - B.y);
+        switch (distanceType)
+        {
+            case DotDistanceType.Euclidean:
+                return (int)Math.Sqrt(
+                    Math.Pow(A.X - B.X, 2) +
+                    Math.Pow(A.Y - B.Y, 2)
+                );
+
+            case DotDistanceType.Manhattan:
+                return (
+                    Math.Abs(A.X - B.X) +
+                    Math.Abs(A.Y - B.Y)
+                );
+
+            default:
+                return null;
+        }
     }
 
     public Dot(int x, int y)
@@ -54,7 +76,7 @@ public class Dot
 
     public static bool operator ==(Dot a, Dot b)
     {
-        return (a.x == b.x) && (a.y == b.y);
+        return (a.X == b.X) && (a.Y == b.Y);
     }
 
     public static bool operator !=(Dot a, Dot b)

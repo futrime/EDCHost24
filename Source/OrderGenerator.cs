@@ -80,7 +80,7 @@ public class OrderGenerator
         var order = this._orderList[this._nextGeneratedOrderIndex];
         ++this._nextGeneratedOrderIndex;
 
-        order.Status = Order.StatusType.Pending;
+        order.Status = OrderStatusType.Pending;
 
         return order;
     }
