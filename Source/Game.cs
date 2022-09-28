@@ -366,11 +366,12 @@ public class Game
     /// <param name="lastParkingDuration">The parking time in last frame</param>
     private void ParkingPenalty(Dot vehiclePosition, long? parkingDuration, long? lastParkingDuration)
     {
-        if (parkingDuration / MaxParkingTime != lastParkingDuration / MaxParkingTime &&
-            !IsInChargingPileInfluenceScope(this._camp, vehiclePosition))
-        {
-            this._score[this._camp] -= LongParkingPenalty;
-        }
+        if (parkingDuration != null && lastParkingDuration != null)
+            if (parkingDuration / MaxParkingTime != lastParkingDuration / MaxParkingTime &&
+                !IsInChargingPileInfluenceScope(this._camp, vehiclePosition))
+            {
+                this._score[this._camp] -= LongParkingPenalty;
+            }
     }
     // decide which team and stage is going on
     public void Start(CampType _camp, GameStageType _GameStage)
