@@ -33,7 +33,8 @@ public class Game
     );
 
     // Parameters for orders
-    public const int MaxOrderNumber = 20;
+    public const int MaxOrderNumberFisrtHalf = 20;
+    public const int MaxOrderNumberSecondHalf = 60;
     public const int MaxDeliveringOrderNumber = 5;
     public const int MinDeliveryTime = 20;
     public const int MaxDeliveryTime = 60;
@@ -164,6 +165,7 @@ public class Game
         {{CampType.A,0},
          {CampType.B,0}};
 
+    private int _maxOrderNumber;
     private OrderGenerator _orderGenerator;
     private List<Order> _allOrderList;
     private List<Order> _pendingOrderList = new List<Order>();
@@ -353,10 +355,22 @@ public class Game
         // this._vehicle[CampType.A].Reset();
         // this._vehicle[CampType.B].Reset();
 
+        if (GameStage == GameStageType.FirstHalf)
+        {
+            this._gameDuration = GameDurationFirstHalf;
+            this._maxOrderNumber = MaxOrderNumberFisrtHalf;
+        }
+        else if (GameStage == GameStageType.SecondHalf)
+        {
+            this._gameDuration = GameDurationSecondHalf;
+            this._maxOrderNumber = MaxOrderNumberSecondHalf;
+
+        }
+
         if (this._camp == CampType.A)
         {
             // Initial orders on the field, which is only implemented per half game
-            this._orderGenerator = new OrderGenerator(MaxOrderNumber, CoreArea,
+            this._orderGenerator = new OrderGenerator(this._maxOrderNumber, CoreArea,
                                     (0, _gameDuration), (MinDeliveryTime, MaxDeliveryTime), out _allOrderList);
         }
         else if (this._camp == CampType.B)
@@ -364,14 +378,7 @@ public class Game
             this._orderGenerator.Reset();
         }
 
-        if (GameStage == GameStageType.FirstHalf)
-        {
-            this._gameDuration = GameDurationFirstHalf;
-        }
-        else if (GameStage == GameStageType.SecondHalf)
-        {
-            this._gameDuration = GameDurationSecondHalf;
-        }
+
 
         this._startTime = this.SystemTime;
 
