@@ -30,46 +30,46 @@ partial class SettingsWindow
     {
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.comboBoxVehicleABaudrate = new System.Windows.Forms.ComboBox();
+            this.comboBoxBaudrateVehicleA = new System.Windows.Forms.ComboBox();
             this.label10 = new System.Windows.Forms.Label();
-            this.comboBoxVehicleASerialPort = new System.Windows.Forms.ComboBox();
+            this.comboBoxSerialPortVehicleA = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
-            this.checkBoxVehicleAShowMask = new System.Windows.Forms.CheckBox();
-            this.numericUpDownVehicleAMinimumArea = new System.Windows.Forms.NumericUpDown();
+            this.checkBoxShowMaskVehicleA = new System.Windows.Forms.CheckBox();
+            this.numericUpDownMinimumAreaVehicleA = new System.Windows.Forms.NumericUpDown();
             this.label9 = new System.Windows.Forms.Label();
-            this.numericUpDownVehicleAValueUpper = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDownValueUpperVehicleA = new System.Windows.Forms.NumericUpDown();
             this.label6 = new System.Windows.Forms.Label();
-            this.numericUpDownVehicleAValueLower = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDownValueLowerVehicleA = new System.Windows.Forms.NumericUpDown();
             this.label7 = new System.Windows.Forms.Label();
-            this.numericUpDownVehicleASaturationUpper = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDownSaturationUpperVehicleA = new System.Windows.Forms.NumericUpDown();
             this.label4 = new System.Windows.Forms.Label();
-            this.numericUpDownVehicleASaturationLower = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDownSaturationLowerVehicleA = new System.Windows.Forms.NumericUpDown();
             this.label5 = new System.Windows.Forms.Label();
-            this.numericUpDownVehicleAHueUpper = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDownHueUpperVehicleA = new System.Windows.Forms.NumericUpDown();
             this.label3 = new System.Windows.Forms.Label();
-            this.numericUpDownVehicleAHueLower = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDownHueLowerVehicleA = new System.Windows.Forms.NumericUpDown();
             this.label2 = new System.Windows.Forms.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.comboBoxVehicleBBaudrate = new System.Windows.Forms.ComboBox();
+            this.comboBoxBaudrateVehicleB = new System.Windows.Forms.ComboBox();
             this.label12 = new System.Windows.Forms.Label();
-            this.comboBoxVehicleBSerialPort = new System.Windows.Forms.ComboBox();
+            this.comboBoxSerialPortVehicleB = new System.Windows.Forms.ComboBox();
             this.label13 = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
-            this.checkBoxVehicleBShowMask = new System.Windows.Forms.CheckBox();
-            this.numericUpDownVehicleBMinimumArea = new System.Windows.Forms.NumericUpDown();
+            this.checkBoxShowMaskVehicleB = new System.Windows.Forms.CheckBox();
+            this.numericUpDownMinimumAreaVehicleB = new System.Windows.Forms.NumericUpDown();
             this.label15 = new System.Windows.Forms.Label();
-            this.numericUpDownVehicleBValueUpper = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDownValueUpperVehicleB = new System.Windows.Forms.NumericUpDown();
             this.label16 = new System.Windows.Forms.Label();
-            this.numericUpDownVehicleBValueLower = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDownValueLowerVehicleB = new System.Windows.Forms.NumericUpDown();
             this.label17 = new System.Windows.Forms.Label();
-            this.numericUpDownVehicleBSaturationUpper = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDownSaturationUpperVehicleB = new System.Windows.Forms.NumericUpDown();
             this.label18 = new System.Windows.Forms.Label();
-            this.numericUpDownVehicleBSaturationLower = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDownSaturationLowerVehicleB = new System.Windows.Forms.NumericUpDown();
             this.label19 = new System.Windows.Forms.Label();
-            this.numericUpDownVehicleBHueUpper = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDownHueUpperVehicleB = new System.Windows.Forms.NumericUpDown();
             this.label20 = new System.Windows.Forms.Label();
-            this.numericUpDownVehicleBHueLower = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDownHueLowerVehicleB = new System.Windows.Forms.NumericUpDown();
             this.label21 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel2 = new System.Windows.Forms.Panel();
@@ -83,21 +83,21 @@ partial class SettingsWindow
             this.comboBoxCamera = new System.Windows.Forms.ComboBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownVehicleAMinimumArea)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownVehicleAValueUpper)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownVehicleAValueLower)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownVehicleASaturationUpper)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownVehicleASaturationLower)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownVehicleAHueUpper)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownVehicleAHueLower)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMinimumAreaVehicleA)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownValueUpperVehicleA)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownValueLowerVehicleA)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSaturationUpperVehicleA)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSaturationLowerVehicleA)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownHueUpperVehicleA)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownHueLowerVehicleA)).BeginInit();
             this.tabPage2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownVehicleBMinimumArea)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownVehicleBValueUpper)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownVehicleBValueLower)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownVehicleBSaturationUpper)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownVehicleBSaturationLower)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownVehicleBHueUpper)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownVehicleBHueLower)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMinimumAreaVehicleB)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownValueUpperVehicleB)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownValueLowerVehicleB)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSaturationUpperVehicleB)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSaturationLowerVehicleB)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownHueUpperVehicleB)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownHueLowerVehicleB)).BeginInit();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.SuspendLayout();
@@ -115,25 +115,25 @@ partial class SettingsWindow
             // 
             // tabPage1
             // 
-            this.tabPage1.Controls.Add(this.comboBoxVehicleABaudrate);
+            this.tabPage1.Controls.Add(this.comboBoxBaudrateVehicleA);
             this.tabPage1.Controls.Add(this.label10);
-            this.tabPage1.Controls.Add(this.comboBoxVehicleASerialPort);
+            this.tabPage1.Controls.Add(this.comboBoxSerialPortVehicleA);
             this.tabPage1.Controls.Add(this.label1);
             this.tabPage1.Controls.Add(this.label8);
-            this.tabPage1.Controls.Add(this.checkBoxVehicleAShowMask);
-            this.tabPage1.Controls.Add(this.numericUpDownVehicleAMinimumArea);
+            this.tabPage1.Controls.Add(this.checkBoxShowMaskVehicleA);
+            this.tabPage1.Controls.Add(this.numericUpDownMinimumAreaVehicleA);
             this.tabPage1.Controls.Add(this.label9);
-            this.tabPage1.Controls.Add(this.numericUpDownVehicleAValueUpper);
+            this.tabPage1.Controls.Add(this.numericUpDownValueUpperVehicleA);
             this.tabPage1.Controls.Add(this.label6);
-            this.tabPage1.Controls.Add(this.numericUpDownVehicleAValueLower);
+            this.tabPage1.Controls.Add(this.numericUpDownValueLowerVehicleA);
             this.tabPage1.Controls.Add(this.label7);
-            this.tabPage1.Controls.Add(this.numericUpDownVehicleASaturationUpper);
+            this.tabPage1.Controls.Add(this.numericUpDownSaturationUpperVehicleA);
             this.tabPage1.Controls.Add(this.label4);
-            this.tabPage1.Controls.Add(this.numericUpDownVehicleASaturationLower);
+            this.tabPage1.Controls.Add(this.numericUpDownSaturationLowerVehicleA);
             this.tabPage1.Controls.Add(this.label5);
-            this.tabPage1.Controls.Add(this.numericUpDownVehicleAHueUpper);
+            this.tabPage1.Controls.Add(this.numericUpDownHueUpperVehicleA);
             this.tabPage1.Controls.Add(this.label3);
-            this.tabPage1.Controls.Add(this.numericUpDownVehicleAHueLower);
+            this.tabPage1.Controls.Add(this.numericUpDownHueLowerVehicleA);
             this.tabPage1.Controls.Add(this.label2);
             this.tabPage1.Location = new System.Drawing.Point(4, 24);
             this.tabPage1.Name = "tabPage1";
@@ -145,9 +145,9 @@ partial class SettingsWindow
             // 
             // comboBoxVehicleABaudrate
             // 
-            this.comboBoxVehicleABaudrate.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBoxVehicleABaudrate.FormattingEnabled = true;
-            this.comboBoxVehicleABaudrate.Items.AddRange(new object[] {
+            this.comboBoxBaudrateVehicleA.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxBaudrateVehicleA.FormattingEnabled = true;
+            this.comboBoxBaudrateVehicleA.Items.AddRange(new object[] {
             "110",
             "300",
             "1200",
@@ -158,10 +158,10 @@ partial class SettingsWindow
             "38400",
             "57600",
             "115200"});
-            this.comboBoxVehicleABaudrate.Location = new System.Drawing.Point(120, 234);
-            this.comboBoxVehicleABaudrate.Name = "comboBoxVehicleABaudrate";
-            this.comboBoxVehicleABaudrate.Size = new System.Drawing.Size(139, 23);
-            this.comboBoxVehicleABaudrate.TabIndex = 40;
+            this.comboBoxBaudrateVehicleA.Location = new System.Drawing.Point(120, 234);
+            this.comboBoxBaudrateVehicleA.Name = "comboBoxVehicleABaudrate";
+            this.comboBoxBaudrateVehicleA.Size = new System.Drawing.Size(139, 23);
+            this.comboBoxBaudrateVehicleA.TabIndex = 40;
             // 
             // label10
             // 
@@ -174,12 +174,12 @@ partial class SettingsWindow
             // 
             // comboBoxVehicleASerialPort
             // 
-            this.comboBoxVehicleASerialPort.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBoxVehicleASerialPort.FormattingEnabled = true;
-            this.comboBoxVehicleASerialPort.Location = new System.Drawing.Point(120, 196);
-            this.comboBoxVehicleASerialPort.Name = "comboBoxVehicleASerialPort";
-            this.comboBoxVehicleASerialPort.Size = new System.Drawing.Size(139, 23);
-            this.comboBoxVehicleASerialPort.TabIndex = 38;
+            this.comboBoxSerialPortVehicleA.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxSerialPortVehicleA.FormattingEnabled = true;
+            this.comboBoxSerialPortVehicleA.Location = new System.Drawing.Point(120, 196);
+            this.comboBoxSerialPortVehicleA.Name = "comboBoxVehicleASerialPort";
+            this.comboBoxSerialPortVehicleA.Size = new System.Drawing.Size(139, 23);
+            this.comboBoxSerialPortVehicleA.TabIndex = 38;
             // 
             // label1
             // 
@@ -201,24 +201,24 @@ partial class SettingsWindow
             // 
             // checkBoxVehicleAShowMask
             // 
-            this.checkBoxVehicleAShowMask.AutoSize = true;
-            this.checkBoxVehicleAShowMask.Location = new System.Drawing.Point(120, 163);
-            this.checkBoxVehicleAShowMask.Name = "checkBoxVehicleAShowMask";
-            this.checkBoxVehicleAShowMask.Size = new System.Drawing.Size(15, 14);
-            this.checkBoxVehicleAShowMask.TabIndex = 35;
-            this.checkBoxVehicleAShowMask.UseVisualStyleBackColor = true;
+            this.checkBoxShowMaskVehicleA.AutoSize = true;
+            this.checkBoxShowMaskVehicleA.Location = new System.Drawing.Point(120, 163);
+            this.checkBoxShowMaskVehicleA.Name = "checkBoxVehicleAShowMask";
+            this.checkBoxShowMaskVehicleA.Size = new System.Drawing.Size(15, 14);
+            this.checkBoxShowMaskVehicleA.TabIndex = 35;
+            this.checkBoxShowMaskVehicleA.UseVisualStyleBackColor = true;
             // 
             // numericUpDownVehicleAMinimumArea
             // 
-            this.numericUpDownVehicleAMinimumArea.Location = new System.Drawing.Point(120, 126);
-            this.numericUpDownVehicleAMinimumArea.Maximum = new decimal(new int[] {
+            this.numericUpDownMinimumAreaVehicleA.Location = new System.Drawing.Point(120, 126);
+            this.numericUpDownMinimumAreaVehicleA.Maximum = new decimal(new int[] {
             999999,
             0,
             0,
             0});
-            this.numericUpDownVehicleAMinimumArea.Name = "numericUpDownVehicleAMinimumArea";
-            this.numericUpDownVehicleAMinimumArea.Size = new System.Drawing.Size(56, 23);
-            this.numericUpDownVehicleAMinimumArea.TabIndex = 34;
+            this.numericUpDownMinimumAreaVehicleA.Name = "numericUpDownVehicleAMinimumArea";
+            this.numericUpDownMinimumAreaVehicleA.Size = new System.Drawing.Size(56, 23);
+            this.numericUpDownMinimumAreaVehicleA.TabIndex = 34;
             // 
             // label9
             // 
@@ -231,15 +231,15 @@ partial class SettingsWindow
             // 
             // numericUpDownVehicleAValueUpper
             // 
-            this.numericUpDownVehicleAValueUpper.Location = new System.Drawing.Point(203, 89);
-            this.numericUpDownVehicleAValueUpper.Maximum = new decimal(new int[] {
+            this.numericUpDownValueUpperVehicleA.Location = new System.Drawing.Point(203, 89);
+            this.numericUpDownValueUpperVehicleA.Maximum = new decimal(new int[] {
             255,
             0,
             0,
             0});
-            this.numericUpDownVehicleAValueUpper.Name = "numericUpDownVehicleAValueUpper";
-            this.numericUpDownVehicleAValueUpper.Size = new System.Drawing.Size(56, 23);
-            this.numericUpDownVehicleAValueUpper.TabIndex = 32;
+            this.numericUpDownValueUpperVehicleA.Name = "numericUpDownVehicleAValueUpper";
+            this.numericUpDownValueUpperVehicleA.Size = new System.Drawing.Size(56, 23);
+            this.numericUpDownValueUpperVehicleA.TabIndex = 32;
             // 
             // label6
             // 
@@ -252,15 +252,15 @@ partial class SettingsWindow
             // 
             // numericUpDownVehicleAValueLower
             // 
-            this.numericUpDownVehicleAValueLower.Location = new System.Drawing.Point(120, 89);
-            this.numericUpDownVehicleAValueLower.Maximum = new decimal(new int[] {
+            this.numericUpDownValueLowerVehicleA.Location = new System.Drawing.Point(120, 89);
+            this.numericUpDownValueLowerVehicleA.Maximum = new decimal(new int[] {
             255,
             0,
             0,
             0});
-            this.numericUpDownVehicleAValueLower.Name = "numericUpDownVehicleAValueLower";
-            this.numericUpDownVehicleAValueLower.Size = new System.Drawing.Size(56, 23);
-            this.numericUpDownVehicleAValueLower.TabIndex = 30;
+            this.numericUpDownValueLowerVehicleA.Name = "numericUpDownVehicleAValueLower";
+            this.numericUpDownValueLowerVehicleA.Size = new System.Drawing.Size(56, 23);
+            this.numericUpDownValueLowerVehicleA.TabIndex = 30;
             // 
             // label7
             // 
@@ -273,15 +273,15 @@ partial class SettingsWindow
             // 
             // numericUpDownVehicleASaturationUpper
             // 
-            this.numericUpDownVehicleASaturationUpper.Location = new System.Drawing.Point(203, 53);
-            this.numericUpDownVehicleASaturationUpper.Maximum = new decimal(new int[] {
+            this.numericUpDownSaturationUpperVehicleA.Location = new System.Drawing.Point(203, 53);
+            this.numericUpDownSaturationUpperVehicleA.Maximum = new decimal(new int[] {
             255,
             0,
             0,
             0});
-            this.numericUpDownVehicleASaturationUpper.Name = "numericUpDownVehicleASaturationUpper";
-            this.numericUpDownVehicleASaturationUpper.Size = new System.Drawing.Size(56, 23);
-            this.numericUpDownVehicleASaturationUpper.TabIndex = 28;
+            this.numericUpDownSaturationUpperVehicleA.Name = "numericUpDownVehicleASaturationUpper";
+            this.numericUpDownSaturationUpperVehicleA.Size = new System.Drawing.Size(56, 23);
+            this.numericUpDownSaturationUpperVehicleA.TabIndex = 28;
             // 
             // label4
             // 
@@ -294,15 +294,15 @@ partial class SettingsWindow
             // 
             // numericUpDownVehicleASaturationLower
             // 
-            this.numericUpDownVehicleASaturationLower.Location = new System.Drawing.Point(120, 53);
-            this.numericUpDownVehicleASaturationLower.Maximum = new decimal(new int[] {
+            this.numericUpDownSaturationLowerVehicleA.Location = new System.Drawing.Point(120, 53);
+            this.numericUpDownSaturationLowerVehicleA.Maximum = new decimal(new int[] {
             255,
             0,
             0,
             0});
-            this.numericUpDownVehicleASaturationLower.Name = "numericUpDownVehicleASaturationLower";
-            this.numericUpDownVehicleASaturationLower.Size = new System.Drawing.Size(56, 23);
-            this.numericUpDownVehicleASaturationLower.TabIndex = 26;
+            this.numericUpDownSaturationLowerVehicleA.Name = "numericUpDownVehicleASaturationLower";
+            this.numericUpDownSaturationLowerVehicleA.Size = new System.Drawing.Size(56, 23);
+            this.numericUpDownSaturationLowerVehicleA.TabIndex = 26;
             // 
             // label5
             // 
@@ -315,15 +315,15 @@ partial class SettingsWindow
             // 
             // numericUpDownVehicleAHueUpper
             // 
-            this.numericUpDownVehicleAHueUpper.Location = new System.Drawing.Point(203, 17);
-            this.numericUpDownVehicleAHueUpper.Maximum = new decimal(new int[] {
+            this.numericUpDownHueUpperVehicleA.Location = new System.Drawing.Point(203, 17);
+            this.numericUpDownHueUpperVehicleA.Maximum = new decimal(new int[] {
             255,
             0,
             0,
             0});
-            this.numericUpDownVehicleAHueUpper.Name = "numericUpDownVehicleAHueUpper";
-            this.numericUpDownVehicleAHueUpper.Size = new System.Drawing.Size(56, 23);
-            this.numericUpDownVehicleAHueUpper.TabIndex = 24;
+            this.numericUpDownHueUpperVehicleA.Name = "numericUpDownVehicleAHueUpper";
+            this.numericUpDownHueUpperVehicleA.Size = new System.Drawing.Size(56, 23);
+            this.numericUpDownHueUpperVehicleA.TabIndex = 24;
             // 
             // label3
             // 
@@ -336,15 +336,15 @@ partial class SettingsWindow
             // 
             // numericUpDownVehicleAHueLower
             // 
-            this.numericUpDownVehicleAHueLower.Location = new System.Drawing.Point(120, 17);
-            this.numericUpDownVehicleAHueLower.Maximum = new decimal(new int[] {
+            this.numericUpDownHueLowerVehicleA.Location = new System.Drawing.Point(120, 17);
+            this.numericUpDownHueLowerVehicleA.Maximum = new decimal(new int[] {
             255,
             0,
             0,
             0});
-            this.numericUpDownVehicleAHueLower.Name = "numericUpDownVehicleAHueLower";
-            this.numericUpDownVehicleAHueLower.Size = new System.Drawing.Size(56, 23);
-            this.numericUpDownVehicleAHueLower.TabIndex = 22;
+            this.numericUpDownHueLowerVehicleA.Name = "numericUpDownVehicleAHueLower";
+            this.numericUpDownHueLowerVehicleA.Size = new System.Drawing.Size(56, 23);
+            this.numericUpDownHueLowerVehicleA.TabIndex = 22;
             // 
             // label2
             // 
@@ -357,25 +357,25 @@ partial class SettingsWindow
             // 
             // tabPage2
             // 
-            this.tabPage2.Controls.Add(this.comboBoxVehicleBBaudrate);
+            this.tabPage2.Controls.Add(this.comboBoxBaudrateVehicleB);
             this.tabPage2.Controls.Add(this.label12);
-            this.tabPage2.Controls.Add(this.comboBoxVehicleBSerialPort);
+            this.tabPage2.Controls.Add(this.comboBoxSerialPortVehicleB);
             this.tabPage2.Controls.Add(this.label13);
             this.tabPage2.Controls.Add(this.label14);
-            this.tabPage2.Controls.Add(this.checkBoxVehicleBShowMask);
-            this.tabPage2.Controls.Add(this.numericUpDownVehicleBMinimumArea);
+            this.tabPage2.Controls.Add(this.checkBoxShowMaskVehicleB);
+            this.tabPage2.Controls.Add(this.numericUpDownMinimumAreaVehicleB);
             this.tabPage2.Controls.Add(this.label15);
-            this.tabPage2.Controls.Add(this.numericUpDownVehicleBValueUpper);
+            this.tabPage2.Controls.Add(this.numericUpDownValueUpperVehicleB);
             this.tabPage2.Controls.Add(this.label16);
-            this.tabPage2.Controls.Add(this.numericUpDownVehicleBValueLower);
+            this.tabPage2.Controls.Add(this.numericUpDownValueLowerVehicleB);
             this.tabPage2.Controls.Add(this.label17);
-            this.tabPage2.Controls.Add(this.numericUpDownVehicleBSaturationUpper);
+            this.tabPage2.Controls.Add(this.numericUpDownSaturationUpperVehicleB);
             this.tabPage2.Controls.Add(this.label18);
-            this.tabPage2.Controls.Add(this.numericUpDownVehicleBSaturationLower);
+            this.tabPage2.Controls.Add(this.numericUpDownSaturationLowerVehicleB);
             this.tabPage2.Controls.Add(this.label19);
-            this.tabPage2.Controls.Add(this.numericUpDownVehicleBHueUpper);
+            this.tabPage2.Controls.Add(this.numericUpDownHueUpperVehicleB);
             this.tabPage2.Controls.Add(this.label20);
-            this.tabPage2.Controls.Add(this.numericUpDownVehicleBHueLower);
+            this.tabPage2.Controls.Add(this.numericUpDownHueLowerVehicleB);
             this.tabPage2.Controls.Add(this.label21);
             this.tabPage2.Location = new System.Drawing.Point(4, 24);
             this.tabPage2.Name = "tabPage2";
@@ -387,9 +387,9 @@ partial class SettingsWindow
             // 
             // comboBoxVehicleBBaudrate
             // 
-            this.comboBoxVehicleBBaudrate.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBoxVehicleBBaudrate.FormattingEnabled = true;
-            this.comboBoxVehicleBBaudrate.Items.AddRange(new object[] {
+            this.comboBoxBaudrateVehicleB.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxBaudrateVehicleB.FormattingEnabled = true;
+            this.comboBoxBaudrateVehicleB.Items.AddRange(new object[] {
             "110",
             "300",
             "1200",
@@ -400,10 +400,10 @@ partial class SettingsWindow
             "38400",
             "57600",
             "115200"});
-            this.comboBoxVehicleBBaudrate.Location = new System.Drawing.Point(120, 234);
-            this.comboBoxVehicleBBaudrate.Name = "comboBoxVehicleBBaudrate";
-            this.comboBoxVehicleBBaudrate.Size = new System.Drawing.Size(139, 23);
-            this.comboBoxVehicleBBaudrate.TabIndex = 40;
+            this.comboBoxBaudrateVehicleB.Location = new System.Drawing.Point(120, 234);
+            this.comboBoxBaudrateVehicleB.Name = "comboBoxVehicleBBaudrate";
+            this.comboBoxBaudrateVehicleB.Size = new System.Drawing.Size(139, 23);
+            this.comboBoxBaudrateVehicleB.TabIndex = 40;
             // 
             // label12
             // 
@@ -416,12 +416,12 @@ partial class SettingsWindow
             // 
             // comboBoxVehicleBSerialPort
             // 
-            this.comboBoxVehicleBSerialPort.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBoxVehicleBSerialPort.FormattingEnabled = true;
-            this.comboBoxVehicleBSerialPort.Location = new System.Drawing.Point(120, 196);
-            this.comboBoxVehicleBSerialPort.Name = "comboBoxVehicleBSerialPort";
-            this.comboBoxVehicleBSerialPort.Size = new System.Drawing.Size(139, 23);
-            this.comboBoxVehicleBSerialPort.TabIndex = 38;
+            this.comboBoxSerialPortVehicleB.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxSerialPortVehicleB.FormattingEnabled = true;
+            this.comboBoxSerialPortVehicleB.Location = new System.Drawing.Point(120, 196);
+            this.comboBoxSerialPortVehicleB.Name = "comboBoxVehicleBSerialPort";
+            this.comboBoxSerialPortVehicleB.Size = new System.Drawing.Size(139, 23);
+            this.comboBoxSerialPortVehicleB.TabIndex = 38;
             // 
             // label13
             // 
@@ -443,19 +443,19 @@ partial class SettingsWindow
             // 
             // checkBoxVehicleBShowMask
             // 
-            this.checkBoxVehicleBShowMask.AutoSize = true;
-            this.checkBoxVehicleBShowMask.Location = new System.Drawing.Point(120, 163);
-            this.checkBoxVehicleBShowMask.Name = "checkBoxVehicleBShowMask";
-            this.checkBoxVehicleBShowMask.Size = new System.Drawing.Size(15, 14);
-            this.checkBoxVehicleBShowMask.TabIndex = 35;
-            this.checkBoxVehicleBShowMask.UseVisualStyleBackColor = true;
+            this.checkBoxShowMaskVehicleB.AutoSize = true;
+            this.checkBoxShowMaskVehicleB.Location = new System.Drawing.Point(120, 163);
+            this.checkBoxShowMaskVehicleB.Name = "checkBoxVehicleBShowMask";
+            this.checkBoxShowMaskVehicleB.Size = new System.Drawing.Size(15, 14);
+            this.checkBoxShowMaskVehicleB.TabIndex = 35;
+            this.checkBoxShowMaskVehicleB.UseVisualStyleBackColor = true;
             // 
             // numericUpDownVehicleBMinimumArea
             // 
-            this.numericUpDownVehicleBMinimumArea.Location = new System.Drawing.Point(120, 126);
-            this.numericUpDownVehicleBMinimumArea.Name = "numericUpDownVehicleBMinimumArea";
-            this.numericUpDownVehicleBMinimumArea.Size = new System.Drawing.Size(56, 23);
-            this.numericUpDownVehicleBMinimumArea.TabIndex = 34;
+            this.numericUpDownMinimumAreaVehicleB.Location = new System.Drawing.Point(120, 126);
+            this.numericUpDownMinimumAreaVehicleB.Name = "numericUpDownVehicleBMinimumArea";
+            this.numericUpDownMinimumAreaVehicleB.Size = new System.Drawing.Size(56, 23);
+            this.numericUpDownMinimumAreaVehicleB.TabIndex = 34;
             // 
             // label15
             // 
@@ -468,15 +468,15 @@ partial class SettingsWindow
             // 
             // numericUpDownVehicleBValueUpper
             // 
-            this.numericUpDownVehicleBValueUpper.Location = new System.Drawing.Point(203, 89);
-            this.numericUpDownVehicleBValueUpper.Maximum = new decimal(new int[] {
+            this.numericUpDownValueUpperVehicleB.Location = new System.Drawing.Point(203, 89);
+            this.numericUpDownValueUpperVehicleB.Maximum = new decimal(new int[] {
             255,
             0,
             0,
             0});
-            this.numericUpDownVehicleBValueUpper.Name = "numericUpDownVehicleBValueUpper";
-            this.numericUpDownVehicleBValueUpper.Size = new System.Drawing.Size(56, 23);
-            this.numericUpDownVehicleBValueUpper.TabIndex = 32;
+            this.numericUpDownValueUpperVehicleB.Name = "numericUpDownVehicleBValueUpper";
+            this.numericUpDownValueUpperVehicleB.Size = new System.Drawing.Size(56, 23);
+            this.numericUpDownValueUpperVehicleB.TabIndex = 32;
             // 
             // label16
             // 
@@ -489,15 +489,15 @@ partial class SettingsWindow
             // 
             // numericUpDownVehicleBValueLower
             // 
-            this.numericUpDownVehicleBValueLower.Location = new System.Drawing.Point(120, 89);
-            this.numericUpDownVehicleBValueLower.Maximum = new decimal(new int[] {
+            this.numericUpDownValueLowerVehicleB.Location = new System.Drawing.Point(120, 89);
+            this.numericUpDownValueLowerVehicleB.Maximum = new decimal(new int[] {
             255,
             0,
             0,
             0});
-            this.numericUpDownVehicleBValueLower.Name = "numericUpDownVehicleBValueLower";
-            this.numericUpDownVehicleBValueLower.Size = new System.Drawing.Size(56, 23);
-            this.numericUpDownVehicleBValueLower.TabIndex = 30;
+            this.numericUpDownValueLowerVehicleB.Name = "numericUpDownVehicleBValueLower";
+            this.numericUpDownValueLowerVehicleB.Size = new System.Drawing.Size(56, 23);
+            this.numericUpDownValueLowerVehicleB.TabIndex = 30;
             // 
             // label17
             // 
@@ -510,15 +510,15 @@ partial class SettingsWindow
             // 
             // numericUpDownVehicleBSaturationUpper
             // 
-            this.numericUpDownVehicleBSaturationUpper.Location = new System.Drawing.Point(203, 53);
-            this.numericUpDownVehicleBSaturationUpper.Maximum = new decimal(new int[] {
+            this.numericUpDownSaturationUpperVehicleB.Location = new System.Drawing.Point(203, 53);
+            this.numericUpDownSaturationUpperVehicleB.Maximum = new decimal(new int[] {
             255,
             0,
             0,
             0});
-            this.numericUpDownVehicleBSaturationUpper.Name = "numericUpDownVehicleBSaturationUpper";
-            this.numericUpDownVehicleBSaturationUpper.Size = new System.Drawing.Size(56, 23);
-            this.numericUpDownVehicleBSaturationUpper.TabIndex = 28;
+            this.numericUpDownSaturationUpperVehicleB.Name = "numericUpDownVehicleBSaturationUpper";
+            this.numericUpDownSaturationUpperVehicleB.Size = new System.Drawing.Size(56, 23);
+            this.numericUpDownSaturationUpperVehicleB.TabIndex = 28;
             // 
             // label18
             // 
@@ -531,15 +531,15 @@ partial class SettingsWindow
             // 
             // numericUpDownVehicleBSaturationLower
             // 
-            this.numericUpDownVehicleBSaturationLower.Location = new System.Drawing.Point(120, 53);
-            this.numericUpDownVehicleBSaturationLower.Maximum = new decimal(new int[] {
+            this.numericUpDownSaturationLowerVehicleB.Location = new System.Drawing.Point(120, 53);
+            this.numericUpDownSaturationLowerVehicleB.Maximum = new decimal(new int[] {
             255,
             0,
             0,
             0});
-            this.numericUpDownVehicleBSaturationLower.Name = "numericUpDownVehicleBSaturationLower";
-            this.numericUpDownVehicleBSaturationLower.Size = new System.Drawing.Size(56, 23);
-            this.numericUpDownVehicleBSaturationLower.TabIndex = 26;
+            this.numericUpDownSaturationLowerVehicleB.Name = "numericUpDownVehicleBSaturationLower";
+            this.numericUpDownSaturationLowerVehicleB.Size = new System.Drawing.Size(56, 23);
+            this.numericUpDownSaturationLowerVehicleB.TabIndex = 26;
             // 
             // label19
             // 
@@ -552,15 +552,15 @@ partial class SettingsWindow
             // 
             // numericUpDownVehicleBHueUpper
             // 
-            this.numericUpDownVehicleBHueUpper.Location = new System.Drawing.Point(203, 17);
-            this.numericUpDownVehicleBHueUpper.Maximum = new decimal(new int[] {
+            this.numericUpDownHueUpperVehicleB.Location = new System.Drawing.Point(203, 17);
+            this.numericUpDownHueUpperVehicleB.Maximum = new decimal(new int[] {
             255,
             0,
             0,
             0});
-            this.numericUpDownVehicleBHueUpper.Name = "numericUpDownVehicleBHueUpper";
-            this.numericUpDownVehicleBHueUpper.Size = new System.Drawing.Size(56, 23);
-            this.numericUpDownVehicleBHueUpper.TabIndex = 24;
+            this.numericUpDownHueUpperVehicleB.Name = "numericUpDownVehicleBHueUpper";
+            this.numericUpDownHueUpperVehicleB.Size = new System.Drawing.Size(56, 23);
+            this.numericUpDownHueUpperVehicleB.TabIndex = 24;
             // 
             // label20
             // 
@@ -573,15 +573,15 @@ partial class SettingsWindow
             // 
             // numericUpDownVehicleBHueLower
             // 
-            this.numericUpDownVehicleBHueLower.Location = new System.Drawing.Point(120, 17);
-            this.numericUpDownVehicleBHueLower.Maximum = new decimal(new int[] {
+            this.numericUpDownHueLowerVehicleB.Location = new System.Drawing.Point(120, 17);
+            this.numericUpDownHueLowerVehicleB.Maximum = new decimal(new int[] {
             255,
             0,
             0,
             0});
-            this.numericUpDownVehicleBHueLower.Name = "numericUpDownVehicleBHueLower";
-            this.numericUpDownVehicleBHueLower.Size = new System.Drawing.Size(56, 23);
-            this.numericUpDownVehicleBHueLower.TabIndex = 22;
+            this.numericUpDownHueLowerVehicleB.Name = "numericUpDownVehicleBHueLower";
+            this.numericUpDownHueLowerVehicleB.Size = new System.Drawing.Size(56, 23);
+            this.numericUpDownHueLowerVehicleB.TabIndex = 22;
             // 
             // label21
             // 
@@ -717,22 +717,22 @@ partial class SettingsWindow
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownVehicleAMinimumArea)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownVehicleAValueUpper)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownVehicleAValueLower)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownVehicleASaturationUpper)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownVehicleASaturationLower)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownVehicleAHueUpper)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownVehicleAHueLower)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMinimumAreaVehicleA)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownValueUpperVehicleA)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownValueLowerVehicleA)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSaturationUpperVehicleA)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSaturationLowerVehicleA)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownHueUpperVehicleA)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownHueLowerVehicleA)).EndInit();
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownVehicleBMinimumArea)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownVehicleBValueUpper)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownVehicleBValueLower)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownVehicleBSaturationUpper)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownVehicleBSaturationLower)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownVehicleBHueUpper)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownVehicleBHueLower)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMinimumAreaVehicleB)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownValueUpperVehicleB)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownValueLowerVehicleB)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSaturationUpperVehicleB)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSaturationLowerVehicleB)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownHueUpperVehicleB)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownHueLowerVehicleB)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.panel2.ResumeLayout(false);
@@ -745,45 +745,45 @@ partial class SettingsWindow
     private System.Windows.Forms.TabControl tabControl1;
     private System.Windows.Forms.TabPage tabPage1;
     private System.Windows.Forms.TabPage tabPage2;
-    private System.Windows.Forms.ComboBox comboBoxVehicleABaudrate;
+    private System.Windows.Forms.ComboBox comboBoxBaudrateVehicleA;
     private System.Windows.Forms.Label label10;
-    private System.Windows.Forms.ComboBox comboBoxVehicleASerialPort;
+    private System.Windows.Forms.ComboBox comboBoxSerialPortVehicleA;
     private System.Windows.Forms.Label label1;
     private System.Windows.Forms.Label label8;
-    private System.Windows.Forms.CheckBox checkBoxVehicleAShowMask;
-    private System.Windows.Forms.NumericUpDown numericUpDownVehicleAMinimumArea;
+    private System.Windows.Forms.CheckBox checkBoxShowMaskVehicleA;
+    private System.Windows.Forms.NumericUpDown numericUpDownMinimumAreaVehicleA;
     private System.Windows.Forms.Label label9;
-    private System.Windows.Forms.NumericUpDown numericUpDownVehicleAValueUpper;
+    private System.Windows.Forms.NumericUpDown numericUpDownValueUpperVehicleA;
     private System.Windows.Forms.Label label6;
-    private System.Windows.Forms.NumericUpDown numericUpDownVehicleAValueLower;
+    private System.Windows.Forms.NumericUpDown numericUpDownValueLowerVehicleA;
     private System.Windows.Forms.Label label7;
-    private System.Windows.Forms.NumericUpDown numericUpDownVehicleASaturationUpper;
+    private System.Windows.Forms.NumericUpDown numericUpDownSaturationUpperVehicleA;
     private System.Windows.Forms.Label label4;
-    private System.Windows.Forms.NumericUpDown numericUpDownVehicleASaturationLower;
+    private System.Windows.Forms.NumericUpDown numericUpDownSaturationLowerVehicleA;
     private System.Windows.Forms.Label label5;
-    private System.Windows.Forms.NumericUpDown numericUpDownVehicleAHueUpper;
+    private System.Windows.Forms.NumericUpDown numericUpDownHueUpperVehicleA;
     private System.Windows.Forms.Label label3;
-    private System.Windows.Forms.NumericUpDown numericUpDownVehicleAHueLower;
+    private System.Windows.Forms.NumericUpDown numericUpDownHueLowerVehicleA;
     private System.Windows.Forms.Label label2;
-    private System.Windows.Forms.ComboBox comboBoxVehicleBBaudrate;
+    private System.Windows.Forms.ComboBox comboBoxBaudrateVehicleB;
     private System.Windows.Forms.Label label12;
-    private System.Windows.Forms.ComboBox comboBoxVehicleBSerialPort;
+    private System.Windows.Forms.ComboBox comboBoxSerialPortVehicleB;
     private System.Windows.Forms.Label label13;
     private System.Windows.Forms.Label label14;
-    private System.Windows.Forms.CheckBox checkBoxVehicleBShowMask;
-    private System.Windows.Forms.NumericUpDown numericUpDownVehicleBMinimumArea;
+    private System.Windows.Forms.CheckBox checkBoxShowMaskVehicleB;
+    private System.Windows.Forms.NumericUpDown numericUpDownMinimumAreaVehicleB;
     private System.Windows.Forms.Label label15;
-    private System.Windows.Forms.NumericUpDown numericUpDownVehicleBValueUpper;
+    private System.Windows.Forms.NumericUpDown numericUpDownValueUpperVehicleB;
     private System.Windows.Forms.Label label16;
-    private System.Windows.Forms.NumericUpDown numericUpDownVehicleBValueLower;
+    private System.Windows.Forms.NumericUpDown numericUpDownValueLowerVehicleB;
     private System.Windows.Forms.Label label17;
-    private System.Windows.Forms.NumericUpDown numericUpDownVehicleBSaturationUpper;
+    private System.Windows.Forms.NumericUpDown numericUpDownSaturationUpperVehicleB;
     private System.Windows.Forms.Label label18;
-    private System.Windows.Forms.NumericUpDown numericUpDownVehicleBSaturationLower;
+    private System.Windows.Forms.NumericUpDown numericUpDownSaturationLowerVehicleB;
     private System.Windows.Forms.Label label19;
-    private System.Windows.Forms.NumericUpDown numericUpDownVehicleBHueUpper;
+    private System.Windows.Forms.NumericUpDown numericUpDownHueUpperVehicleB;
     private System.Windows.Forms.Label label20;
-    private System.Windows.Forms.NumericUpDown numericUpDownVehicleBHueLower;
+    private System.Windows.Forms.NumericUpDown numericUpDownHueLowerVehicleB;
     private System.Windows.Forms.Label label21;
     private System.Windows.Forms.Panel panel1;
     private System.Windows.Forms.Button buttonRevert;

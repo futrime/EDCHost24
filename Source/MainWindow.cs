@@ -228,8 +228,8 @@ public partial class MainWindow : Form
             this._camera.FrameHeight
         );
         this._monitorFrameSize = new OpenCvSharp.Size(
-            this.MonitorPictureBox.Width,
-            this.MonitorPictureBox.Height
+            this.pictureBoxMonitor.Width,
+            this.pictureBoxMonitor.Height
         );
         this._courtSize = new OpenCvSharp.Size(
             Game.CourtWidth,
@@ -244,8 +244,8 @@ public partial class MainWindow : Form
         );
 
         // Setup the timer
-        this.Timer.Interval = 1000 / MainWindow.RefreshRate;
-        this.Timer.Start();
+        this.timer.Interval = 1000 / MainWindow.RefreshRate;
+        this.timer.Start();
 
         // Setup the locators
         foreach (var camp in MainWindow.AllCampList)
@@ -269,16 +269,16 @@ public partial class MainWindow : Form
 
         if (this._game.GameState == GameStateType.Unstarted)
         {
-            this.FoulButton.Enabled = false;
+            this.buttonFoul.Enabled = false;
             if (this._calibrationClickCount >= 4)
             {
-                this.CalibrateButton.Enabled = true;
+                this.buttonCalibration.Enabled = true;
             }
-            this.SettingsButton.Enabled = true;
-            this.StartButton.Enabled = true;
-            this.PauseButton.Enabled = false;
-            this.ContinueButton.Enabled = false;
-            this.EndButton.Enabled = false;
+            this.buttonSettings.Enabled = true;
+            this.buttonStart.Enabled = true;
+            this.buttonPause.Enabled = false;
+            this.buttonContinue.Enabled = false;
+            this.buttonEnd.Enabled = false;
         }
         else if (this._game.GameState == GameStateType.Running)
         {
@@ -292,54 +292,54 @@ public partial class MainWindow : Form
                 this._game.Refresh();
             }
 
-            this.FoulButton.Enabled = true;
-            this.CalibrateButton.Enabled = false;
-            this.SettingsButton.Enabled = false;
-            this.StartButton.Enabled = false;
-            this.PauseButton.Enabled = true;
-            this.ContinueButton.Enabled = false;
-            this.EndButton.Enabled = true;
+            this.buttonFoul.Enabled = true;
+            this.buttonCalibration.Enabled = false;
+            this.buttonSettings.Enabled = false;
+            this.buttonStart.Enabled = false;
+            this.buttonPause.Enabled = true;
+            this.buttonContinue.Enabled = false;
+            this.buttonEnd.Enabled = true;
 
-            this.ScoreALabel.Text = ((int)this._game.GetScore(CampType.A, this._game.GameStage)).ToString();
-            this.ScoreBLabel.Text = ((int)this._game.GetScore(CampType.B, this._game.GameStage)).ToString();
-            this.GameTimeLabel.Text = Math.Max((decimal)(this._game.RemainingTime) / 1000, (decimal)0).ToString("0.00");
+            this.labelScoreVehicleA.Text = ((int)this._game.GetScore(CampType.A, this._game.GameStage)).ToString();
+            this.labelScoreVehicleB.Text = ((int)this._game.GetScore(CampType.B, this._game.GameStage)).ToString();
+            this.labelGameTime.Text = Math.Max((decimal)(this._game.RemainingTime) / 1000, (decimal)0).ToString("0.00");
             this.progressBarRemainingPowerRatio.Value = (int)(this._game.GetPowerRatio() * 100);
         }
         else if (this._game.GameState == GameStateType.Paused)
         {
-            this.FoulButton.Enabled = true;
+            this.buttonFoul.Enabled = true;
             if (this._calibrationClickCount >= 4)
             {
-                this.CalibrateButton.Enabled = true;
+                this.buttonCalibration.Enabled = true;
             }
-            this.SettingsButton.Enabled = false;
-            this.StartButton.Enabled = false;
-            this.PauseButton.Enabled = false;
-            this.ContinueButton.Enabled = true;
-            this.EndButton.Enabled = true;
+            this.buttonSettings.Enabled = false;
+            this.buttonStart.Enabled = false;
+            this.buttonPause.Enabled = false;
+            this.buttonContinue.Enabled = true;
+            this.buttonEnd.Enabled = true;
         }
         else if (this._game.GameState == GameStateType.Ended)
         {
-            this.FoulButton.Enabled = false;
+            this.buttonFoul.Enabled = false;
             if (this._calibrationClickCount >= 4)
             {
-                this.CalibrateButton.Enabled = true;
+                this.buttonCalibration.Enabled = true;
             }
-            this.SettingsButton.Enabled = false;
+            this.buttonSettings.Enabled = false;
             if (
                 this._game.GameStage == GameStageType.SecondHalf &&
                 this._game.GetCamp() == CampType.B
             )
             {
-                this.StartButton.Enabled = false;
+                this.buttonStart.Enabled = false;
             }
             else
             {
-                this.StartButton.Enabled = true;
+                this.buttonStart.Enabled = true;
             }
-            this.PauseButton.Enabled = false;
-            this.ContinueButton.Enabled = false;
-            this.EndButton.Enabled = false;
+            this.buttonPause.Enabled = false;
+            this.buttonContinue.Enabled = false;
+            this.buttonEnd.Enabled = false;
         }
 
         this.Refresh();
@@ -568,7 +568,7 @@ public partial class MainWindow : Form
     /// </param>
     private void RefreshMonitor(Image img)
     {
-        MonitorPictureBox.Image = img;
+        pictureBoxMonitor.Image = img;
     }
 
     #endregion
@@ -576,7 +576,7 @@ public partial class MainWindow : Form
 
     #region Methods related to the Windows Form
 
-    private void OnFormClosed(object sender, FormClosedEventArgs e)
+    private void MainWindow_FormClosed(object sender, FormClosedEventArgs e)
     {
         this._camera.Release();
 
@@ -595,10 +595,10 @@ public partial class MainWindow : Form
         }
     }
 
-    private void OnCalibrateButtonClick(object sender, EventArgs e)
+    private void buttonCalibrate_Click(object sender, EventArgs e)
     {
         this._calibrationClickCount = 0;
-        this.CalibrateButton.Enabled = false;
+        this.buttonCalibration.Enabled = false;
     }
 
     /// <summary>
@@ -609,12 +609,12 @@ public partial class MainWindow : Form
     /// bottom left corner, and the bottom right corner
     /// in turn to calibrate the capturing.
     /// </remarks>
-    private void OnMonitorMouseClick(object sender, MouseEventArgs e)
+    private void pictureBoxMonitor_MouseClick(object sender, MouseEventArgs e)
     {
         // Return if the mouse does not click in the monitor picture box.
         if (
-            e.X < 0 || e.X >= this.MonitorPictureBox.Width ||
-            e.Y < 0 || e.Y >= this.MonitorPictureBox.Height
+            e.X < 0 || e.X >= this.pictureBoxMonitor.Width ||
+            e.Y < 0 || e.Y >= this.pictureBoxMonitor.Height
         )
         {
             return;
@@ -634,15 +634,15 @@ public partial class MainWindow : Form
         if (this._calibrationClickCount >= 4)
         {
             this._coordinateConverter.Calibrate(_monitorCorners);
-            this.CalibrateButton.Enabled = true;
+            this.buttonCalibration.Enabled = true;
         }
     }
 
-    private void OnMonitorPictureBoxResize(object sender, EventArgs e)
+    private void pictureBoxMonitor_Resize(object sender, EventArgs e)
     {
         this._monitorFrameSize = new OpenCvSharp.Size(
-            this.MonitorPictureBox.Width,
-            this.MonitorPictureBox.Height
+            this.pictureBoxMonitor.Width,
+            this.pictureBoxMonitor.Height
         );
         if (this._coordinateConverter != null)
             this._coordinateConverter = new CoordinateConverter(
@@ -653,31 +653,31 @@ public partial class MainWindow : Form
             );
     }
 
-    private void OnStartButtonClick(object sender, EventArgs e)
+    private void buttonStart_Click(object sender, EventArgs e)
     {
         if (this._game.GameStage == GameStageType.None &&
             this._game.GetCamp() == CampType.None)
         {
             _game.Start(CampType.A, GameStageType.FirstHalf);
-            GameRoundLabel.Text = "上半场";
+            labelGameHalf.Text = "上半场";
         }
         else if (this._game.GameStage == GameStageType.FirstHalf &&
             this._game.GetCamp() == CampType.A)
         {
             _game.Start(CampType.B, GameStageType.FirstHalf);
-            GameRoundLabel.Text = "上半场";
+            labelGameHalf.Text = "上半场";
         }
         else if (this._game.GameStage == GameStageType.FirstHalf &&
             this._game.GetCamp() == CampType.B)
         {
             _game.Start(CampType.A, GameStageType.SecondHalf);
-            GameRoundLabel.Text = "下半场";
+            labelGameHalf.Text = "下半场";
         }
         else if (this._game.GameStage == GameStageType.SecondHalf &&
             this._game.GetCamp() == CampType.A)
         {
             _game.Start(CampType.B, GameStageType.SecondHalf);
-            GameRoundLabel.Text = "下半场";
+            labelGameHalf.Text = "下半场";
         }
         else
         {
@@ -685,39 +685,39 @@ public partial class MainWindow : Form
         }
     }
 
-    private void OnPauseButtonClick(object sender, EventArgs e)
+    private void buttonPause_Click(object sender, EventArgs e)
     {
         this._game.Pause();
     }
 
-    private void OnContinueButtonClick(object sender, EventArgs e)
+    private void buttonContinue_Click(object sender, EventArgs e)
     {
         _game.Continue();
     }
 
-    private void OnEndButtonClick(object sender, EventArgs e)
+    private void buttonEnd_Click(object sender, EventArgs e)
     {
         _game.End();
     }
 
-    private void OnResetButtonClick(object sender, EventArgs e)
+    private void buttonReset_Click(object sender, EventArgs e)
     {
         this._game = new Game();
     }
 
-    private void OnFoulButtonClick(object sender, EventArgs e)
+    private void buttonFoul_Click(object sender, EventArgs e)
     {
         _game.GetPenalty();
     }
 
-    private void OnSettingsButtonClick(object sender, EventArgs e)
+    private void buttonSettings_Click(object sender, EventArgs e)
     {
         (new Thread(
             () => (new SettingsWindow(this)).ShowDialog()
         )).Start();
     }
 
-    private void OnTimerTick(object sender, EventArgs e)
+    private void Timer_Tick(object sender, EventArgs e)
     {
         this.RefreshAll();
         this.Communicate();

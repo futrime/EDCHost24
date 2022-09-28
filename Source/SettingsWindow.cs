@@ -53,12 +53,12 @@ public partial class SettingsWindow : Form
         this.SyncConfigToForm();
 
         // Update available serial ports.
-        this.comboBoxVehicleASerialPort.Items.Clear();
-        this.comboBoxVehicleBSerialPort.Items.Clear();
+        this.comboBoxSerialPortVehicleA.Items.Clear();
+        this.comboBoxSerialPortVehicleB.Items.Clear();
         foreach (var serialPort in SerialPort.GetPortNames())
         {
-            this.comboBoxVehicleASerialPort.Items.Add(serialPort);
-            this.comboBoxVehicleBSerialPort.Items.Add(serialPort);
+            this.comboBoxSerialPortVehicleA.Items.Add(serialPort);
+            this.comboBoxSerialPortVehicleB.Items.Add(serialPort);
         }
 
         // Hide the label showing "Applying..."
@@ -195,22 +195,22 @@ public partial class SettingsWindow : Form
                         Locator = new Locator.ConfigType
                         {
                             Hue = (
-                                (int)this.numericUpDownVehicleAHueLower.Value,
-                                (int)this.numericUpDownVehicleAHueUpper.Value
+                                (int)this.numericUpDownHueLowerVehicleA.Value,
+                                (int)this.numericUpDownHueUpperVehicleA.Value
                             ),
                             Saturation = (
-                                (int)this.numericUpDownVehicleASaturationLower.Value,
-                                (int)this.numericUpDownVehicleASaturationUpper.Value
+                                (int)this.numericUpDownSaturationLowerVehicleA.Value,
+                                (int)this.numericUpDownSaturationUpperVehicleA.Value
                             ),
                             Value = (
-                                (int)this.numericUpDownVehicleAValueLower.Value,
-                                (int)this.numericUpDownVehicleAValueUpper.Value
+                                (int)this.numericUpDownValueLowerVehicleA.Value,
+                                (int)this.numericUpDownValueUpperVehicleA.Value
                             ),
-                            MinArea = this.numericUpDownVehicleAMinimumArea.Value
+                            MinArea = this.numericUpDownMinimumAreaVehicleA.Value
                         },
-                        ShowMask = this.checkBoxVehicleAShowMask.Checked,
-                        SerialPort = this.comboBoxVehicleASerialPort.Text,
-                        Baudrate = Convert.ToInt32(this.comboBoxVehicleABaudrate.Text)
+                        ShowMask = this.checkBoxShowMaskVehicleA.Checked,
+                        SerialPort = this.comboBoxSerialPortVehicleA.Text,
+                        Baudrate = Convert.ToInt32(this.comboBoxBaudrateVehicleA.Text)
                     }
                 },
                 {
@@ -220,22 +220,22 @@ public partial class SettingsWindow : Form
                         Locator = new Locator.ConfigType
                         {
                             Hue = (
-                                (int)this.numericUpDownVehicleBHueLower.Value,
-                                (int)this.numericUpDownVehicleBHueUpper.Value
+                                (int)this.numericUpDownHueLowerVehicleB.Value,
+                                (int)this.numericUpDownHueUpperVehicleB.Value
                             ),
                             Saturation = (
-                                (int)this.numericUpDownVehicleBSaturationLower.Value,
-                                (int)this.numericUpDownVehicleBSaturationUpper.Value
+                                (int)this.numericUpDownSaturationLowerVehicleB.Value,
+                                (int)this.numericUpDownSaturationUpperVehicleB.Value
                             ),
                             Value = (
-                                (int)this.numericUpDownVehicleBValueLower.Value,
-                                (int)this.numericUpDownVehicleBValueUpper.Value
+                                (int)this.numericUpDownValueLowerVehicleB.Value,
+                                (int)this.numericUpDownValueUpperVehicleB.Value
                             ),
-                            MinArea = this.numericUpDownVehicleBMinimumArea.Value
+                            MinArea = this.numericUpDownMinimumAreaVehicleB.Value
                         },
-                        ShowMask = this.checkBoxVehicleBShowMask.Checked,
-                        SerialPort = this.comboBoxVehicleBSerialPort.Text,
-                        Baudrate = Convert.ToInt32(this.comboBoxVehicleBBaudrate.Text)
+                        ShowMask = this.checkBoxShowMaskVehicleB.Checked,
+                        SerialPort = this.comboBoxSerialPortVehicleB.Text,
+                        Baudrate = Convert.ToInt32(this.comboBoxBaudrateVehicleB.Text)
                     }
                 }
             },
@@ -255,46 +255,46 @@ public partial class SettingsWindow : Form
 
     private void SyncConfigToForm()
     {
-        this.numericUpDownVehicleAHueLower.Value =
+        this.numericUpDownHueLowerVehicleA.Value =
             this._config.Vehicles[CampType.A].Locator.Hue.Min;
-        this.numericUpDownVehicleAHueUpper.Value =
+        this.numericUpDownHueUpperVehicleA.Value =
             this._config.Vehicles[CampType.A].Locator.Hue.Max;
-        this.numericUpDownVehicleASaturationLower.Value =
+        this.numericUpDownSaturationLowerVehicleA.Value =
             this._config.Vehicles[CampType.A].Locator.Saturation.Min;
-        this.numericUpDownVehicleASaturationUpper.Value =
+        this.numericUpDownSaturationUpperVehicleA.Value =
             this._config.Vehicles[CampType.A].Locator.Saturation.Max;
-        this.numericUpDownVehicleAValueLower.Value =
+        this.numericUpDownValueLowerVehicleA.Value =
             this._config.Vehicles[CampType.A].Locator.Value.Min;
-        this.numericUpDownVehicleAValueUpper.Value =
+        this.numericUpDownValueUpperVehicleA.Value =
             this._config.Vehicles[CampType.A].Locator.Value.Max;
-        this.numericUpDownVehicleAMinimumArea.Value =
+        this.numericUpDownMinimumAreaVehicleA.Value =
             this._config.Vehicles[CampType.A].Locator.MinArea;
-        this.checkBoxVehicleAShowMask.Checked =
+        this.checkBoxShowMaskVehicleA.Checked =
             this._config.Vehicles[CampType.A].ShowMask;
-        this.comboBoxVehicleASerialPort.Text =
+        this.comboBoxSerialPortVehicleA.Text =
             this._config.Vehicles[CampType.A].SerialPort;
-        this.comboBoxVehicleABaudrate.Text =
+        this.comboBoxBaudrateVehicleA.Text =
             this._config.Vehicles[CampType.A].Baudrate.ToString();
 
-        this.numericUpDownVehicleBHueLower.Value =
+        this.numericUpDownHueLowerVehicleB.Value =
             this._config.Vehicles[CampType.B].Locator.Hue.Min;
-        this.numericUpDownVehicleBHueUpper.Value =
+        this.numericUpDownHueUpperVehicleB.Value =
             this._config.Vehicles[CampType.B].Locator.Hue.Max;
-        this.numericUpDownVehicleBSaturationLower.Value =
+        this.numericUpDownSaturationLowerVehicleB.Value =
             this._config.Vehicles[CampType.B].Locator.Saturation.Min;
-        this.numericUpDownVehicleBSaturationUpper.Value =
+        this.numericUpDownSaturationUpperVehicleB.Value =
             this._config.Vehicles[CampType.B].Locator.Saturation.Max;
-        this.numericUpDownVehicleBValueLower.Value =
+        this.numericUpDownValueLowerVehicleB.Value =
             this._config.Vehicles[CampType.B].Locator.Value.Min;
-        this.numericUpDownVehicleBValueUpper.Value =
+        this.numericUpDownValueUpperVehicleB.Value =
             this._config.Vehicles[CampType.B].Locator.Value.Max;
-        this.numericUpDownVehicleBMinimumArea.Value =
+        this.numericUpDownMinimumAreaVehicleB.Value =
             this._config.Vehicles[CampType.B].Locator.MinArea;
-        this.checkBoxVehicleBShowMask.Checked =
+        this.checkBoxShowMaskVehicleB.Checked =
             this._config.Vehicles[CampType.B].ShowMask;
-        this.comboBoxVehicleBSerialPort.Text =
+        this.comboBoxSerialPortVehicleB.Text =
             this._config.Vehicles[CampType.B].SerialPort;
-        this.comboBoxVehicleBBaudrate.Text =
+        this.comboBoxBaudrateVehicleB.Text =
             this._config.Vehicles[CampType.B].Baudrate.ToString();
 
         this.comboBoxCamera.Text =
