@@ -192,7 +192,7 @@ public class Vehicle
         // If there are at least two positions in the path.
         if (this.Path.Count > 1)
         {
-            // use this to debug: Dot.Distance(this.Path[this.Path.Count - 1], this.Path[this.Path.Count - 2]) < 20
+            // use this to debug: Dot.Distance(this.Path[this.Path.Count - 1], this.Path[this.Path.Count - 2]) < 5
             if (this.Path[this.Path.Count - 1] == this.Path[this.Path.Count - 2])
             // If the vehicle starts to park, update the last start parking time.
             {
