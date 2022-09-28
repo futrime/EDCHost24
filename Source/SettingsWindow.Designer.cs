@@ -145,6 +145,7 @@ partial class SettingsWindow
             // 
             // comboBoxVehicleABaudrate
             // 
+            this.comboBoxVehicleABaudrate.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxVehicleABaudrate.FormattingEnabled = true;
             this.comboBoxVehicleABaudrate.Items.AddRange(new object[] {
             "110",
@@ -173,6 +174,7 @@ partial class SettingsWindow
             // 
             // comboBoxVehicleASerialPort
             // 
+            this.comboBoxVehicleASerialPort.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxVehicleASerialPort.FormattingEnabled = true;
             this.comboBoxVehicleASerialPort.Location = new System.Drawing.Point(120, 196);
             this.comboBoxVehicleASerialPort.Name = "comboBoxVehicleASerialPort";
@@ -385,6 +387,7 @@ partial class SettingsWindow
             // 
             // comboBoxVehicleBBaudrate
             // 
+            this.comboBoxVehicleBBaudrate.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxVehicleBBaudrate.FormattingEnabled = true;
             this.comboBoxVehicleBBaudrate.Items.AddRange(new object[] {
             "110",
@@ -399,7 +402,7 @@ partial class SettingsWindow
             "115200"});
             this.comboBoxVehicleBBaudrate.Location = new System.Drawing.Point(120, 234);
             this.comboBoxVehicleBBaudrate.Name = "comboBoxVehicleBBaudrate";
-            this.comboBoxVehicleBBaudrate.Size = new System.Drawing.Size(56, 23);
+            this.comboBoxVehicleBBaudrate.Size = new System.Drawing.Size(139, 23);
             this.comboBoxVehicleBBaudrate.TabIndex = 40;
             // 
             // label12
@@ -413,10 +416,11 @@ partial class SettingsWindow
             // 
             // comboBoxVehicleBSerialPort
             // 
+            this.comboBoxVehicleBSerialPort.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxVehicleBSerialPort.FormattingEnabled = true;
             this.comboBoxVehicleBSerialPort.Location = new System.Drawing.Point(120, 196);
             this.comboBoxVehicleBSerialPort.Name = "comboBoxVehicleBSerialPort";
-            this.comboBoxVehicleBSerialPort.Size = new System.Drawing.Size(56, 23);
+            this.comboBoxVehicleBSerialPort.Size = new System.Drawing.Size(139, 23);
             this.comboBoxVehicleBSerialPort.TabIndex = 38;
             // 
             // label13
@@ -685,6 +689,7 @@ partial class SettingsWindow
             // 
             // comboBoxCamera
             // 
+            this.comboBoxCamera.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxCamera.Enabled = false;
             this.comboBoxCamera.FormattingEnabled = true;
             this.comboBoxCamera.Location = new System.Drawing.Point(63, 42);
