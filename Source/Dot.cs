@@ -6,7 +6,7 @@ namespace EdcHost;
 /// <summary>
 /// A 2-dimenstion dot
 /// </summary>
-public class Dot
+public struct Dot
 {
     /// <summary>
     /// The x-coordinate of the dot

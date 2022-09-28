@@ -10,21 +10,55 @@ public class Order
     #region Public properties
 
     /// <summary>
+    /// The delivery time limit.
+    /// </summary>
+    public long DeliveryTimeLimit => this._deliveryTimeLimit;
+
+    /// <summary>
     /// The departure position
     /// </summary>
     public Dot DeparturePosition => this._departurePosition;
+
     /// <summary>
     /// The destination position
     /// </summary>
     public Dot DestinationPosition => this._destinationPosition;
+
     /// <summary>
     /// The generation time
     /// </summary>
     public long GenerationTime => this._generationTime;
+
+    /// <summary>
+    /// The overtiom duraiton.
+    /// </summary>
+    public long? OvertimeDuration
+    {
+        get {
+            if (this.ScheduledDeliveryTime == null)
+            {
+                return null;
+            }
+
+            return Math.Max((long)this._deliveryTime - (long)this.ScheduledDeliveryTime, 0);
+        }
+    }
+
     /// <summary>
     /// The scheduled delivery time
     /// </summary>
-    public long ScheduledDeliveryTime => this._deliveryTimeLimit + this._generationTime;
+    public long? ScheduledDeliveryTime
+    {
+        get {
+            if (this._departureTime == null)
+            {
+                return null;
+            }
+
+            return this._deliveryTimeLimit + this._departureTime;
+        }
+    }
+
     /// <summary>
     /// The order status
     /// </summary>

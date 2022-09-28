@@ -169,7 +169,7 @@ public class PacketGetStatusInformationHost : Packet
             currentIndex += 4;
 
             // Scheduled time
-            BitConverter.GetBytes(order.ScheduledDeliveryTime).CopyTo(data, currentIndex);
+            BitConverter.GetBytes((long)order.ScheduledDeliveryTime).CopyTo(data, currentIndex);
             currentIndex += 8;
 
             // isTaken is based on 'order.Status'

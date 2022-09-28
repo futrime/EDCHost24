@@ -221,7 +221,7 @@ public class GameLegacy
         }
 
         int TimePenalty = 0;
-        Dot vehiclePosition = this._vehicle[this._camp].Position;
+        Dot vehiclePosition = (Dot)this._vehicle[this._camp].Position;
         this._parkingDuration = this._vehicle[this._camp].ParkingDuration;
 
         // Update vehicle's info on each frame

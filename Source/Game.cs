@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Media;
 
 namespace EdcHost;
 
@@ -33,15 +34,27 @@ public class Game
     public const decimal ScoreDeliverOrder = 20M;
 
     /// <summary>
+    /// The score obtained when a delivery is over time per
+    /// millisecond.
+    /// </summary>
+    public const decimal ScoreDeliveryOvertimeRate = -0.005M;
+
+    /// <summary>
+    /// The score obtained when a vehicle is hitting a wall
+    /// per millisecond.
+    /// </summary>
+    public const decimal ScoreHittingWallRate = -0.01M;
+
+    /// <summary>
+    /// The score obtained when the vehicle park overtime per
+    /// millisecond.
+    /// </summary>
+    public const decimal ScoreOvertimeParkingRate = -0.005M;
+
+    /// <summary>
     /// The score obtained when setting a charging pile.
     /// </summary>
     public const decimal ScoreSetChargingPile = 5M;
-
-    /// <summary>
-    /// The score obtained when a delivery is over time per
-    /// second.
-    /// </summary>
-    public const decimal ScoreDeliveryOvertimeRate = -5M;
 
     /// <summary>
     /// The score obtained when gaining a foul flag.
@@ -111,9 +124,9 @@ public class Game
 
     /// <summary>
     /// The reduction rate of the max distances of vehicles in barriers
-    /// in centimeter per second.
+    /// in centimeter per millisecond.
     /// </summary>
-    public const decimal BarrierDischargingRate = 0.1M;
+    public const decimal BarrierDischargingRate = -0.1M;
 
     #endregion
 
@@ -129,19 +142,13 @@ public class Game
     /// The reduction rate of the max distances of vehicles in the influence
     /// scope of their opponents' charging piles in centimeter per second.
     /// </summary>
-    public const decimal ChargingPileDischargingRate = 0.1M;
+    public const decimal ChargingPileDischargingRate = -0.1M;
 
     /// <summary>
-    /// The radius of the scope where vehicles charge from a
-    /// charging pile.
+    /// The radius of the scope where vehicles are influenced by
+    /// charging piles.
     /// </summary>
-    public const int ChargingPileChargingScopeRadius = 20;
-
-    /// <summary>
-    /// The radius of the scope where vehicles discharge from
-    /// a charging pile of their opponents.
-    /// </summary>
-    public const int ChargingPileDischargingScopeRadius = 20;
+    public const int ChargingPileInfluenceScopeRadius = 20;
 
     #endregion
 
@@ -180,6 +187,20 @@ public class Game
             { GameStageType.PreMatch, null }
         };
 
+    /// <summary>
+    /// The sound to play when delivering an order.
+    /// </summary>
+    public static readonly SoundPlayer OrderSoundDeliver = new SoundPlayer(
+        @"Assets/Sounds/Deliver.wav"
+    );
+
+    /// <summary>
+    /// The sound to play when taking an order.
+    /// </summary>
+    public static readonly SoundPlayer OrderSoundTake = new SoundPlayer(
+        @"Assets/Sounds/Order.wav"
+    );
+
     #endregion
 
     #region Parameters related to vehicles
@@ -191,9 +212,14 @@ public class Game
 
     /// <summary>
     /// The increasing rate of the max distances of vehicles out of power
-    /// in centimeter per second.
+    /// in centimeter per millisecond.
     /// </summary>
     public const decimal VehicleAutoChargingRate = 0.02M;
+
+    /// <summary>
+    /// The step in milliseconds of auto charging.
+    /// </summary>
+    public const long VehicleAutoChargingStep = 5000;
 
     #endregion
 
@@ -290,6 +316,10 @@ public class Game
 
     private GameStateType _gameState = GameStateType.Unstarted;
 
+    // True if the vehicle of the current camp has moved into the
+    // inner court.
+    private bool? _hasMovedIntoInnerCourt = null;
+
     // Minus one to prevent division by zero.
     private long _lastTickTime = Utility.SystemTime - 1;
 
@@ -299,8 +329,6 @@ public class Game
 
     private long? _pauseTime = null;
 
-    private List<Order> _pendingOrderList = new List<Order>();
-
     private Dictionary<CampType, decimal> _score =
         new Dictionary<CampType, decimal>
         {
@@ -309,6 +337,13 @@ public class Game
         };
 
     private long? _startTime = null;
+
+    private long _lastTickDuration
+    {
+        get {
+            return Utility.SystemTime - this._lastTickTime;
+        }
+    }
 
     private Dictionary<CampType, Vehicle> _vehicle = null;
 
@@ -322,6 +357,10 @@ public class Game
     /// </summary>
     public Game()
     {
+        // Load sounds
+        Game.OrderSoundDeliver.Load();
+        Game.OrderSoundTake.Load();
+
         // Generate barriers
         this._barrierList = new List<Barrier>();
         for (int i = 0; i < Game.BarrierNumber; ++i)
@@ -392,18 +431,25 @@ public class Game
             throw new Exception("The game runs in pre-match stage.");
         }
 
-        // Attempt to generate an order
-        var order = this._orderGenerator.Generate((long)this.GameTime);
-        if (order != null)
-        {
-            this._orderList.Add(order);
-        }
-
         // End the game if the time is up.
         if ((long)this.RemainingTime <= 0)
         {
             this.End();
         }
+
+        this.GenerateOrder();
+
+        this.TakeAndDeliverOrder();
+
+        this.ScoreMoving();
+
+        this.ScoreHittingWall();
+
+        this.TackleBarriers();
+
+        this.TackleChargingPiles();
+
+        this.AutoCharge();
 
         // Update the time of the last tick.
         this._lastTickTime = Utility.SystemTime;
@@ -468,6 +514,9 @@ public class Game
             default:
                 throw new Exception("The camp is invalid.");
         }
+
+        // Set other things.
+        this._hasMovedIntoInnerCourt = false;
     }
 
     /// <summary>
@@ -515,9 +564,67 @@ public class Game
         this._gameState = GameStateType.Ended;
     }
 
+    /// <summary>
+    /// Set a charging pile.
+    /// </summary>
+    public void SetChargingPile()
+    {
+        if (this._camp == null)
+        {
+            throw new Exception("The camp is invalid.");
+        }
+
+        if (this._vehicle[(CampType)this._camp].Position == null)
+        {
+            return;
+        }
+
+        this._chargingPileList.Add(new ChargingPile(
+            (CampType)this._camp,
+            (Dot)this._vehicle[(CampType)this._camp].Position,
+            Game.ChargingPileInfluenceScopeRadius
+        ));
+
+        this._score[(CampType)this._camp] += Game.ScoreSetChargingPile;
+    }
+
     #endregion
 
     #region Private methods
+
+    /// <summary>
+    /// Auto charge if the power of the vehicle is used up.
+    /// </summary>
+    private void AutoCharge()
+    {
+        var vehicle = this._vehicle[(CampType)this._camp];
+
+        if (vehicle.Position == null)
+        {
+            return;
+        }
+
+        if (vehicle.IsPowerExhausted)
+        {
+            // Exchange time for power.
+            this._startTime -= Game.VehicleAutoChargingStep;
+            vehicle.IncreaseMaxDistance(
+                (int)(Game.VehicleAutoChargingRate * Game.VehicleAutoChargingStep)
+            );
+        }
+    }
+
+    /// <summary>
+    /// Attempt to generate an order.
+    /// </summary>
+    private void GenerateOrder()
+    {
+        var newOrder = this._orderGenerator.Generate((long)this.GameTime);
+        if (newOrder != null)
+        {
+            this._orderList.Add(newOrder);
+        }
+    }
 
     /// <summary>
     /// Check if a position is in barrier area.
@@ -597,6 +704,200 @@ public class Game
             }
         }
         return false;
+    }
+
+    /// <summary>
+    /// Judge if the vehicle is hitting the wall and score
+    /// according to it.
+    /// </summary>
+    void ScoreHittingWall()
+    {
+        var vehicle = this._vehicle[(CampType)this._camp];
+
+        if (vehicle.Position == null)
+        {
+            return;
+        }
+
+        var vehiclePosition = (Dot)vehicle.Position;
+
+        if (this.IsInWall(vehiclePosition))
+        {
+            this._score[(CampType)this._camp] +=
+                Game.ScoreHittingWallRate * this._lastTickDuration;
+        }
+    }
+
+    /// <summary>
+    /// Judge the moving status of the vehicle and score
+    /// according to it.
+    /// </summary>
+    void ScoreMoving()
+    {
+        var vehicle = this._vehicle[(CampType)this._camp];
+
+        if (vehicle.Position == null)
+        {
+            return;
+        }
+
+        var vehiclePosition = (Dot)vehicle.Position;
+
+        // Score first moving into inner court.
+        if (this._hasMovedIntoInnerCourt == null)
+        {
+            throw new Exception("_hasMovedIntoInnerCourt == null.");
+        }
+
+        if (
+            !(bool)this._hasMovedIntoInnerCourt &&
+            vehiclePosition.X >= Game.InnerCourtArea.TopLeft.X &&
+            vehiclePosition.Y >= Game.InnerCourtArea.TopLeft.Y &&
+            vehiclePosition.X <= Game.InnerCourtArea.BottomRight.X &&
+            vehiclePosition.Y <= Game.InnerCourtArea.BottomRight.Y
+        )
+        {
+            this._hasMovedIntoInnerCourt = true;
+            this._score[(CampType)this._camp] += Game.ScoreMoveIntoInnerCourt;
+        }
+
+        // Score parking penalty.
+        if (
+            vehicle.ParkingDuration != null &&
+            (long)vehicle.ParkingDuration > 5000 + this._lastTickDuration
+        )
+        {
+            this._score[(CampType)this._camp] +=
+                Game.ScoreOvertimeParkingRate * this._lastTickDuration;
+        }
+    }
+
+    /// <summary>
+    /// Tackle the moving on barriers status.
+    /// </summary>
+    void TackleBarriers()
+    {
+        var vehicle = this._vehicle[(CampType)this._camp];
+
+        if (vehicle.Position == null)
+        {
+            return;
+        }
+
+        var vehiclePosition = (Dot)vehicle.Position;
+
+        if (this.IsInBarrier(vehiclePosition))
+        {
+            vehicle.IncreaseMaxDistance(
+                (int)Math.Round(Game.BarrierDischargingRate * this._lastTickDuration)
+            );
+        }
+    }
+
+    /// <summary>
+    /// Tackle the charging and discharing status.
+    /// </summary>
+    void TackleChargingPiles()
+    {
+        var vehicle = this._vehicle[(CampType)this._camp];
+
+        if (vehicle.Position == null)
+        {
+            return;
+        }
+
+        var vehiclePosition = (Dot)vehicle.Position;
+
+        if (this.IsInChargingPileInfluenceScope(
+            position: vehiclePosition,
+            camp: (CampType)this._camp
+        ))
+        {
+            vehicle.IncreaseMaxDistance(
+                (int)Math.Round(Game.ChargingPileChargingRate * this._lastTickDuration)
+            );
+        }
+
+        if (this.IsInChargingPileInfluenceScope(
+            position: vehiclePosition,
+            camp: (CampType)this._camp,
+            reverse: true
+        ))
+        {
+            vehicle.IncreaseMaxDistance(
+                (int)Math.Round(Game.ChargingPileDischargingRate * this._lastTickDuration)
+            );
+        }
+    }
+
+    /// <summary>
+    /// Take and deliver orders.
+    /// </summary>
+    void TakeAndDeliverOrder()
+    {
+        var vehicle = this._vehicle[(CampType)this._camp];
+
+        if (vehicle.Position == null)
+        {
+            return;
+        }
+
+        var vehiclePosition = (Dot)vehicle.Position;
+
+        // The vehicle should park there for at least 1000ms.
+        if (vehicle.ParkingDuration >= 1000)
+        {
+            // Count the orders in delivery.
+            var deliveringOrderNumber = 0;
+            foreach (var order in this._orderList)
+            {
+                if (order.Status == OrderStatusType.InDelivery)
+                {
+                    ++deliveringOrderNumber;
+                }
+            }
+
+            foreach (var order in this._orderList)
+            {
+                // Take orders.
+                if (order.Status == OrderStatusType.Pending)
+                {
+                    // Check if the capacity is full.
+                    if (deliveringOrderNumber > Game.OrderDeliveryCapacity)
+                    {
+                        continue;
+                    }
+
+                    if ((int)Dot.Distance(order.DeparturePosition, vehiclePosition)
+                        < Game.OrderContactScopeRadius)
+                    {
+                        order.Take((long)this.GameTime);
+
+                        // Play the take sound.
+                        Game.OrderSoundTake.Play();
+                    }
+                }
+                else if (order.Status == OrderStatusType.InDelivery)
+                {
+                    if ((int)Dot.Distance(order.DestinationPosition, vehiclePosition)
+                        < Game.OrderContactScopeRadius)
+                    {
+                        order.Deliver((long)this.GameTime);
+
+                        if (order.OvertimeDuration == null)
+                        {
+                            throw new Exception("The overtime duration of the order is null.");
+                        }
+
+                        this._score[(CampType)this._camp] +=
+                            Math.Max(Game.ScoreDeliverOrder - Game.ScoreDeliveryOvertimeRate * (long)order.OvertimeDuration, 0);
+
+                        // Player the deliver sound.
+                        Game.OrderSoundDeliver.Play();
+                    }
+                }
+            }
+        }
     }
 
     #endregion

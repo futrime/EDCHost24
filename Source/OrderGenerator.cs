@@ -96,8 +96,7 @@ public class OrderGenerator
                 this._orderList[i].DeparturePosition,
                 this._orderList[i].DestinationPosition,
                 this._orderList[i].GenerationTime,
-                deliveryTimeLimit: this._orderList[i].ScheduledDeliveryTime -
-                    this._orderList[i].GenerationTime
+                deliveryTimeLimit: this._orderList[i].DeliveryTimeLimit
             );
         }
 

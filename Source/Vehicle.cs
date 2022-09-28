@@ -101,7 +101,7 @@ public class Vehicle
     /// <summary>
     /// The position of the vehicle
     /// </summary>
-    public Dot Position
+    public Dot? Position
     {
         get
         {
