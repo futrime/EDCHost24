@@ -183,9 +183,11 @@ public partial class SettingsWindow : Form
 
     private void SyncFormToConfig()
     {
-        this._config = new ConfigType
+        try
         {
-            Vehicles = new Dictionary<CampType, ConfigType.PerVehicleConfigType> {
+            this._config = new ConfigType
+            {
+                Vehicles = new Dictionary<CampType, ConfigType.PerVehicleConfigType> {
                 {
                     CampType.A,
                     new ConfigType.PerVehicleConfigType
@@ -237,8 +239,18 @@ public partial class SettingsWindow : Form
                     }
                 }
             },
-            Camera = Convert.ToInt32(this.comboBoxCamera.Text)
-        };
+                Camera = Convert.ToInt32(this.comboBoxCamera.Text)
+            };
+        }
+        catch (System.FormatException)
+        {
+            MessageBox.Show(
+                "Some parameters are invalid.",
+                "Error",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Error
+            );
+        }
     }
 
     private void SyncConfigToForm()
