@@ -157,7 +157,7 @@ public class GameLegacy
 
     #region Private fields
 
-    private GameStageType _gameStage = GameStageType.None;
+    private GameStageType _gameStage = GameStageType.PreMatch;
     private GameStateType _gameState = GameStateType.Unstarted;
     private CampType _camp = CampType.None;
     private long _startTime = 0;
@@ -519,7 +519,7 @@ public class GameLegacy
 
     public decimal GetScore(CampType c, GameStageType gs)
     {
-        if (gs == GameStageType.None)
+        if (gs == GameStageType.PreMatch)
         {
             return 0;
         }

@@ -656,7 +656,7 @@ public partial class MainWindow : Form
 
     private void buttonStart_Click(object sender, EventArgs e)
     {
-        if (this._game.GameStage == GameStageType.None &&
+        if (this._game.GameStage == GameStageType.PreMatch &&
             this._game.GetCamp() == CampType.None)
         {
             _game.Start(CampType.A, GameStageType.FirstHalf);

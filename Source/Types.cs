@@ -44,9 +44,9 @@ public enum DotDistanceType
 public enum GameStageType
 {
     /// <summary>
-    /// Undefined stage
+    /// The pre-match stage.
     /// </summary>
-    None,
+    PreMatch,
 
     /// <summary>
     /// The first half
