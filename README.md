@@ -1,2 +1,2 @@
 # EDC-Host
-The host program for the 24th Electronic Design Contest.
+The host program for the Electronic Design Contest of Tsinghua University.
