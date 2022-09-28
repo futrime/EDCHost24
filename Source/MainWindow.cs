@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO.Ports;
+using System.Threading;
 using System.Windows.Forms;
 using OpenCvSharp;
 using OpenCvSharp.Extensions;
@@ -155,7 +156,6 @@ public partial class MainWindow : Form
 
     #region Private fields
 
-    private string[] _availableSerialPortList = SerialPort.GetPortNames();
     private int _calibrationClickCount = 4;
     private VideoCapture _camera = new VideoCapture();
     private OpenCvSharp.Size _cameraFrameSize;
@@ -284,7 +284,7 @@ public partial class MainWindow : Form
         {
             if (this._locatorDict[this._game.GetCamp()].TargetPosition != null)
             {
-                // update Car_pos;
+                // Update the position of the current vehicle.
                 this._game.Vehicle[this._game.GetCamp()].UpdatePosition(new Dot((Point2i)this._coordinateConverter.CameraToCourt((Point2f)this._locatorDict[this._game.GetCamp()].TargetPosition)));
                 this._game.Refresh();
             }
@@ -380,8 +380,8 @@ public partial class MainWindow : Form
     private void ProcessCameraFrame()
     {
         // Read the camera frame.
-        Mat cameraFrame = new Mat();
-        if (!Camera.Read(cameraFrame))
+        Mat frame = new Mat();
+        if (!Camera.Read(frame))
         {
             return;
         }
@@ -389,17 +389,17 @@ public partial class MainWindow : Form
         // Update locator images.
         foreach (var locator in this._locatorDict.Values)
         {
-            locator.Image = cameraFrame;
+            locator.Image = frame;
         }
 
-        // Draw patterns on the monitor.
-        this.Draw(ref cameraFrame);
-
         // Resize to the size of the monitor
-        Cv2.Resize(cameraFrame, cameraFrame, this._monitorFrameSize);
+        Cv2.Resize(src: frame, dst: frame, dsize: this._monitorFrameSize);
+
+        // Draw patterns on the monitor.
+        this.Draw(ref frame);
 
         // Update the monitor frame
-        this.BeginInvoke(new Action<Image>(RefreshMonitor), BitmapConverter.ToBitmap(cameraFrame));
+        this.RefreshMonitor(BitmapConverter.ToBitmap(frame));
     }
 
     /// <summary>
@@ -411,7 +411,7 @@ public partial class MainWindow : Form
     private void Draw(ref Mat image)
     {
         // Draw court boundaries
-        var corners = this._coordinateConverter.CourtToCamera(new Point2f[]{
+        var corners = this._coordinateConverter.CourtToMonitor(new Point2f[]{
             new Point2f(0, 0),
             new Point2f(0, this._courtSize.Width),
             new Point2f(this._courtSize.Height, this._courtSize.Height),
@@ -445,7 +445,7 @@ public partial class MainWindow : Form
             this.DrawIcon(
                 image: ref image,
                 icon: IconChargingPileDict[chargingPile.Camp],
-                position: (Point2i)this._coordinateConverter.CourtToCamera(chargingPile.Position.ToPoint())
+                position: (Point2i)this._coordinateConverter.CourtToMonitor(chargingPile.Position.ToPoint())
             );
         }
 
@@ -461,7 +461,7 @@ public partial class MainWindow : Form
                     this.DrawIcon(
                         image: ref image,
                         icon: IconOrder.Departure,
-                        position: (Point2i)this._coordinateConverter.CourtToCamera(order.DeparturePosition.ToPoint())
+                        position: (Point2i)this._coordinateConverter.CourtToMonitor(order.DeparturePosition.ToPoint())
                     );
                 }
                 else if (order.Status == Order.StatusType.InDelivery)
@@ -469,7 +469,7 @@ public partial class MainWindow : Form
                     this.DrawIcon(
                         image: ref image,
                         icon: IconOrder.Destination,
-                        position: (Point2i)this._coordinateConverter.CourtToCamera(order.DestinationPosition.ToPoint())
+                        position: (Point2i)this._coordinateConverter.CourtToMonitor(order.DestinationPosition.ToPoint())
                     );
                 }
             }
@@ -487,14 +487,14 @@ public partial class MainWindow : Form
             this.DrawIcon(
                 image: ref image,
                 icon: IconCarDict[camp],
-                position: (Point2i)this._locatorDict[camp].TargetPosition
+                position: (Point2i)this._coordinateConverter.CameraToMonitor((Point2f)this._locatorDict[camp].TargetPosition)
             );
         }
 
         // Draw corners when calibrating
         if (this._calibrationClickCount < 4) // When calibrating
         {
-            var pointList = this._coordinateConverter.MonitorToCamera(this._monitorCorners);
+            var pointList = this._monitorCorners;
             for (int i = 0; i < this._calibrationClickCount; ++i)
             {
                 var point = pointList[i];
@@ -529,12 +529,12 @@ public partial class MainWindow : Form
             new Point2f(barrier.BottomRightPosition.x, barrier.TopLeftPosition.y),
         };
 
-        var cornerInCameraCoordinateList = this._coordinateConverter.CourtToCamera(cornerInCourtCoordinateList);
+        var cornerInMonitorCoordinateList = this._coordinateConverter.CourtToMonitor(cornerInCourtCoordinateList);
 
         Cv2.FillConvexPoly(
             image,
             Array.ConvertAll(
-                cornerInCameraCoordinateList,
+                cornerInMonitorCoordinateList,
                 item => (Point2i)item
             ),
             color
@@ -709,8 +709,9 @@ public partial class MainWindow : Form
 
     private void OnSettingsButtonClick(object sender, EventArgs e)
     {
-        var settingsWindow = new SettingsWindow(this);
-        settingsWindow.Show();
+        (new Thread(
+            () => (new SettingsWindow(this)).ShowDialog()
+        )).Start();
     }
 
     private void OnTimerTick(object sender, EventArgs e)

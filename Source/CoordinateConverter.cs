@@ -235,5 +235,45 @@ public class CoordinateConverter : IDisposable
         return Cv2.PerspectiveTransform(points, _transformationCourtToCamera);
     }
 
+    /// <summary>
+    /// Convert the coordinates of a point from the monitor coordinate system to the court coordinate system.
+    /// </summary>
+    /// <param name="points">The point in the monitor coordinate system</param>
+    /// <returns>The point in the court coordinate system</returns>
+    public Point2f MonitorToCourt(Point2f point)
+    {
+        return this.CameraToCourt(this.MonitorToCamera(point));
+    }
+
+    /// <summary>
+    /// Convert the coordinates of points from the monitor coordinate system to the court coordinate system.
+    /// </summary>
+    /// <param name="points">The points in the monitor coordinate system</param>
+    /// <returns>The points in the court coordinate system</returns>
+    public Point2f[] MonitorToCourt(Point2f[] points)
+    {
+        return this.CameraToCourt(this.MonitorToCamera(points));
+    }
+
+    /// <summary>
+    /// Convert the coordinates of a point from the court coordinate system to the monitor coordinate system.
+    /// </summary>
+    /// <param name="points">The point in the court coordinate system</param>
+    /// <returns>The point in the monitor coordinate system</returns>
+    public Point2f CourtToMonitor(Point2f point)
+    {
+        return this.CameraToMonitor(this.CourtToCamera(point));
+    }
+
+    /// <summary>
+    /// Convert the coordinates of points from the court coordinate system to the monitor coordinate system.
+    /// </summary>
+    /// <param name="points">The points in the court coordinate system</param>
+    /// <returns>The points in the monitor coordinate system</returns>
+    public Point2f[] CourtToMonitor(Point2f[] points)
+    {
+        return this.CameraToMonitor(this.CourtToCamera(points));
+    }
+
     #endregion
 }
