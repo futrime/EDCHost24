@@ -7,6 +7,8 @@ namespace EdcHost;
 /// </summary>
 static class Utility
 {
+    #region Public properties.
+
     /// <summary>
     /// A random number generator.
     /// </summary>
@@ -22,4 +24,28 @@ static class Utility
             return (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
         }
     }
+
+    #endregion
+
+    #region Private fields.
+
+    private static int _lastUniqueId = 0;
+
+    #endregion
+
+
+    #region Public methods.
+
+    /// <summary>
+    /// Generate a unique ID.
+    /// </summary>
+    /// <returns>The unique ID.</returns>
+    public static int GenerateUniqueId()
+    {
+        ++Utility._lastUniqueId;
+
+        return Utility._lastUniqueId;
+    }
+
+    #endregion
 }
