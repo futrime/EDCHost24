@@ -108,4 +108,9 @@ public class PacketGetGameInformationHost : Packet
         return bytes;
     }
 
+    public override byte GetPacketId()
+    {
+        return PacketGetGameInformationHost.PacketId;
+    }
+
 }

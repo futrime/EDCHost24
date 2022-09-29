@@ -20,14 +20,6 @@ public class PacketSetChargingPileSlave : Packet
     #region Constructors and finalizers.
 
     /// <summary>
-    /// Construct a SetChargingPileSlave packet.
-    /// </summary>
-    public PacketSetChargingPileSlave()
-    {
-        // Empty
-    }
-
-    /// <summary>
     /// Construct a SetChargingPileSlave packet from a raw
     /// byte array.
     /// </summary>
@@ -60,6 +52,11 @@ public class PacketSetChargingPileSlave : Packet
         data.CopyTo(bytes, header.Length);
 
         return bytes;
+    }
+
+    public override byte GetPacketId()
+    {
+        return PacketSetChargingPileSlave.PacketId;
     }
 
     #endregion
