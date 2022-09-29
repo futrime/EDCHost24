@@ -286,9 +286,14 @@ public partial class MainWindow : Form
             if (this._locatorDict[(CampType)this._game.Camp].TargetPosition != null)
             {
                 // Update the position of the current vehicle.
+                if (this._game.GameTime == null)
+                {
+                    throw new Exception("The game time is null.");
+                }
+
                 this._game.Vehicle[(CampType)this._game.Camp].UpdatePosition(
                     new Dot((Point2i)this._coordinateConverter.CameraToCourt((Point2f)this._locatorDict[(CampType)this._game.Camp].TargetPosition)),
-                    this._game.GameTime
+                    (long)this._game.GameTime
                 );
                 this._game.Refresh();
             }

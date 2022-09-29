@@ -288,7 +288,12 @@ public class Game
                 return null;
             }
 
-            return (Game.GameDuration[this._gameStage] - this.GameTime);
+            if (Game.GameDuration[this._gameStage] == null)
+            {
+                return null;
+            }
+
+            return Math.Max((long)Game.GameDuration[this._gameStage] - (long)this.GameTime, 0);
         }
     }
 
@@ -494,6 +499,7 @@ public class Game
 
         // Set the start time
         this._startTime = Utility.SystemTime;
+
         // Set the order generator.
         switch (this._camp)
         {
@@ -561,10 +567,13 @@ public class Game
     /// </summary>
     public void End()
     {
-        // if (this._gameState != GameStateType.Running)
-        // {
-        //     throw new Exception("The game is not running.");
-        // }
+        if (
+            this._gameState != GameStateType.Running &&
+            this._gameState != GameStateType.Paused
+        )
+        {
+            throw new Exception("The game is not running or paused.");
+        }
 
         this._gameState = GameStateType.Ended;
     }
@@ -906,11 +915,12 @@ public class Game
     }
 
     /// <summary>
-    /// Take and deliver orders.
+    /// Set a foul flag.
     /// </summary>
     public void SetFoul()
     {
-        this._score[(CampType)this._camp] += ScoreFoul;
+        this._score[(CampType)this._camp] += Game.ScoreFoul;
     }
+
     #endregion
 }
