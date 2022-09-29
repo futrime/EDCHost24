@@ -59,9 +59,9 @@ public enum GameStageType
 };
 
 /// <summary>
-/// The game state type
+/// The game status type
 /// </summary>
-public enum GameStateType
+public enum GameStatusType
 {
     /// <summary>
     /// The game has not started yet

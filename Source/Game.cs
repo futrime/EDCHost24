@@ -252,7 +252,7 @@ public class Game
     /// <summary>
     /// The game state.
     /// </summary>
-    public GameStateType GameState => this._gameState;
+    public GameStatusType GameState => this._gameState;
 
     /// <summary>
     /// The game time. Null if the game has not started.
@@ -319,7 +319,7 @@ public class Game
 
     private GameStageType _gameStage = GameStageType.PreMatch;
 
-    private GameStateType _gameState = GameStateType.Unstarted;
+    private GameStatusType _gameState = GameStatusType.Unstarted;
 
     // True if the vehicle of the current camp has moved into the
     // inner court.
@@ -419,7 +419,7 @@ public class Game
     {
         // The game should only refresh when running.
         if (
-            this._gameState != GameStateType.Running
+            this._gameState != GameStatusType.Running
         )
         {
             return;
@@ -471,8 +471,8 @@ public class Game
     public void Start(CampType camp, GameStageType gameStage)
     {
         if (
-            this._gameState != GameStateType.Unstarted &&
-            this._gameState != GameStateType.Ended
+            this._gameState != GameStatusType.Unstarted &&
+            this._gameState != GameStatusType.Ended
         )
         {
             throw new Exception("The game has started.");
@@ -484,7 +484,7 @@ public class Game
             throw new Exception("The game stage is invalid.");
         }
 
-        this._gameState = GameStateType.Running;
+        this._gameState = GameStatusType.Running;
 
         // Set the metadata.
         this._camp = camp;
@@ -536,12 +536,12 @@ public class Game
     /// </summary>
     public void Pause()
     {
-        if (this._gameState != GameStateType.Running)
+        if (this._gameState != GameStatusType.Running)
         {
             throw new Exception("The game is not running.");
         }
 
-        this._gameState = GameStateType.Paused;
+        this._gameState = GameStatusType.Paused;
 
         // Record the time when start to pause.
         this._pauseTime = Utility.SystemTime;
@@ -552,12 +552,12 @@ public class Game
     /// </summary>
     public void Continue()
     {
-        if (this._gameState != GameStateType.Paused)
+        if (this._gameState != GameStatusType.Paused)
         {
             throw new Exception("The game is not paused.");
         }
 
-        this._gameState = GameStateType.Running;
+        this._gameState = GameStatusType.Running;
 
         // To reduce the paused time in the game time.
         this._startTime += Utility.SystemTime - this._pauseTime;
@@ -569,14 +569,14 @@ public class Game
     public void End()
     {
         if (
-            this._gameState != GameStateType.Running &&
-            this._gameState != GameStateType.Paused
+            this._gameState != GameStatusType.Running &&
+            this._gameState != GameStatusType.Paused
         )
         {
             throw new Exception("The game is not running or paused.");
         }
 
-        this._gameState = GameStateType.Ended;
+        this._gameState = GameStatusType.Ended;
     }
 
     /// <summary>

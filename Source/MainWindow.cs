@@ -281,7 +281,7 @@ public partial class MainWindow : Form
 
         this.ProcessCameraFrame();
 
-        if (this._game.GameState == GameStateType.Unstarted)
+        if (this._game.GameState == GameStatusType.Unstarted)
         {
             this.buttonFoul.Enabled = false;
             if (this._calibrationClickCount >= 4)
@@ -294,7 +294,7 @@ public partial class MainWindow : Form
             this.buttonContinue.Enabled = false;
             this.buttonEnd.Enabled = false;
         }
-        else if (this._game.GameState == GameStateType.Running)
+        else if (this._game.GameState == GameStatusType.Running)
         {
             if (this._locatorDict[(CampType)this._game.Camp].TargetPosition != null)
             {
@@ -327,7 +327,7 @@ public partial class MainWindow : Form
             this.labelGameTime.Text = Math.Max((decimal)(this._game.RemainingTime) / 1000, (decimal)0).ToString("0.00");
             this.progressBarRemainingPowerRatio.Value = (int)(this._game.Vehicle[(CampType)this._game.Camp].RemainingPowerRatio * 100);
         }
-        else if (this._game.GameState == GameStateType.Paused)
+        else if (this._game.GameState == GameStatusType.Paused)
         {
             this.buttonFoul.Enabled = true;
             if (this._calibrationClickCount >= 4)
@@ -340,7 +340,7 @@ public partial class MainWindow : Form
             this.buttonContinue.Enabled = true;
             this.buttonEnd.Enabled = true;
         }
-        else if (this._game.GameState == GameStateType.Ended)
+        else if (this._game.GameState == GameStatusType.Ended)
         {
             this.buttonFoul.Enabled = false;
             if (this._calibrationClickCount >= 4)
@@ -500,7 +500,7 @@ public partial class MainWindow : Form
         }
 
         // Draw departures and destinations of orders
-        if (this._game.GameState == GameStateType.Running || this._game.GameState == GameStateType.Paused)
+        if (this._game.GameState == GameStatusType.Running || this._game.GameState == GameStatusType.Paused)
         {
             Vehicle vehicle = this._game.Vehicle[(CampType)this._game.Camp];
 
