@@ -315,7 +315,7 @@ public class Game
 
     private CampType? _camp = null;
 
-    public List<ChargingPile> _chargingPileList = new List<ChargingPile>();
+    private List<ChargingPile> _chargingPileList = new List<ChargingPile>();
 
     private GameStageType _gameStage = GameStageType.PreMatch;
 
