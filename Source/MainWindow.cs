@@ -93,7 +93,11 @@ public partial class MainWindow : Form
     /// <summary>
     /// The camera
     /// </summary>
-    public VideoCapture Camera => this._camera;
+    public VideoCapture Camera
+    {
+        get => this._camera;
+        set => this._camera = value;
+    }
 
     /// <summary>
     /// The size of camera frames
