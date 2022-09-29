@@ -179,6 +179,12 @@ public partial class MainWindow : Form
     {
         InitializeComponent();
 
+        // Initialize the label texts
+        this.labelScoreVehicleA.Text = "0.000";
+        this.labelScoreVehicleB.Text = "0.000";
+        this.labelGameTime.Text = "0.00";
+        this.labelGameHalf.Text = "Pre-match";
+
         // Resize icons
         foreach (var icon in IconCarDict.Values)
         {
@@ -257,6 +263,9 @@ public partial class MainWindow : Form
                 )
             );
         }
+
+        // Refresh the window to update content.
+        this.Refresh();
     }
 
     /// <summary>
@@ -677,25 +686,25 @@ public partial class MainWindow : Form
             this._game.Camp == null)
         {
             _game.Start(CampType.A, GameStageType.FirstHalf);
-            labelGameHalf.Text = "上半场";
+            labelGameHalf.Text = "First Half";
         }
         else if (this._game.GameStage == GameStageType.FirstHalf &&
             this._game.Camp == CampType.A)
         {
             _game.Start(CampType.B, GameStageType.FirstHalf);
-            labelGameHalf.Text = "上半场";
+            labelGameHalf.Text = "First Half";
         }
         else if (this._game.GameStage == GameStageType.FirstHalf &&
             this._game.Camp == CampType.B)
         {
             _game.Start(CampType.A, GameStageType.SecondHalf);
-            labelGameHalf.Text = "下半场";
+            labelGameHalf.Text = "Second Half";
         }
         else if (this._game.GameStage == GameStageType.SecondHalf &&
             this._game.Camp == CampType.A)
         {
             _game.Start(CampType.B, GameStageType.SecondHalf);
-            labelGameHalf.Text = "下半场";
+            labelGameHalf.Text = "Second Half";
         }
         else
         {
