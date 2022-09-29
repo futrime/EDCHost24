@@ -3,14 +3,24 @@ using System;
 namespace EdcHost;
 
 /// <summary>
-/// A packet for slaves to set a charging pile
+/// A packet for slaves to set a charging pile.
 /// </summary>
 public class PacketSetChargingPileSlave : Packet
 {
-    public const byte PacketId = 0x02;
+    #region Static, const and readonly fields.
 
     /// <summary>
-    /// Construct a SetChargingPileSlave packet with fields.
+    /// The packet ID.
+    /// </summary>
+    public const byte PacketId = 0x02;
+
+    #endregion
+
+
+    #region Constructors and finalizers.
+
+    /// <summary>
+    /// Construct a SetChargingPileSlave packet.
     /// </summary>
     public PacketSetChargingPileSlave()
     {
@@ -18,24 +28,26 @@ public class PacketSetChargingPileSlave : Packet
     }
 
     /// <summary>
-    /// Construct a SetChargingPileSlave packet with a raw
+    /// Construct a SetChargingPileSlave packet from a raw
     /// byte array.
     /// </summary>
-    /// <param name="bytes">The raw byte array</param>
-    /// <exception cref="Exception">
-    /// The raw byte array violates the rules.
-    /// </exception>
+    /// <param name="bytes">The raw byte array.</param>
     public PacketSetChargingPileSlave(byte[] bytes)
     {
-        // Validate the packet and extract data
-        Packet.ExtractPacketData(bytes);
+        // Validate the packet and extract data.
+        var data = Packet.ExtractPacketData(bytes);
 
+        // Check the packet ID.
         byte packetId = bytes[0];
         if (packetId != PacketSetChargingPileSlave.PacketId)
         {
             throw new Exception("The packet ID is incorrect.");
         }
     }
+
+    #endregion
+
+    #region Methods.
 
     public override byte[] GetBytes()
     {
@@ -49,4 +61,6 @@ public class PacketSetChargingPileSlave : Packet
 
         return bytes;
     }
+
+    #endregion
 }

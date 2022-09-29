@@ -1,201 +1,167 @@
 using System;
 using System.Collections.Generic;
+
 namespace EdcHost;
 
 public class PacketGetStatusHost : Packet
 {
-    public enum Status
-    {
-        Standby = 0,
-        InProgress = 1,
-        Paused = 2
-    };
+    #region Static, const and readonly fields.
 
-
+    /// <summary>
+    /// The packet ID.
+    /// </summary>
     public const byte PacketId = 0x05;
 
+    private GameStatusType _gameStatus;
+    private long _gameTime;
+    private double _score;
+    private Dot _vehiclePosition;
+    private int _remainingDistance;
+    private List<Order> _orderInDeliveryList;
+    private Order _latestPendingOrder;
 
-    private Status _currentStatus;
-    private long _currentTime;
-    private int _currentScore;
-    private Dot _carPos;
-    private int _mileage;
-    private int _orderListLength;
-    private List<Order> _orderList;
+    #endregion
+
+
+    #region Constructors and finalizers.
 
     /// <summary>
     /// Construct a GetSiteInformation packet with fields.
     /// </summary>
-    /// <remarks>
-    /// Note that orederList represents the order ## remaining on the GUI ##
-    /// </remarks>
-    public PacketGetStatusHost(GameStateType currentState, long currentTime, int currentScore,
-        Dot carPos, int mileage, List<Order> orderList)
+    public PacketGetStatusHost(
+        GameStatusType gameStatus,
+        long gameTime,
+        double score,
+        Dot vehiclePosition,
+        int remainingDistance,
+        List<Order> orderInDeliveryList,
+        Order latestPendingOrder
+    )
     {
-        // convert Gamestate to Status
-        switch (currentState)
-        {
-            case GameStateType.Unstarted:
-            case GameStateType.Ended:
-                this._currentStatus = Status.Standby;
-                break;
-            case GameStateType.Running:
-                this._currentStatus = Status.InProgress;
-                break;
-            case GameStateType.Paused:
-                this._currentStatus = Status.Paused;
-                break;
-        }
-        this._currentTime = currentTime;
-        this._currentScore = currentScore;
-        this._carPos = carPos;
-        this._mileage = mileage;
-        this._orderListLength = orderList.Count;
-        this._orderList = orderList;
+        this._gameStatus = gameStatus;
+        this._gameTime = gameTime;
+        this._score = score;
+        this._vehiclePosition = vehiclePosition;
+        this._remainingDistance = remainingDistance;
+        this._orderInDeliveryList = orderInDeliveryList;
+        this._latestPendingOrder = latestPendingOrder;
     }
 
-    /// <summary>
-    /// Construct a GetSiteInformation packet with a raw byte array.
-    /// </summary>
-    /// <param name="bytes">The raw byte array</param>
-    /// <exception cref="ArgumentException">
-    /// The raw byte array violates the rules.
-    /// </exception>
-    public PacketGetStatusHost(byte[] bytes)
-    {
-        // Validate the packet and extract data
-        byte[] data = Packet.ExtractPacketData(bytes);
+    #endregion
 
-        byte packetId = bytes[0];
-        if (packetId != PacketGetStatusHost.PacketId)
-        {
-            throw new Exception("The packet ID is incorrect.");
-        }
-        int currentIndex = 0;
-        // status
-        this._currentStatus = (Status)data[currentIndex];
-        currentIndex += 1;
-        // time
-        this._currentTime = BitConverter.ToInt64(data, currentIndex);
-        currentIndex += 8;
-        // score
-        this._currentScore = BitConverter.ToInt32(data, currentIndex);
-        currentIndex += 4;
-        // car
-        this._carPos.X = BitConverter.ToInt32(data, currentIndex);
-        currentIndex += 4;
-        this._carPos.Y = BitConverter.ToInt32(data, currentIndex);
-        currentIndex += 4;
-        // mileage
-        this._mileage = BitConverter.ToInt32(data, currentIndex);
-        currentIndex += 4;
 
-        // orderList
-        this._orderListLength = BitConverter.ToInt32(data, currentIndex);
-        currentIndex += 4;
-
-        //Note that only according to bytes, the _orderList is probably incomplete (with regard to variable 'generationTime' and 'StatusType')
-        for (int i = 0; i < this._orderListLength; i++)
-        {
-            Dot departurePosition = new Dot(BitConverter.ToInt32(data, currentIndex), BitConverter.ToInt32(data, currentIndex + 4));
-            currentIndex += 4 * 2;
-            Dot destinationPosition = new Dot(BitConverter.ToInt32(data, currentIndex), BitConverter.ToInt32(data, currentIndex + 4));
-            currentIndex += 4 * 2;
-
-            long deliveryTimeLimit = BitConverter.ToInt64(data, currentIndex);
-            currentIndex += 8;
-
-            // Not used because there's no interface in the constructor of class Order
-            bool isTaken = BitConverter.ToBoolean(data, currentIndex);
-            currentIndex += 1;
-
-            long generationTime = 0;
-
-            this._orderList.Add(new Order(departurePosition, destinationPosition, generationTime, deliveryTimeLimit));
-        }
-    }
+    #region Methods.
 
     public override byte[] GetBytes()
     {
-        // Compute the length of the data
-        int dataLength = (
-            1 +                                    // this._currentStatus
-            8 +                                    // this._currentTime
-            4 +                                    // this._score
-            2 * 4 +                                // this._CarPos
-            4 +                                    // this._mileages
-            4 +                                    // this._orderListLength
-            this._orderListLength * 25             // this._orderList
-        );
-        // Initialize the data array
-        var data = new byte[dataLength];
+        var data = new byte[
+            1 + 8 + 8 + 8 + 4 +
+            (4 + 28 * this._orderInDeliveryList.Count) + 28
+        ];
 
-        int currentIndex = 0;
+        int index = 0;
 
-        data[currentIndex] = (byte)this._currentStatus;
-        currentIndex += 1;
-
-        // time
-        BitConverter.GetBytes(this._currentTime).CopyTo(data, currentIndex);
-        currentIndex += 8;
-
-        // score
-        BitConverter.GetBytes(this._currentScore).CopyTo(data, currentIndex);
-        currentIndex += 4;
-
-        // carPos
-        BitConverter.GetBytes(this._carPos.X).CopyTo(data, currentIndex);
-        currentIndex += 4;
-        BitConverter.GetBytes(this._carPos.Y).CopyTo(data, currentIndex);
-        currentIndex += 4;
-
-        // mileage
-        BitConverter.GetBytes(this._mileage).CopyTo(data, currentIndex);
-        currentIndex += 4;
-
-        // orderList length 
-        BitConverter.GetBytes(this._orderListLength).CopyTo(data, currentIndex);
-        currentIndex += 4;
-
-        // orderList
-        foreach (Order order in this._orderList)
+        // The game status.
+        switch (this._gameStatus)
         {
-            // Departure Position
-            BitConverter.GetBytes(order.DeparturePosition.X).CopyTo(data, currentIndex);
-            currentIndex += 4;
-            BitConverter.GetBytes(order.DeparturePosition.Y).CopyTo(data, currentIndex);
-            currentIndex += 4;
+            case GameStatusType.Unstarted:
+            case GameStatusType.Paused:
+            case GameStatusType.Ended:
+                BitConverter.GetBytes((byte)0).CopyTo(data, index);
+                break;
 
-            // Destination Position
-            BitConverter.GetBytes(order.DestinationPosition.X).CopyTo(data, currentIndex);
-            currentIndex += 4;
-            BitConverter.GetBytes(order.DestinationPosition.Y).CopyTo(data, currentIndex);
-            currentIndex += 4;
+            case GameStatusType.Running:
+                BitConverter.GetBytes((byte)1).CopyTo(data, index);
+                break;
 
-            // Scheduled time
-            BitConverter.GetBytes((long)order.ScheduledDeliveryTime).CopyTo(data, currentIndex);
-            currentIndex += 8;
-
-            // isTaken is based on 'order.Status'
-            bool isTaken = false;
-            switch (order.Status)
-            {
-                case OrderStatusType.Pending:
-                case OrderStatusType.Ungenerated:
-                    isTaken = false;
-                    break;
-                case OrderStatusType.InDelivery:
-                    isTaken = true;
-                    break;
-                // Error: OrderStatusType.Delivered
-                default:
-                    throw new Exception("Input delivered orders to the PacketGetStatusInformationHost!");
-            }
-            BitConverter.GetBytes(isTaken).CopyTo(data, currentIndex);
-            currentIndex += 1;
+            default:
+                break;
         }
-        // --------- Finish encoding the 'data' ---------- //
+        index += 1;
 
+        // The game time.
+        BitConverter.GetBytes(this._gameTime).CopyTo(data, index);
+        index += 8;
+
+        // The score.
+        BitConverter.GetBytes(this._score).CopyTo(data, index);
+        index += 8;
+
+        #region The vehicle position.
+        // The x.
+        BitConverter.GetBytes(this._vehiclePosition.X).CopyTo(data, index);
+        index += 4;
+        // The y.
+        BitConverter.GetBytes(this._vehiclePosition.Y).CopyTo(data, index);
+        index += 4;
+        #endregion
+
+        // The remaining distance.
+        BitConverter.GetBytes(this._remainingDistance).CopyTo(data, index);
+        index += 4;
+
+        #region The order in delivery list.
+        BitConverter.GetBytes(this._orderInDeliveryList.Count).CopyTo(data, index);
+        index += 4;
+        foreach (var order in this._orderInDeliveryList)
+        {
+            #region The departure position.
+            // The x.
+            BitConverter.GetBytes(order.DeparturePosition.X).CopyTo(data, index);
+            index += 4;
+            // The y.
+            BitConverter.GetBytes(order.DeparturePosition.Y).CopyTo(data, index);
+            index += 4;
+            #endregion
+
+            #region The destination position.
+            // The x.
+            BitConverter.GetBytes(order.DestinationPosition.X).CopyTo(data, index);
+            index += 4;
+            // The y.
+            BitConverter.GetBytes(order.DestinationPosition.Y).CopyTo(data, index);
+            index += 4;
+            #endregion
+
+            // The delivery time limit.
+            BitConverter.GetBytes(order.DeliveryTimeLimit).CopyTo(data, index);
+            index += 8;
+
+            // The order ID.
+            BitConverter.GetBytes(order.Id).CopyTo(data, index);
+            index += 4;
+        }
+        #endregion
+
+        #region The latest pending order.
+        #region The departure position.
+        // The x.
+        BitConverter.GetBytes(this._latestPendingOrder.DeparturePosition.X).CopyTo(data, index);
+        index += 4;
+        // The y.
+        BitConverter.GetBytes(this._latestPendingOrder.DeparturePosition.Y).CopyTo(data, index);
+        index += 4;
+        #endregion
+
+        #region The destination position.
+        // The x.
+        BitConverter.GetBytes(this._latestPendingOrder.DestinationPosition.X).CopyTo(data, index);
+        index += 4;
+        // The y.
+        BitConverter.GetBytes(this._latestPendingOrder.DestinationPosition.Y).CopyTo(data, index);
+        index += 4;
+        #endregion
+
+        // The delivery time limit.
+        BitConverter.GetBytes(this._latestPendingOrder.DeliveryTimeLimit).CopyTo(data, index);
+        index += 8;
+
+        // The order ID.
+        BitConverter.GetBytes(this._latestPendingOrder.Id).CopyTo(data, index);
+        index += 4;
+        #endregion
+
+        // Generate the header.
         var header = Packet.GeneratePacketHeader(PacketGetStatusHost.PacketId, data);
 
         var bytes = new byte[header.Length + data.Length];
@@ -204,4 +170,6 @@ public class PacketGetStatusHost : Packet
 
         return bytes;
     }
+
+    #endregion
 }

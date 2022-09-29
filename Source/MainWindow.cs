@@ -382,38 +382,44 @@ public partial class MainWindow : Form
                 continue;
             }
 
-            // Read the message
+            // Read the message.
             var buffer = new byte[MainWindow.SerialPortBufferLength];
             var length = this._serialPortDict[camp].Read(
                 buffer: buffer,
                 offset: 0,
                 count: MainWindow.SerialPortBufferLength
             );
+            var bytesRead = new byte[length];
+            buffer.CopyTo(bytesRead, 0);
 
-            Packet packetToSend = null;
-
-            // Tackle the packet received.
-            if (length > 0)
+            // Send default packet.
+            // Only send if the serial port is not writing.
+            if (this._serialPortDict[camp].BytesToWrite == 0)
             {
-                var bytes = new byte[length];
-                buffer.CopyTo(bytes, 0);
-            }
+                // Get the order in delivery list.
+                var orderInDeliveryList = new List<Order>();
+                foreach (var order in this._game.OrderList)
+                {
+                    if (order.Status == OrderStatusType.InDelivery)
+                    {
+                        orderInDeliveryList.Add(order);
+                    }
+                }
 
-            // Send default packet
-            if (packetToSend == null)
-            {
-                packetToSend = new PacketGetStatusHost(
-                    currentState: this._game.GameState,
-                    currentTime: this._game.GameTime.GetValueOrDefault(0),
-                    currentScore: (int)this._game.Score[camp],
-                    carPos: this._game.Vehicle[camp].Position.GetValueOrDefault(new Dot(0, 0)),
-                    mileage: this._game.Vehicle[camp].RemainingDistance,
-                    orderList: this._game.OrderList
+                var packet = new PacketGetStatusHost(
+                    gameStatus: this._game.GameState,
+                    gameTime: this._game.GameTime.GetValueOrDefault(0),
+                    score: (double)this._game.Score[camp],
+                    vehiclePosition: this._game.Vehicle[camp].Position.GetValueOrDefault(new Dot(0, 0)),
+                    remainingDistance: this._game.Vehicle[camp].RemainingDistance,
+                    orderInDeliveryList: orderInDeliveryList,
+                    latestPendingOrder: this._game.OrderList[this._game.OrderList.Count - 1]
                 );
-            }
 
-            var bytesToSend = packetToSend.GetBytes();
-            this._serialPortDict[camp].Write(bytesToSend, 0, bytesToSend.Length);
+                var bytesToWrite = packet.GetBytes();
+
+                this._serialPortDict[camp].Write(bytesToWrite, 0, bytesToWrite.Length);
+            }
         }
     }
 

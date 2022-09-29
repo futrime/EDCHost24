@@ -97,14 +97,8 @@ public abstract class Packet
             case PacketGetGameInformationSlave.PacketId:
                 return new PacketGetGameInformationSlave(bytes);
 
-            case PacketGetGameInformationHost.PacketId:
-                return new PacketGetGameInformationHost(bytes);
-
             case PacketSetChargingPileSlave.PacketId:
                 return new PacketSetChargingPileSlave(bytes);
-
-            case PacketGetStatusHost.PacketId:
-                return new PacketGetStatusHost(bytes);
 
             default:
                 throw new Exception("The packet ID is invalid.");
