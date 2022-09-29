@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class PacketGetSiteInformationHost : Packet
 {
-    private readonly byte PacketId = 0x01;
+    public const byte PacketId = 0x01;
 
     private int _obstacleListLength;
     private List<Barrier> _obstacleList;
@@ -51,7 +51,7 @@ public class PacketGetSiteInformationHost : Packet
         byte[] data = Packet.ExtractPacketData(bytes);
 
         byte packetId = bytes[0];
-        if (packetId != this.PacketId)
+        if (packetId != PacketGetSiteInformationHost.PacketId)
         {
             throw new Exception("The packet ID is incorrect.");
         }
@@ -167,7 +167,7 @@ public class PacketGetSiteInformationHost : Packet
         }
 
         // write the data's information into the header
-        var header = GeneratePacketHeader(this.PacketId, data);
+        var header = GeneratePacketHeader(PacketGetSiteInformationHost.PacketId, data);
 
         var bytes = new byte[header.Length + data.Length];
         header.CopyTo(bytes, 0);

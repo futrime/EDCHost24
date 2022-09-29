@@ -7,7 +7,7 @@ namespace EdcHost;
 /// </summary>
 public class PacketGetSiteInformationSlave : Packet
 {
-    private readonly byte PacketId = 0x00;
+    public const byte PacketId = 0x00;
 
     /// <summary>
     /// Construct a GetSiteInformationSlave packet with fields.
@@ -31,7 +31,7 @@ public class PacketGetSiteInformationSlave : Packet
         Packet.ExtractPacketData(bytes);
 
         byte packetId = bytes[0];
-        if (packetId != this.PacketId)
+        if (packetId != PacketGetSiteInformationSlave.PacketId)
         {
             throw new Exception("The packet ID is incorrect.");
         }
@@ -41,7 +41,7 @@ public class PacketGetSiteInformationSlave : Packet
     {
         var data = new byte[0];
 
-        var header = Packet.GeneratePacketHeader(this.PacketId, data);
+        var header = Packet.GeneratePacketHeader(PacketGetSiteInformationSlave.PacketId, data);
 
         var bytes = new byte[header.Length + data.Length];
         header.CopyTo(bytes, 0);

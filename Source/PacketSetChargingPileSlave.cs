@@ -7,12 +7,12 @@ namespace EdcHost;
 /// </summary>
 public class PacketSetChargingPileSlave : Packet
 {
-    private readonly byte PacketId = 0x02;
+    public const byte PacketId = 0x02;
 
     /// <summary>
     /// Construct a SetChargingPileSlave packet with fields.
     /// </summary>
-    public PacketSetChargingPileSlave(Dot ChargingPilePos)
+    public PacketSetChargingPileSlave()
     {
         // Empty
     }
@@ -31,7 +31,7 @@ public class PacketSetChargingPileSlave : Packet
         Packet.ExtractPacketData(bytes);
 
         byte packetId = bytes[0];
-        if (packetId != this.PacketId)
+        if (packetId != PacketSetChargingPileSlave.PacketId)
         {
             throw new Exception("The packet ID is incorrect.");
         }
@@ -41,7 +41,7 @@ public class PacketSetChargingPileSlave : Packet
     {
         var data = new byte[8];
 
-        var header = Packet.GeneratePacketHeader(this.PacketId, data);
+        var header = Packet.GeneratePacketHeader(PacketSetChargingPileSlave.PacketId, data);
 
         var bytes = new byte[header.Length + data.Length];
         header.CopyTo(bytes, 0);

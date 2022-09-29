@@ -390,10 +390,30 @@ public partial class MainWindow : Form
                 count: MainWindow.SerialPortBufferLength
             );
 
+            Packet packetToSend = null;
+
+            // Tackle the packet received.
             if (length > 0)
             {
-                // To be implemented
+                var bytes = new byte[length];
+                buffer.CopyTo(bytes, 0);
             }
+
+            // Send default packet
+            if (packetToSend == null)
+            {
+                packetToSend = new PacketGetStatusInformationHost(
+                    currentState: this._game.GameState,
+                    currentTime: this._game.GameTime.GetValueOrDefault(0),
+                    currentScore: (int)this._game.Score[camp],
+                    carPos: this._game.Vehicle[camp].Position.GetValueOrDefault(new Dot(0, 0)),
+                    mileage: this._game.Vehicle[camp].RemainingDistance,
+                    orderList: this._game.OrderList
+                );
+            }
+
+            var bytesToSend = packetToSend.GetBytes();
+            this._serialPortDict[camp].Write(bytesToSend, 0, bytesToSend.Length);
         }
     }
 

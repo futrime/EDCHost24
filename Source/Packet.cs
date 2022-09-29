@@ -81,6 +81,39 @@ public abstract class Packet
     }
 
     /// <summary>
+    /// Make a packet from a raw byte array.
+    /// </summary>
+    /// <param name="bytes">The raw byte array.</param>
+    /// <returns>The packet</returns>
+    public static Packet Make(byte[] bytes)
+    {
+        if (bytes.Length < 6)
+        {
+            throw new Exception("The packet is broken.");
+        }
+
+        byte packetId = bytes[0];
+
+        switch (packetId)
+        {
+            case PacketGetSiteInformationSlave.PacketId:
+                return new PacketGetSiteInformationSlave(bytes);
+
+            case PacketGetSiteInformationHost.PacketId:
+                return new PacketGetSiteInformationHost(bytes);
+
+            case PacketSetChargingPileSlave.PacketId:
+                return new PacketSetChargingPileSlave(bytes);
+
+            case PacketGetStatusInformationHost.PacketId:
+                return new PacketGetStatusInformationHost(bytes);
+
+            default:
+                throw new Exception("The packet ID is invalid.");
+        }
+    }
+
+    /// <summary>
     /// Get the raw byte array of the packet.
     /// </summary>
     /// <returns>The raw byte array</returns>

@@ -10,7 +10,11 @@ public class PacketGetStatusInformationHost : Packet
         InProgress = 1,
         Paused = 2
     };
-    private readonly byte PacketId = 0x05;
+
+
+    public const byte PacketId = 0x05;
+
+
     private Status _currentStatus;
     private long _currentTime;
     private int _currentScore;
@@ -63,7 +67,7 @@ public class PacketGetStatusInformationHost : Packet
         byte[] data = Packet.ExtractPacketData(bytes);
 
         byte packetId = bytes[0];
-        if (packetId != this.PacketId)
+        if (packetId != PacketGetStatusInformationHost.PacketId)
         {
             throw new Exception("The packet ID is incorrect.");
         }
@@ -192,7 +196,7 @@ public class PacketGetStatusInformationHost : Packet
         }
         // --------- Finish encoding the 'data' ---------- //
 
-        var header = Packet.GeneratePacketHeader(this.PacketId, data);
+        var header = Packet.GeneratePacketHeader(PacketGetStatusInformationHost.PacketId, data);
 
         var bytes = new byte[header.Length + data.Length];
         header.CopyTo(bytes, 0);
