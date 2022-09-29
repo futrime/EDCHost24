@@ -171,5 +171,10 @@ public class PacketGetStatusHost : Packet
         return bytes;
     }
 
+    public override byte GetPacketId()
+    {
+        return PacketGetStatusHost.PacketId;
+    }
+
     #endregion
 }

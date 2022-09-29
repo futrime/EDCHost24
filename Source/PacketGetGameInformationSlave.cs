@@ -20,19 +20,11 @@ public class PacketGetGameInformationSlave : Packet
     #region Constructors and finalizers.
 
     /// <summary>
-    /// Construct a GetGameInformationSlave packet.
-    /// </summary>
-    public PacketGetGameInformationSlave()
-    {
-        // Empty
-    }
-
-    /// <summary>
     /// Construct a GetGameInformationSlave packet from a raw
     /// byte array.
     /// </summary>
     /// <param name="bytes">The raw byte array.</param>
-    public PacketGetGameInformationSlave(byte[] bytes) : this()
+    public PacketGetGameInformationSlave(byte[] bytes)
     {
         // Validate the packet and extract data.
         var data = Packet.ExtractPacketData(bytes);
@@ -61,6 +53,11 @@ public class PacketGetGameInformationSlave : Packet
         data.CopyTo(bytes, header.Length);
 
         return bytes;
+    }
+
+    public override byte GetPacketId()
+    {
+        return PacketGetGameInformationSlave.PacketId;
     }
 
     #endregion

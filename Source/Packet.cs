@@ -115,5 +115,11 @@ public abstract class Packet
     /// <returns>The raw byte array.</returns>
     public abstract byte[] GetBytes();
 
+    /// <summary>
+    /// Get the packet ID.
+    /// </summary>
+    /// <returns></returns>
+    public abstract byte GetPacketId();
+
     #endregion
 }
