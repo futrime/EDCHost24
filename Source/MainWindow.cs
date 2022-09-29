@@ -295,10 +295,13 @@ public partial class MainWindow : Form
                     throw new Exception("The game time is null.");
                 }
 
+                // Update the position of the vehicle of the current camp.
                 this._game.Vehicle[(CampType)this._game.Camp].UpdatePosition(
                     new Dot((Point2i)this._coordinateConverter.CameraToCourt((Point2f)this._locatorDict[(CampType)this._game.Camp].TargetPosition)),
                     (long)this._game.GameTime
                 );
+
+                // Refresh the game.
                 this._game.Refresh();
             }
 
@@ -310,8 +313,8 @@ public partial class MainWindow : Form
             this.buttonContinue.Enabled = false;
             this.buttonEnd.Enabled = true;
 
-            this.labelScoreVehicleA.Text = ((int)this._game.Score[CampType.A]).ToString();
-            this.labelScoreVehicleB.Text = ((int)this._game.Score[CampType.B]).ToString();
+            this.labelScoreVehicleA.Text = this._game.Score[CampType.A].ToString("0.000");
+            this.labelScoreVehicleB.Text = this._game.Score[CampType.B].ToString("0.000");
             this.labelGameTime.Text = Math.Max((decimal)(this._game.RemainingTime) / 1000, (decimal)0).ToString("0.00");
             this.progressBarRemainingPowerRatio.Value = (int)(this._game.Vehicle[(CampType)this._game.Camp].RemainingPowerRatio * 100);
         }
@@ -405,14 +408,19 @@ public partial class MainWindow : Form
             locator.Image = frame;
         }
 
-        // Resize to the size of the monitor
-        Cv2.Resize(src: frame, dst: frame, dsize: this._monitorFrameSize);
+        // Avoid rendering the monitor frame when the main window is minimized.
+        if (this._monitorFrameSize.Width != 0 &&
+            this._monitorFrameSize.Height != 0)
+        {
+            // Resize to the size of the monitor
+            Cv2.Resize(src: frame, dst: frame, dsize: this._monitorFrameSize);
 
-        // Draw patterns on the monitor.
-        this.Draw(ref frame);
+            // Draw patterns on the monitor.
+            this.Draw(ref frame);
 
-        // Update the monitor frame
-        this.RefreshMonitor(BitmapConverter.ToBitmap(frame));
+            // Update the monitor frame
+            this.RefreshMonitor(BitmapConverter.ToBitmap(frame));
+        }
     }
 
     /// <summary>
