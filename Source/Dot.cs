@@ -1,65 +1,105 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System;
+using OpenCvSharp;
 
-namespace EDCHOST22
+namespace EdcHost;
+
+/// <summary>
+/// A 2-dimenstion dot
+/// </summary>
+public struct Dot
 {
-    //0813xhl把struct改成了class
-    public class Dot //点
+    /// <summary>
+    /// The x-coordinate of the dot
+    /// </summary>
+    public int X
     {
-        public int x;
-        public int y;
-        //构造函数
-        //8-14 yd添加了默认构造值
-        public Dot(int _x = 0, int _y = 0) { x = _x; y = _y; }
+        get => this._x;
+        set => this._x = value;
+    }
+    /// <summary>
+    /// The y-coordinate of the dot
+    /// </summary>
+    public int Y
+    {
+        get => this._y;
+        set => this._y = value;
+    }
 
-        //运算符重载
-        public static bool operator ==(Dot a, Dot b)
+    private int _x;
+    private int _y;
+
+
+    /// <summary>
+    /// Get the Manhattan distance between two dots.
+    /// </summary>
+    /// <param name="A"></param>
+    /// <param name="B"></param>
+    /// <returns>
+    /// The distance. Null if the distance type is wrong.
+    /// </returns>
+    public static int? Distance(
+        Dot A,
+        Dot B,
+        DotDistanceType distanceType = DotDistanceType.Euclidean
+    )
+    {
+        switch (distanceType)
         {
-            return (a.x == b.x) && (a.y == b.y);
-        }
+            case DotDistanceType.Euclidean:
+                return (int)Math.Sqrt(
+                    Math.Pow(A.X - B.X, 2) +
+                    Math.Pow(A.Y - B.Y, 2)
+                );
 
-        public static bool operator !=(Dot a, Dot b)
-        {
-            return !(a == b);
-        }
+            case DotDistanceType.Manhattan:
+                return (
+                    Math.Abs(A.X - B.X) +
+                    Math.Abs(A.Y - B.Y)
+                );
 
-        public void SetInfo(int x_, int y_)
-        {
-            this.x = x_;
-            this.y = y_;
+            default:
+                return null;
         }
+    }
 
-        // 两点间距
-        public static double GetDistance(Dot d1, Dot d2)        
-        {
-            return Math.Sqrt(Math.Pow(d1.x - d2.x, 2) + Math.Pow(d1.y - d2.y, 2));
-        }
+    public Dot(int x, int y)
+    {
+        this._x = x;
+        this._y = y;
+    }
 
-        // 两点间距是否小于某定值dist
-        // dist默认值为碰撞半径，也可设为金矿间最小间距Court.MINE_LOWERDIST_CM
-        // 用于判断碰撞或金矿间距
-        public static bool InCollisionZone(Dot d1, Dot d2, int dist = Court.COINCIDE_ERR_DIST_CM)      
-        {
-            return GetDistance(d1, d2) < dist;
-        }
+    public Dot(Point point)
+    {
+        this._x = point.X;
+        this._y = point.Y;
+    }
 
-        // 判断d是否与dArray中的某一个点的间距小于某定值dist
-        // dist参数含义同上
-        public static bool InCollisionZones(Dot d, Dot[] dArray, int dist = Court.COINCIDE_ERR_DIST_CM)   
-        {
-            foreach(Dot temp in dArray)
-            {
-                if(InCollisionZone(d, temp, dist))//有一个点满足条件即可返回true
-                {
-                    return true;
-                }
-            }
-            //每个点均不满足则返回false
-            return false;
-        }
+    public static bool operator ==(Dot a, Dot b)
+    {
+        return (a.X == b.X) && (a.Y == b.Y);
+    }
 
+    public static bool operator !=(Dot a, Dot b)
+    {
+        return !(a == b);
+    }
+
+    public override bool Equals(object obj)
+    {
+        return base.Equals(obj);
+    }
+
+    public override int GetHashCode()
+    {
+        return base.GetHashCode();
+    }
+
+    /// <summary>
+    /// Convert the dot to a Point object
+    /// </summary>
+    /// <returns>The Point object</returns>
+    public Point ToPoint()
+    {
+        return new Point(this._x, this._y);
     }
 }

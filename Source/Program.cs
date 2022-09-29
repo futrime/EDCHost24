@@ -1,22 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System;
 using System.Windows.Forms;
 
-namespace EDCHOST22
+namespace EdcHost;
+
+/// <summary>
+/// The program
+/// </summary>
+static class Program
 {
-    static class Program
+    [STAThread]
+    static void Main()
     {
-        /// <summary>
-        /// 应用程序的主入口点。
-        /// </summary>
-        [STAThread]
-        static void Main()
-        {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Tracker());
-        }
+        ApplicationConfiguration.Initialize();
+        Application.Run(new MainWindow());
     }
 }

@@ -1,183 +1,279 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System;
 using OpenCvSharp;
-using System.Drawing;
-using System.IO;
-using System.IO.Ports;
-using System.Windows.Forms;
-using Point2i = OpenCvSharp.Point;
 
-namespace EDCHOST22
+namespace EdcHost;
+
+/// <summary>
+/// A coordinate converter between coordinate systems
+/// </summary>
+/// <remarks>
+/// This is the transformation between camera frame coordinate, monitor frame coordinate,
+/// and the court coordinate.
+/// </remarks>
+public class CoordinateConverter : IDisposable
 {
-    // 坐标转换器：将三种坐标（摄像头坐标、显示坐标、逻辑坐标）上的点坐标进行相互转换
-    // 摄像头坐标：摄像头直接捕捉到的视频帧对应的坐标
-    // 显示坐标：界面上的组件大小所决定的显示画面帧对应的坐标
-    // 逻辑坐标：规则文档中描述的场地大小对应的坐标
-    public class CoordinateConverter : IDisposable
+    #region Public properties
+
+    public Point2f[] CalibrationCorners => this._calibrationCorners;
+
+    #endregion
+
+    #region Private fields
+
+    // The transformation matrices
+    private Mat _transformationCameraToCourt;
+    private Mat _transformationCourtToCamera;
+    private Mat _transformationMonitorToCamera;
+    private Mat _transformationCameraToMonitor;
+
+    /// <summary>
+    /// The corners of the court in the camera coordinate system
+    /// in the last calibration
+    /// </summary>
+    private Point2f[] _calibrationCorners;
+
+    /// <summary>
+    /// The corners of the court in the court coordinate system
+    /// </summary>
+    private readonly Point2f[] _courtCorners;
+
+    #endregion
+
+    /// <summary>
+    /// Construct a coordinate converter.
+    /// </summary>
+    /// <param name="config">The information of the game</param>
+    /// <param name="cameraFrameSize">
+    /// The size of the camera frame
+    /// </param>
+    /// <param name="monitorFrameSize">
+    /// The size of the monitor frame
+    /// </param>
+    /// <param name="courtSize">
+    /// The size of the court
+    /// </param>
+    /// <param name="Point2f[]">
+    /// The calibration information to initialize the converter
+    /// </param>
+    public CoordinateConverter(
+        OpenCvSharp.Size cameraFrameSize,
+        OpenCvSharp.Size monitorFrameSize,
+        OpenCvSharp.Size courtSize,
+        Point2f[] calibrationCorners = null
+    )
     {
-        // 投影变换中的变换矩阵
-        private Mat cam2logic;
-        private Mat logic2cam;
-        private Mat show2cam;
-        private Mat cam2show;
-        private Mat show2logic;
-        private Mat logic2show;
+        Point2f[] camCorners = {
+            new Point2f(0, 0),
+            new Point2f(cameraFrameSize.Width, 0),
+            new Point2f(0, cameraFrameSize.Height),
+            new Point2f(cameraFrameSize.Width, cameraFrameSize.Height)
+        };
+        Point2f[] showCorners = {
+            new Point2f(0, 0),
+            new Point2f(monitorFrameSize.Width, 0),
+            new Point2f(0, monitorFrameSize.Height),
+            new Point2f(monitorFrameSize.Width, monitorFrameSize.Height)
+        };
 
-        // 逻辑画面、摄像头画面、显示画面的四个角坐标
-        // 顺序依次为左上、右上、左下、右下
-        private Point2f[] logicCorners;
-        private Point2f[] camCorners;
-        private Point2f[] showCorners;
+        this._courtCorners = new Point2f[] {
+            new Point2f(0, 0),
+            new Point2f(courtSize.Width, 0),
+            new Point2f(0, courtSize.Height),
+            new Point2f(courtSize.Width, courtSize.Height)
+        };
 
-        // 释放托管资源
-        protected virtual void Dispose(bool disposing)
+        // By default, the court corners are at the same positions as the camera corners
+        // in the camera coordinate system.
+        if (calibrationCorners != null)
         {
-            if (disposing)
-            {
-                ((IDisposable)(cam2logic)).Dispose();
-                ((IDisposable)(logic2cam)).Dispose();
-                ((IDisposable)(show2cam)).Dispose();
-                ((IDisposable)(cam2show)).Dispose();
-                ((IDisposable)(show2logic)).Dispose();
-                ((IDisposable)(logic2show)).Dispose();
-            }
-
+            this._calibrationCorners = calibrationCorners;
+        }
+        else
+        {
+            this._calibrationCorners = camCorners;
         }
 
-        public void Dispose()
+        // Get the position transformations between camera frames and monitor frames
+        this._transformationCameraToMonitor = Cv2.GetPerspectiveTransform(camCorners, showCorners);
+        this._transformationMonitorToCamera = Cv2.GetPerspectiveTransform(showCorners, camCorners);
+
+        // Get the position transformations between camera frames and the court
+        this._transformationCameraToCourt = Cv2.GetPerspectiveTransform(this._calibrationCorners, _courtCorners);
+        this._transformationCourtToCamera = Cv2.GetPerspectiveTransform(_courtCorners, this._calibrationCorners);
+    }
+
+    /// <summary>
+    /// Dispose the converter.
+    /// </summary>
+    public void Dispose()
+    {
+        this.Dispose(true);
+    }
+
+    /// <summary>
+    /// Dispose the converter.
+    /// </summary>
+    /// <param name="disposing">
+    /// True if to dispose
+    /// </param>
+    public void Dispose(bool disposing)
+    {
+        if (disposing)
         {
-            Dispose(true);
+            _transformationCameraToCourt.Dispose();
+            _transformationCourtToCamera.Dispose();
+            _transformationMonitorToCamera.Dispose();
+            _transformationCameraToMonitor.Dispose();
             GC.SuppressFinalize(this);
         }
-
-        // 设置3种画面的分别的4个角的坐标，并计算出投影变化矩阵
-        public CoordinateConverter(MyFlags myFlags)
-        {
-            // 相机拍摄的地图
-            camCorners = new Point2f[4];
-            // 逻辑的地图
-            logicCorners = new Point2f[4];
-            // 在屏幕上显示的地图
-            showCorners = new Point2f[4];
-
-            cam2logic = new Mat();
-            show2cam = new Mat();
-            logic2show = new Mat();
-            show2logic = new Mat();
-            cam2show = new Mat();
-            logic2cam = new Mat();
-
-            // 逻辑画面四角坐标设置
-            logicCorners[0].X = 0;
-            logicCorners[0].Y = 0;
-            logicCorners[1].X = myFlags.logicSize.Width;
-            logicCorners[1].Y = 0;
-            logicCorners[2].X = 0;
-            logicCorners[2].Y = myFlags.logicSize.Height;
-            logicCorners[3].X = myFlags.logicSize.Width;
-            logicCorners[3].Y = myFlags.logicSize.Height;
-
-            // 显示画面四角坐标设置
-            showCorners[0].X = 0;
-            showCorners[0].Y = 0;
-            showCorners[1].X = myFlags.showSize.Width;
-            showCorners[1].Y = 0;
-            showCorners[2].X = 0;
-            showCorners[2].Y = myFlags.showSize.Height;
-            showCorners[3].X = myFlags.showSize.Width;
-            showCorners[3].Y = myFlags.showSize.Height;
-
-            // 摄像头画面四角坐标设置
-            camCorners[0].X = 0;
-            camCorners[0].Y = 0;
-            camCorners[1].X = myFlags.cameraSize.Width;
-            camCorners[1].Y = 0;
-            camCorners[2].X = 0;
-            camCorners[2].Y = myFlags.cameraSize.Height;
-            camCorners[3].X = myFlags.cameraSize.Width;
-            camCorners[3].Y = myFlags.cameraSize.Height;
-
-            // 通过投影变换函数计算变换矩阵
-            show2cam = Cv2.GetPerspectiveTransform(showCorners, camCorners);
-            cam2show = Cv2.GetPerspectiveTransform(camCorners, showCorners);
-        }
-
-        // 传入鼠标点击的画面上的4个点，校正摄像机画面
-        public void UpdateCorners(Point2f[] corners, MyFlags myFlags)
-        {
-            // 如果传入的不是4个点则返回
-            if (corners == null) return;
-            if (corners.Length != 4) return;
-            else showCorners = corners;
-            // showCorners被更新为鼠标点击的4个点（左上、右上、左下、右下）
-
-            // logicCorners不需要改变
-            // 直接计算showCorners和logicCorners间的变换矩阵
-            logic2show = Cv2.GetPerspectiveTransform(logicCorners, showCorners);
-            show2logic = Cv2.GetPerspectiveTransform(showCorners, logicCorners);
-
-            // 将显示画面投影变换成摄像头画面，同时更新摄像头画面的四个角标
-            // 通过修正后的showCorners和先前已计算过的showCorners至camCorners的变换矩阵
-            // 计算出实际上摄像头拍到的场地边界camCorners
-            camCorners = Cv2.PerspectiveTransform(showCorners, show2cam);
-            cam2logic = Cv2.GetPerspectiveTransform(camCorners, logicCorners);
-            logic2cam = Cv2.GetPerspectiveTransform(logicCorners, camCorners);
-
-            // 标记摄像机画面为已校正
-            myFlags.calibrated = true;
-        }
-
-        #region 投影变换函数
-
-        // 输入某一地图上一串坐标序列，通过投影矩阵的作用，输出另一地图对应的坐标序列
-        public Point2f[] ShowToCamera(Point2f[] ptsShow)
-        {
-            return Cv2.PerspectiveTransform(ptsShow, show2cam);
-        }
-
-        public Point2f[] CameraToShow(Point2f[] ptsCamera)
-        {
-            return Cv2.PerspectiveTransform(ptsCamera, cam2show);
-        }
-
-        public Point2f[] CameraToLogic(Point2f[] ptsCamera)
-        {
-            return Cv2.PerspectiveTransform(ptsCamera, cam2logic);
-        }
-
-        public Point2f[] LogicToCamera(Point2f[] ptsLogic)
-        {
-            return Cv2.PerspectiveTransform(ptsLogic, logic2cam);
-        }
-
-        public Point2f[] LogicToShow(Point2f[] ptsLogic)
-        {
-            return Cv2.PerspectiveTransform(ptsLogic, logic2show);
-        }
-
-        public Point2f[] ShowToLogic(Point2f[] ptsShow)
-        {
-            return Cv2.PerspectiveTransform(ptsShow, show2logic);
-        }
-
-        #endregion
-
-/*
-        // 将flags中人员的起始位置从逻辑坐标转换为显示坐标
-        public void PeopleFilter(MyFlags flags)
-        {
-            // 如果图像还未被校正，直接返回
-            if (!flags.calibrated) return;
-
-            // 因为被困人员同一时间在场上只有1个，其实只要计算1个坐标变换
-            // 但是还是将这1个坐标构造成了坐标点列方便调用已有函数
-            Point2f[] res = LogicToCamera(new Point2f[] { flags.logicPsgStart });
-
-            // 计算被困人员在画面地图上的坐标
-            flags.logicPsgStart = res[0];
-        }*/
     }
+
+    /// <summary>
+    /// Calibrate the coordinate transformation.
+    /// </summary>
+    /// <param name="corners">The four corners of the court in the monitor coordinate system</param>
+    public void Calibrate(Point2f[] corners)
+    {
+        // Return if the corner list is invalid
+        if (corners == null)
+        {
+            return;
+        }
+        if (corners.Length != 4)
+        {
+            return;
+        }
+
+        corners = Cv2.PerspectiveTransform(corners, _transformationMonitorToCamera);
+
+        // Get the position transformations between camera frames and the court
+        this._transformationCameraToCourt = Cv2.GetPerspectiveTransform(corners, this._courtCorners);
+        this._transformationCourtToCamera = Cv2.GetPerspectiveTransform(this._courtCorners, corners);
+
+        this._calibrationCorners = corners;
+    }
+
+    #region Transformations
+
+    /// <summary>
+    /// Convert the coordinates of a point from the monitor coordinate system to the camera coordinate system.
+    /// </summary>
+    /// <param name="points">The point in the monitor coordinate system</param>
+    /// <returns>The point in the camera coordinate system</returns>
+    public Point2f MonitorToCamera(Point2f point)
+    {
+        return Cv2.PerspectiveTransform(new Point2f[1] { point }, _transformationMonitorToCamera)[0];
+    }
+
+    /// <summary>
+    /// Convert the coordinates of points from the monitor coordinate system to the camera coordinate system.
+    /// </summary>
+    /// <param name="points">The points in the monitor coordinate system</param>
+    /// <returns>The points in the camera coordinate system</returns>
+    public Point2f[] MonitorToCamera(Point2f[] points)
+    {
+        return Cv2.PerspectiveTransform(points, _transformationMonitorToCamera);
+    }
+
+    /// <summary>
+    /// Convert the coordinates of a point from the camera coordinate system to the monitor coordinate system.
+    /// </summary>
+    /// <param name="points">The point in the camera coordinate system</param>
+    /// <returns>The point in the monitor coordinate system</returns>
+    public Point2f CameraToMonitor(Point2f point)
+    {
+        return Cv2.PerspectiveTransform(new Point2f[1] { point }, _transformationCameraToMonitor)[0];
+    }
+
+    /// <summary>
+    /// Convert the coordinates of points from the camera coordinate system to the monitor coordinate system.
+    /// </summary>
+    /// <param name="points">The points in the camera coordinate system</param>
+    /// <returns>The points in the monitor coordinate system</returns>
+    public Point2f[] CameraToMonitor(Point2f[] points)
+    {
+        return Cv2.PerspectiveTransform(points, _transformationCameraToMonitor);
+    }
+
+    /// <summary>
+    /// Convert the coordinates of a point from the camera coordinate system to the court coordinate system.
+    /// </summary>
+    /// <param name="points">The point in the camera coordinate system</param>
+    /// <returns>The point in the court coordinate system</returns>
+    public Point2f CameraToCourt(Point2f point)
+    {
+        return Cv2.PerspectiveTransform(new Point2f[1] { point }, _transformationCameraToCourt)[0];
+    }
+
+    /// <summary>
+    /// Convert the coordinates of points from the camera coordinate system to the court coordinate system.
+    /// </summary>
+    /// <param name="points">The points in the camera coordinate system</param>
+    /// <returns>The points in the court coordinate system</returns>
+    public Point2f[] CameraToCourt(Point2f[] points)
+    {
+        return Cv2.PerspectiveTransform(points, _transformationCameraToCourt);
+    }
+
+    /// <summary>
+    /// Convert the coordinates of a point from the court coordinate system to the camera coordinate system.
+    /// </summary>
+    /// <param name="points">The point in the court coordinate system</param>
+    /// <returns>The point in the camera coordinate system</returns>
+    public Point2f CourtToCamera(Point2f point)
+    {
+        return Cv2.PerspectiveTransform(new Point2f[1] { point }, _transformationCourtToCamera)[0];
+    }
+
+    /// <summary>
+    /// Convert the coordinates of points from the court coordinate system to the camera coordinate system.
+    /// </summary>
+    /// <param name="points">The points in the court coordinate system</param>
+    /// <returns>The points in the camera coordinate system</returns>
+    public Point2f[] CourtToCamera(Point2f[] points)
+    {
+        return Cv2.PerspectiveTransform(points, _transformationCourtToCamera);
+    }
+
+    /// <summary>
+    /// Convert the coordinates of a point from the monitor coordinate system to the court coordinate system.
+    /// </summary>
+    /// <param name="points">The point in the monitor coordinate system</param>
+    /// <returns>The point in the court coordinate system</returns>
+    public Point2f MonitorToCourt(Point2f point)
+    {
+        return this.CameraToCourt(this.MonitorToCamera(point));
+    }
+
+    /// <summary>
+    /// Convert the coordinates of points from the monitor coordinate system to the court coordinate system.
+    /// </summary>
+    /// <param name="points">The points in the monitor coordinate system</param>
+    /// <returns>The points in the court coordinate system</returns>
+    public Point2f[] MonitorToCourt(Point2f[] points)
+    {
+        return this.CameraToCourt(this.MonitorToCamera(points));
+    }
+
+    /// <summary>
+    /// Convert the coordinates of a point from the court coordinate system to the monitor coordinate system.
+    /// </summary>
+    /// <param name="points">The point in the court coordinate system</param>
+    /// <returns>The point in the monitor coordinate system</returns>
+    public Point2f CourtToMonitor(Point2f point)
+    {
+        return this.CameraToMonitor(this.CourtToCamera(point));
+    }
+
+    /// <summary>
+    /// Convert the coordinates of points from the court coordinate system to the monitor coordinate system.
+    /// </summary>
+    /// <param name="points">The points in the court coordinate system</param>
+    /// <returns>The points in the monitor coordinate system</returns>
+    public Point2f[] CourtToMonitor(Point2f[] points)
+    {
+        return this.CameraToMonitor(this.CourtToCamera(points));
+    }
+
+    #endregion
 }

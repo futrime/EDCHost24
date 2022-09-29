@@ -52,7 +52,8 @@ msbuild.wrn
 # Built Visual Studio Code Extensions
 *.vsix
 
+# capture
+*.avi
+
 
 ## Project specific ignored files
-Data/*
-!Data/.keep
