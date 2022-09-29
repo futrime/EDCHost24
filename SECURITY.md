@@ -10,4 +10,4 @@
 ## Reporting a Vulnerability
 
 If the problem is too serious to raise an issue,
-please contact us at <zijian-z21@mails.tsinghua.edu.cn>.
+please notify us with the Security Advisories in the Security tab.
