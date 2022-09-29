@@ -779,7 +779,7 @@ public class Game
         // Score parking penalty.
         if (
             vehicle.ParkingDuration != null &&
-            (long)vehicle.ParkingDuration > 5000 + this._lastTickDuration
+            (long)vehicle.ParkingDuration >= 5000 + this._lastTickDuration
         )
         {
             this._score[(CampType)this._camp] +=
@@ -884,7 +884,7 @@ public class Game
                     }
 
                     if ((int)Dot.Distance(order.DeparturePosition, vehiclePosition)
-                        < Game.OrderContactScopeRadius)
+                        <= Game.OrderContactScopeRadius)
                     {
                         order.Take((long)this.GameTime);
 
@@ -895,7 +895,7 @@ public class Game
                 else if (order.Status == OrderStatusType.InDelivery)
                 {
                     if ((int)Dot.Distance(order.DestinationPosition, vehiclePosition)
-                        < Game.OrderContactScopeRadius)
+                        <= Game.OrderContactScopeRadius)
                     {
                         order.Deliver((long)this.GameTime);
 
