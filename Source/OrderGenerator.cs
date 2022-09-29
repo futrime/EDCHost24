@@ -25,21 +25,46 @@ public class OrderGenerator
     /// <param name="area">The area to generate</param>
     /// <param name="generationTimeRange">The generation time range</param>
     /// <param name="timeLimitRange">The time limit range</param>
+    /// <param name="barrierList">A list of the barriers where no order generates.</param>
     public OrderGenerator(
         int count,
         (Dot TopLeft, Dot BottomRight) area,
         (long Lower, long Upper) generationTimeRange,
-        (long Lower, long Upper) timeLimitRange
+        (long Lower, long Upper) timeLimitRange,
+        List<Barrier> barrierList = null
     )
     {
+        if (barrierList == null)
+        {
+            barrierList = new List<Barrier>();
+        }
+
         // Generate orders
         for (int i = 0; i < count; ++i)
         {
-            this._orderList.Add(Order.GenerateRandomOrder(
-                area,
-                generationTimeRange,
-                timeLimitRange
-            ));
+            Order order = null;
+
+            while (order == null)
+            {
+                order = Order.GenerateRandomOrder(
+                    area,
+                    generationTimeRange,
+                    timeLimitRange
+                );
+
+                foreach (var barrier in barrierList)
+                {
+                    // If the order is in barriers, generate again.
+                    if (barrier.IsIn(order.DeparturePosition) ||
+                        barrier.IsIn(order.DestinationPosition))
+                    {
+                        order = null;
+                        break;
+                    }
+                }
+            }
+
+            this._orderList.Add(order);
         }
 
         // Sort the orders by their generation time

@@ -509,7 +509,8 @@ public class Game
                     count: (int)Game.OrderNumber[this._gameStage],
                     area: Game.InnerCourtArea,
                     generationTimeRange: (0, (long)Game.GameDuration[this._gameStage]),
-                    timeLimitRange: Game.OrderDeliveryDurationRange
+                    timeLimitRange: Game.OrderDeliveryDurationRange,
+                    barrierList: this._barrierList
                 );
                 break;
 
