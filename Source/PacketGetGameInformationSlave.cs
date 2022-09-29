@@ -5,14 +5,14 @@ namespace EdcHost;
 /// <summary>
 /// A packet for slaves to get site information
 /// </summary>
-public class PacketGetSiteInformationSlave : Packet
+public class PacketGetGameInformationSlave : Packet
 {
     public const byte PacketId = 0x00;
 
     /// <summary>
     /// Construct a GetSiteInformationSlave packet with fields.
     /// </summary>
-    public PacketGetSiteInformationSlave()
+    public PacketGetGameInformationSlave()
     {
         // Empty
     }
@@ -25,13 +25,13 @@ public class PacketGetSiteInformationSlave : Packet
     /// <exception cref="Exception">
     /// The raw byte array violates the rules.
     /// </exception>
-    public PacketGetSiteInformationSlave(byte[] bytes) : this()
+    public PacketGetGameInformationSlave(byte[] bytes) : this()
     {
         // Validate the packet and extract data
         Packet.ExtractPacketData(bytes);
 
         byte packetId = bytes[0];
-        if (packetId != PacketGetSiteInformationSlave.PacketId)
+        if (packetId != PacketGetGameInformationSlave.PacketId)
         {
             throw new Exception("The packet ID is incorrect.");
         }
@@ -41,7 +41,7 @@ public class PacketGetSiteInformationSlave : Packet
     {
         var data = new byte[0];
 
-        var header = Packet.GeneratePacketHeader(PacketGetSiteInformationSlave.PacketId, data);
+        var header = Packet.GeneratePacketHeader(PacketGetGameInformationSlave.PacketId, data);
 
         var bytes = new byte[header.Length + data.Length];
         header.CopyTo(bytes, 0);

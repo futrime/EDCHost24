@@ -402,7 +402,7 @@ public partial class MainWindow : Form
             // Send default packet
             if (packetToSend == null)
             {
-                packetToSend = new PacketGetStatusInformationHost(
+                packetToSend = new PacketGetStatusHost(
                     currentState: this._game.GameState,
                     currentTime: this._game.GameTime.GetValueOrDefault(0),
                     currentScore: (int)this._game.Score[camp],

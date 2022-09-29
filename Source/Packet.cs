@@ -3,15 +3,17 @@ using System;
 namespace EdcHost;
 
 /// <summary>
-/// A packet for communication
+/// A packet for communication.
 /// </summary>
 public abstract class Packet
 {
+    #region Public static methods.
+
     /// <summary>
     /// Calculate the checksum of a raw byte array.
     /// </summary>
-    /// <param name="bytes">The raw byte array</param>
-    /// <returns>The checksum</returns>
+    /// <param name="bytes">The raw byte array.</param>
+    /// <returns>The checksum.</returns>
     public static byte CalculateChecksum(byte[] bytes)
     {
         byte checksum = 0x00;
@@ -23,16 +25,12 @@ public abstract class Packet
     }
 
     /// <summary>
-    /// Extract the data from a packet in raw byte array form
-    /// as a raw byte array.
+    /// Extract the data from a packet in raw byte array form.
     /// </summary>
     /// <param name="bytes">
-    /// The packet in raw byte array form
+    /// The packet in raw byte array form.
     /// </param>
-    /// <returns>The data</returns>
-    /// <exception cref="Exception">
-    /// The data cannot be extracted.
-    /// </exception>
+    /// <returns>The data.</returns>
     public static byte[] ExtractPacketData(byte[] bytes)
     {
         // Validate the byte array
@@ -64,8 +62,8 @@ public abstract class Packet
     /// <summary>
     /// Generate the header of some data.
     /// </summary>
-    /// <param name="packetId">The packet ID</param>
-    /// <param name="data">The data</param>
+    /// <param name="packetId">The packet ID.</param>
+    /// <param name="data">The data.</param>
     /// <returns></returns>
     public static byte[] GeneratePacketHeader(byte packetId, byte[] data)
     {
@@ -84,7 +82,7 @@ public abstract class Packet
     /// Make a packet from a raw byte array.
     /// </summary>
     /// <param name="bytes">The raw byte array.</param>
-    /// <returns>The packet</returns>
+    /// <returns>The packet.</returns>
     public static Packet Make(byte[] bytes)
     {
         if (bytes.Length < 6)
@@ -96,26 +94,32 @@ public abstract class Packet
 
         switch (packetId)
         {
-            case PacketGetSiteInformationSlave.PacketId:
-                return new PacketGetSiteInformationSlave(bytes);
+            case PacketGetGameInformationSlave.PacketId:
+                return new PacketGetGameInformationSlave(bytes);
 
-            case PacketGetSiteInformationHost.PacketId:
-                return new PacketGetSiteInformationHost(bytes);
+            case PacketGetGameInformationHost.PacketId:
+                return new PacketGetGameInformationHost(bytes);
 
             case PacketSetChargingPileSlave.PacketId:
                 return new PacketSetChargingPileSlave(bytes);
 
-            case PacketGetStatusInformationHost.PacketId:
-                return new PacketGetStatusInformationHost(bytes);
+            case PacketGetStatusHost.PacketId:
+                return new PacketGetStatusHost(bytes);
 
             default:
                 throw new Exception("The packet ID is invalid.");
         }
     }
 
+    #endregion
+
+    #region Public member methods.
+
     /// <summary>
     /// Get the raw byte array of the packet.
     /// </summary>
-    /// <returns>The raw byte array</returns>
+    /// <returns>The raw byte array.</returns>
     public abstract byte[] GetBytes();
+
+    #endregion
 }

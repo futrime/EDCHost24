@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 namespace EdcHost;
 
-public class PacketGetStatusInformationHost : Packet
+public class PacketGetStatusHost : Packet
 {
     public enum Status
     {
@@ -29,7 +29,7 @@ public class PacketGetStatusInformationHost : Packet
     /// <remarks>
     /// Note that orederList represents the order ## remaining on the GUI ##
     /// </remarks>
-    public PacketGetStatusInformationHost(GameStateType currentState, long currentTime, int currentScore,
+    public PacketGetStatusHost(GameStateType currentState, long currentTime, int currentScore,
         Dot carPos, int mileage, List<Order> orderList)
     {
         // convert Gamestate to Status
@@ -61,13 +61,13 @@ public class PacketGetStatusInformationHost : Packet
     /// <exception cref="ArgumentException">
     /// The raw byte array violates the rules.
     /// </exception>
-    public PacketGetStatusInformationHost(byte[] bytes)
+    public PacketGetStatusHost(byte[] bytes)
     {
         // Validate the packet and extract data
         byte[] data = Packet.ExtractPacketData(bytes);
 
         byte packetId = bytes[0];
-        if (packetId != PacketGetStatusInformationHost.PacketId)
+        if (packetId != PacketGetStatusHost.PacketId)
         {
             throw new Exception("The packet ID is incorrect.");
         }
@@ -196,7 +196,7 @@ public class PacketGetStatusInformationHost : Packet
         }
         // --------- Finish encoding the 'data' ---------- //
 
-        var header = Packet.GeneratePacketHeader(PacketGetStatusInformationHost.PacketId, data);
+        var header = Packet.GeneratePacketHeader(PacketGetStatusHost.PacketId, data);
 
         var bytes = new byte[header.Length + data.Length];
         header.CopyTo(bytes, 0);

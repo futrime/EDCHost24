@@ -2,7 +2,7 @@ using System;
 namespace EdcHost;
 using System.Collections.Generic;
 
-public class PacketGetSiteInformationHost : Packet
+public class PacketGetGameInformationHost : Packet
 {
     public const byte PacketId = 0x01;
 
@@ -21,7 +21,7 @@ public class PacketGetSiteInformationHost : Packet
     /// <remarks>
     /// There is no field in this type of packets.
     /// </remarks>
-    public PacketGetSiteInformationHost(
+    public PacketGetGameInformationHost(
         List<Barrier> obstacleList,
         GameStageType currentGameStage,
         int duration,
@@ -45,13 +45,13 @@ public class PacketGetSiteInformationHost : Packet
     /// <exception cref="ArgumentException">
     /// The raw byte array violates the rules.
     /// </exception>
-    public PacketGetSiteInformationHost(byte[] bytes)
+    public PacketGetGameInformationHost(byte[] bytes)
     {
         // Validate the packet and extract data
         byte[] data = Packet.ExtractPacketData(bytes);
 
         byte packetId = bytes[0];
-        if (packetId != PacketGetSiteInformationHost.PacketId)
+        if (packetId != PacketGetGameInformationHost.PacketId)
         {
             throw new Exception("The packet ID is incorrect.");
         }
@@ -167,7 +167,7 @@ public class PacketGetSiteInformationHost : Packet
         }
 
         // write the data's information into the header
-        var header = GeneratePacketHeader(PacketGetSiteInformationHost.PacketId, data);
+        var header = GeneratePacketHeader(PacketGetGameInformationHost.PacketId, data);
 
         var bytes = new byte[header.Length + data.Length];
         header.CopyTo(bytes, 0);
