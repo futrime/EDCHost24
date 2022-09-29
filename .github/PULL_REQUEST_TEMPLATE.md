@@ -8,6 +8,11 @@
 
 ## Checklist before merging
 
-- [ ] If its a core feature, I have added through test.
-- [ ] Do we need to implement analytics? 
-- [ ] Will this be part of a product update? If yes, please write one phrase about this update
+Thank you for your contribution to the repo. 
+Before submitting this PR, please make sure:
+
+- [ ] Your code builds clean without any errors or warnings
+- [ ] Your code follows the code style of THU ASTA
+- [ ] You have tested all functions
+- [ ] You have not used code without license
+- [ ] You have added statement for third-party code
