@@ -395,44 +395,46 @@ public partial class MainWindow : Form
             // Process the message
             if (length > 0)
             {
-                // Packet packetFromSlave = Packet.Make(bytesRead); 
-                // Check if the packet is 0x00: send 0x01 packet
-                if (bytesRead[0] == PacketGetGameInformationSlave.PacketId)
+                try
                 {
-                    // Find own charging pile list
-                    List<Dot> ownChargingPiles = new List<Dot> { },
-                        opponentChargingPiles = new List<Dot> { };
-                    foreach (var chargingPile in this._game.ChargingPileList)
+                    Packet packetFromSlave = Packet.Make(bytesRead);
+
+                    if (packetFromSlave.GetPacketId() == PacketGetGameInformationSlave.PacketId)
                     {
-                        if (chargingPile.Camp == this._game.Camp)
+                        // Find own charging pile list
+                        List<Dot> ownChargingPiles = new List<Dot> { },
+                            opponentChargingPiles = new List<Dot> { };
+                        foreach (var chargingPile in this._game.ChargingPileList)
                         {
-                            ownChargingPiles.Add(chargingPile.Position);
+                            if (chargingPile.Camp == this._game.Camp)
+                            {
+                                ownChargingPiles.Add(chargingPile.Position);
+                            }
+                            else
+                            {
+                                opponentChargingPiles.Add(chargingPile.Position);
+                            }
                         }
-                        else
-                        {
-                            opponentChargingPiles.Add(chargingPile.Position);
-                        }
+
+                        var gameInfoPacket = new PacketGetGameInformationHost(
+                                            gameStage: this._game.GameStage,
+                                            barrierList: this._game.BarrierList,
+                                            duration: (long)Game.GameDuration[this._game.GameStage],
+                                            ownChargingPiles: ownChargingPiles,
+                                            opponentChargingPiles: opponentChargingPiles
+                                        );
+                        var bytesToWrite = gameInfoPacket.GetBytes();
+
+                        this._serialPortDict[camp].Write(bytesToWrite, 0, bytesToWrite.Length);
                     }
-
-                    var gameInfoPacket = new PacketGetGameInformationHost(
-                                        gameStage: this._game.GameStage,
-                                        barrierList: this._game.BarrierList,
-                                        duration: (long)Game.GameDuration[this._game.GameStage],
-                                        ownChargingPiles: ownChargingPiles,
-                                        opponentChargingPiles: opponentChargingPiles
-                                    );
-                    var bytesToWrite = gameInfoPacket.GetBytes();
-
-                    this._serialPortDict[camp].Write(bytesToWrite, 0, bytesToWrite.Length);
+                    else if (packetFromSlave.GetPacketId() == PacketSetChargingPileSlave.PacketId)
+                    {
+                        this._game.SetChargingPile();
+                    }
                 }
-                // Check if the packet is 0x02: set the charging piles
-                else if (bytesRead[0] == PacketSetChargingPileSlave.PacketId)
+                catch (System.Exception)
                 {
-                    this._game.SetChargingPile();
-                }
-                else
-                {
-                    throw new ArgumentException("The bytes from vehicle is not valid!");
+                    // Do nothing.
                 }
             }
 
