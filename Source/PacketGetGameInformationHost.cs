@@ -8,7 +8,7 @@ public class PacketGetGameInformationHost : Packet
     private GameStageType _gameStage;
     private List<Barrier> _barrierList;
     private long _duration;
-    private List<Dot> _ownChargingPiles;
+    private List<Dot> _ownChargingPiles;  // class Dot is sufficient for use. So I don't use type List<ChargingPile>
     private List<Dot> _opponentChargingPiles;
 
     /// <summary>
@@ -49,7 +49,12 @@ public class PacketGetGameInformationHost : Packet
 
         int currentIndex = 0;
 
-        // Obstacle
+
+        // Gamestage 
+        BitConverter.GetBytes((int)this._gameStage).CopyTo(data, currentIndex);
+        currentIndex += 4;
+
+        // Barrier
         BitConverter.GetBytes(this._barrierList.Count).CopyTo(data, currentIndex);
         currentIndex += 4;
 
@@ -62,10 +67,6 @@ public class PacketGetGameInformationHost : Packet
             BitConverter.GetBytes(this._barrierList[i].BottomRightPosition.Y).CopyTo(data, currentIndex + 12);
             currentIndex += 4 * 4;
         }
-
-        // Gamestage 
-        BitConverter.GetBytes((int)this._gameStage).CopyTo(data, currentIndex);
-        currentIndex += 4;
 
         BitConverter.GetBytes(this._duration).CopyTo(data, currentIndex);
         currentIndex += 8;

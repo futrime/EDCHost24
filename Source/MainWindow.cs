@@ -404,14 +404,13 @@ public partial class MainWindow : Form
                         opponentChargingPiles = new List<Dot> { };
                     foreach (var chargingPile in this._game.ChargingPileList)
                     {
-                        switch (chargingPile.Camp)
+                        if (chargingPile.Camp == this._game.Camp)
                         {
-                            case CampType.A:
-                                ownChargingPiles.Add(chargingPile.Position);
-                                break;
-                            case CampType.B:
-                                opponentChargingPiles.Add(chargingPile.Position);
-                                break;
+                            ownChargingPiles.Add(chargingPile.Position);
+                        }
+                        else
+                        {
+                            opponentChargingPiles.Add(chargingPile.Position);
                         }
                     }
 
