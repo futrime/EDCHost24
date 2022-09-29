@@ -392,6 +392,52 @@ public partial class MainWindow : Form
             var bytesRead = new byte[length];
             buffer.CopyTo(bytesRead, 0);
 
+            // Process the message
+            if (length > 0)
+            {
+                // Packet packetFromSlave = Packet.Make(bytesRead); 
+                // Check if the packet is 0x00: send 0x01 packet
+                if (bytesRead[0] == PacketGetGameInformationSlave.PacketId)
+                {
+                    // Find own charging pile list
+                    List<Dot> ownChargingPiles = new List<Dot> { },
+                        opponentChargingPiles = new List<Dot> { };
+                    foreach (var chargingPile in this._game.ChargingPileList)
+                    {
+                        switch (chargingPile.Camp)
+                        {
+                            case CampType.A:
+                                ownChargingPiles.Add(chargingPile.Position);
+                                break;
+                            case CampType.B:
+                                opponentChargingPiles.Add(chargingPile.Position);
+                                break;
+                        }
+                    }
+
+                    var gameInfoPacket = new PacketGetGameInformationHost(
+                                        gameStage: this._game.GameStage,
+                                        barrierList: this._game.BarrierList,
+                                        duration: (long)Game.GameDuration[this._game.GameStage],
+                                        ownChargingPiles: ownChargingPiles,
+                                        opponentChargingPiles: opponentChargingPiles
+                                    );
+                    var bytesToWrite = gameInfoPacket.GetBytes();
+
+                    this._serialPortDict[camp].Write(bytesToWrite, 0, bytesToWrite.Length);
+                }
+                // Check if the packet is 0x02: set the charging piles
+                else if (bytesRead[0] == PacketSetChargingPileSlave.PacketId)
+                {
+                    this._game.SetChargingPile();
+                }
+                else
+                {
+                    throw new ArgumentException("The bytes from vehicle is not valid!");
+                }
+            }
+
+
             // Send default packet.
             // Only send if the serial port is not writing.
             if (this._serialPortDict[camp].BytesToWrite == 0)
