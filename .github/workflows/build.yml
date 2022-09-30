@@ -14,6 +14,9 @@ jobs:
     - name: Checkout the repository
       uses: actions/checkout@v3
       
+    - name: Replace the version strings
+      run: sed -i 's/EDC_HOST_BUILD_REF/{{ github.ref_name }}/g' Source/*
+      
     - name: Setup .NET
       uses: actions/setup-dotnet@v2
       with:
