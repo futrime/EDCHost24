@@ -23,7 +23,7 @@ jobs:
         dotnet-version: 6.0.x
         
     - name: Build the program
-      run: dotnet publish -c Release -o build
+      run: dotnet publish -o Build -c Release -r win-x86 --sc true -p:DebugType=none -p:PublishReadyToRun=true -p:PublishSingleFile=true
       
     - name: Copy the essential files
       run: |
