@@ -33,5 +33,5 @@ jobs:
     - name: Upload the build artifact
       uses: actions/upload-artifact@v3
       with:
-        name: EdcHost-nightly-${{ github.sha }}
+        name: EDC-Host-nightly-${{ github.sha }}
         path: build
