@@ -7,10 +7,15 @@
     <EnableDefaultItems>false</EnableDefaultItems>
     <BaseOutputPath>Bin</BaseOutputPath>
     <BaseIntermediateOutputPath>Obj</BaseIntermediateOutputPath>
+    <ApplicationIcon>Assets\Icons\Icon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
     <Compile Include="Source/*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Assets\Icons\Icon.ico" />
   </ItemGroup>
 
   <ItemGroup>
