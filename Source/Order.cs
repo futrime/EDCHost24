@@ -30,6 +30,11 @@ public class Order
     public long GenerationTime => this._generationTime;
 
     /// <summary>
+    /// The ID.
+    /// </summary>
+    public int Id => this._id;
+
+    /// <summary>
     /// The overtiom duraiton.
     /// </summary>
     public long? OvertimeDuration
@@ -72,12 +77,13 @@ public class Order
 
     #region Private fields
 
+    private long? _deliveryTime = null;
+    private long _deliveryTimeLimit;
     private Dot _departurePosition;
+    private long? _departureTime = null;
     private Dot _destinationPosition;
     private long _generationTime;
-    private long _deliveryTimeLimit;
-    private long? _departureTime = null;
-    private long? _deliveryTime = null;
+    private int _id = Utility.GenerateUniqueId();
     private OrderStatusType _status = OrderStatusType.Ungenerated;
 
     #endregion

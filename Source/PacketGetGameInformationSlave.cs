@@ -3,16 +3,16 @@ using System;
 namespace EdcHost;
 
 /// <summary>
-/// A packet for slaves to set a charging pile.
+/// A packet for slaves to get site information.
 /// </summary>
-public class PacketSetChargingPileSlave : Packet
+public class PacketGetGameInformationSlave : Packet
 {
     #region Static, const and readonly fields.
 
     /// <summary>
     /// The packet ID.
     /// </summary>
-    public const byte PacketId = 0x02;
+    public const byte PacketId = 0x00;
 
     #endregion
 
@@ -20,18 +20,18 @@ public class PacketSetChargingPileSlave : Packet
     #region Constructors and finalizers.
 
     /// <summary>
-    /// Construct a SetChargingPileSlave packet from a raw
+    /// Construct a GetGameInformationSlave packet from a raw
     /// byte array.
     /// </summary>
     /// <param name="bytes">The raw byte array.</param>
-    public PacketSetChargingPileSlave(byte[] bytes)
+    public PacketGetGameInformationSlave(byte[] bytes)
     {
         // Validate the packet and extract data.
         var data = Packet.ExtractPacketData(bytes);
 
         // Check the packet ID.
         byte packetId = bytes[0];
-        if (packetId != PacketSetChargingPileSlave.PacketId)
+        if (packetId != PacketGetGameInformationSlave.PacketId)
         {
             throw new Exception("The packet ID is incorrect.");
         }
@@ -39,13 +39,14 @@ public class PacketSetChargingPileSlave : Packet
 
     #endregion
 
+
     #region Methods.
 
     public override byte[] GetBytes()
     {
-        var data = new byte[8];
+        var data = new byte[0];
 
-        var header = Packet.GeneratePacketHeader(PacketSetChargingPileSlave.PacketId, data);
+        var header = Packet.GeneratePacketHeader(PacketGetGameInformationSlave.PacketId, data);
 
         var bytes = new byte[header.Length + data.Length];
         header.CopyTo(bytes, 0);
@@ -56,7 +57,7 @@ public class PacketSetChargingPileSlave : Packet
 
     public override byte GetPacketId()
     {
-        return PacketSetChargingPileSlave.PacketId;
+        return PacketGetGameInformationSlave.PacketId;
     }
 
     #endregion

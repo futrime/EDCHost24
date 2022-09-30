@@ -14,6 +14,9 @@ jobs:
     - name: Checkout the repository
       uses: actions/checkout@v3
       
+    - name: Replace the version strings
+      run: (Get-Content -path Source/MainWindow.Designer.cs -Raw) -replace 'EDC_HOST_BUILD_REF','${{ github.ref_name }}' | Set-Content -Path Source/MainWindow.Designer.cs
+      
     - name: Setup .NET
       uses: actions/setup-dotnet@v2
       with:

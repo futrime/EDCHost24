@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO.Ports;
@@ -281,7 +281,7 @@ public partial class MainWindow : Form
 
         this.ProcessCameraFrame();
 
-        if (this._game.GameState == GameStateType.Unstarted)
+        if (this._game.GameState == GameStatusType.Unstarted)
         {
             this.buttonFoul.Enabled = false;
             if (this._calibrationClickCount >= 4)
@@ -294,7 +294,7 @@ public partial class MainWindow : Form
             this.buttonContinue.Enabled = false;
             this.buttonEnd.Enabled = false;
         }
-        else if (this._game.GameState == GameStateType.Running)
+        else if (this._game.GameState == GameStatusType.Running)
         {
             if (this._locatorDict[(CampType)this._game.Camp].TargetPosition != null)
             {
@@ -327,7 +327,7 @@ public partial class MainWindow : Form
             this.labelGameTime.Text = Math.Max((decimal)(this._game.RemainingTime) / 1000, (decimal)0).ToString("0.00");
             this.progressBarRemainingPowerRatio.Value = (int)(this._game.Vehicle[(CampType)this._game.Camp].RemainingPowerRatio * 100);
         }
-        else if (this._game.GameState == GameStateType.Paused)
+        else if (this._game.GameState == GameStatusType.Paused)
         {
             this.buttonFoul.Enabled = true;
             if (this._calibrationClickCount >= 4)
@@ -340,7 +340,7 @@ public partial class MainWindow : Form
             this.buttonContinue.Enabled = true;
             this.buttonEnd.Enabled = true;
         }
-        else if (this._game.GameState == GameStateType.Ended)
+        else if (this._game.GameState == GameStatusType.Ended)
         {
             this.buttonFoul.Enabled = false;
             if (this._calibrationClickCount >= 4)
@@ -382,38 +382,91 @@ public partial class MainWindow : Form
                 continue;
             }
 
-            // Read the message
+            // Read the message.
             var buffer = new byte[MainWindow.SerialPortBufferLength];
             var length = this._serialPortDict[camp].Read(
                 buffer: buffer,
                 offset: 0,
                 count: MainWindow.SerialPortBufferLength
             );
+            var bytesRead = new byte[length];
+            buffer.CopyTo(bytesRead, 0);
 
-            Packet packetToSend = null;
-
-            // Tackle the packet received.
+            // Process the message
             if (length > 0)
             {
-                var bytes = new byte[length];
-                buffer.CopyTo(bytes, 0);
+                try
+                {
+                    Packet packetFromSlave = Packet.Make(bytesRead);
+
+                    if (packetFromSlave.GetPacketId() == PacketGetGameInformationSlave.PacketId)
+                    {
+                        // Find own charging pile list
+                        List<Dot> ownChargingPiles = new List<Dot> { },
+                            opponentChargingPiles = new List<Dot> { };
+                        foreach (var chargingPile in this._game.ChargingPileList)
+                        {
+                            if (chargingPile.Camp == this._game.Camp)
+                            {
+                                ownChargingPiles.Add(chargingPile.Position);
+                            }
+                            else
+                            {
+                                opponentChargingPiles.Add(chargingPile.Position);
+                            }
+                        }
+
+                        var gameInfoPacket = new PacketGetGameInformationHost(
+                                            gameStage: this._game.GameStage,
+                                            barrierList: this._game.BarrierList,
+                                            duration: (long)Game.GameDuration[this._game.GameStage],
+                                            ownChargingPiles: ownChargingPiles,
+                                            opponentChargingPiles: opponentChargingPiles
+                                        );
+                        var bytesToWrite = gameInfoPacket.GetBytes();
+
+                        this._serialPortDict[camp].Write(bytesToWrite, 0, bytesToWrite.Length);
+                    }
+                    else if (packetFromSlave.GetPacketId() == PacketSetChargingPileSlave.PacketId)
+                    {
+                        this._game.SetChargingPile();
+                    }
+                }
+                catch (System.Exception)
+                {
+                    // Do nothing.
+                }
             }
 
-            // Send default packet
-            if (packetToSend == null)
+
+            // Send default packet.
+            // Only send if the serial port is not writing.
+            if (this._serialPortDict[camp].BytesToWrite == 0)
             {
-                packetToSend = new PacketGetStatusInformationHost(
-                    currentState: this._game.GameState,
-                    currentTime: this._game.GameTime.GetValueOrDefault(0),
-                    currentScore: (int)this._game.Score[camp],
-                    carPos: this._game.Vehicle[camp].Position.GetValueOrDefault(new Dot(0, 0)),
-                    mileage: this._game.Vehicle[camp].RemainingDistance,
-                    orderList: this._game.OrderList
-                );
-            }
+                // Get the order in delivery list.
+                var orderInDeliveryList = new List<Order>();
+                foreach (var order in this._game.OrderList)
+                {
+                    if (order.Status == OrderStatusType.InDelivery)
+                    {
+                        orderInDeliveryList.Add(order);
+                    }
+                }
 
-            var bytesToSend = packetToSend.GetBytes();
-            this._serialPortDict[camp].Write(bytesToSend, 0, bytesToSend.Length);
+                var packet = new PacketGetStatusHost(
+                    gameStatus: this._game.GameState,
+                    gameTime: this._game.GameTime.GetValueOrDefault(0),
+                    score: (double)this._game.Score[camp],
+                    vehiclePosition: this._game.Vehicle[camp].Position.GetValueOrDefault(new Dot(0, 0)),
+                    remainingDistance: this._game.Vehicle[camp].RemainingDistance,
+                    orderInDeliveryList: orderInDeliveryList,
+                    latestPendingOrder: this._game.OrderList[this._game.OrderList.Count - 1]
+                );
+
+                var bytesToWrite = packet.GetBytes();
+
+                this._serialPortDict[camp].Write(bytesToWrite, 0, bytesToWrite.Length);
+            }
         }
     }
 
@@ -500,7 +553,7 @@ public partial class MainWindow : Form
         }
 
         // Draw departures and destinations of orders
-        if (this._game.GameState == GameStateType.Running || this._game.GameState == GameStateType.Paused)
+        if (this._game.GameState == GameStatusType.Running || this._game.GameState == GameStatusType.Paused)
         {
             Vehicle vehicle = this._game.Vehicle[(CampType)this._game.Camp];
 
