@@ -812,9 +812,11 @@ public partial class MainWindow : Form
 
     private void buttonSettings_Click(object sender, EventArgs e)
     {
-        (new Thread(
+        var thread = new Thread(
             () => (new SettingsWindow(this)).ShowDialog()
-        )).Start();
+        );
+        thread.IsBackground = true;
+        thread.Start();
     }
 
     private void Timer_Tick(object sender, EventArgs e)

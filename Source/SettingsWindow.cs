@@ -387,6 +387,7 @@ public partial class SettingsWindow : Form
         this.labelApplying.Show();
 
         Thread thread = new Thread(this.ApplyConfig);
+        thread.IsBackground = true;
         thread.Start();
     }
 
@@ -412,6 +413,7 @@ public partial class SettingsWindow : Form
     {
         // Update available cameras asynchronously
         Thread thread = new Thread(this.UpdateAvailableCameras);
+        thread.IsBackground = true;
         thread.Start();
     }
 

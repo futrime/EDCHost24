@@ -1,5 +1,4 @@
 using System;
-using System.Threading;
 using System.Windows.Forms;
 
 namespace EdcHost;
@@ -15,7 +14,19 @@ static class Program
         AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(HandleUnhandledException);
 
         ApplicationConfiguration.Initialize();
-        Application.Run(new MainWindow());
+        try
+        {
+            Application.Run(new MainWindow());
+        }
+        catch (System.IO.FileNotFoundException)
+        {
+            MessageBox.Show(
+                "Some essential files are missing. Please check if you have extracted all files to the folder wherein the program locate.",
+                "Error",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Error
+            );
+        }
     }
 
     /// <summary>
