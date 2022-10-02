@@ -314,6 +314,11 @@ public partial class MainWindow : Form
                 this._game.Refresh();
             }
 
+            // Actually, whether the CarPosition is null or not, the game should generate orders anyway.
+            // So, I take the function 'GenerateOrder' out of the function 'Refresh'
+
+            this._game.GenerateOrder();
+
             this.buttonFoul.Enabled = true;
             this.buttonCalibration.Enabled = false;
             this.buttonSettings.Enabled = false;
