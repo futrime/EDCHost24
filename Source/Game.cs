@@ -445,7 +445,11 @@ public class Game
             this.End();
         }
 
-        this.GenerateOrder();
+        // Actually, whether the CarPosition is null or not, the game should generate orders anyway.
+        // So, I take the function 'GenerateOrder' out of the function 'Refresh'
+        // For more details, please check the reference of this function-- 'Refresh'
+
+        // this.GenerateOrder();
 
         this.TakeAndDeliverOrder();
 
@@ -632,7 +636,7 @@ public class Game
     /// <summary>
     /// Attempt to generate an order.
     /// </summary>
-    private void GenerateOrder()
+    public void GenerateOrder()
     {
         var newOrder = this._orderGenerator.Generate((long)this.GameTime);
         if (newOrder != null)
