@@ -40,7 +40,7 @@ public struct Dot
     public static int? Distance(
         Dot A,
         Dot B,
-        DotDistanceType distanceType = DotDistanceType.Euclidean
+        DotDistanceType distanceType = DotDistanceType.Manhattan
     )
     {
         switch (distanceType)
