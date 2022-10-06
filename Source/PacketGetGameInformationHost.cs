@@ -14,9 +14,6 @@ public class PacketGetGameInformationHost : Packet
     /// <summary>
     /// Construct a GetSiteInformation packet with fields.
     /// </summary>
-    /// <remarks>
-    /// There is no field in this type of packets.
-    /// </remarks>
     public PacketGetGameInformationHost(
         GameStageType gameStage,
         List<Barrier> barrierList,
@@ -108,7 +105,70 @@ public class PacketGetGameInformationHost : Packet
 
         return bytes;
     }
+    /// <summary>
+    /// Construct a GetSiteInformation packet with a raw byte array.
+    /// </summary>
+    /// <param name="bytes">The raw byte array</param>
+    /// <exception cref="ArgumentException">
+    /// The raw byte array violates the rules.
+    /// </exception>
+    public PacketGetGameInformationHost(byte[] bytes)
+    {
+        // Validate the packet and extract data
+        byte[] data = Packet.ExtractPacketData(bytes);
 
+        byte packetId = bytes[0];
+        if (packetId != PacketGetGameInformationHost.PacketId)
+        {
+            throw new Exception("The packet ID is incorrect.");
+        }
+
+        int currentIndex = 0;
+
+        // Gamestage 
+        this._gameStage = (GameStageType)BitConverter.ToInt32(data, currentIndex);
+        currentIndex += 4;
+
+        // Obstacle data
+        int barrierListLength = BitConverter.ToInt32(data, currentIndex);
+        currentIndex += 4;
+        // Get the information from barrier list
+        this._barrierList = new List<Barrier>() { };
+        for (int i = 0; i < barrierListLength; i++)
+        {
+            Dot left_up = new Dot(BitConverter.ToInt32(data, currentIndex), BitConverter.ToInt32(data, currentIndex + 4));
+            Dot right_down = new Dot(BitConverter.ToInt32(data, currentIndex + 8), BitConverter.ToInt32(data, currentIndex + 12));
+
+            this._barrierList.Add(new Barrier(left_up, right_down));
+            currentIndex += 4 * 4;
+        }
+
+        this._duration = BitConverter.ToInt32(data, currentIndex);
+        currentIndex += 8;
+
+        // Get the information of owncharging piles
+        int ownChargingPilesLength = BitConverter.ToInt32(data, currentIndex);
+        currentIndex += 4;
+
+        this._ownChargingPiles = new List<Dot>() { };
+        for (int i = 0; i < ownChargingPilesLength; i++)
+        {
+            this._ownChargingPiles.Add(new Dot(BitConverter.ToInt32(data, currentIndex), BitConverter.ToInt32(data, currentIndex + 4)));
+            currentIndex += 4 * 2;
+        }
+
+        // Get the information of opponent's charging piles
+        int opponentChargingPilesLength = BitConverter.ToInt32(data, currentIndex);
+        currentIndex += 4;
+
+        this._opponentChargingPiles = new List<Dot>() { };
+        for (int i = 0; i < opponentChargingPilesLength; i++)
+        {
+            this._opponentChargingPiles.Add(new Dot(BitConverter.ToInt32(data, currentIndex), BitConverter.ToInt32(data, currentIndex + 4)));
+            currentIndex += 4 * 2;
+        }
+
+    }
     public override byte GetPacketId()
     {
         return PacketGetGameInformationHost.PacketId;

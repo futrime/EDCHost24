@@ -74,8 +74,8 @@ public class PacketGetStatusHost : Packet
         this._gameTime = BitConverter.ToInt64(data, currentIndex);
         currentIndex += 8;
         // score
-        this._score = BitConverter.ToInt32(data, currentIndex);
-        currentIndex += 4;
+        this._score = BitConverter.ToDouble(data, currentIndex);
+        currentIndex += 8;
         // car
         this._vehiclePosition.X = BitConverter.ToInt32(data, currentIndex);
         currentIndex += 4;
@@ -90,6 +90,7 @@ public class PacketGetStatusHost : Packet
         currentIndex += 4;
 
         //Note that only according to bytes, the _orderList is probably incomplete (with regard to variable 'generationTime' and 'StatusType')
+        this._orderInDeliveryList = new List<Order>() { };
         for (int i = 0; i < orderInDeliveryListLength + 1; i++)
         {
             // (orderInDeliveryListLength + 1) represents (orderInDeliveryList + lastestPendingOrder)
@@ -112,7 +113,7 @@ public class PacketGetStatusHost : Packet
             long generationTime = 0;
 
             // Warning: this constructor might make false order ids because it generates <new> Order
-            if (packetId != orderInDeliveryListLength)
+            if (i != orderInDeliveryListLength)
                 this._orderInDeliveryList.Add(new Order(departurePosition, destinationPosition, generationTime, deliveryTimeLimit));
             else
                 this._latestPendingOrder = new Order(departurePosition, destinationPosition, generationTime, deliveryTimeLimit);

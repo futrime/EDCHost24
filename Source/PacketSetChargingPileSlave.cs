@@ -20,6 +20,16 @@ public class PacketSetChargingPileSlave : Packet
     #region Constructors and finalizers.
 
     /// <summary>
+    /// Construct a PacketGetGameInformationSlave packet with fields.
+    /// </summary>
+    /// <remarks>
+    /// There is no field in this type of packets.
+    /// </remarks>
+    public PacketSetChargingPileSlave()
+    {
+    }
+
+    /// <summary>
     /// Construct a SetChargingPileSlave packet from a raw
     /// byte array.
     /// </summary>

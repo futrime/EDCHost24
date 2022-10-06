@@ -445,8 +445,8 @@ public partial class MainWindow : Form
 
 
             // Send default packet.
-            // Only send if the serial port is not writing.
-            if (this._serialPortDict[camp].BytesToWrite == 0)
+            // Only send if the serial port is not writing and the count of orders is not zero.
+            if (this._serialPortDict[camp].BytesToWrite == 0 && this._game.OrderList.Count > 0)
             {
                 // Get the order in delivery list.
                 var orderInDeliveryList = new List<Order>();
