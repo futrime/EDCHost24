@@ -49,6 +49,78 @@ public class PacketGetStatusHost : Packet
 
     #endregion
 
+    /// <summary>
+    /// Construct a GetSiteInformation packet with a raw byte array.
+    /// </summary>
+    /// <param name="bytes">The raw byte array</param>
+    /// <exception cref="ArgumentException">
+    /// The raw byte array violates the rules.
+    /// </exception>
+    public PacketGetStatusHost(byte[] bytes)
+    {
+        // Validate the packet and extract data
+        byte[] data = Packet.ExtractPacketData(bytes);
+
+        byte packetId = bytes[0];
+        if (packetId != PacketGetStatusHost.PacketId)
+        {
+            throw new Exception("The packet ID is incorrect.");
+        }
+        int currentIndex = 0;
+        // status
+        this._gameStatus = (GameStatusType)data[currentIndex];
+        currentIndex += 1;
+        // time
+        this._gameTime = BitConverter.ToInt64(data, currentIndex);
+        currentIndex += 8;
+        // score
+        this._score = BitConverter.ToDouble(data, currentIndex);
+        currentIndex += 8;
+        // car
+        this._vehiclePosition.X = BitConverter.ToInt32(data, currentIndex);
+        currentIndex += 4;
+        this._vehiclePosition.Y = BitConverter.ToInt32(data, currentIndex);
+        currentIndex += 4;
+        // mileage
+        this._remainingDistance = BitConverter.ToInt32(data, currentIndex);
+        currentIndex += 4;
+
+        // DeliveryList
+        int orderInDeliveryListLength = BitConverter.ToInt32(data, currentIndex);
+        currentIndex += 4;
+
+        //Note that only according to bytes, the _orderList is probably incomplete (with regard to variable 'generationTime' and 'StatusType')
+        this._orderInDeliveryList = new List<Order>() { };
+        for (int i = 0; i < orderInDeliveryListLength + 1; i++)
+        {
+            // (orderInDeliveryListLength + 1) represents (orderInDeliveryList + lastestPendingOrder)
+
+            Dot departurePosition = new Dot(BitConverter.ToInt32(data, currentIndex), BitConverter.ToInt32(data, currentIndex + 4));
+            currentIndex += 4 * 2;
+            Dot destinationPosition = new Dot(BitConverter.ToInt32(data, currentIndex), BitConverter.ToInt32(data, currentIndex + 4));
+            currentIndex += 4 * 2;
+
+            long deliveryTimeLimit = BitConverter.ToInt64(data, currentIndex);
+            currentIndex += 8;
+
+            // Not used because there's no interface in the constructor of class Order
+            // bool isTaken = BitConverter.ToBoolean(data, currentIndex);
+            // currentIndex += 1;
+
+            int order_id = BitConverter.ToInt32(data, currentIndex);
+            currentIndex += 4;
+
+            long generationTime = 0;
+
+            // Warning: this constructor might make false order ids because it generates <new> Order
+            if (i != orderInDeliveryListLength)
+                this._orderInDeliveryList.Add(new Order(departurePosition, destinationPosition, generationTime, deliveryTimeLimit));
+            else
+                this._latestPendingOrder = new Order(departurePosition, destinationPosition, generationTime, deliveryTimeLimit);
+        }
+
+
+    }
 
     #region Methods.
 
