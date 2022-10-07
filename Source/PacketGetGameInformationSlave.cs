@@ -18,6 +18,15 @@ public class PacketGetGameInformationSlave : Packet
 
 
     #region Constructors and finalizers.
+    /// <summary>
+    /// Construct a GetGameInformationSlave packet with fields.
+    /// </summary>
+    /// <remarks>
+    /// There is no field in this type of packets.
+    /// </remarks>
+    public PacketGetGameInformationSlave()
+    {
+    }
 
     /// <summary>
     /// Construct a GetGameInformationSlave packet from a raw
