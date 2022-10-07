@@ -169,7 +169,7 @@ public partial class SettingsWindow : Form
         if (!File.Exists(this._configFilePath))
         {
             MessageBox.Show(
-                text: "No configuration file found!",
+                text: "No configuration file is found!",
                 caption: "Error",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Error

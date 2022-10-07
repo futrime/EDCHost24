@@ -18,10 +18,10 @@ static class Program
         {
             Application.Run(new MainWindow());
         }
-        catch (System.IO.FileNotFoundException)
+        catch (System.IO.FileNotFoundException e)
         {
             MessageBox.Show(
-                "Some essential files are missing. Please check if you have extracted all files to the folder wherein the program locate.",
+                $"The file {e.FileName} is missing. Please check if you have extracted all files to the folder wherein the program locate.",
                 "Error",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Error
