@@ -20,7 +20,7 @@ public class PacketSetChargingPileSlave : Packet
     #region Constructors and finalizers.
 
     /// <summary>
-    /// Construct a PacketGetGameInformationSlave packet with fields.
+    /// Construct a SetChargingPileSlave packet with fields.
     /// </summary>
     /// <remarks>
     /// There is no field in this type of packets.
@@ -41,7 +41,7 @@ public class PacketSetChargingPileSlave : Packet
 
         // Check the packet ID.
         byte packetId = bytes[0];
-        if (packetId != PacketSetChargingPileSlave.PacketId)
+        if (packetId != this.GetPacketId())
         {
             throw new Exception("The packet ID is incorrect.");
         }
