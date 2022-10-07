@@ -223,7 +223,8 @@ public partial class MainWindow : Form
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Error
             );
-            Application.Exit();
+            Environment.Exit(0);
+            // Application.Exit();
         }
         this._camera.ConvertRgb = true;
 
