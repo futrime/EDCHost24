@@ -77,8 +77,8 @@ public class Game
     /// The inner court area.
     /// </summary>
     public static readonly (Dot TopLeft, Dot BottomRight) InnerCourtArea = (
-        new Dot(32, 32),
-        new Dot(222, 222)
+        new Dot(40, 40),
+        new Dot(214, 214)
     );
 
     /// <summary>
@@ -86,17 +86,17 @@ public class Game
     /// </summary>
     public static readonly Barrier[] WallList = {
         // Walls on the top.
-        new Barrier(new Dot(30, 30), new Dot(112, 32)),
-        new Barrier(new Dot(142, 30), new Dot(224, 32)),
+        new Barrier(new Dot(38, 38), new Dot(107, 40)),
+        new Barrier(new Dot(147, 38), new Dot(216, 40)),
         // Walls on the bottom.
-        new Barrier(new Dot(30, 222), new Dot(112, 224)),
-        new Barrier(new Dot(142, 222), new Dot(224, 224)),
+        new Barrier(new Dot(38, 214), new Dot(107, 216)),
+        new Barrier(new Dot(147, 214), new Dot(216, 216)),
         // Walls on the left.
-        new Barrier(new Dot(30, 30), new Dot(32, 112)),
-        new Barrier(new Dot(30, 142), new Dot(32, 224)),
+        new Barrier(new Dot(38, 38), new Dot(40, 107)),
+        new Barrier(new Dot(38, 147), new Dot(40, 216)),
         // Walls on the right.
-        new Barrier(new Dot(222, 30), new Dot(224, 112)),
-        new Barrier(new Dot(222, 142), new Dot(224, 224))
+        new Barrier(new Dot(214, 38), new Dot(216, 107)),
+        new Barrier(new Dot(214, 147), new Dot(216, 216))
     };
 
     #endregion
@@ -511,7 +511,7 @@ public class Game
                 this._orderList.Clear();
                 this._orderGenerator = new OrderGenerator(
                     count: (int)Game.OrderNumber[this._gameStage],
-                    area: Game.InnerCourtArea,
+                    area: Game.CourtArea,
                     generationTimeRange: (0, (long)Game.GameDuration[this._gameStage]),
                     timeLimitRange: Game.OrderDeliveryDurationRange,
                     barrierList: this._barrierList
@@ -863,8 +863,8 @@ public class Game
 
         var vehiclePosition = (Dot)vehicle.Position;
 
-        // The vehicle should park there for at least 1000ms.
-        if (vehicle.ParkingDuration >= 1000)
+        // The vehicle should park there for at least 0ms.
+        if (vehicle.ParkingDuration >= 0)
         {
             // Count the orders in delivery.
             var deliveringOrderNumber = 0;
