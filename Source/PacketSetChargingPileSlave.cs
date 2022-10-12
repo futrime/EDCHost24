@@ -53,7 +53,7 @@ public class PacketSetChargingPileSlave : Packet
 
     public override byte[] GetBytes()
     {
-        var data = new byte[8];
+        var data = new byte[0];
 
         var header = Packet.GeneratePacketHeader(PacketSetChargingPileSlave.PacketId, data);
 
