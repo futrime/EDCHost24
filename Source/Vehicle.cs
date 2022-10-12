@@ -9,16 +9,6 @@ namespace EdcHost;
 /// </summary>
 public class Vehicle
 {
-    #region Parameters
-
-    /// <summary>
-    /// The default value of the max distance in centimeters
-    /// </summary>
-    private const int DefaultInitialMaxDistance = 1000;
-
-    #endregion
-
-
     #region Public properties
 
     /// <summary>
@@ -161,7 +151,7 @@ public class Vehicle
     /// <param name="initialMaxDistance">The initial maximum distance</param>
     public Vehicle(
         CampType camp,
-        int initialMaxDistance = Vehicle.DefaultInitialMaxDistance
+        int initialMaxDistance
     )
     {
         this._camp = camp;
@@ -196,7 +186,6 @@ public class Vehicle
         // If there are at least two positions in the path.
         if (this.Path.Count > 1)
         {
-            // use this to debug: Dot.Distance(this.Path[this.Path.Count - 1], this.Path[this.Path.Count - 2]) < 5
             if (this.Path[this.Path.Count - 1] == this.Path[this.Path.Count - 2])
             // If the vehicle starts to park, update the last start parking time.
             {

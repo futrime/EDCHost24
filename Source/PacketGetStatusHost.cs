@@ -107,6 +107,9 @@ public class PacketGetStatusHost : Packet
             // bool isTaken = BitConverter.ToBoolean(data, currentIndex);
             // currentIndex += 1;
 
+            int commission = BitConverter.ToInt32(data, currentIndex);
+            currentIndex += 4;
+
             int order_id = BitConverter.ToInt32(data, currentIndex);
             currentIndex += 4;
 
@@ -114,9 +117,9 @@ public class PacketGetStatusHost : Packet
 
             // Warning: this constructor might make false order ids because it generates <new> Order
             if (i != orderInDeliveryListLength)
-                this._orderInDeliveryList.Add(new Order(departurePosition, destinationPosition, generationTime, deliveryTimeLimit));
+                this._orderInDeliveryList.Add(new Order(departurePosition, destinationPosition, generationTime, deliveryTimeLimit, commission));
             else
-                this._latestPendingOrder = new Order(departurePosition, destinationPosition, generationTime, deliveryTimeLimit);
+                this._latestPendingOrder = new Order(departurePosition, destinationPosition, generationTime, deliveryTimeLimit, commission);
         }
 
 
