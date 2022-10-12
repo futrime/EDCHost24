@@ -25,12 +25,14 @@ public class OrderGenerator
     /// <param name="area">The area to generate</param>
     /// <param name="generationTimeRange">The generation time range</param>
     /// <param name="timeLimitRange">The time limit range</param>
+    /// <param name="commissionRange">The commission range</param>
     /// <param name="barrierList">A list of the barriers where no order generates.</param>
     public OrderGenerator(
         int count,
         (Dot TopLeft, Dot BottomRight) area,
         (long Lower, long Upper) generationTimeRange,
         (long Lower, long Upper) timeLimitRange,
+        (decimal Lower, decimal Upper) commissionRange,
         List<Barrier> barrierList = null
     )
     {
@@ -49,7 +51,8 @@ public class OrderGenerator
                 order = Order.GenerateRandomOrder(
                     area,
                     generationTimeRange,
-                    timeLimitRange
+                    timeLimitRange,
+                    commissionRange
                 );
 
                 foreach (var barrier in barrierList)
@@ -117,7 +120,8 @@ public class OrderGenerator
                 this._orderList[i].DeparturePosition,
                 this._orderList[i].DestinationPosition,
                 this._orderList[i].GenerationTime,
-                deliveryTimeLimit: this._orderList[i].DeliveryTimeLimit
+                deliveryTimeLimit: this._orderList[i].DeliveryTimeLimit,
+                commission: this._orderList[i].Commission
             );
         }
 

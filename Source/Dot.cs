@@ -37,7 +37,7 @@ public struct Dot
     /// <returns>
     /// The distance. Null if the distance type is wrong.
     /// </returns>
-    public static int? Distance(
+    public static decimal? Distance(
         Dot A,
         Dot B,
         DotDistanceType distanceType = DotDistanceType.Manhattan
@@ -46,13 +46,13 @@ public struct Dot
         switch (distanceType)
         {
             case DotDistanceType.Euclidean:
-                return (int)Math.Sqrt(
+                return (decimal)Math.Sqrt(
                     Math.Pow(A.X - B.X, 2) +
                     Math.Pow(A.Y - B.Y, 2)
                 );
 
             case DotDistanceType.Manhattan:
-                return (
+                return (decimal)(
                     Math.Abs(A.X - B.X) +
                     Math.Abs(A.Y - B.Y)
                 );

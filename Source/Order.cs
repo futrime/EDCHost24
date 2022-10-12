@@ -10,6 +10,11 @@ public class Order
     #region Public properties
 
     /// <summary>
+    /// The commission.
+    /// </summary>
+    public int Commission => this._commission;
+
+    /// <summary>
     /// The delivery time limit.
     /// </summary>
     public long DeliveryTimeLimit => this._deliveryTimeLimit;
@@ -77,6 +82,7 @@ public class Order
 
     #region Private fields
 
+    private int _commission;
     private long? _deliveryTime = null;
     private long _deliveryTimeLimit;
     private Dot _departurePosition;
@@ -97,27 +103,28 @@ public class Order
     /// <param name="area">The area</param>
     /// <param name="generationTimeRange">The generation time range</param>
     /// <param name="timeLimitRange">The time limit range</param>
+    /// <param name="commissionRange">The commission range</param>
     /// <returns></returns>
     public static Order GenerateRandomOrder(
         (Dot TopLeft, Dot BottomRight) area,
         (long Lower, long Upper) generationTimeRange,
-        (long Lower, long Upper) timeLimitRange
+        (long Lower, long Upper) timeLimitRange,
+        (decimal Lower, decimal Upper) commissionRange
     )
     {
-        var random = new Random((int)DateTime.Now.Ticks);
-
         var departurePosition = new Dot(
-            random.Next(area.TopLeft.X, area.BottomRight.X),
-            random.Next(area.TopLeft.Y, area.BottomRight.Y)
+            Utility.RandomGenerator.Next(area.TopLeft.X, area.BottomRight.X),
+            Utility.RandomGenerator.Next(area.TopLeft.Y, area.BottomRight.Y)
         );
         var destinationPosition = new Dot(
-            random.Next(area.TopLeft.X, area.BottomRight.X),
-            random.Next(area.TopLeft.Y, area.BottomRight.Y)
+            Utility.RandomGenerator.Next(area.TopLeft.X, area.BottomRight.X),
+            Utility.RandomGenerator.Next(area.TopLeft.Y, area.BottomRight.Y)
         );
-        var generationTime = random.NextInt64(generationTimeRange.Lower, generationTimeRange.Upper);
-        var timeLimit = random.NextInt64(timeLimitRange.Lower, timeLimitRange.Upper);
+        var generationTime = Utility.RandomGenerator.NextInt64(generationTimeRange.Lower, generationTimeRange.Upper);
+        var timeLimit = Utility.RandomGenerator.NextInt64(timeLimitRange.Lower, timeLimitRange.Upper);
+        var commission = Utility.RandomGenerator.Next((int)commissionRange.Lower, (int)commissionRange.Upper);
 
-        return new Order(departurePosition, destinationPosition, generationTime, timeLimit);
+        return new Order(departurePosition, destinationPosition, generationTime, timeLimit, commission);
     }
 
     /// <summary>
@@ -127,11 +134,13 @@ public class Order
     /// <param name="destinationPosition">The destination position</param>
     /// <param name="generationTime">The generation time</param>
     /// <param name="deliveryTimeLimit">The delivery time limit</param>
+    /// <param name="commission">The commission.</param>
     public Order(
         Dot departurePosition,
         Dot destinationPosition,
         long generationTime,
-        long deliveryTimeLimit
+        long deliveryTimeLimit,
+        int commission
     )
     {
         // Validate the delivery time limit
@@ -144,6 +153,7 @@ public class Order
         this._destinationPosition = destinationPosition;
         this._generationTime = generationTime;
         this._deliveryTimeLimit = deliveryTimeLimit;
+        this._commission = commission;
     }
 
     /// <summary>

@@ -29,9 +29,9 @@ public class Game
     public const decimal ScoreMoveIntoInnerCourt = 10M;
 
     /// <summary>
-    /// The score obtained when having an order delivered.
+    /// The range of the scores obtained when having an order delivered.
     /// </summary>
-    public const decimal ScoreDeliverOrder = 20M;
+    public static readonly (decimal Lower, decimal Upper) ScoreDeliverOrderRange = (10M, 50M);
 
     /// <summary>
     /// The score obtained when a delivery is over time per
@@ -77,8 +77,8 @@ public class Game
     /// The inner court area.
     /// </summary>
     public static readonly (Dot TopLeft, Dot BottomRight) InnerCourtArea = (
-        new Dot(32, 32),
-        new Dot(222, 222)
+        new Dot(40, 40),
+        new Dot(214, 214)
     );
 
     /// <summary>
@@ -86,17 +86,17 @@ public class Game
     /// </summary>
     public static readonly Barrier[] WallList = {
         // Walls on the top.
-        new Barrier(new Dot(30, 30), new Dot(112, 32)),
-        new Barrier(new Dot(142, 30), new Dot(224, 32)),
+        new Barrier(new Dot(38, 38), new Dot(107, 40)),
+        new Barrier(new Dot(147, 38), new Dot(216, 40)),
         // Walls on the bottom.
-        new Barrier(new Dot(30, 222), new Dot(112, 224)),
-        new Barrier(new Dot(142, 222), new Dot(224, 224)),
+        new Barrier(new Dot(38, 214), new Dot(107, 216)),
+        new Barrier(new Dot(147, 214), new Dot(216, 216)),
         // Walls on the left.
-        new Barrier(new Dot(30, 30), new Dot(32, 112)),
-        new Barrier(new Dot(30, 142), new Dot(32, 224)),
+        new Barrier(new Dot(38, 38), new Dot(40, 107)),
+        new Barrier(new Dot(38, 147), new Dot(40, 216)),
         // Walls on the right.
-        new Barrier(new Dot(222, 30), new Dot(224, 112)),
-        new Barrier(new Dot(222, 142), new Dot(224, 224))
+        new Barrier(new Dot(214, 38), new Dot(216, 107)),
+        new Barrier(new Dot(214, 147), new Dot(216, 216))
     };
 
     #endregion
@@ -119,7 +119,7 @@ public class Game
     /// The range of the side lengths of the barriers.
     /// </summary>
     public static readonly (int Min, int Max) BarrierSideLengthRange = (
-        10, 180
+        10, 170
     );
 
     /// <summary>
@@ -136,7 +136,7 @@ public class Game
     /// The increasing rate of the max distances of vehicles in the influence
     /// scope of their own charging piles in centimeter per second.
     /// </summary>
-    public const decimal ChargingPileChargingRate = 0.1M;
+    public const decimal ChargingPileChargingRate = 1M;
 
     /// <summary>
     /// The reduction rate of the max distances of vehicles in the influence
@@ -148,7 +148,7 @@ public class Game
     /// The radius of the scope where vehicles are influenced by
     /// charging piles.
     /// </summary>
-    public const int ChargingPileInfluenceScopeRadius = 20;
+    public const decimal ChargingPileInfluenceScopeRadius = 20M;
 
     #endregion
 
@@ -157,12 +157,7 @@ public class Game
     /// <summary>
     /// The radius of the scope where vehicles can contact a order.
     /// </summary>
-    public const int OrderContactScopeRadius = 8;
-
-    /// <summary>
-    /// The delay for vehicles to deliver an order.
-    /// </summary>
-    public const long OrderDeliverDelay = 1000;
+    public const decimal OrderContactScopeRadius = 8M;
 
     /// <summary>
     /// The capacity of the orders on a vehicle.
@@ -208,7 +203,7 @@ public class Game
     /// <summary>
     /// The initial max distance of vehicles.
     /// </summary>
-    public const int VehicleInitialMaxDistance = 1000;
+    public const int VehicleInitialMaxDistance = 4000;
 
     /// <summary>
     /// The increasing rate of the max distances of vehicles out of power
@@ -497,8 +492,8 @@ public class Game
         // Set the vehicles.
         this._vehicle = new Dictionary<CampType, Vehicle>
         {
-            { CampType.A, new Vehicle(CampType.A) },
-            { CampType.B, new Vehicle(CampType.B) }
+            { CampType.A, new Vehicle(CampType.A, initialMaxDistance: Game.VehicleInitialMaxDistance) },
+            { CampType.B, new Vehicle(CampType.B, initialMaxDistance: Game.VehicleInitialMaxDistance) }
         };
 
         // Set the start time
@@ -511,9 +506,10 @@ public class Game
                 this._orderList.Clear();
                 this._orderGenerator = new OrderGenerator(
                     count: (int)Game.OrderNumber[this._gameStage],
-                    area: Game.InnerCourtArea,
+                    area: Game.CourtArea,
                     generationTimeRange: (0, (long)Game.GameDuration[this._gameStage]),
                     timeLimitRange: Game.OrderDeliveryDurationRange,
+                    commissionRange: Game.ScoreDeliverOrderRange,
                     barrierList: this._barrierList
                 );
                 break;
@@ -601,7 +597,7 @@ public class Game
         this._chargingPileList.Add(new ChargingPile(
             (CampType)this._camp,
             (Dot)this._vehicle[(CampType)this._camp].Position,
-            Game.ChargingPileInfluenceScopeRadius
+            influenceScopeRadius: Game.ChargingPileInfluenceScopeRadius
         ));
 
         this._score[(CampType)this._camp] += Game.ScoreSetChargingPile;
@@ -863,8 +859,8 @@ public class Game
 
         var vehiclePosition = (Dot)vehicle.Position;
 
-        // The vehicle should park there for at least 1000ms.
-        if (vehicle.ParkingDuration >= 1000)
+        // The vehicle should park there for at least 0ms.
+        if (vehicle.ParkingDuration >= 0)
         {
             // Count the orders in delivery.
             var deliveringOrderNumber = 0;
@@ -887,7 +883,7 @@ public class Game
                         continue;
                     }
 
-                    if ((int)Dot.Distance(order.DeparturePosition, vehiclePosition)
+                    if ((decimal)Dot.Distance(order.DeparturePosition, vehiclePosition)
                         <= Game.OrderContactScopeRadius)
                     {
                         order.Take((long)this.GameTime);
@@ -898,7 +894,7 @@ public class Game
                 }
                 else if (order.Status == OrderStatusType.InDelivery)
                 {
-                    if ((int)Dot.Distance(order.DestinationPosition, vehiclePosition)
+                    if ((decimal)Dot.Distance(order.DestinationPosition, vehiclePosition)
                         <= Game.OrderContactScopeRadius)
                     {
                         order.Deliver((long)this.GameTime);
@@ -909,7 +905,7 @@ public class Game
                         }
 
                         this._score[(CampType)this._camp] +=
-                            Math.Max(Game.ScoreDeliverOrder + Game.ScoreDeliveryOvertimeRate * (long)order.OvertimeDuration, 0);
+                            Math.Max(order.Commission + Game.ScoreDeliveryOvertimeRate * (long)order.OvertimeDuration, 0);
 
                         // Player the deliver sound.
                         Game.OrderSoundDeliver.Play();

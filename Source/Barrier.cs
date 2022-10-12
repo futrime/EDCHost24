@@ -64,18 +64,16 @@ public class Barrier
             throw new Exception("The area is too small to generate.");
         }
 
-        var random = new Random((int)DateTime.Now.Ticks);
-
         // The size of the barrier
         // Note that the range for random.Next() is in [a, b) form.
         var size = new Dot(
-            random.Next(sizeRange.Min.X, sizeRange.Max.X + 1),
-            random.Next(sizeRange.Min.Y, sizeRange.Max.Y + 1)
+            Utility.RandomGenerator.Next(sizeRange.Min.X, sizeRange.Max.X + 1),
+            Utility.RandomGenerator.Next(sizeRange.Min.Y, sizeRange.Max.Y + 1)
         );
 
         var topLeftPosition = new Dot(
-            random.Next(area.TopLeft.X, area.BottomRight.X - size.X + 1),
-            random.Next(area.TopLeft.Y, area.BottomRight.Y - size.Y + 1)
+            Utility.RandomGenerator.Next(area.TopLeft.X, area.BottomRight.X - size.X + 1),
+            Utility.RandomGenerator.Next(area.TopLeft.Y, area.BottomRight.Y - size.Y + 1)
         );
 
         var bottomRightPosition = new Dot(
