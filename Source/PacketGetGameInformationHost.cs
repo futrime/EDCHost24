@@ -46,8 +46,8 @@ public class PacketGetGameInformationHost : Packet
         int currentIndex = 0;
 
         // Gamestage 
-        this._gameStage = (GameStageType)BitConverter.ToInt32(data, currentIndex);
-        currentIndex += 4;
+        this._gameStage = (GameStageType)(data[currentIndex]);
+        currentIndex += 1;
 
         // Obstacle data
         int barrierListLength = BitConverter.ToInt32(data, currentIndex);
@@ -94,7 +94,7 @@ public class PacketGetGameInformationHost : Packet
     {
         // Compute the length of the data
         int dataLength = (
-            1 * 4 +                                // this._currentGameStage
+            1 +                                   // this._currentGameStage
             4 +                                    // this._obstacleListLength
             this._barrierList.Count * 16 +
             1 * 8 +                                // this._duration
@@ -110,8 +110,8 @@ public class PacketGetGameInformationHost : Packet
 
 
         // Gamestage 
-        BitConverter.GetBytes((int)this._gameStage).CopyTo(data, currentIndex);
-        currentIndex += 4;
+        BitConverter.GetBytes((byte)this._gameStage).CopyTo(data, currentIndex);
+        currentIndex += 1;
 
         // Barrier
         BitConverter.GetBytes(this._barrierList.Count).CopyTo(data, currentIndex);
@@ -167,7 +167,7 @@ public class PacketGetGameInformationHost : Packet
 
         return bytes;
     }
-    
+
     public override byte GetPacketId()
     {
         return PacketGetGameInformationHost.PacketId;

@@ -55,7 +55,7 @@ public class ChargingPile
     /// </returns>
     public bool IsInInfluenceScope(Dot position)
     {
-        return ((decimal)Dot.Distance(position, this._position) <
+        return ((decimal)Dot.Distance(position, this._position) <=
             this._influenceScopeRadius);
     }
 
