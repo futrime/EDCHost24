@@ -133,6 +133,11 @@ public class Game
     #region Parameters related to the charging piles.
 
     /// <summary>
+    /// The max number of charging piles of a camp.
+    /// </summary>
+    public const int ChargingPileMaxNumber = 3;
+
+    /// <summary>
     /// The increasing rate of the max distances of vehicles in the influence
     /// scope of their own charging piles in centimeter per second.
     /// </summary>
@@ -168,7 +173,7 @@ public class Game
     /// The range of the delivery durations of orders.
     /// </summary>
     public static readonly (long Min, long Max) OrderDeliveryDurationRange = (
-        20, 60
+        20000, 60000
     );
 
     /// <summary>
@@ -594,6 +599,26 @@ public class Game
             return;
         }
 
+        // Avoid setting too many charging piles.
+        int chargingPileNumber = 0;
+        foreach (var chargingPile in this._chargingPileList)
+        {
+            if (chargingPile.Camp == this._camp)
+            {
+                ++chargingPileNumber;
+            }
+        }
+        if (chargingPileNumber > Game.ChargingPileMaxNumber)
+        {
+            return;
+        }
+
+        // Can only set charging piles in the first half.
+        if (this._gameStage != GameStageType.FirstHalf)
+        {
+            return;
+        }
+
         this._chargingPileList.Add(new ChargingPile(
             (CampType)this._camp,
             (Dot)this._vehicle[(CampType)this._camp].Position,
@@ -859,57 +884,54 @@ public class Game
 
         var vehiclePosition = (Dot)vehicle.Position;
 
-        // The vehicle should park there for at least 0ms.
-        if (vehicle.ParkingDuration >= 0)
+
+        // Count the orders in delivery.
+        var deliveringOrderNumber = 0;
+        foreach (var order in this._orderList)
         {
-            // Count the orders in delivery.
-            var deliveringOrderNumber = 0;
-            foreach (var order in this._orderList)
+            if (order.Status == OrderStatusType.InDelivery)
             {
-                if (order.Status == OrderStatusType.InDelivery)
+                ++deliveringOrderNumber;
+            }
+        }
+
+        foreach (var order in this._orderList)
+        {
+            // Take orders.
+            if (order.Status == OrderStatusType.Pending)
+            {
+                // Check if the capacity is full.
+                if (deliveringOrderNumber > Game.OrderDeliveryCapacity)
                 {
-                    ++deliveringOrderNumber;
+                    continue;
+                }
+
+                if ((decimal)Dot.Distance(order.DeparturePosition, vehiclePosition)
+                    <= Game.OrderContactScopeRadius)
+                {
+                    order.Take((long)this.GameTime);
+
+                    // Play the take sound.
+                    Game.OrderSoundTake.Play();
                 }
             }
-
-            foreach (var order in this._orderList)
+            else if (order.Status == OrderStatusType.InDelivery)
             {
-                // Take orders.
-                if (order.Status == OrderStatusType.Pending)
+                if ((decimal)Dot.Distance(order.DestinationPosition, vehiclePosition)
+                    <= Game.OrderContactScopeRadius)
                 {
-                    // Check if the capacity is full.
-                    if (deliveringOrderNumber > Game.OrderDeliveryCapacity)
+                    order.Deliver((long)this.GameTime);
+
+                    if (order.OvertimeDuration == null)
                     {
-                        continue;
+                        throw new Exception("The overtime duration of the order is null.");
                     }
 
-                    if ((decimal)Dot.Distance(order.DeparturePosition, vehiclePosition)
-                        <= Game.OrderContactScopeRadius)
-                    {
-                        order.Take((long)this.GameTime);
+                    this._score[(CampType)this._camp] +=
+                        Math.Max(order.Commission + Game.ScoreDeliveryOvertimeRate * (long)order.OvertimeDuration, 0);
 
-                        // Play the take sound.
-                        Game.OrderSoundTake.Play();
-                    }
-                }
-                else if (order.Status == OrderStatusType.InDelivery)
-                {
-                    if ((decimal)Dot.Distance(order.DestinationPosition, vehiclePosition)
-                        <= Game.OrderContactScopeRadius)
-                    {
-                        order.Deliver((long)this.GameTime);
-
-                        if (order.OvertimeDuration == null)
-                        {
-                            throw new Exception("The overtime duration of the order is null.");
-                        }
-
-                        this._score[(CampType)this._camp] +=
-                            Math.Max(order.Commission + Game.ScoreDeliveryOvertimeRate * (long)order.OvertimeDuration, 0);
-
-                        // Player the deliver sound.
-                        Game.OrderSoundDeliver.Play();
-                    }
+                    // Player the deliver sound.
+                    Game.OrderSoundDeliver.Play();
                 }
             }
         }

@@ -180,9 +180,9 @@ public partial class MainWindow : Form
         InitializeComponent();
 
         // Initialize the label texts
-        this.labelScoreVehicleA.Text = "0.000";
-        this.labelScoreVehicleB.Text = "0.000";
-        this.labelGameTime.Text = "0.00";
+        this.labelScoreVehicleA.Text = "N/A";
+        this.labelScoreVehicleB.Text = "N/A";
+        this.labelGameTime.Text = "N/A";
         this.labelGameHalf.Text = "Pre-match";
 
         // Resize icons
@@ -809,6 +809,11 @@ public partial class MainWindow : Form
     private void buttonReset_Click(object sender, EventArgs e)
     {
         this._game = new Game();
+
+        this.labelScoreVehicleA.Text = "N/A";
+        this.labelScoreVehicleB.Text = "N/A";
+        this.labelGameTime.Text = "N/A";
+        this.labelGameHalf.Text = "Pre-match";
     }
 
     private void buttonFoul_Click(object sender, EventArgs e)
