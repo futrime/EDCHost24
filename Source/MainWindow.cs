@@ -509,6 +509,8 @@ public partial class MainWindow : Form
             // Update the monitor frame
             this.RefreshMonitor(BitmapConverter.ToBitmap(frame));
         }
+
+        frame.Dispose();
     }
 
     /// <summary>
@@ -674,6 +676,11 @@ public partial class MainWindow : Form
     /// </param>
     private void RefreshMonitor(Image img)
     {
+        if (pictureBoxMonitor.Image != null)
+        {
+            pictureBoxMonitor.Image.Dispose();
+        }
+
         pictureBoxMonitor.Image = img;
     }
 
