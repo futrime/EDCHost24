@@ -89,7 +89,7 @@ public class Order
     private long? _departureTime = null;
     private Dot _destinationPosition;
     private long _generationTime;
-    private int _id = Utility.GenerateUniqueId();
+    private int _id;
     private OrderStatusType _status = OrderStatusType.Ungenerated;
 
     #endregion
@@ -128,19 +128,21 @@ public class Order
     }
 
     /// <summary>
-    /// Construct an Order object.
+    /// Constructs an Order object.
     /// </summary>
     /// <param name="departurePosition">The departure position</param>
     /// <param name="destinationPosition">The destination position</param>
     /// <param name="generationTime">The generation time</param>
     /// <param name="deliveryTimeLimit">The delivery time limit</param>
-    /// <param name="commission">The commission.</param>
+    /// <param name="commission">The commission</param>
+    /// <param name="id">The id</param>
     public Order(
         Dot departurePosition,
         Dot destinationPosition,
         long generationTime,
         long deliveryTimeLimit,
-        int commission
+        int commission,
+        int? id = null
     )
     {
         // Validate the delivery time limit
@@ -154,6 +156,7 @@ public class Order
         this._generationTime = generationTime;
         this._deliveryTimeLimit = deliveryTimeLimit;
         this._commission = commission;
+        this._id = id.GetValueOrDefault(Utility.GenerateUniqueId());
     }
 
     /// <summary>

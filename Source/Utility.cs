@@ -29,6 +29,7 @@ static class Utility
 
     #region Private fields.
 
+    // Note that static local variables are not permitted in C#.
     private static int _lastUniqueId = 0;
 
     #endregion
