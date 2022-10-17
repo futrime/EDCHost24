@@ -134,7 +134,7 @@ public class PacketGetStatusHost : Packet
 
         var data = new byte[
             1 + 8 + 8 + 8 + 4 +
-            (4 + 32 * this._orderInDeliveryList.Count) + 32 * Convert.ToInt32(lastestPendingOrderIsNull)
+            (4 + 32 * this._orderInDeliveryList.Count) + 32 * Convert.ToInt32(!lastestPendingOrderIsNull)
         ];
 
         int index = 0;

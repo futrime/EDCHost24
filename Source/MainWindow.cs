@@ -33,7 +33,7 @@ public partial class MainWindow : Form
                     Locator = new LocatorConfigType
                     {
                         Hue = (100, 150),
-                        Saturation = (200, 255),
+                        Saturation = (100, 255),
                         Value = (100, 255),
                         MinArea = 4M
                     },
@@ -49,7 +49,7 @@ public partial class MainWindow : Form
                     Locator = new LocatorConfigType
                     {
                         Hue = (0, 50),
-                        Saturation = (200, 255),
+                        Saturation = (120, 255),
                         Value = (100, 255),
                         MinArea = 4M
                     },
