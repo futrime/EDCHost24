@@ -129,9 +129,12 @@ public class PacketGetStatusHost : Packet
 
     public override byte[] GetBytes()
     {
+        // Used to judge whether the lastest pending order is null, if not, the length of byte array will be added with 32;
+        bool lastestPendingOrderIsNull = (this._latestPendingOrder == null);
+
         var data = new byte[
             1 + 8 + 8 + 8 + 4 +
-            (4 + 28 * this._orderInDeliveryList.Count) + 28
+            (4 + 32 * this._orderInDeliveryList.Count) + 32 * Convert.ToInt32(lastestPendingOrderIsNull)
         ];
 
         int index = 0;
@@ -208,32 +211,37 @@ public class PacketGetStatusHost : Packet
         }
         #endregion
 
+
         #region The latest pending order.
-        #region The departure position.
-        // The x.
-        BitConverter.GetBytes(this._latestPendingOrder.DeparturePosition.X).CopyTo(data, index);
-        index += 4;
-        // The y.
-        BitConverter.GetBytes(this._latestPendingOrder.DeparturePosition.Y).CopyTo(data, index);
-        index += 4;
-        #endregion
+        if (!lastestPendingOrderIsNull)
+        {
+            #region The departure position.
 
-        #region The destination position.
-        // The x.
-        BitConverter.GetBytes(this._latestPendingOrder.DestinationPosition.X).CopyTo(data, index);
-        index += 4;
-        // The y.
-        BitConverter.GetBytes(this._latestPendingOrder.DestinationPosition.Y).CopyTo(data, index);
-        index += 4;
-        #endregion
+            // The x.
+            BitConverter.GetBytes(this._latestPendingOrder.DeparturePosition.X).CopyTo(data, index);
+            index += 4;
+            // The y.
+            BitConverter.GetBytes(this._latestPendingOrder.DeparturePosition.Y).CopyTo(data, index);
+            index += 4;
+            #endregion
 
-        // The delivery time limit.
-        BitConverter.GetBytes(this._latestPendingOrder.DeliveryTimeLimit).CopyTo(data, index);
-        index += 8;
+            #region The destination position.
+            // The x.
+            BitConverter.GetBytes(this._latestPendingOrder.DestinationPosition.X).CopyTo(data, index);
+            index += 4;
+            // The y.
+            BitConverter.GetBytes(this._latestPendingOrder.DestinationPosition.Y).CopyTo(data, index);
+            index += 4;
+            #endregion
 
-        // The order ID.
-        BitConverter.GetBytes(this._latestPendingOrder.Id).CopyTo(data, index);
-        index += 4;
+            // The delivery time limit.
+            BitConverter.GetBytes(this._latestPendingOrder.DeliveryTimeLimit).CopyTo(data, index);
+            index += 8;
+
+            // The order ID.
+            BitConverter.GetBytes(this._latestPendingOrder.Id).CopyTo(data, index);
+            index += 4;
+        }
         #endregion
 
         // Generate the header.

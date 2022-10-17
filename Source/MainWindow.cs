@@ -446,8 +446,7 @@ public partial class MainWindow : Form
 
 
             // Send default packet.
-            // Only send if the serial port is not writing and the count of orders is not zero.
-            if (this._serialPortDict[camp].BytesToWrite == 0 && this._game.OrderList.Count > 0)
+            if (this._serialPortDict[camp].BytesToWrite == 0)
             {
                 // Get the order in delivery list.
                 var orderInDeliveryList = new List<Order>();
@@ -459,6 +458,9 @@ public partial class MainWindow : Form
                     }
                 }
 
+                // If the order list is empty, the latestPendingOrder will be null, which won't be added to the bytes of PacketGetStatusHost
+                Order latestPendingOrder = (this._game.OrderList.Count > 0 ? this._game.OrderList[this._game.OrderList.Count] : null);
+
                 var packet = new PacketGetStatusHost(
                     gameStatus: this._game.GameState,
                     gameTime: this._game.GameTime.GetValueOrDefault(0),
@@ -466,7 +468,7 @@ public partial class MainWindow : Form
                     vehiclePosition: this._game.Vehicle[camp].Position.GetValueOrDefault(new Dot(0, 0)),
                     remainingDistance: this._game.Vehicle[camp].RemainingDistance,
                     orderInDeliveryList: orderInDeliveryList,
-                    latestPendingOrder: this._game.OrderList[this._game.OrderList.Count - 1]
+                    latestPendingOrder: latestPendingOrder
                 );
 
                 var bytesToWrite = packet.GetBytes();
