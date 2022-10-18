@@ -13,8 +13,8 @@ public class PacketGetStatusHost : Packet
     public const byte PacketId = 0x05;
 
     private GameStatusType _gameStatus;
-    private long _gameTime;
-    private double _score;
+    private int _gameTime;
+    private float _score;
     private Dot _vehiclePosition;
     private int _remainingDistance;
     private List<Order> _orderInDeliveryList;
@@ -30,8 +30,8 @@ public class PacketGetStatusHost : Packet
     /// </summary>
     public PacketGetStatusHost(
         GameStatusType gameStatus,
-        long gameTime,
-        double score,
+        int gameTime,
+        float score,
         Dot vehiclePosition,
         int remainingDistance,
         List<Order> orderInDeliveryList,
@@ -71,11 +71,11 @@ public class PacketGetStatusHost : Packet
         this._gameStatus = (GameStatusType)data[currentIndex];
         currentIndex += 1;
         // time
-        this._gameTime = BitConverter.ToInt64(data, currentIndex);
-        currentIndex += 8;
+        this._gameTime = BitConverter.ToInt32(data, currentIndex);
+        currentIndex += 4;
         // score
-        this._score = BitConverter.ToDouble(data, currentIndex);
-        currentIndex += 8;
+        this._score = BitConverter.ToSingle(data, currentIndex);
+        currentIndex += 4;
         // car
         this._vehiclePosition.X = BitConverter.ToInt32(data, currentIndex);
         currentIndex += 4;
@@ -86,8 +86,8 @@ public class PacketGetStatusHost : Packet
         currentIndex += 4;
 
         // DeliveryList
-        int orderInDeliveryListLength = BitConverter.ToInt32(data, currentIndex);
-        currentIndex += 4;
+        byte orderInDeliveryListLength = data[currentIndex];
+        currentIndex += 1;
 
         //Note that only according to bytes, the _orderList is probably incomplete (with regard to variable 'generationTime' and 'StatusType')
         this._orderInDeliveryList = new List<Order>() { };
@@ -100,14 +100,14 @@ public class PacketGetStatusHost : Packet
             Dot destinationPosition = new Dot(BitConverter.ToInt32(data, currentIndex), BitConverter.ToInt32(data, currentIndex + 4));
             currentIndex += 4 * 2;
 
-            long deliveryTimeLimit = BitConverter.ToInt64(data, currentIndex);
-            currentIndex += 8;
+            int deliveryTimeLimit = BitConverter.ToInt32(data, currentIndex);
+            currentIndex += 4;
 
             // Not used because there's no interface in the constructor of class Order
             // bool isTaken = BitConverter.ToBoolean(data, currentIndex);
             // currentIndex += 1;
 
-            int commission = BitConverter.ToInt32(data, currentIndex);
+            float commission = BitConverter.ToSingle(data, currentIndex);
             currentIndex += 4;
 
             int order_id = BitConverter.ToInt32(data, currentIndex);
@@ -133,8 +133,8 @@ public class PacketGetStatusHost : Packet
         bool lastestPendingOrderIsNull = (this._latestPendingOrder == null);
 
         var data = new byte[
-            1 + 8 + 8 + 8 + 4 +
-            (4 + 32 * this._orderInDeliveryList.Count) + 32 * Convert.ToInt32(!lastestPendingOrderIsNull)
+            1 + 4 + 4 + 8 + 4 +
+            (1 + 28 * this._orderInDeliveryList.Count) + 28 * Convert.ToInt32(!lastestPendingOrderIsNull)
         ];
 
         int index = 0;
@@ -159,11 +159,11 @@ public class PacketGetStatusHost : Packet
 
         // The game time.
         BitConverter.GetBytes(this._gameTime).CopyTo(data, index);
-        index += 8;
+        index += 4;
 
         // The score.
         BitConverter.GetBytes(this._score).CopyTo(data, index);
-        index += 8;
+        index += 4;
 
         #region The vehicle position.
         // The x.
@@ -179,8 +179,13 @@ public class PacketGetStatusHost : Packet
         index += 4;
 
         #region The order in delivery list.
-        BitConverter.GetBytes(this._orderInDeliveryList.Count).CopyTo(data, index);
-        index += 4;
+        // If the count is too large, throw an exception
+        if (this._orderInDeliveryList.Count > 0xff)
+        {
+            throw new ArgumentException("Length of orderInDeliveryList is larger than 0xff");
+        }
+        BitConverter.GetBytes((byte)this._orderInDeliveryList.Count).CopyTo(data, index);
+        index += 1;
         foreach (var order in this._orderInDeliveryList)
         {
             #region The departure position.
@@ -203,7 +208,11 @@ public class PacketGetStatusHost : Packet
 
             // The delivery time limit.
             BitConverter.GetBytes(order.DeliveryTimeLimit).CopyTo(data, index);
-            index += 8;
+            index += 4;
+
+            // The commission
+            BitConverter.GetBytes(order.Commission).CopyTo(data, index);
+            index += 4;
 
             // The order ID.
             BitConverter.GetBytes(order.Id).CopyTo(data, index);
@@ -236,7 +245,11 @@ public class PacketGetStatusHost : Packet
 
             // The delivery time limit.
             BitConverter.GetBytes(this._latestPendingOrder.DeliveryTimeLimit).CopyTo(data, index);
-            index += 8;
+            index += 4;
+
+            // The commission
+            BitConverter.GetBytes(this._latestPendingOrder.Commission).CopyTo(data, index);
+            index += 4;
 
             // The order ID.
             BitConverter.GetBytes(this._latestPendingOrder.Id).CopyTo(data, index);

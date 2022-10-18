@@ -425,7 +425,7 @@ public partial class MainWindow : Form
                         var gameInfoPacket = new PacketGetGameInformationHost(
                                             gameStage: this._game.GameStage,
                                             barrierList: this._game.BarrierList,
-                                            duration: (long)Game.GameDuration[this._game.GameStage],
+                                            duration: (int)Game.GameDuration[this._game.GameStage],
                                             ownChargingPiles: ownChargingPiles,
                                             opponentChargingPiles: opponentChargingPiles
                                         );
@@ -463,8 +463,8 @@ public partial class MainWindow : Form
 
                 var packet = new PacketGetStatusHost(
                     gameStatus: this._game.GameState,
-                    gameTime: this._game.GameTime.GetValueOrDefault(0),
-                    score: (double)this._game.Score[camp],
+                    gameTime: (int)this._game.GameTime.GetValueOrDefault(0),
+                    score: (float)this._game.Score[camp],
                     vehiclePosition: this._game.Vehicle[camp].Position.GetValueOrDefault(new Dot(0, 0)),
                     remainingDistance: this._game.Vehicle[camp].RemainingDistance,
                     orderInDeliveryList: orderInDeliveryList,
