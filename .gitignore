@@ -57,3 +57,4 @@ msbuild.wrn
 
 
 ## Project specific ignored files
+Config.yml
