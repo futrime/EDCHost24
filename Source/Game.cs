@@ -928,7 +928,7 @@ public class Game
                     }
 
                     this._score[(CampType)this._camp] +=
-                        Math.Max(order.Commission + Game.ScoreDeliveryOvertimeRate * (long)order.OvertimeDuration, 0);
+                        Math.Max((decimal)order.Commission + Game.ScoreDeliveryOvertimeRate * (long)order.OvertimeDuration, 0);
 
                     // Player the deliver sound.
                     Game.OrderSoundDeliver.Play();

@@ -12,7 +12,7 @@ public class Order
     /// <summary>
     /// The commission.
     /// </summary>
-    public int Commission => this._commission;
+    public float Commission => this._commission;
 
     /// <summary>
     /// The delivery time limit.
@@ -44,7 +44,8 @@ public class Order
     /// </summary>
     public long? OvertimeDuration
     {
-        get {
+        get
+        {
             if (this.ScheduledDeliveryTime == null)
             {
                 return null;
@@ -59,7 +60,8 @@ public class Order
     /// </summary>
     public long? ScheduledDeliveryTime
     {
-        get {
+        get
+        {
             if (this._departureTime == null)
             {
                 return null;
@@ -82,7 +84,7 @@ public class Order
 
     #region Private fields
 
-    private int _commission;
+    private float _commission;
     private long? _deliveryTime = null;
     private long _deliveryTimeLimit;
     private Dot _departurePosition;
@@ -122,9 +124,9 @@ public class Order
         );
         var generationTime = Utility.RandomGenerator.NextInt64(generationTimeRange.Lower, generationTimeRange.Upper);
         var timeLimit = Utility.RandomGenerator.NextInt64(timeLimitRange.Lower, timeLimitRange.Upper);
-        var commission = Utility.RandomGenerator.Next((int)commissionRange.Lower, (int)commissionRange.Upper);
+        var commission = commissionRange.Lower + (decimal)Utility.RandomGenerator.NextDouble() * (commissionRange.Upper - commissionRange.Lower);
 
-        return new Order(departurePosition, destinationPosition, generationTime, timeLimit, commission);
+        return new Order(departurePosition, destinationPosition, generationTime, timeLimit, (float)commission);
     }
 
     /// <summary>
@@ -135,13 +137,13 @@ public class Order
     /// <param name="generationTime">The generation time</param>
     /// <param name="deliveryTimeLimit">The delivery time limit</param>
     /// <param name="commission">The commission</param>
-    /// <param name="id">The id</param>
+    /// <param name="id">The id, empty for auto-generation</param>
     public Order(
         Dot departurePosition,
         Dot destinationPosition,
         long generationTime,
         long deliveryTimeLimit,
-        int commission,
+        float commission,
         int? id = null
     )
     {
