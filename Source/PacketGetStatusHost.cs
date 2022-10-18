@@ -129,12 +129,10 @@ public class PacketGetStatusHost : Packet
 
     public override byte[] GetBytes()
     {
-        // Used to judge whether the lastest pending order is null, if not, the length of byte array will be added with 32;
-        bool lastestPendingOrderIsNull = (this._latestPendingOrder == null);
 
         var data = new byte[
             1 + 4 + 4 + 8 + 4 +
-            (1 + 28 * this._orderInDeliveryList.Count) + 28 * Convert.ToInt32(!lastestPendingOrderIsNull)
+            (1 + 28 * this._orderInDeliveryList.Count) + 28 * 1
         ];
 
         int index = 0;
@@ -222,7 +220,8 @@ public class PacketGetStatusHost : Packet
 
 
         #region The latest pending order.
-        if (!lastestPendingOrderIsNull)
+        // Used to judge whether the lastest pending order is null, if it is, then a null order with id -1 will be created;
+        if (this._latestPendingOrder != null)
         {
             #region The departure position.
 
@@ -253,6 +252,14 @@ public class PacketGetStatusHost : Packet
 
             // The order ID.
             BitConverter.GetBytes(this._latestPendingOrder.Id).CopyTo(data, index);
+            index += 4;
+        }
+        else
+        {
+            // The bytes of a null order is 0, except for -1 id
+            index += 4 * 6;
+            // The order ID.
+            BitConverter.GetBytes((int)-1).CopyTo(data, index);
             index += 4;
         }
         #endregion
