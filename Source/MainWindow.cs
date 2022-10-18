@@ -165,6 +165,7 @@ public partial class MainWindow : Form
     private Dictionary<CampType, Locator> _locatorDict = new Dictionary<CampType, Locator>();
     private Point2f[] _monitorCorners = new Point2f[4];
     private OpenCvSharp.Size _monitorFrameSize;
+    private List<Order> _orderToTransmitList = new List<Order>();
     private Dictionary<CampType, SerialPort> _serialPortDict = new Dictionary<CampType, SerialPort> {
         {CampType.A, null},
         {CampType.B, null}
@@ -315,9 +316,6 @@ public partial class MainWindow : Form
                 this._game.Refresh();
             }
 
-            // Actually, whether the CarPosition is null or not, the game should generate orders anyway.
-            // So, I take the function 'GenerateOrder' out of the function 'Refresh'
-
             this._game.GenerateOrder();
 
             this.buttonFoul.Enabled = true;
@@ -458,8 +456,32 @@ public partial class MainWindow : Form
                     }
                 }
 
-                // If the order list is empty, the latestPendingOrder will be null, which won't be added to the bytes of PacketGetStatusHost
-                Order latestPendingOrder = (this._game.OrderList.Count > 0 ? this._game.OrderList[this._game.OrderList.Count] : null);
+                // Make a queue of orders to transmit
+                if (this._orderToTransmitList.Count == 0 ||
+                    this._orderToTransmitList[this._orderToTransmitList.Count - 1].Id
+                        != this._game.OrderList[this._game.OrderList.Count - 1].Id)
+                {
+                    for (int i = 0; i < 5; i++)
+                    {
+                        this._orderToTransmitList.Add(this._game.OrderList[this._game.OrderList.Count - 1]);
+                    }
+                }
+
+                Order latestPendingOrder = (
+                    this._orderToTransmitList.Count > 0 ?
+                    this._game.OrderList[0] :
+                    new Order(
+                        departurePosition: new Dot(),
+                        destinationPosition: new Dot(),
+                        generationTime: 0,
+                        deliveryTimeLimit: 0,
+                        commission: 0,
+                        id: -1
+                    ));
+
+                if (this._orderToTransmitList.Count > 1) {
+                    this._orderToTransmitList.RemoveAt(0);
+                }
 
                 var packet = new PacketGetStatusHost(
                     gameStatus: this._game.GameState,

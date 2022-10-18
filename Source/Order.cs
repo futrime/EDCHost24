@@ -137,7 +137,7 @@ public class Order
     /// <param name="generationTime">The generation time</param>
     /// <param name="deliveryTimeLimit">The delivery time limit</param>
     /// <param name="commission">The commission</param>
-    /// <param name="id">The id</param>
+    /// <param name="id">The id, empty for auto-generation</param>
     public Order(
         Dot departurePosition,
         Dot destinationPosition,
