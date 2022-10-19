@@ -445,12 +445,6 @@ public class Game
             this.End();
         }
 
-        // Actually, whether the CarPosition is null or not, the game should generate orders anyway.
-        // So, I take the function 'GenerateOrder' out of the function 'Refresh'
-        // For more details, please check the reference of this function-- 'Refresh'
-
-        // this.GenerateOrder();
-
         this.TakeAndDeliverOrder();
 
         this.ScoreMoving();
@@ -901,7 +895,7 @@ public class Game
             if (order.Status == OrderStatusType.Pending)
             {
                 // Check if the capacity is full.
-                if (deliveringOrderNumber > Game.OrderDeliveryCapacity)
+                if (deliveringOrderNumber >= Game.OrderDeliveryCapacity)
                 {
                     continue;
                 }
