@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
 using System.Media;
+using CsvHelper;
 
 namespace EdcHost;
 
@@ -271,6 +274,15 @@ public class Game
     }
 
     /// <summary>
+    /// True if recording is enabled.
+    /// </summary>
+    public bool IsRecordingEnabled
+    {
+        get => this._isRecordingEnabled;
+        set => this._isRecordingEnabled = value;
+    }
+
+    /// <summary>
     /// A list of the generated orders.
     /// </summary>
     public List<Order> OrderList => this._orderList;
@@ -325,6 +337,9 @@ public class Game
     // inner court.
     private bool? _hasMovedIntoInnerCourt = null;
 
+    // True if to record game information to an 
+    private bool _isRecordingEnabled = false;
+
     // Minus one to prevent division by zero.
     private long _lastTickTime = Utility.SystemTime - 1;
 
@@ -333,6 +348,10 @@ public class Game
     private List<Order> _orderList = new List<Order>();
 
     private long? _pauseTime = null;
+
+    private CsvWriter _recordCsvWriter = null;
+
+    private StreamWriter _recordStreamWriter = null;
 
     private Dictionary<CampType, decimal> _score =
         new Dictionary<CampType, decimal>
@@ -445,11 +464,15 @@ public class Game
             this.End();
         }
 
-        // Actually, whether the CarPosition is null or not, the game should generate orders anyway.
-        // So, I take the function 'GenerateOrder' out of the function 'Refresh'
-        // For more details, please check the reference of this function-- 'Refresh'
+        if (this._isRecordingEnabled)
+        {
+            if (this._recordCsvWriter == null)
+            {
+                throw new Exception("The record CSV writer is not set.");
+            }
 
-        // this.GenerateOrder();
+            // To do: Record the game information.
+        }
 
         this.TakeAndDeliverOrder();
 
@@ -486,6 +509,18 @@ public class Game
         if (gameStage == GameStageType.PreMatch)
         {
             throw new Exception("The game stage is invalid.");
+        }
+
+        if (this._isRecordingEnabled)
+        {
+            var recordFilePath =
+                $"RECORD_{DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss")}.csv";
+            this._recordStreamWriter = new StreamWriter(recordFilePath);
+            this._recordCsvWriter = new CsvWriter(
+                this._recordStreamWriter, CultureInfo.InvariantCulture
+            );
+            
+            // To do: Write the header of the CSV file.
         }
 
         this._gameState = GameStatusType.Running;
@@ -582,6 +617,18 @@ public class Game
         }
 
         this._gameState = GameStatusType.Ended;
+
+        if (this._recordCsvWriter != null)
+        {
+            this._recordCsvWriter.Dispose();
+            this._recordCsvWriter = null;
+        }
+
+        if (this._recordStreamWriter != null)
+        {
+            this._recordStreamWriter.Dispose();
+            this._recordStreamWriter = null;
+        }
     }
 
     /// <summary>
