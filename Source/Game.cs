@@ -948,7 +948,7 @@ public class Game
             if (order.Status == OrderStatusType.Pending)
             {
                 // Check if the capacity is full.
-                if (deliveringOrderNumber > Game.OrderDeliveryCapacity)
+                if (deliveringOrderNumber >= Game.OrderDeliveryCapacity)
                 {
                     continue;
                 }
