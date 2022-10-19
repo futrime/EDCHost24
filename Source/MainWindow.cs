@@ -275,6 +275,12 @@ public partial class MainWindow : Form
     /// </summary>
     private void RefreshAll()
     {
+        // Do not refresh if the camera is changing.
+        if (this._camera == null)
+        {
+            return;
+        }
+
         // Update the timer interval.
         if (this.timer.Interval != (int)(this._camera.Fps))
         {
@@ -479,7 +485,8 @@ public partial class MainWindow : Form
                         id: -1
                     ));
 
-                if (this._orderToTransmitList.Count > 1) {
+                if (this._orderToTransmitList.Count > 1)
+                {
                     this._orderToTransmitList.RemoveAt(0);
                 }
 
@@ -507,9 +514,9 @@ public partial class MainWindow : Form
     /// </summary>
     private void ProcessCameraFrame()
     {
-        // Read the camera frame.
+        // Read a frame from the camera.
         Mat frame = new Mat();
-        if (!Camera.Read(frame))
+        if (!this._camera.Read(frame))
         {
             return;
         }

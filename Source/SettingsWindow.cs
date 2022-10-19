@@ -70,12 +70,13 @@ public partial class SettingsWindow : Form
         this._mainWindow.Config = this._config;
 
         // Apply the camera configurations
-        this._mainWindow.Camera.Release();
-
-        var camera = new VideoCapture();
+        var camera = this._mainWindow.Camera;
+        this._mainWindow.Camera = null;
+        camera.Release();
+        camera = new VideoCapture();
 
         camera.Open(this._mainWindow.Config.Camera);
-        
+
         this._mainWindow.CameraFrameSize = new OpenCvSharp.Size(
             camera.FrameWidth,
             camera.FrameHeight
@@ -329,7 +330,11 @@ public partial class SettingsWindow : Form
                 Action safeWrite = delegate
                 {
                     this.comboBoxCamera.Items.Add(cameraPort);
-                    if (this.comboBoxCamera.Items.Count > 0)
+                    if (this.comboBoxCamera.Items.Count > this._config.Camera)
+                    {
+                        this.comboBoxCamera.SelectedIndex = this._config.Camera;
+                    }
+                    else
                     {
                         this.comboBoxCamera.SelectedIndex = 0;
                     }
@@ -339,7 +344,11 @@ public partial class SettingsWindow : Form
             else
             {
                 this.comboBoxCamera.Items.Add(cameraPort);
-                if (this.comboBoxCamera.Items.Count > 0)
+                if (this.comboBoxCamera.Items.Count > this._config.Camera)
+                {
+                    this.comboBoxCamera.SelectedIndex = this._config.Camera;
+                }
+                else
                 {
                     this.comboBoxCamera.SelectedIndex = 0;
                 }
