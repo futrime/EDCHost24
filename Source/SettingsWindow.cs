@@ -246,7 +246,7 @@ public partial class SettingsWindow : Form
                     }
                 }
             },
-                Camera = Convert.ToInt32(this.comboBoxCamera.Text)
+                Camera = this.comboBoxCamera.SelectedIndex
             };
         }
         catch (System.FormatException)
@@ -303,9 +303,6 @@ public partial class SettingsWindow : Form
             this._config.Vehicles[CampType.B].SerialPort;
         this.comboBoxBaudrateVehicleB.Text =
             this._config.Vehicles[CampType.B].Baudrate.ToString();
-
-        this.comboBoxCamera.Text =
-            this._config.Camera.ToString();
 
         this.Refresh();
     }
