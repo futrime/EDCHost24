@@ -426,6 +426,24 @@ public partial class MainWindow : Form
                             }
                         }
 
+                        if ((int)Game.GameDuration[this._game.GameStage] != Game.GameDuration[this._game.GameStage])
+                        {
+                            throw new Exception("GameDuration overflow");
+                        }
+                        if (ownChargingPiles.Count > 0x7f)
+                        {
+                            throw new Exception("The length of the ownChargingPiles is greater than 127");
+                        }
+                        if (opponentChargingPiles.Count > 0x7f)
+                        {
+                            throw new Exception("The length of the opponentChargingPiles is greater than 127");
+                        }
+                        if (_game.BarrierList.Count > 0x7f)
+                        {
+                            throw new Exception("The length of the BarrierList is greater than 127");
+                        }
+
+
                         var gameInfoPacket = new PacketGetGameInformationHost(
                                             gameStage: this._game.GameStage,
                                             barrierList: this._game.BarrierList,
@@ -490,6 +508,14 @@ public partial class MainWindow : Form
                     this._orderToTransmitList.RemoveAt(0);
                 }
 
+                if ((int)this._game.GameTime.GetValueOrDefault(0) != this._game.GameTime.GetValueOrDefault(0))
+                {
+                    throw new Exception("GameTime overflow");
+                }
+                if (orderInDeliveryList.Count > 0x7f)
+                {
+                    throw new Exception("The length of the orderInDeliveryList is greater than 127");
+                }
                 var packet = new PacketGetStatusHost(
                     gameStatus: this._game.GameState,
                     gameTime: (int)this._game.GameTime.GetValueOrDefault(0),
