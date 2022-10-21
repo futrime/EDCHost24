@@ -38,6 +38,8 @@ public class PacketGetStatusHost : Packet
         Order latestPendingOrder
     )
     {
+        
+
         this._gameStatus = gameStatus;
         this._gameTime = gameTime;
         this._score = score;
@@ -72,6 +74,7 @@ public class PacketGetStatusHost : Packet
         currentIndex += 1;
         // time
         this._gameTime = BitConverter.ToInt32(data, currentIndex);
+
         currentIndex += 4;
         // score
         this._score = BitConverter.ToSingle(data, currentIndex);
