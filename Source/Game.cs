@@ -271,6 +271,33 @@ public class Game
     }
 
     /// <summary>
+    /// The duration of the last tick
+    /// </summary>
+    /// <remarks>
+    /// Should be update externally.
+    /// </remarks>
+    public long LastTickDuration
+    {
+        get => this._lastTickDuraion;
+    }
+
+    /// <summary>
+    /// The time of the last tick
+    /// </summary>
+    /// <remarks>
+    /// Should be update externally.
+    /// </remarks>
+    public long LastTickTime
+    {
+        get => this._lastTickTime;
+        set
+        {
+            this._lastTickDuraion = value - this._lastTickTime;
+            this._lastTickTime = value;
+        }
+    }
+
+    /// <summary>
     /// A list of the generated orders.
     /// </summary>
     public List<Order> OrderList => this._orderList;
@@ -325,6 +352,9 @@ public class Game
     // inner court.
     private bool? _hasMovedIntoInnerCourt = null;
 
+    // Set a magic default value.
+    private long _lastTickDuraion = 1;
+
     // Minus one to prevent division by zero.
     private long _lastTickTime = Utility.SystemTime - 1;
 
@@ -342,14 +372,6 @@ public class Game
         };
 
     private long? _startTime = null;
-
-    private long _lastTickDuration
-    {
-        get
-        {
-            return Utility.SystemTime - this._lastTickTime;
-        }
-    }
 
     private Dictionary<CampType, Vehicle> _vehicle = null;
 
@@ -457,8 +479,8 @@ public class Game
 
         this.AutoCharge();
 
-        // Update the time of the last tick.
-        this._lastTickTime = Utility.SystemTime;
+        // Do not need to update the time of the last tick.
+        // Updated in MainWindow.cs.
     }
 
     /// <summary>
@@ -758,7 +780,7 @@ public class Game
         if (this.IsInWall(vehiclePosition))
         {
             this._score[(CampType)this._camp] +=
-                Game.ScoreHittingWallRate * this._lastTickDuration;
+                Game.ScoreHittingWallRate * this.LastTickDuration;
         }
     }
 
@@ -798,11 +820,11 @@ public class Game
         // Score parking penalty.
         if (
             vehicle.ParkingDuration != null &&
-            (long)vehicle.ParkingDuration >= 5000 + this._lastTickDuration
+            (long)vehicle.ParkingDuration >= 5000 + this.LastTickDuration
         )
         {
             this._score[(CampType)this._camp] +=
-                Game.ScoreOvertimeParkingRate * this._lastTickDuration;
+                Game.ScoreOvertimeParkingRate * this.LastTickDuration;
         }
     }
 
@@ -823,7 +845,7 @@ public class Game
         if (this.IsInBarrier(vehiclePosition))
         {
             vehicle.IncreaseMaxDistance(
-                (int)Math.Round(Game.BarrierDischargingRate * this._lastTickDuration)
+                (int)Math.Round(Game.BarrierDischargingRate * this.LastTickDuration)
             );
         }
     }
@@ -848,7 +870,7 @@ public class Game
         ))
         {
             vehicle.IncreaseMaxDistance(
-                (int)Math.Round(Game.ChargingPileChargingRate * this._lastTickDuration)
+                (int)Math.Round(Game.ChargingPileChargingRate * this.LastTickDuration)
             );
         }
 
@@ -859,7 +881,7 @@ public class Game
         ))
         {
             vehicle.IncreaseMaxDistance(
-                (int)Math.Round(Game.ChargingPileDischargingRate * this._lastTickDuration)
+                (int)Math.Round(Game.ChargingPileDischargingRate * this.LastTickDuration)
             );
         }
     }

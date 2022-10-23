@@ -62,6 +62,8 @@ public partial class MainWindow : Form
         Camera = 0
     };
 
+    private const decimal FpsUpdateDecay = 0.2M;
+
     /// <summary>
     /// The size of icons shown on the monitor
     /// </summary>
@@ -161,6 +163,7 @@ public partial class MainWindow : Form
     private ConfigType _config = MainWindow.DefaultConfig;
     private OpenCvSharp.Size _courtSize;
     private CoordinateConverter _coordinateConverter;
+    private decimal _fps = 0;
     private Game _game = new Game();
     private Dictionary<CampType, Locator> _locatorDict = new Dictionary<CampType, Locator>();
     private Point2f[] _monitorCorners = new Point2f[4];
@@ -275,6 +278,9 @@ public partial class MainWindow : Form
     /// </summary>
     private void RefreshAll()
     {
+        // Update the time of the last tick.
+        this._game.LastTickTime = Utility.SystemTime;
+
         // Do not refresh if the camera is changing.
         if (this._camera == null)
         {
@@ -382,155 +388,171 @@ public partial class MainWindow : Form
     /// </summary>
     private void Communicate()
     {
-        foreach (var camp in MainWindow.AllCampList)
-        {
-            if (
-                this._serialPortDict[camp] == null ||
-                !this._serialPortDict[camp].IsOpen
-            )
+        //开局才communicate 10-23 ZYR
+        if (this._game.GameState == GameStatusType.Running)
+            foreach (var camp in MainWindow.AllCampList)
             {
-                continue;
-            }
+                if (
+                    this._serialPortDict[camp] == null ||
+                    !this._serialPortDict[camp].IsOpen
+                )
+                {
+                    continue;
+                }
 
-            // Read the message.
-            var buffer = new byte[MainWindow.SerialPortBufferLength];
-            var length = this._serialPortDict[camp].Read(
-                buffer: buffer,
-                offset: 0,
-                count: MainWindow.SerialPortBufferLength
-            );
-            var bytesRead = new byte[length];
-            buffer.CopyTo(bytesRead, 0);
-
-            // Process the message
-            if (length > 0)
-            {
+                // Read the message.
+                var buffer = new byte[MainWindow.SerialPortBufferLength];
+                int length = 0;
                 try
                 {
-                    Packet packetFromSlave = Packet.Make(bytesRead);
 
-                    if (packetFromSlave.GetPacketId() == PacketGetGameInformationSlave.PacketId)
+                    length = this._serialPortDict[camp].Read(
+                         buffer: buffer,
+                         offset: 0,
+                         count: MainWindow.SerialPortBufferLength
+                     );
+                }
+                catch (Exception)
+                {
+                    // Empty
+                }
+                var bytesRead = new byte[length];
+                buffer[0..length].CopyTo(bytesRead, 0);
+
+                // Process the message
+                if (length > 0)
+                {
+                    try
                     {
-                        // Find own charging pile list
-                        List<Dot> ownChargingPiles = new List<Dot> { },
-                            opponentChargingPiles = new List<Dot> { };
-                        foreach (var chargingPile in this._game.ChargingPileList)
+                        Packet packetFromSlave = Packet.Make(bytesRead);
+
+                        if (packetFromSlave.GetPacketId() == PacketGetGameInformationSlave.PacketId)
                         {
-                            if (chargingPile.Camp == this._game.Camp)
+                            // Find own charging pile list
+                            List<Dot> ownChargingPiles = new List<Dot> { },
+                                opponentChargingPiles = new List<Dot> { };
+                            foreach (var chargingPile in this._game.ChargingPileList)
                             {
-                                ownChargingPiles.Add(chargingPile.Position);
+                                if (chargingPile.Camp == this._game.Camp)
+                                {
+                                    ownChargingPiles.Add(chargingPile.Position);
+                                }
+                                else
+                                {
+                                    opponentChargingPiles.Add(chargingPile.Position);
+                                }
                             }
-                            else
+
+                            if ((int)Game.GameDuration[this._game.GameStage] != Game.GameDuration[this._game.GameStage])
                             {
-                                opponentChargingPiles.Add(chargingPile.Position);
+                                throw new Exception("GameDuration overflow");
                             }
-                        }
-
-                        if ((int)Game.GameDuration[this._game.GameStage] != Game.GameDuration[this._game.GameStage])
-                        {
-                            throw new Exception("GameDuration overflow");
-                        }
-                        if (ownChargingPiles.Count > 0x7f)
-                        {
-                            throw new Exception("The length of the ownChargingPiles is greater than 127");
-                        }
-                        if (opponentChargingPiles.Count > 0x7f)
-                        {
-                            throw new Exception("The length of the opponentChargingPiles is greater than 127");
-                        }
-                        if (_game.BarrierList.Count > 0x7f)
-                        {
-                            throw new Exception("The length of the BarrierList is greater than 127");
-                        }
+                            if (ownChargingPiles.Count > 0x7f)
+                            {
+                                throw new Exception("The length of the ownChargingPiles is greater than 127");
+                            }
+                            if (opponentChargingPiles.Count > 0x7f)
+                            {
+                                throw new Exception("The length of the opponentChargingPiles is greater than 127");
+                            }
+                            if (_game.BarrierList.Count > 0x7f)
+                            {
+                                throw new Exception("The length of the BarrierList is greater than 127");
+                            }
 
 
-                        var gameInfoPacket = new PacketGetGameInformationHost(
-                                            gameStage: this._game.GameStage,
-                                            barrierList: this._game.BarrierList,
-                                            duration: (int)Game.GameDuration[this._game.GameStage],
-                                            ownChargingPiles: ownChargingPiles,
-                                            opponentChargingPiles: opponentChargingPiles
-                                        );
-                        var bytesToWrite = gameInfoPacket.GetBytes();
+                            var gameInfoPacket = new PacketGetGameInformationHost(
+                                                gameStage: this._game.GameStage,
+                                                barrierList: this._game.BarrierList,
+                                                duration: (int)Game.GameDuration[this._game.GameStage],
+                                                ownChargingPiles: ownChargingPiles,
+                                                opponentChargingPiles: opponentChargingPiles
+                                            );
+                            var bytesToWrite = gameInfoPacket.GetBytes();
 
-                        this._serialPortDict[camp].Write(bytesToWrite, 0, bytesToWrite.Length);
+                            this._serialPortDict[camp].Write(bytesToWrite, 0, bytesToWrite.Length);
+                        }
+                        else if (packetFromSlave.GetPacketId() == PacketSetChargingPileSlave.PacketId)
+                        {
+                            this._game.SetChargingPile();
+                        }
                     }
-                    else if (packetFromSlave.GetPacketId() == PacketSetChargingPileSlave.PacketId)
+                    catch (System.Exception)
                     {
-                        this._game.SetChargingPile();
+                        // Do nothing.
                     }
                 }
-                catch (System.Exception)
+
+
+                // Send default packet.
+                if (this._serialPortDict[camp].BytesToWrite == 0)
                 {
-                    // Do nothing.
+                    // Get the order in delivery list.
+                    var orderInDeliveryList = new List<Order>();
+                    foreach (var order in this._game.OrderList)
+                    {
+                        if (order.Status == OrderStatusType.InDelivery)
+                        {
+                            orderInDeliveryList.Add(order);
+                        }
+                    }
+                    //????????
+                    // Make a queue of orders to transmit
+                    if (this._game.OrderList.Count > 0 && //ZYR editted in 10-23
+
+                    (this._orderToTransmitList.Count == 0 ||
+                        this._orderToTransmitList[this._orderToTransmitList.Count - 1].Id
+                            != this._game.OrderList[this._game.OrderList.Count - 1].Id))
+                    {
+                        for (int i = 0; i < 5; i++)
+                        {
+                            this._orderToTransmitList.Add(this._game.OrderList[this._game.OrderList.Count - 1]);
+                        }
+                    }
+
+                    Order latestPendingOrder = (
+                        this._game.OrderList.Count > 0 ?
+                        this._game.OrderList[this._game.OrderList.Count - 1] :
+                        new Order(
+                            departurePosition: new Dot(),
+                            destinationPosition: new Dot(),
+                            generationTime: 0,
+                            deliveryTimeLimit: 0,
+                            commission: 0,
+                            id: -1
+                        ));
+
+                    if (this._orderToTransmitList.Count > 1)
+                    {
+                        this._orderToTransmitList.RemoveAt(0);
+                    }
+
+                    var gameTime = this._game.GameTime.GetValueOrDefault(0);
+                    if ((int)gameTime != gameTime)
+                    {
+                        throw new Exception("GameTime overflow");
+                    }
+
+                    if (orderInDeliveryList.Count > 0x7f)
+                    {
+                        throw new Exception("The length of the orderInDeliveryList is greater than 127");
+                    }
+
+                    var packet = new PacketGetStatusHost(
+                        gameStatus: this._game.GameState,
+                        gameTime: (int)this._game.GameTime.GetValueOrDefault(0),
+                        score: (float)this._game.Score[camp],
+                        vehiclePosition: this._game.Vehicle[camp].Position.GetValueOrDefault(new Dot(0, 0)),
+                        remainingDistance: this._game.Vehicle[camp].RemainingDistance,
+                        orderInDeliveryList: orderInDeliveryList,
+                        latestPendingOrder: latestPendingOrder
+                    );
+
+                    var bytesToWrite = packet.GetBytes();
+
+                    this._serialPortDict[camp].Write(bytesToWrite, 0, bytesToWrite.Length);
                 }
             }
-
-
-            // Send default packet.
-            if (this._serialPortDict[camp].BytesToWrite == 0)
-            {
-                // Get the order in delivery list.
-                var orderInDeliveryList = new List<Order>();
-                foreach (var order in this._game.OrderList)
-                {
-                    if (order.Status == OrderStatusType.InDelivery)
-                    {
-                        orderInDeliveryList.Add(order);
-                    }
-                }
-
-                // Make a queue of orders to transmit
-                if (this._orderToTransmitList.Count == 0 ||
-                    this._orderToTransmitList[this._orderToTransmitList.Count - 1].Id
-                        != this._game.OrderList[this._game.OrderList.Count - 1].Id)
-                {
-                    for (int i = 0; i < 5; i++)
-                    {
-                        this._orderToTransmitList.Add(this._game.OrderList[this._game.OrderList.Count - 1]);
-                    }
-                }
-
-                Order latestPendingOrder = (
-                    this._orderToTransmitList.Count > 0 ?
-                    this._game.OrderList[0] :
-                    new Order(
-                        departurePosition: new Dot(),
-                        destinationPosition: new Dot(),
-                        generationTime: 0,
-                        deliveryTimeLimit: 0,
-                        commission: 0,
-                        id: -1
-                    ));
-
-                if (this._orderToTransmitList.Count > 1)
-                {
-                    this._orderToTransmitList.RemoveAt(0);
-                }
-
-                if ((int)this._game.GameTime.GetValueOrDefault(0) != this._game.GameTime.GetValueOrDefault(0))
-                {
-                    throw new Exception("GameTime overflow");
-                }
-                if (orderInDeliveryList.Count > 0x7f)
-                {
-                    throw new Exception("The length of the orderInDeliveryList is greater than 127");
-                }
-                var packet = new PacketGetStatusHost(
-                    gameStatus: this._game.GameState,
-                    gameTime: (int)this._game.GameTime.GetValueOrDefault(0),
-                    score: (float)this._game.Score[camp],
-                    vehiclePosition: this._game.Vehicle[camp].Position.GetValueOrDefault(new Dot(0, 0)),
-                    remainingDistance: this._game.Vehicle[camp].RemainingDistance,
-                    orderInDeliveryList: orderInDeliveryList,
-                    latestPendingOrder: latestPendingOrder
-                );
-
-                var bytesToWrite = packet.GetBytes();
-
-                this._serialPortDict[camp].Write(bytesToWrite, 0, bytesToWrite.Length);
-            }
-        }
     }
 
     #region Methods related to the camera and the monitor
@@ -680,6 +702,20 @@ public partial class MainWindow : Form
                 );
             }
         }
+
+        // Draw frame rate information.
+        this._fps = this._fps * (1 - MainWindow.FpsUpdateDecay) + (1000M / this._game.LastTickDuration) * MainWindow.FpsUpdateDecay;
+        Cv2.PutText(
+            image,
+            text: $"FPS: {(int)this._fps}",
+            org: new Point2i(5, 30),
+            fontFace: HersheyFonts.HersheySimplex,
+            fontScale: 1,
+            color: new Scalar(102, 8, 116),
+            thickness: 2,
+            bottomLeftOrigin: false,
+            lineType: LineTypes.AntiAlias
+        );
     }
 
     /// <summary>
@@ -868,6 +904,8 @@ public partial class MainWindow : Form
     private void buttonEnd_Click(object sender, EventArgs e)
     {
         _game.End();
+
+        this._orderToTransmitList.Clear();
     }
 
     private void buttonReset_Click(object sender, EventArgs e)

@@ -133,6 +133,7 @@ public partial class SettingsWindow : Form
                     );
                     this._mainWindow.SerialPortDict[camp] = null;
                 }
+                this._mainWindow.SerialPortDict[camp].ReadTimeout = 10;
             }
         }
 
@@ -366,6 +367,20 @@ public partial class SettingsWindow : Form
         else
         {
             this.labelLoading.Hide();
+        }
+
+        // Re-enable the apply button.
+        if (this.buttonApply.InvokeRequired)
+        {
+            Action safeWrite = delegate
+            {
+                this.buttonApply.Enabled = true;
+            };
+            this.buttonApply.Invoke(safeWrite);
+        }
+        else
+        {
+            this.buttonApply.Enabled = true;
         }
 
         // Enable the camera selection box.

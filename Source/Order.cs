@@ -148,7 +148,8 @@ public class Order
     )
     {
         // Validate the delivery time limit
-        if (deliveryTimeLimit <= 0)
+        // change the <= into <,because the delivery time limit of the default order is 0. 10-23 ZYR
+        if (deliveryTimeLimit < 0)
         {
             throw new Exception("The delivery time limit is invalid.");
         }
