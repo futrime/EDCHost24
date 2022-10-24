@@ -62,6 +62,9 @@ public partial class MainWindow : Form
         Camera = 0
     };
 
+    /// <summary>
+    /// FPS = Old FPS * (1 - FpsUpdateDecay) + New FPS * FpsUpdateDecay
+    /// </summary>
     private const decimal FpsUpdateDecay = 0.2M;
 
     /// <summary>
@@ -157,13 +160,13 @@ public partial class MainWindow : Form
 
     #region Private fields
 
-    private int _calibrationClickCount = 4;
+    private int _calibrationClickCount = 4; // Four corners.
     private VideoCapture _camera = new VideoCapture();
     private OpenCvSharp.Size _cameraFrameSize;
     private ConfigType _config = MainWindow.DefaultConfig;
     private OpenCvSharp.Size _courtSize;
     private CoordinateConverter _coordinateConverter;
-    private decimal _fps = 0;
+    private decimal _fps = 0; // Just a magic number.
     private Game _game = new Game();
     private Dictionary<CampType, Locator> _locatorDict = new Dictionary<CampType, Locator>();
     private Point2f[] _monitorCorners = new Point2f[4];
@@ -278,9 +281,6 @@ public partial class MainWindow : Form
     /// </summary>
     private void RefreshAll()
     {
-        // Update the time of the last tick.
-        this._game.LastTickTime = Utility.SystemTime;
-
         // Do not refresh if the camera is changing.
         if (this._camera == null)
         {
@@ -294,6 +294,9 @@ public partial class MainWindow : Form
         }
 
         this.ProcessCameraFrame();
+
+        // Refresh the game.
+        this._game.Refresh();
 
         if (this._game.GameState == GameStatusType.Unstarted)
         {
@@ -310,25 +313,21 @@ public partial class MainWindow : Form
         }
         else if (this._game.GameState == GameStatusType.Running)
         {
-            if (this._locatorDict[(CampType)this._game.Camp].TargetPosition != null)
+            if (this._game.GameTime == null)
             {
-                // Update the position of the current vehicle.
-                if (this._game.GameTime == null)
-                {
-                    throw new Exception("The game time is null.");
-                }
-
-                // Update the position of the vehicle of the current camp.
-                this._game.Vehicle[(CampType)this._game.Camp].UpdatePosition(
-                    new Dot((Point2i)this._coordinateConverter.CameraToCourt((Point2f)this._locatorDict[(CampType)this._game.Camp].TargetPosition)),
-                    (long)this._game.GameTime
-                );
-
-                // Refresh the game.
-                this._game.Refresh();
+                throw new Exception("The game time is null.");
             }
 
-            this._game.GenerateOrder();
+            if (this._locatorDict[(CampType)this._game.Camp].TargetPosition != null)
+            {
+                // Update the position of the vehicle of the current camp.
+                this._game.Vehicle[(CampType)this._game.Camp].UpdatePosition(
+                    new Dot((Point2i)this._coordinateConverter.CameraToCourt(
+                        (Point2f)this._locatorDict[(CampType)this._game.Camp].TargetPosition
+                    )),
+                    (long)this._game.GameTime
+                );
+            }
 
             this.buttonFoul.Enabled = true;
             this.buttonCalibration.Enabled = false;
@@ -380,6 +379,7 @@ public partial class MainWindow : Form
             this.buttonEnd.Enabled = false;
         }
 
+        // Force to refresh the window.
         this.Refresh();
     }
 

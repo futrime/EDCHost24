@@ -4,8 +4,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+
 ## [Unreleased]
-None
+## Added
+- Frame rate displaying by @Futrime
+
+## Fixed
+- Tons of bugs in communication by @Futrime and @Zhangyr2022
+- Timing bug by @Futrime
+
+
+## [24.1.0-beta.5]
+## Added
+- Exception handling in packet construction by @Zhangyr2022
+
+## Changed
+- Adapt to new Communication Protocol by @Zhangyr2022
+
+## Fixed
+- Camera index always set to zero when opening settings window by @Futrime
+- Main window not responding when applying camera change by @Futrime
+- That more than five orders can be carried simultaneously by @Futrime
+
 
 ## [24.1.0-beta.4]
 ### Fixed

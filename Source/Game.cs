@@ -276,10 +276,7 @@ public class Game
     /// <remarks>
     /// Should be update externally.
     /// </remarks>
-    public long LastTickDuration
-    {
-        get => this._lastTickDuraion;
-    }
+    public long LastTickDuration => this._lastTickDuraion;
 
     /// <summary>
     /// The time of the last tick
@@ -287,15 +284,7 @@ public class Game
     /// <remarks>
     /// Should be update externally.
     /// </remarks>
-    public long LastTickTime
-    {
-        get => this._lastTickTime;
-        set
-        {
-            this._lastTickDuraion = value - this._lastTickTime;
-            this._lastTickTime = value;
-        }
-    }
+    public long LastTickTime => this._lastTickTime;
 
     /// <summary>
     /// A list of the generated orders.
@@ -352,8 +341,7 @@ public class Game
     // inner court.
     private bool? _hasMovedIntoInnerCourt = null;
 
-    // Set a magic default value.
-    private long _lastTickDuraion = 1;
+    private long _lastTickDuraion = 1000; // Just a magic default value.
 
     // Minus one to prevent division by zero.
     private long _lastTickTime = Utility.SystemTime - 1;
@@ -439,6 +427,9 @@ public class Game
     /// </summary>
     public void Refresh()
     {
+        this._lastTickDuraion = Utility.SystemTime - this._lastTickTime;
+        this._lastTickTime = Utility.SystemTime;
+
         // The game should only refresh when running.
         if (
             this._gameState != GameStatusType.Running
@@ -479,8 +470,9 @@ public class Game
 
         this.AutoCharge();
 
-        // Do not need to update the time of the last tick.
-        // Updated in MainWindow.cs.
+        // Must generate orders after refreshing the game to avoid interacting with
+        // orders not processed by the slave.
+        this.GenerateOrder();
     }
 
     /// <summary>
@@ -673,7 +665,7 @@ public class Game
     /// <summary>
     /// Attempt to generate an order.
     /// </summary>
-    public void GenerateOrder()
+    private void GenerateOrder()
     {
         var newOrder = this._orderGenerator.Generate((long)this.GameTime);
         if (newOrder != null)
