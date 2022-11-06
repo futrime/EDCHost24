@@ -6,12 +6,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## [Unreleased]
+
+
+## [24.1.0-beta.6]
 ## Added
 - Frame rate displaying by @Futrime
+
+## Changed
+- Dramatically improve performance in communication by @Futrime and @Zhangyr2022
 
 ## Fixed
 - Tons of bugs in communication by @Futrime and @Zhangyr2022
 - Timing bug by @Futrime
+- Not responding when receiving endless bytes from serial ports by @Futrime
+- Slave being able to set four charging piles by @Futrime and @Zhangyr2022
 
 
 ## [24.1.0-beta.5]

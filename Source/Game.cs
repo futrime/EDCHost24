@@ -616,7 +616,7 @@ public class Game
                 ++chargingPileNumber;
             }
         }
-        if (chargingPileNumber > Game.ChargingPileMaxNumber)
+        if (chargingPileNumber >= Game.ChargingPileMaxNumber)
         {
             return;
         }

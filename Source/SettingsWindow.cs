@@ -126,13 +126,14 @@ public partial class SettingsWindow : Form
                 catch (System.Exception)
                 {
                     MessageBox.Show(
-                        "Cannot open the serial port.",
+                        $"Cannot open the serial port: {vehicleConfig.SerialPort}",
                         "Error",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Error
                     );
                     this._mainWindow.SerialPortDict[camp] = null;
                 }
+                this._mainWindow.SerialPortDict[camp].ReadTimeout = 10;
             }
         }
 
