@@ -390,6 +390,7 @@ public partial class MainWindow : Form
     {
         //开局才communicate 10-23 ZYR
         if (this._game.GameState == GameStatusType.Running)
+        {
             foreach (var camp in MainWindow.AllCampList)
             {
                 if (
@@ -405,12 +406,10 @@ public partial class MainWindow : Form
                 int length = 0;
                 try
                 {
-
-                    length = this._serialPortDict[camp].Read(
-                         buffer: buffer,
-                         offset: 0,
-                         count: MainWindow.SerialPortBufferLength
-                     );
+                    if (this._serialPortDict[camp].BytesToRead > 0)
+                    {
+                        length = this._serialPortDict[camp].Read(buffer, 0, MainWindow.SerialPortBufferLength);
+                    }
                 }
                 catch (Exception)
                 {
@@ -553,6 +552,7 @@ public partial class MainWindow : Form
                     this._serialPortDict[camp].Write(bytesToWrite, 0, bytesToWrite.Length);
                 }
             }
+        }
     }
 
     #region Methods related to the camera and the monitor

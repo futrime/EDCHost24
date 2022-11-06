@@ -133,7 +133,6 @@ public partial class SettingsWindow : Form
                     );
                     this._mainWindow.SerialPortDict[camp] = null;
                 }
-                this._mainWindow.SerialPortDict[camp].ReadTimeout = 10;
             }
         }
 
