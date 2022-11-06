@@ -126,13 +126,14 @@ public partial class SettingsWindow : Form
                 catch (System.Exception)
                 {
                     MessageBox.Show(
-                        "Cannot open the serial port.",
+                        $"Cannot open the serial port: {vehicleConfig.SerialPort}",
                         "Error",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Error
                     );
                     this._mainWindow.SerialPortDict[camp] = null;
                 }
+                this._mainWindow.SerialPortDict[camp].ReadTimeout = 10;
             }
         }
 
@@ -366,6 +367,20 @@ public partial class SettingsWindow : Form
         else
         {
             this.labelLoading.Hide();
+        }
+
+        // Re-enable the apply button.
+        if (this.buttonApply.InvokeRequired)
+        {
+            Action safeWrite = delegate
+            {
+                this.buttonApply.Enabled = true;
+            };
+            this.buttonApply.Invoke(safeWrite);
+        }
+        else
+        {
+            this.buttonApply.Enabled = true;
         }
 
         // Enable the camera selection box.

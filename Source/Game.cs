@@ -271,6 +271,22 @@ public class Game
     }
 
     /// <summary>
+    /// The duration of the last tick
+    /// </summary>
+    /// <remarks>
+    /// Should be update externally.
+    /// </remarks>
+    public long LastTickDuration => this._lastTickDuraion;
+
+    /// <summary>
+    /// The time of the last tick
+    /// </summary>
+    /// <remarks>
+    /// Should be update externally.
+    /// </remarks>
+    public long LastTickTime => this._lastTickTime;
+
+    /// <summary>
     /// A list of the generated orders.
     /// </summary>
     public List<Order> OrderList => this._orderList;
@@ -325,6 +341,8 @@ public class Game
     // inner court.
     private bool? _hasMovedIntoInnerCourt = null;
 
+    private long _lastTickDuraion = 1000; // Just a magic default value.
+
     // Minus one to prevent division by zero.
     private long _lastTickTime = Utility.SystemTime - 1;
 
@@ -342,14 +360,6 @@ public class Game
         };
 
     private long? _startTime = null;
-
-    private long _lastTickDuration
-    {
-        get
-        {
-            return Utility.SystemTime - this._lastTickTime;
-        }
-    }
 
     private Dictionary<CampType, Vehicle> _vehicle = null;
 
@@ -417,6 +427,9 @@ public class Game
     /// </summary>
     public void Refresh()
     {
+        this._lastTickDuraion = Utility.SystemTime - this._lastTickTime;
+        this._lastTickTime = Utility.SystemTime;
+
         // The game should only refresh when running.
         if (
             this._gameState != GameStatusType.Running
@@ -457,8 +470,9 @@ public class Game
 
         this.AutoCharge();
 
-        // Update the time of the last tick.
-        this._lastTickTime = Utility.SystemTime;
+        // Must generate orders after refreshing the game to avoid interacting with
+        // orders not processed by the slave.
+        this.GenerateOrder();
     }
 
     /// <summary>
@@ -602,7 +616,7 @@ public class Game
                 ++chargingPileNumber;
             }
         }
-        if (chargingPileNumber > Game.ChargingPileMaxNumber)
+        if (chargingPileNumber >= Game.ChargingPileMaxNumber)
         {
             return;
         }
@@ -651,7 +665,7 @@ public class Game
     /// <summary>
     /// Attempt to generate an order.
     /// </summary>
-    public void GenerateOrder()
+    private void GenerateOrder()
     {
         var newOrder = this._orderGenerator.Generate((long)this.GameTime);
         if (newOrder != null)
@@ -758,7 +772,7 @@ public class Game
         if (this.IsInWall(vehiclePosition))
         {
             this._score[(CampType)this._camp] +=
-                Game.ScoreHittingWallRate * this._lastTickDuration;
+                Game.ScoreHittingWallRate * this.LastTickDuration;
         }
     }
 
@@ -798,11 +812,11 @@ public class Game
         // Score parking penalty.
         if (
             vehicle.ParkingDuration != null &&
-            (long)vehicle.ParkingDuration >= 5000 + this._lastTickDuration
+            (long)vehicle.ParkingDuration >= 5000 + this.LastTickDuration
         )
         {
             this._score[(CampType)this._camp] +=
-                Game.ScoreOvertimeParkingRate * this._lastTickDuration;
+                Game.ScoreOvertimeParkingRate * this.LastTickDuration;
         }
     }
 
@@ -823,7 +837,7 @@ public class Game
         if (this.IsInBarrier(vehiclePosition))
         {
             vehicle.IncreaseMaxDistance(
-                (int)Math.Round(Game.BarrierDischargingRate * this._lastTickDuration)
+                (int)Math.Round(Game.BarrierDischargingRate * this.LastTickDuration)
             );
         }
     }
@@ -848,7 +862,7 @@ public class Game
         ))
         {
             vehicle.IncreaseMaxDistance(
-                (int)Math.Round(Game.ChargingPileChargingRate * this._lastTickDuration)
+                (int)Math.Round(Game.ChargingPileChargingRate * this.LastTickDuration)
             );
         }
 
@@ -859,7 +873,7 @@ public class Game
         ))
         {
             vehicle.IncreaseMaxDistance(
-                (int)Math.Round(Game.ChargingPileDischargingRate * this._lastTickDuration)
+                (int)Math.Round(Game.ChargingPileDischargingRate * this.LastTickDuration)
             );
         }
     }
