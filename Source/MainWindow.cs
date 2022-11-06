@@ -711,7 +711,7 @@ public partial class MainWindow : Form
             org: new Point2i(5, 30),
             fontFace: HersheyFonts.HersheySimplex,
             fontScale: 1,
-            color: new Scalar(102, 8, 116),
+            color: new Scalar(255, 0, 255),
             thickness: 2,
             bottomLeftOrigin: false,
             lineType: LineTypes.AntiAlias
@@ -916,6 +916,7 @@ public partial class MainWindow : Form
         this.labelScoreVehicleB.Text = "N/A";
         this.labelGameTime.Text = "N/A";
         this.labelGameHalf.Text = "Pre-match";
+        this.progressBarRemainingPowerRatio.Value = 0;
     }
 
     private void buttonFoul_Click(object sender, EventArgs e)
