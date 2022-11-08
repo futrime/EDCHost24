@@ -111,7 +111,7 @@ public class PacketGetGameInformationHost : Packet
 
 
         // Gamestage 
-        BitConverter.GetBytes((byte)this._gameStage).CopyTo(data, currentIndex);
+        data[currentIndex] = ((byte)this._gameStage);
         currentIndex += 1;
 
         // Barrier
@@ -119,7 +119,7 @@ public class PacketGetGameInformationHost : Packet
         {
             throw new ArgumentException("Barrier length is larger than 0xff");
         }
-        BitConverter.GetBytes((byte)this._barrierList.Count).CopyTo(data, currentIndex);
+        data[currentIndex] = ((byte)this._barrierList.Count);
         currentIndex += 1;
 
         for (int i = 0; i < this._barrierList.Count; i++)
@@ -141,7 +141,7 @@ public class PacketGetGameInformationHost : Packet
         {
             throw new ArgumentException("Length of own charging piles is larger than 0xff");
         }
-        BitConverter.GetBytes((byte)this._ownChargingPiles.Count).CopyTo(data, currentIndex);
+        data[currentIndex] = ((byte)this._ownChargingPiles.Count);
         currentIndex += 1;
 
         for (int i = 0; i < this._ownChargingPiles.Count; i++)
@@ -158,8 +158,9 @@ public class PacketGetGameInformationHost : Packet
         {
             throw new ArgumentException("Length of opponent charging piles is larger than 0xff");
         }
-        BitConverter.GetBytes(this._opponentChargingPiles.Count).CopyTo(data, currentIndex);
-        currentIndex += 4;
+
+        data[currentIndex] = ((byte)this._opponentChargingPiles.Count);
+        currentIndex += 1; // ZYR FIXED BUG in 2022-11-9
 
         for (int i = 0; i < this._opponentChargingPiles.Count; i++)
         {
