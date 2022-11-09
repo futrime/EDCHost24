@@ -38,7 +38,7 @@ public class PacketGetStatusHost : Packet
         Order latestPendingOrder
     )
     {
-        
+
 
         this._gameStatus = gameStatus;
         this._gameTime = gameTime;
@@ -146,11 +146,11 @@ public class PacketGetStatusHost : Packet
             case GameStatusType.Unstarted:
             case GameStatusType.Paused:
             case GameStatusType.Ended:
-                BitConverter.GetBytes((byte)0).CopyTo(data, index);
+                data[index] = ((byte)0);
                 break;
 
             case GameStatusType.Running:
-                BitConverter.GetBytes((byte)1).CopyTo(data, index);
+                data[index] = ((byte)1);
                 break;
 
             default:
@@ -185,7 +185,7 @@ public class PacketGetStatusHost : Packet
         {
             throw new ArgumentException("Length of orderInDeliveryList is larger than 0xff");
         }
-        BitConverter.GetBytes((byte)this._orderInDeliveryList.Count).CopyTo(data, index);
+        data[index] = ((byte)this._orderInDeliveryList.Count);
         index += 1;
         foreach (var order in this._orderInDeliveryList)
         {

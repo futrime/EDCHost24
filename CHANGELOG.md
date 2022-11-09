@@ -8,6 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## [24.1.0-beta.7]
+## Fixed
+- Progress bar not being reset to zero when resetting the game
+- Failing to handle packages with packet ID 0x00
+
+## Changed
+- Update titles of error messages
+
+
 ## [24.1.0-beta.6]
 ## Added
 - Frame rate displaying by @Futrime

@@ -22,7 +22,7 @@ static class Program
         {
             MessageBox.Show(
                 $"The file {e.FileName} is missing. Please check if you have extracted all files to the folder wherein the program locate.",
-                "Error",
+                "Nahida said:",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Error
             );
@@ -39,7 +39,7 @@ static class Program
         MessageBox.Show(
             "An unhandled exception occurred!\nPlease take a screenshot of this message and report to EDC Commitee!\n\n" +
             e.ExceptionObject.ToString(),
-            "Unexpected Exception",
+            "Nahida choked and said:",
             MessageBoxButtons.OK,
             MessageBoxIcon.Error
         );
