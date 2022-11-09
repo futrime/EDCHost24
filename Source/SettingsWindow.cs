@@ -127,7 +127,7 @@ public partial class SettingsWindow : Form
                 {
                     MessageBox.Show(
                         $"Cannot open the serial port: {vehicleConfig.SerialPort}",
-                        "Error",
+                        "Nahida said:",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Error
                     );
@@ -172,7 +172,7 @@ public partial class SettingsWindow : Form
         {
             MessageBox.Show(
                 text: "No configuration file is found!",
-                caption: "Error",
+                caption: "Nahida said:",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Error
             );
@@ -254,7 +254,7 @@ public partial class SettingsWindow : Form
         {
             MessageBox.Show(
                 "Some parameters are invalid.",
-                "Error",
+                "Nahida said:",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Error
             );

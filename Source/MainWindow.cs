@@ -225,8 +225,8 @@ public partial class MainWindow : Form
         if (!this._camera.IsOpened())
         {
             MessageBox.Show(
-                "No camera found!",
-                "Error",
+                "No camera is found!",
+                "Nahida said:",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Error
             );
@@ -772,6 +772,7 @@ public partial class MainWindow : Form
         if (pictureBoxMonitor.Image != null)
         {
             pictureBoxMonitor.Image.Dispose();
+            pictureBoxMonitor.Image = null;
         }
 
         pictureBoxMonitor.Image = img;
