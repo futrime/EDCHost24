@@ -201,6 +201,10 @@ public class Game
         @"Assets/Sounds/Order.wav"
     );
 
+
+    public static readonly SoundPlayer SetChargingPileSound = new SoundPlayer(
+        @"Assets/Sounds/SetChargingPile.wav"
+    );
     #endregion
 
     #region Parameters related to vehicles
@@ -376,6 +380,7 @@ public class Game
         // Load sounds
         Game.OrderSoundDeliver.Load();
         Game.OrderSoundTake.Load();
+        Game.SetChargingPileSound.Load();
 
         // Generate barriers
         this._barrierList = new List<Barrier>();
@@ -634,6 +639,8 @@ public class Game
         ));
 
         this._score[(CampType)this._camp] += Game.ScoreSetChargingPile;
+
+        Game.SetChargingPileSound.Play();
     }
 
     #endregion
@@ -847,6 +854,11 @@ public class Game
     /// </summary>
     void TackleChargingPiles()
     {
+        if (this._gameStage != GameStageType.SecondHalf)
+        {
+            return;
+        }
+
         var vehicle = this._vehicle[(CampType)this._camp];
 
         if (vehicle.Position == null)
