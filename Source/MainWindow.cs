@@ -418,74 +418,70 @@ public partial class MainWindow : Form
                 var bytesRead = new byte[length];
                 buffer[0..length].CopyTo(bytesRead, 0);
 
+                bool isMessageSent = false; // Set to true when a message is sent.
+
                 // Process the message
                 if (length > 0)
                 {
-                    try
+                    Packet packetFromSlave = Packet.Make(bytesRead);
+
+                    if (packetFromSlave.GetPacketId() == PacketGetGameInformationSlave.PacketId)
                     {
-                        Packet packetFromSlave = Packet.Make(bytesRead);
-
-                        if (packetFromSlave.GetPacketId() == PacketGetGameInformationSlave.PacketId)
+                        // Find own charging pile list
+                        List<Dot> ownChargingPiles = new List<Dot> { },
+                            opponentChargingPiles = new List<Dot> { };
+                        foreach (var chargingPile in this._game.ChargingPileList)
                         {
-                            // Find own charging pile list
-                            List<Dot> ownChargingPiles = new List<Dot> { },
-                                opponentChargingPiles = new List<Dot> { };
-                            foreach (var chargingPile in this._game.ChargingPileList)
+                            if (chargingPile.Camp == this._game.Camp)
                             {
-                                if (chargingPile.Camp == this._game.Camp)
-                                {
-                                    ownChargingPiles.Add(chargingPile.Position);
-                                }
-                                else
-                                {
-                                    opponentChargingPiles.Add(chargingPile.Position);
-                                }
+                                ownChargingPiles.Add(chargingPile.Position);
                             }
-
-                            if ((int)Game.GameDuration[this._game.GameStage] != Game.GameDuration[this._game.GameStage])
+                            else
                             {
-                                throw new Exception("GameDuration overflow");
+                                opponentChargingPiles.Add(chargingPile.Position);
                             }
-                            if (ownChargingPiles.Count > 0x7f)
-                            {
-                                throw new Exception("The length of the ownChargingPiles is greater than 127");
-                            }
-                            if (opponentChargingPiles.Count > 0x7f)
-                            {
-                                throw new Exception("The length of the opponentChargingPiles is greater than 127");
-                            }
-                            if (_game.BarrierList.Count > 0x7f)
-                            {
-                                throw new Exception("The length of the BarrierList is greater than 127");
-                            }
-
-
-                            var gameInfoPacket = new PacketGetGameInformationHost(
-                                                gameStage: this._game.GameStage,
-                                                barrierList: this._game.BarrierList,
-                                                duration: (int)Game.GameDuration[this._game.GameStage],
-                                                ownChargingPiles: ownChargingPiles,
-                                                opponentChargingPiles: opponentChargingPiles
-                                            );
-                            var bytesToWrite = gameInfoPacket.GetBytes();
-
-                            this._serialPortDict[camp].Write(bytesToWrite, 0, bytesToWrite.Length);
                         }
-                        else if (packetFromSlave.GetPacketId() == PacketSetChargingPileSlave.PacketId)
+
+                        if ((int)Game.GameDuration[this._game.GameStage] != Game.GameDuration[this._game.GameStage])
                         {
-                            this._game.SetChargingPile();
-                            Game.SetChargingPileSound.Play();
+                            throw new Exception("GameDuration overflow");
                         }
+                        if (ownChargingPiles.Count > 0x7f)
+                        {
+                            throw new Exception("The length of the ownChargingPiles is greater than 127");
+                        }
+                        if (opponentChargingPiles.Count > 0x7f)
+                        {
+                            throw new Exception("The length of the opponentChargingPiles is greater than 127");
+                        }
+                        if (_game.BarrierList.Count > 0x7f)
+                        {
+                            throw new Exception("The length of the BarrierList is greater than 127");
+                        }
+
+
+                        var gameInfoPacket = new PacketGetGameInformationHost(
+                                            gameStage: this._game.GameStage,
+                                            barrierList: this._game.BarrierList,
+                                            duration: (int)Game.GameDuration[this._game.GameStage],
+                                            ownChargingPiles: ownChargingPiles,
+                                            opponentChargingPiles: opponentChargingPiles
+                                        );
+                        var bytesToWrite = gameInfoPacket.GetBytes();
+
+                        this._serialPortDict[camp].Write(bytesToWrite, 0, bytesToWrite.Length);
+                        isMessageSent = true;
                     }
-                    catch (System.Exception)
+                    else if (packetFromSlave.GetPacketId() == PacketSetChargingPileSlave.PacketId)
                     {
-                        // Do nothing.
+                        this._game.SetChargingPile();
+                        Game.SetChargingPileSound.Play();
                     }
                 }
 
 
                 // Send default packet.
-                if (this._serialPortDict[camp].BytesToWrite == 0)
+                if (!isMessageSent)
                 {
                     // Get the order in delivery list.
                     var orderInDeliveryList = new List<Order>();
@@ -551,6 +547,7 @@ public partial class MainWindow : Form
                     var bytesToWrite = packet.GetBytes();
 
                     this._serialPortDict[camp].Write(bytesToWrite, 0, bytesToWrite.Length);
+                    isMessageSent = true;
                 }
             }
         }
