@@ -201,6 +201,10 @@ public class Game
         @"Assets/Sounds/Order.wav"
     );
 
+
+    public static readonly SoundPlayer SetChargingPileSound = new SoundPlayer(
+        @"Assets/Sounds/SetChargingPile.wav"
+    );
     #endregion
 
     #region Parameters related to vehicles
@@ -376,7 +380,8 @@ public class Game
         // Load sounds
         Game.OrderSoundDeliver.Load();
         Game.OrderSoundTake.Load();
-
+        Game.SetChargingPileSound.Load();
+        
         // Generate barriers
         this._barrierList = new List<Barrier>();
 

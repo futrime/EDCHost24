@@ -474,6 +474,7 @@ public partial class MainWindow : Form
                         else if (packetFromSlave.GetPacketId() == PacketSetChargingPileSlave.PacketId)
                         {
                             this._game.SetChargingPile();
+                            Game.SetChargingPileSound.Play();
                         }
                     }
                     catch (System.Exception)
