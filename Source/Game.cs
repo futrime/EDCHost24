@@ -639,6 +639,8 @@ public class Game
         ));
 
         this._score[(CampType)this._camp] += Game.ScoreSetChargingPile;
+
+        Game.SetChargingPileSound.Play();
     }
 
     #endregion
