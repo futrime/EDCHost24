@@ -381,7 +381,7 @@ public class Game
         Game.OrderSoundDeliver.Load();
         Game.OrderSoundTake.Load();
         Game.SetChargingPileSound.Load();
-        
+
         // Generate barriers
         this._barrierList = new List<Barrier>();
 
@@ -852,6 +852,11 @@ public class Game
     /// </summary>
     void TackleChargingPiles()
     {
+        if (this._gameStage != GameStageType.SecondHalf)
+        {
+            return;
+        }
+
         var vehicle = this._vehicle[(CampType)this._camp];
 
         if (vehicle.Position == null)
