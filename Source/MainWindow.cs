@@ -224,16 +224,6 @@ public partial class MainWindow : Form
 
         // Setup the camera
         this._camera.Open(this.Config.Camera);
-        if (!this._camera.IsOpened())
-        {
-            MessageBox.Show(
-                "No camera is found!",
-                "Nahida said:",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Error
-            );
-            Environment.Exit(0);
-        }
         this._camera.ConvertRgb = true;
 
         // Load the sizes of camera frames, monitor frames and the court.
