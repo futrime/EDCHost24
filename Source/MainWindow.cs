@@ -85,6 +85,8 @@ public partial class MainWindow : Form
         new Mat(@"Assets/Icons/OrderDestination.png", ImreadModes.Color)
     );
 
+    private static readonly Mat ImageBackground = new Mat(@"Assets/Images/Background.jpg", ImreadModes.Color);
+
     /// <summary>
     /// The length of the buffer for serial ports.
     /// </summary>
@@ -222,17 +224,6 @@ public partial class MainWindow : Form
 
         // Setup the camera
         this._camera.Open(this.Config.Camera);
-        if (!this._camera.IsOpened())
-        {
-            MessageBox.Show(
-                "No camera is found!",
-                "Nahida said:",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Error
-            );
-            Environment.Exit(0);
-            // Application.Exit();
-        }
         this._camera.ConvertRgb = true;
 
         // Load the sizes of camera frames, monitor frames and the court.
@@ -257,7 +248,7 @@ public partial class MainWindow : Form
         );
 
         // Setup the timer
-        this.timer.Interval = Math.Max((int)(1000 / this._camera.Fps), 1);
+        this.timer.Interval = Math.Min(Math.Max((int)(1000 / this._camera.Fps), 1), 1000);
         this.timer.Start();
 
         // Setup the locators
@@ -281,16 +272,17 @@ public partial class MainWindow : Form
     /// </summary>
     private void RefreshAll()
     {
-        // Do not refresh if the camera is changing.
+        // Show default image if the camera is changing.
         if (this._camera == null)
         {
+            this.ShowBackgroundImage();
             return;
         }
 
         // Update the timer interval.
-        if (this.timer.Interval != (int)(this._camera.Fps))
+        if (this.timer.Interval != Math.Min(Math.Max((int)(1000 / this._camera.Fps), 1), 1000))
         {
-            this.timer.Interval = Math.Max((int)(this._camera.Fps), 1);
+            this.timer.Interval = Math.Min(Math.Max((int)(1000 / this._camera.Fps), 1), 1000);
         }
 
         this.ProcessCameraFrame();
@@ -421,10 +413,19 @@ public partial class MainWindow : Form
                 bool isMessageSent = false; // Set to true when a message is sent.
 
                 // Process the message
-                if (length > 0)
-                {
-                    Packet packetFromSlave = Packet.Make(bytesRead);
 
+                Packet packetFromSlave = null;
+                try
+                {
+                    packetFromSlave = Packet.Make(bytesRead);
+                }
+                catch (Exception)
+                {
+                    // Do nothing
+                }
+
+                if (packetFromSlave != null)
+                {
                     if (packetFromSlave.GetPacketId() == PacketGetGameInformationSlave.PacketId)
                     {
                         // Find own charging pile list
@@ -478,7 +479,6 @@ public partial class MainWindow : Form
                     }
                 }
 
-
                 // Send default packet.
                 if (!isMessageSent)
                 {
@@ -491,7 +491,6 @@ public partial class MainWindow : Form
                             orderInDeliveryList.Add(order);
                         }
                     }
-                    //????????
                     // Make a queue of orders to transmit
                     if (this._game.OrderList.Count > 0 && //ZYR editted in 10-23
 
@@ -563,6 +562,8 @@ public partial class MainWindow : Form
         Mat frame = new Mat();
         if (!this._camera.Read(frame))
         {
+            frame.Dispose();
+            this.ShowBackgroundImage();
             return;
         }
 
@@ -585,6 +586,19 @@ public partial class MainWindow : Form
             // Update the monitor frame
             this.RefreshMonitor(BitmapConverter.ToBitmap(frame));
         }
+
+        frame.Dispose();
+    }
+
+    /// <summary>
+    /// Shows background image on monitor
+    /// </summary>
+    private void ShowBackgroundImage()
+    {
+        Mat frame = MainWindow.ImageBackground.Clone();
+
+        Cv2.Resize(src: frame, dst: frame, dsize: this._monitorFrameSize);
+        this.RefreshMonitor(BitmapConverter.ToBitmap(frame));
 
         frame.Dispose();
     }
@@ -924,11 +938,19 @@ public partial class MainWindow : Form
 
     private void buttonSettings_Click(object sender, EventArgs e)
     {
-        var thread = new Thread(
-            () => (new SettingsWindow(this)).ShowDialog()
-        );
-        thread.IsBackground = true;
-        thread.Start();
+        var form = Application.OpenForms["SettingsWindow"];
+        if (form == null)
+        {
+            var thread = new Thread(
+                () => (new SettingsWindow(this)).ShowDialog()
+            );
+            thread.IsBackground = true;
+            thread.Start();
+        }
+        else
+        {
+            form.Activate();
+        }
     }
 
     private void Timer_Tick(object sender, EventArgs e)

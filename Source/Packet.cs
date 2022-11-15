@@ -39,9 +39,14 @@ public abstract class Packet
             throw new Exception("The header of the packet is broken.");
         }
 
-        byte packetId = bytes[0];
-        uint dataLength = BitConverter.ToUInt32(bytes, 1);
-        byte checksum = bytes[5];
+        if (bytes[0] != 0x55 || bytes[1] != 0xAA)
+        {
+            throw new Exception("The header of the packet is broken.");
+        }
+
+        var packetId = bytes[2];
+        var dataLength = BitConverter.ToInt16(bytes, 3);
+        var checksum = bytes[5];
 
         if (bytes.Length < dataLength + 6)
         {
@@ -67,12 +72,14 @@ public abstract class Packet
     /// <returns></returns>
     public static byte[] GeneratePacketHeader(byte packetId, byte[] data)
     {
-        uint dataLength = (uint)data.Length;
+        short dataLength = (short)data.Length;
         byte checksum = Packet.CalculateChecksum(data);
 
         var header = new byte[6];
-        header[0] = packetId;
-        Array.Copy(BitConverter.GetBytes(dataLength), 0, header, 1, 4);
+        header[0] = (byte)0x55;
+        header[1] = (byte)0xAA;
+        header[2] = packetId;
+        Array.Copy(BitConverter.GetBytes(dataLength), 0, header, 3, 2);
         header[5] = checksum;
 
         return header;
@@ -90,7 +97,7 @@ public abstract class Packet
             throw new Exception("The packet is broken.");
         }
 
-        byte packetId = bytes[0];
+        byte packetId = bytes[2];
 
         switch (packetId)
         {
