@@ -288,9 +288,9 @@ public partial class MainWindow : Form
         }
 
         // Update the timer interval.
-        if (this.timer.Interval != (int)(this._camera.Fps))
+        if (this.timer.Interval != Math.Max((int)(1000 / this._camera.Fps), 1))
         {
-            this.timer.Interval = Math.Max((int)(this._camera.Fps), 1);
+            this.timer.Interval = Math.Max((int)(1000 / this._camera.Fps), 1);
         }
 
         this.ProcessCameraFrame();
