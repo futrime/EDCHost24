@@ -222,12 +222,12 @@ partial class MainWindow
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.panel3);
             this.panel1.Controls.Add(this.label5);
             this.panel1.Controls.Add(this.label4);
             this.panel1.Controls.Add(this.label3);
             this.panel1.Controls.Add(this.progressBarRemainingPowerRatio);
             this.panel1.Controls.Add(this.labelScoreVehicleB);
-            this.panel1.Controls.Add(this.panel3);
             this.panel1.Controls.Add(this.labelScoreVehicleA);
             this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.label1);
@@ -327,7 +327,7 @@ partial class MainWindow
             this.Margin = new System.Windows.Forms.Padding(2);
             this.MinimumSize = new System.Drawing.Size(1280, 720);
             this.Name = "MainWindow";
-            this.Padding = new System.Windows.Forms.Padding(10, 10, 10, 10);
+            this.Padding = new System.Windows.Forms.Padding(10);
             this.Text = "EDC Host EDC_HOST_BUILD_REF";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainWindow_FormClosed);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxMonitor)).EndInit();

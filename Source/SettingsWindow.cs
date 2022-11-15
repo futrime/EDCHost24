@@ -72,7 +72,7 @@ public partial class SettingsWindow : Form
         // Apply the camera configurations
         var camera = this._mainWindow.Camera;
         this._mainWindow.Camera = null;
-        camera.Release();
+        camera?.Release();
         camera = new VideoCapture();
 
         camera.Open(this._mainWindow.Config.Camera);
@@ -310,6 +310,8 @@ public partial class SettingsWindow : Form
 
     private void UpdateAvailableCameras()
     {
+        this._mainWindow.Camera?.Release();
+
         bool isLastCameraWorking = true;
         int cameraPort = 0;
         while (isLastCameraWorking)
@@ -351,6 +353,8 @@ public partial class SettingsWindow : Form
                     this.comboBoxCamera.SelectedIndex = 0;
                 }
             }
+
+            camera.Release();
 
             ++cameraPort;
         }
