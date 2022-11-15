@@ -40,7 +40,7 @@ public class PacketSetChargingPileSlave : Packet
         var data = Packet.ExtractPacketData(bytes);
 
         // Check the packet ID.
-        byte packetId = bytes[0];
+        byte packetId = bytes[2];
         if (packetId != this.GetPacketId())
         {
             throw new Exception("The packet ID is incorrect.");

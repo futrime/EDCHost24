@@ -38,8 +38,6 @@ public class PacketGetStatusHost : Packet
         Order latestPendingOrder
     )
     {
-
-
         this._gameStatus = gameStatus;
         this._gameTime = gameTime;
         this._score = score;
@@ -63,7 +61,7 @@ public class PacketGetStatusHost : Packet
         // Validate the packet and extract data
         byte[] data = Packet.ExtractPacketData(bytes);
 
-        byte packetId = bytes[0];
+        byte packetId = bytes[2];
         if (packetId != PacketGetStatusHost.PacketId)
         {
             throw new Exception("The packet ID is incorrect.");
@@ -74,16 +72,15 @@ public class PacketGetStatusHost : Packet
         currentIndex += 1;
         // time
         this._gameTime = BitConverter.ToInt32(data, currentIndex);
-
         currentIndex += 4;
         // score
         this._score = BitConverter.ToSingle(data, currentIndex);
         currentIndex += 4;
         // car
-        this._vehiclePosition.X = BitConverter.ToInt32(data, currentIndex);
-        currentIndex += 4;
-        this._vehiclePosition.Y = BitConverter.ToInt32(data, currentIndex);
-        currentIndex += 4;
+        this._vehiclePosition.X = BitConverter.ToInt16(data, currentIndex);
+        currentIndex += 2;
+        this._vehiclePosition.Y = BitConverter.ToInt16(data, currentIndex);
+        currentIndex += 2;
         // mileage
         this._remainingDistance = BitConverter.ToInt32(data, currentIndex);
         currentIndex += 4;
@@ -98,10 +95,10 @@ public class PacketGetStatusHost : Packet
         {
             // (orderInDeliveryListLength + 1) represents (orderInDeliveryList + lastestPendingOrder)
 
-            Dot departurePosition = new Dot(BitConverter.ToInt32(data, currentIndex), BitConverter.ToInt32(data, currentIndex + 4));
-            currentIndex += 4 * 2;
-            Dot destinationPosition = new Dot(BitConverter.ToInt32(data, currentIndex), BitConverter.ToInt32(data, currentIndex + 4));
-            currentIndex += 4 * 2;
+            Dot departurePosition = new Dot(BitConverter.ToInt16(data, currentIndex), BitConverter.ToInt32(data, currentIndex + 2));
+            currentIndex += 2 * 2;
+            Dot destinationPosition = new Dot(BitConverter.ToInt16(data, currentIndex), BitConverter.ToInt16(data, currentIndex + 2));
+            currentIndex += 2 * 2;
 
             int deliveryTimeLimit = BitConverter.ToInt32(data, currentIndex);
             currentIndex += 4;
@@ -113,8 +110,8 @@ public class PacketGetStatusHost : Packet
             float commission = BitConverter.ToSingle(data, currentIndex);
             currentIndex += 4;
 
-            int order_id = BitConverter.ToInt32(data, currentIndex);
-            currentIndex += 4;
+            int order_id = BitConverter.ToInt16(data, currentIndex);
+            currentIndex += 2;
 
             long generationTime = 0;
 
@@ -134,8 +131,8 @@ public class PacketGetStatusHost : Packet
     {
 
         var data = new byte[
-            1 + 4 + 4 + 8 + 4 +
-            (1 + 28 * this._orderInDeliveryList.Count) + 28 * 1
+            1 + 4 + 4 + 4 + 4 +
+            (1 + 18 * this._orderInDeliveryList.Count) + 18 * 1
         ];
 
         int index = 0;
@@ -168,11 +165,11 @@ public class PacketGetStatusHost : Packet
 
         #region The vehicle position.
         // The x.
-        BitConverter.GetBytes(this._vehiclePosition.X).CopyTo(data, index);
-        index += 4;
+        BitConverter.GetBytes((short)this._vehiclePosition.X).CopyTo(data, index);
+        index += 2;
         // The y.
-        BitConverter.GetBytes(this._vehiclePosition.Y).CopyTo(data, index);
-        index += 4;
+        BitConverter.GetBytes((short)this._vehiclePosition.Y).CopyTo(data, index);
+        index += 2;
         #endregion
 
         // The remaining distance.
@@ -190,21 +187,31 @@ public class PacketGetStatusHost : Packet
         foreach (var order in this._orderInDeliveryList)
         {
             #region The departure position.
+            if ((short)order.DeparturePosition.X != order.DeparturePosition.X ||
+                (short)order.DeparturePosition.Y != order.DeparturePosition.Y)
+            {
+                throw new ArgumentException("The DeparturePosition of an order is out of bounds of 'short'");
+            }
             // The x.
-            BitConverter.GetBytes(order.DeparturePosition.X).CopyTo(data, index);
-            index += 4;
+            BitConverter.GetBytes((short)order.DeparturePosition.X).CopyTo(data, index);
+            index += 2;
             // The y.
-            BitConverter.GetBytes(order.DeparturePosition.Y).CopyTo(data, index);
-            index += 4;
+            BitConverter.GetBytes((short)order.DeparturePosition.Y).CopyTo(data, index);
+            index += 2;
             #endregion
 
             #region The destination position.
+            if ((short)order.DestinationPosition.X != order.DestinationPosition.X ||
+                (short)order.DestinationPosition.Y != order.DestinationPosition.Y)
+            {
+                throw new ArgumentException("The DestinationPosition of an order is out of bounds of 'short'");
+            }
             // The x.
-            BitConverter.GetBytes(order.DestinationPosition.X).CopyTo(data, index);
-            index += 4;
+            BitConverter.GetBytes((short)order.DestinationPosition.X).CopyTo(data, index);
+            index += 2;
             // The y.
-            BitConverter.GetBytes(order.DestinationPosition.Y).CopyTo(data, index);
-            index += 4;
+            BitConverter.GetBytes((short)order.DestinationPosition.Y).CopyTo(data, index);
+            index += 2;
             #endregion
 
             // The delivery time limit.
@@ -215,9 +222,13 @@ public class PacketGetStatusHost : Packet
             BitConverter.GetBytes(order.Commission).CopyTo(data, index);
             index += 4;
 
+            if ((short)order.Id != order.Id)
+            {
+                throw new ArgumentException("The id of an order is out of bounds of 'short'");
+            }
             // The order ID.
-            BitConverter.GetBytes(order.Id).CopyTo(data, index);
-            index += 4;
+            BitConverter.GetBytes((short)order.Id).CopyTo(data, index);
+            index += 2;
         }
         #endregion
 
@@ -228,21 +239,31 @@ public class PacketGetStatusHost : Packet
         {
             #region The departure position.
 
+            if ((short)_latestPendingOrder.DeparturePosition.X != _latestPendingOrder.DeparturePosition.X ||
+                (short)_latestPendingOrder.DeparturePosition.Y != _latestPendingOrder.DeparturePosition.Y)
+            {
+                throw new ArgumentException("The DeparturePosition of an order is out of bounds of 'short'");
+            }
             // The x.
-            BitConverter.GetBytes(this._latestPendingOrder.DeparturePosition.X).CopyTo(data, index);
-            index += 4;
+            BitConverter.GetBytes((short)this._latestPendingOrder.DeparturePosition.X).CopyTo(data, index);
+            index += 2;
             // The y.
-            BitConverter.GetBytes(this._latestPendingOrder.DeparturePosition.Y).CopyTo(data, index);
-            index += 4;
+            BitConverter.GetBytes((short)this._latestPendingOrder.DeparturePosition.Y).CopyTo(data, index);
+            index += 2;
             #endregion
 
             #region The destination position.
+            if ((short)_latestPendingOrder.DestinationPosition.X != _latestPendingOrder.DestinationPosition.X ||
+                (short)_latestPendingOrder.DestinationPosition.Y != _latestPendingOrder.DestinationPosition.Y)
+            {
+                throw new ArgumentException("The DestinationPosition of an order is out of bounds of 'short'");
+            }
             // The x.
-            BitConverter.GetBytes(this._latestPendingOrder.DestinationPosition.X).CopyTo(data, index);
-            index += 4;
+            BitConverter.GetBytes((short)this._latestPendingOrder.DestinationPosition.X).CopyTo(data, index);
+            index += 2;
             // The y.
-            BitConverter.GetBytes(this._latestPendingOrder.DestinationPosition.Y).CopyTo(data, index);
-            index += 4;
+            BitConverter.GetBytes((short)this._latestPendingOrder.DestinationPosition.Y).CopyTo(data, index);
+            index += 2;
             #endregion
 
             // The delivery time limit.
@@ -253,17 +274,21 @@ public class PacketGetStatusHost : Packet
             BitConverter.GetBytes(this._latestPendingOrder.Commission).CopyTo(data, index);
             index += 4;
 
+            if ((short)_latestPendingOrder.Id != _latestPendingOrder.Id)
+            {
+                throw new ArgumentException("The id of an order is out of bounds of 'short'");
+            }
             // The order ID.
-            BitConverter.GetBytes(this._latestPendingOrder.Id).CopyTo(data, index);
-            index += 4;
+            BitConverter.GetBytes((short)this._latestPendingOrder.Id).CopyTo(data, index);
+            index += 2;
         }
         else
         {
             // The bytes of a null order is 0, except for -1 id
-            index += 4 * 6;
+            index += 4 * 4;
             // The order ID.
-            BitConverter.GetBytes((int)-1).CopyTo(data, index);
-            index += 4;
+            BitConverter.GetBytes((short)-1).CopyTo(data, index);
+            index += 2;
         }
         #endregion
 

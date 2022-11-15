@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace EdcHost;
@@ -8,9 +9,22 @@ namespace EdcHost;
 /// </summary>
 static class Program
 {
+    /// <summary>
+    /// The mutex ID for restricting one instance
+    /// </summary>
+    private const string MutexId = "EdcHost";
+
     [STAThread]
     static void Main()
     {
+        // The program can only have one instance.
+        using Mutex mutex = new Mutex(false, MutexId);
+        if (!mutex.WaitOne(0, false))
+        {
+            MessageBox.Show("The program is already running.", "Nahida complained:", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return;
+        }
+
         AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(HandleUnhandledException);
 
         ApplicationConfiguration.Initialize();
