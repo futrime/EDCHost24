@@ -187,6 +187,11 @@ public class PacketGetStatusHost : Packet
         foreach (var order in this._orderInDeliveryList)
         {
             #region The departure position.
+            if ((short)order.DeparturePosition.X != order.DeparturePosition.X ||
+                (short)order.DeparturePosition.Y != order.DeparturePosition.Y)
+            {
+                throw new ArgumentException("The DeparturePosition of an order is out of bounds of 'short'");
+            }
             // The x.
             BitConverter.GetBytes((short)order.DeparturePosition.X).CopyTo(data, index);
             index += 2;
@@ -196,6 +201,11 @@ public class PacketGetStatusHost : Packet
             #endregion
 
             #region The destination position.
+            if ((short)order.DestinationPosition.X != order.DestinationPosition.X ||
+                (short)order.DestinationPosition.Y != order.DestinationPosition.Y)
+            {
+                throw new ArgumentException("The DestinationPosition of an order is out of bounds of 'short'");
+            }
             // The x.
             BitConverter.GetBytes((short)order.DestinationPosition.X).CopyTo(data, index);
             index += 2;
@@ -212,6 +222,10 @@ public class PacketGetStatusHost : Packet
             BitConverter.GetBytes(order.Commission).CopyTo(data, index);
             index += 4;
 
+            if ((short)order.Id != order.Id)
+            {
+                throw new ArgumentException("The id of an order is out of bounds of 'short'");
+            }
             // The order ID.
             BitConverter.GetBytes((short)order.Id).CopyTo(data, index);
             index += 2;
@@ -225,6 +239,11 @@ public class PacketGetStatusHost : Packet
         {
             #region The departure position.
 
+            if ((short)_latestPendingOrder.DeparturePosition.X != _latestPendingOrder.DeparturePosition.X ||
+                (short)_latestPendingOrder.DeparturePosition.Y != _latestPendingOrder.DeparturePosition.Y)
+            {
+                throw new ArgumentException("The DeparturePosition of an order is out of bounds of 'short'");
+            }
             // The x.
             BitConverter.GetBytes((short)this._latestPendingOrder.DeparturePosition.X).CopyTo(data, index);
             index += 2;
@@ -234,6 +253,11 @@ public class PacketGetStatusHost : Packet
             #endregion
 
             #region The destination position.
+            if ((short)_latestPendingOrder.DestinationPosition.X != _latestPendingOrder.DestinationPosition.X ||
+                (short)_latestPendingOrder.DestinationPosition.Y != _latestPendingOrder.DestinationPosition.Y)
+            {
+                throw new ArgumentException("The DestinationPosition of an order is out of bounds of 'short'");
+            }
             // The x.
             BitConverter.GetBytes((short)this._latestPendingOrder.DestinationPosition.X).CopyTo(data, index);
             index += 2;
@@ -250,6 +274,10 @@ public class PacketGetStatusHost : Packet
             BitConverter.GetBytes(this._latestPendingOrder.Commission).CopyTo(data, index);
             index += 4;
 
+            if ((short)_latestPendingOrder.Id != _latestPendingOrder.Id)
+            {
+                throw new ArgumentException("The id of an order is out of bounds of 'short'");
+            }
             // The order ID.
             BitConverter.GetBytes((short)this._latestPendingOrder.Id).CopyTo(data, index);
             index += 2;

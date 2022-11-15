@@ -124,6 +124,14 @@ public class PacketGetGameInformationHost : Packet
         for (int i = 0; i < this._barrierList.Count; i++)
         {
             // 2 Dots —— 8 Bytes per Obstacle
+            if ((short)this._barrierList[i].TopLeftPosition.X != this._barrierList[i].TopLeftPosition.X
+            || (short)this._barrierList[i].TopLeftPosition.Y != this._barrierList[i].TopLeftPosition.Y
+        || (short)this._barrierList[i].BottomRightPosition.X != this._barrierList[i].BottomRightPosition.X
+        || (short)this._barrierList[i].BottomRightPosition.Y != this._barrierList[i].BottomRightPosition.Y)
+            {
+                throw new ArgumentException("The position of the barrier is out of bounds of 'short'");
+            }
+
             BitConverter.GetBytes((short)this._barrierList[i].TopLeftPosition.X).CopyTo(data, currentIndex);
             BitConverter.GetBytes((short)this._barrierList[i].TopLeftPosition.Y).CopyTo(data, currentIndex + 2);
             BitConverter.GetBytes((short)this._barrierList[i].BottomRightPosition.X).CopyTo(data, currentIndex + 4);
@@ -146,6 +154,11 @@ public class PacketGetGameInformationHost : Packet
         for (int i = 0; i < this._ownChargingPiles.Count; i++)
         {
             // 1 Dot —— 4 Bytes per ChargingPile
+            if ((short)this._ownChargingPiles[i].X != this._ownChargingPiles[i].X
+            || (short)this._ownChargingPiles[i].Y != this._ownChargingPiles[i].Y)
+            {
+                throw new ArgumentException("The position of ownChargingPiles is out of bounds of 'short'");
+            }
             BitConverter.GetBytes((short)this._ownChargingPiles[i].X).CopyTo(data, currentIndex);
             BitConverter.GetBytes((short)this._ownChargingPiles[i].Y).CopyTo(data, currentIndex + 2);
             currentIndex += 4;
@@ -164,6 +177,11 @@ public class PacketGetGameInformationHost : Packet
         for (int i = 0; i < this._opponentChargingPiles.Count; i++)
         {
             // 1 Dot —— 4 Bytes per ChargingPile
+            if ((short)this._opponentChargingPiles[i].X != this._opponentChargingPiles[i].X
+            || (short)this._opponentChargingPiles[i].Y != this._opponentChargingPiles[i].Y)
+            {
+                throw new ArgumentException("The position of ownChargingPiles is out of bounds of 'short'");
+            }
             BitConverter.GetBytes((short)this._opponentChargingPiles[i].X).CopyTo(data, currentIndex);
             BitConverter.GetBytes((short)this._opponentChargingPiles[i].Y).CopyTo(data, currentIndex + 2);
             currentIndex += 2;
