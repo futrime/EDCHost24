@@ -45,7 +45,7 @@ public abstract class Packet
         }
 
         var packetId = bytes[2];
-        var dataLength = BitConverter.ToInt16(bytes, 1);
+        var dataLength = BitConverter.ToInt16(bytes, 3);
         var checksum = bytes[5];
 
         if (bytes.Length < dataLength + 6)
@@ -97,7 +97,7 @@ public abstract class Packet
             throw new Exception("The packet is broken.");
         }
 
-        byte packetId = bytes[0];
+        byte packetId = bytes[2];
 
         switch (packetId)
         {

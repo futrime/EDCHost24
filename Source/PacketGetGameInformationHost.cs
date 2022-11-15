@@ -24,7 +24,7 @@ public class PacketGetGameInformationHost : Packet
         this._barrierList = barrierList;
         this._gameStage = gameStage;
         this._duration = duration;
-        this._ownChargingPiles = opponentChargingPiles;
+        this._ownChargingPiles = ownChargingPiles;
         this._opponentChargingPiles = opponentChargingPiles;
     }
 
@@ -37,7 +37,7 @@ public class PacketGetGameInformationHost : Packet
         // Validate the packet and extract data
         byte[] data = Packet.ExtractPacketData(bytes);
 
-        byte packetId = bytes[0];
+        byte packetId = bytes[2];
         if (packetId != PacketGetGameInformationHost.PacketId)
         {
             throw new Exception("The packet ID is incorrect.");
@@ -57,11 +57,11 @@ public class PacketGetGameInformationHost : Packet
         this._barrierList = new List<Barrier>() { };
         for (int i = 0; i < barrierListLength; i++)
         {
-            Dot left_up = new Dot(BitConverter.ToInt32(data, currentIndex), BitConverter.ToInt32(data, currentIndex + 4));
-            Dot right_down = new Dot(BitConverter.ToInt32(data, currentIndex + 8), BitConverter.ToInt32(data, currentIndex + 12));
+            Dot left_up = new Dot(BitConverter.ToInt16(data, currentIndex), BitConverter.ToInt16(data, currentIndex + 2));
+            Dot right_down = new Dot(BitConverter.ToInt16(data, currentIndex + 4), BitConverter.ToInt16(data, currentIndex + 6));
 
             this._barrierList.Add(new Barrier(left_up, right_down));
-            currentIndex += 4 * 4;
+            currentIndex += 2 * 4;
         }
 
         this._duration = BitConverter.ToInt32(data, currentIndex);
@@ -74,8 +74,8 @@ public class PacketGetGameInformationHost : Packet
         this._ownChargingPiles = new List<Dot>() { };
         for (int i = 0; i < ownChargingPilesLength; i++)
         {
-            this._ownChargingPiles.Add(new Dot(BitConverter.ToInt32(data, currentIndex), BitConverter.ToInt32(data, currentIndex + 4)));
-            currentIndex += 4 * 2;
+            this._ownChargingPiles.Add(new Dot(BitConverter.ToInt16(data, currentIndex), BitConverter.ToInt16(data, currentIndex + 2)));
+            currentIndex += 2 * 2;
         }
 
         // Get the information of opponent's charging piles
@@ -85,8 +85,8 @@ public class PacketGetGameInformationHost : Packet
         this._opponentChargingPiles = new List<Dot>() { };
         for (int i = 0; i < opponentChargingPilesLength; i++)
         {
-            this._opponentChargingPiles.Add(new Dot(BitConverter.ToInt32(data, currentIndex), BitConverter.ToInt32(data, currentIndex + 4)));
-            currentIndex += 4 * 2;
+            this._opponentChargingPiles.Add(new Dot(BitConverter.ToInt16(data, currentIndex), BitConverter.ToInt16(data, currentIndex + 2)));
+            currentIndex += 2 * 2;
         }
 
     }
@@ -97,18 +97,17 @@ public class PacketGetGameInformationHost : Packet
         int dataLength = (
             1 +                                    // this._currentGameStage
             1 +                                    // this._obstacleListLength
-            this._barrierList.Count * 16 +
+            this._barrierList.Count * 8 +
             1 * 4 +                                // this._duration
             1 +                                    // this._ownChargingPilesLength
-            this._ownChargingPiles.Count * 8 +
+            this._ownChargingPiles.Count * 4 +
             1 +                                    // this._opponentChargingPilesLength
-            this._opponentChargingPiles.Count * 8
+            this._opponentChargingPiles.Count * 4
         );
         // Initialize the data array
         var data = new byte[dataLength];
 
         int currentIndex = 0;
-
 
         // Gamestage 
         data[currentIndex] = ((byte)this._gameStage);
@@ -124,12 +123,12 @@ public class PacketGetGameInformationHost : Packet
 
         for (int i = 0; i < this._barrierList.Count; i++)
         {
-            // 2 Dots —— 16 Bytes per Obstacle
-            BitConverter.GetBytes(this._barrierList[i].TopLeftPosition.X).CopyTo(data, currentIndex);
-            BitConverter.GetBytes(this._barrierList[i].TopLeftPosition.Y).CopyTo(data, currentIndex + 4);
-            BitConverter.GetBytes(this._barrierList[i].BottomRightPosition.X).CopyTo(data, currentIndex + 8);
-            BitConverter.GetBytes(this._barrierList[i].BottomRightPosition.Y).CopyTo(data, currentIndex + 12);
-            currentIndex += 4 * 4;
+            // 2 Dots —— 8 Bytes per Obstacle
+            BitConverter.GetBytes((short)this._barrierList[i].TopLeftPosition.X).CopyTo(data, currentIndex);
+            BitConverter.GetBytes((short)this._barrierList[i].TopLeftPosition.Y).CopyTo(data, currentIndex + 2);
+            BitConverter.GetBytes((short)this._barrierList[i].BottomRightPosition.X).CopyTo(data, currentIndex + 4);
+            BitConverter.GetBytes((short)this._barrierList[i].BottomRightPosition.Y).CopyTo(data, currentIndex + 6);
+            currentIndex += 2 * 4;
         }
 
         BitConverter.GetBytes(this._duration).CopyTo(data, currentIndex);
@@ -146,10 +145,10 @@ public class PacketGetGameInformationHost : Packet
 
         for (int i = 0; i < this._ownChargingPiles.Count; i++)
         {
-            // 1 Dot —— 8 Bytes per ChargingPile
-            BitConverter.GetBytes(this._ownChargingPiles[i].X).CopyTo(data, currentIndex);
-            BitConverter.GetBytes(this._ownChargingPiles[i].Y).CopyTo(data, currentIndex + 4);
-            currentIndex += 8;
+            // 1 Dot —— 4 Bytes per ChargingPile
+            BitConverter.GetBytes((short)this._ownChargingPiles[i].X).CopyTo(data, currentIndex);
+            BitConverter.GetBytes((short)this._ownChargingPiles[i].Y).CopyTo(data, currentIndex + 2);
+            currentIndex += 4;
         }
 
         // Encode the information of opponent's charging piles
@@ -164,10 +163,10 @@ public class PacketGetGameInformationHost : Packet
 
         for (int i = 0; i < this._opponentChargingPiles.Count; i++)
         {
-            // 1 Dot —— 8 Bytes per ChargingPile
-            BitConverter.GetBytes(this._opponentChargingPiles[i].X).CopyTo(data, currentIndex);
-            BitConverter.GetBytes(this._opponentChargingPiles[i].Y).CopyTo(data, currentIndex + 4);
-            currentIndex += 8;
+            // 1 Dot —— 4 Bytes per ChargingPile
+            BitConverter.GetBytes((short)this._opponentChargingPiles[i].X).CopyTo(data, currentIndex);
+            BitConverter.GetBytes((short)this._opponentChargingPiles[i].Y).CopyTo(data, currentIndex + 2);
+            currentIndex += 2;
         }
 
         // write the data's information into the header
