@@ -421,10 +421,19 @@ public partial class MainWindow : Form
                 bool isMessageSent = false; // Set to true when a message is sent.
 
                 // Process the message
-                if (length > 0)
-                {
-                    Packet packetFromSlave = Packet.Make(bytesRead);
 
+                Packet packetFromSlave = null;
+                try
+                {
+                    packetFromSlave = Packet.Make(bytesRead);
+                }
+                catch (Exception)
+                {
+                    // Do nothing
+                }
+
+                if (packetFromSlave != null)
+                {
                     if (packetFromSlave.GetPacketId() == PacketGetGameInformationSlave.PacketId)
                     {
                         // Find own charging pile list
@@ -478,7 +487,6 @@ public partial class MainWindow : Form
                     }
                 }
 
-
                 // Send default packet.
                 if (!isMessageSent)
                 {
@@ -491,7 +499,6 @@ public partial class MainWindow : Form
                             orderInDeliveryList.Add(order);
                         }
                     }
-                    //????????
                     // Make a queue of orders to transmit
                     if (this._game.OrderList.Count > 0 && //ZYR editted in 10-23
 
