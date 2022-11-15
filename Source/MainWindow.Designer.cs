@@ -320,7 +320,7 @@ partial class MainWindow
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.SystemColors.Window;
-            this.ClientSize = new System.Drawing.Size(1264, 681);
+            this.ClientSize = new System.Drawing.Size(1280, 720);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
