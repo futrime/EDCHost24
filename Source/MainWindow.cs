@@ -65,7 +65,7 @@ public partial class MainWindow : Form
     /// <summary>
     /// FPS = Old FPS * (1 - FpsUpdateDecay) + New FPS * FpsUpdateDecay
     /// </summary>
-    private const decimal FpsUpdateDecay = 0.2M;
+    private const decimal FpsUpdateDecay = 1M;
 
     /// <summary>
     /// The size of icons shown on the monitor

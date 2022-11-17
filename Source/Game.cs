@@ -618,6 +618,15 @@ public class Game
             throw new Exception("The game is not running or paused.");
         }
 
+        Game._soundDeliverOrder.Stop();
+        Game._soundTakeOrder.Stop();
+        Game._soundNotMoving.Stop();
+        Game._soundInBarrier.Stop();
+        Game._soundCharging.Stop();
+        Game._soundDischarging.Stop();
+        Game._soundAutoCharge.Stop();
+        Game._soundSetChargingPile.Stop();
+
         this._gameState = GameStatusType.Ended;
     }
 
@@ -858,8 +867,11 @@ public class Game
         }
         else
         {
-            Game._isSoundNotMovingPlaying = false;
-            Game._soundNotMoving.Stop();
+            if (Game._isSoundNotMovingPlaying)
+            {
+                Game._isSoundNotMovingPlaying = false;
+                Game._soundNotMoving.Stop();
+            }
         }
     }
 
@@ -891,8 +903,11 @@ public class Game
         }
         else
         {
-            Game._isSoundInBarrierPlaying = false;
-            Game._soundInBarrier.Stop();
+            if (Game._isSoundInBarrierPlaying)
+            {
+                Game._isSoundInBarrierPlaying = false;
+                Game._soundInBarrier.Stop();
+            }
         }
     }
 
@@ -932,8 +947,11 @@ public class Game
         }
         else
         {
-            Game._isSoundChargingPlaying = false;
-            Game._soundCharging.Stop();
+            if (Game._isSoundChargingPlaying)
+            {
+                Game._isSoundChargingPlaying = false;
+                Game._soundCharging.Stop();
+            }
         }
 
         if (this.IsInChargingPileInfluenceScope(
@@ -954,8 +972,11 @@ public class Game
         }
         else
         {
-            Game._isSoundDischargingPlaying = false;
-            Game._soundDischarging.Stop();
+            if (Game._isSoundDischargingPlaying)
+            {
+                Game._isSoundDischargingPlaying = false;
+                Game._soundDischarging.Stop();
+            }
         }
     }
 
