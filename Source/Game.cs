@@ -187,24 +187,6 @@ public class Game
             { GameStageType.PreMatch, null }
         };
 
-    /// <summary>
-    /// The sound to play when delivering an order.
-    /// </summary>
-    public static readonly SoundPlayer OrderSoundDeliver = new SoundPlayer(
-        @"Assets/Sounds/Deliver.wav"
-    );
-
-    /// <summary>
-    /// The sound to play when taking an order.
-    /// </summary>
-    public static readonly SoundPlayer OrderSoundTake = new SoundPlayer(
-        @"Assets/Sounds/Order.wav"
-    );
-
-
-    public static readonly SoundPlayer SetChargingPileSound = new SoundPlayer(
-        @"Assets/Sounds/SetChargingPile.wav"
-    );
     #endregion
 
     #region Parameters related to vehicles
@@ -329,7 +311,44 @@ public class Game
 
     #endregion
 
+
     #region Private properties and fields
+
+    private static readonly SoundPlayer _soundDeliverOrder = new SoundPlayer(
+    @"Assets/Sounds/Deliver.wav"
+);
+
+    private static readonly SoundPlayer _soundTakeOrder = new SoundPlayer(
+        @"Assets/Sounds/Order.wav"
+    );
+
+    private static readonly SoundPlayer _soundNotMoving = new SoundPlayer(
+        @"Assets/Sounds/NotMoving.wav"
+    );
+    private static bool _isSoundNotMovingPlaying = false;
+
+    private static readonly SoundPlayer _soundInBarrier = new SoundPlayer(
+        @"Assets/Sounds/InBarrier.wav"
+    );
+    private static bool _isSoundInBarrierPlaying = false;
+
+    private static readonly SoundPlayer _soundCharging = new SoundPlayer(
+        @"Assets/Sounds/Charging.wav"
+    );
+    private static bool _isSoundChargingPlaying = false;
+
+    private static readonly SoundPlayer _soundDischarging = new SoundPlayer(
+        @"Assets/Sounds/InBarrier.wav"
+    );
+    private static bool _isSoundDischargingPlaying = false;
+
+    private static readonly SoundPlayer _soundAutoCharge = new SoundPlayer(
+        @"Assets/Sounds/AutoCharge.wav"
+    );
+
+    private static readonly SoundPlayer _soundSetChargingPile = new SoundPlayer(
+        @"Assets/Sounds/SetChargingPile.wav"
+    );
 
     private readonly List<Barrier> _barrierList;
 
@@ -378,9 +397,14 @@ public class Game
     public Game()
     {
         // Load sounds
-        Game.OrderSoundDeliver.Load();
-        Game.OrderSoundTake.Load();
-        Game.SetChargingPileSound.Load();
+        Game._soundDeliverOrder.Load();
+        Game._soundTakeOrder.Load();
+        Game._soundNotMoving.Load();
+        Game._soundInBarrier.Load();
+        Game._soundCharging.Load();
+        Game._soundDischarging.Load();
+        Game._soundAutoCharge.Load();
+        Game._soundSetChargingPile.Load();
 
         // Generate barriers
         this._barrierList = new List<Barrier>();
@@ -640,7 +664,7 @@ public class Game
 
         this._score[(CampType)this._camp] += Game.ScoreSetChargingPile;
 
-        Game.SetChargingPileSound.Play();
+        Game._soundSetChargingPile.Play();
     }
 
     #endregion
@@ -661,6 +685,8 @@ public class Game
 
         if (vehicle.IsPowerExhausted)
         {
+            Game._soundAutoCharge.Play();
+
             // Exchange time for power.
             this._startTime -= Game.VehicleAutoChargingStep;
             vehicle.IncreaseMaxDistance(
@@ -822,8 +848,18 @@ public class Game
             (long)vehicle.ParkingDuration >= 5000 + this.LastTickDuration
         )
         {
+            if (!Game._isSoundNotMovingPlaying)
+            {
+                Game._isSoundNotMovingPlaying = true;
+                Game._soundNotMoving.PlayLooping();
+            }
             this._score[(CampType)this._camp] +=
                 Game.ScoreOvertimeParkingRate * this.LastTickDuration;
+        }
+        else
+        {
+            Game._isSoundNotMovingPlaying = false;
+            Game._soundNotMoving.Stop();
         }
     }
 
@@ -843,9 +879,20 @@ public class Game
 
         if (this.IsInBarrier(vehiclePosition))
         {
+            if (!Game._isSoundInBarrierPlaying)
+            {
+                Game._isSoundInBarrierPlaying = true;
+                Game._soundInBarrier.PlayLooping();
+            }
+
             vehicle.IncreaseMaxDistance(
                 (int)Math.Round(Game.BarrierDischargingRate * this.LastTickDuration)
             );
+        }
+        else
+        {
+            Game._isSoundInBarrierPlaying = false;
+            Game._soundInBarrier.Stop();
         }
     }
 
@@ -873,9 +920,20 @@ public class Game
             camp: (CampType)this._camp
         ))
         {
+            if (!Game._isSoundChargingPlaying)
+            {
+                Game._isSoundChargingPlaying = true;
+                Game._soundCharging.PlayLooping();
+            }
+
             vehicle.IncreaseMaxDistance(
                 (int)Math.Round(Game.ChargingPileChargingRate * this.LastTickDuration)
             );
+        }
+        else
+        {
+            Game._isSoundChargingPlaying = false;
+            Game._soundCharging.Stop();
         }
 
         if (this.IsInChargingPileInfluenceScope(
@@ -884,9 +942,20 @@ public class Game
             reverse: true
         ))
         {
+            if (!Game._isSoundDischargingPlaying)
+            {
+                Game._isSoundDischargingPlaying = true;
+                Game._soundDischarging.PlayLooping();
+            }
+
             vehicle.IncreaseMaxDistance(
                 (int)Math.Round(Game.ChargingPileDischargingRate * this.LastTickDuration)
             );
+        }
+        else
+        {
+            Game._isSoundDischargingPlaying = false;
+            Game._soundDischarging.Stop();
         }
     }
 
@@ -932,7 +1001,7 @@ public class Game
                     order.Take((long)this.GameTime);
 
                     // Play the take sound.
-                    Game.OrderSoundTake.Play();
+                    Game._soundTakeOrder.Play();
                 }
             }
             else if (order.Status == OrderStatusType.InDelivery)
@@ -951,7 +1020,7 @@ public class Game
                         Math.Max((decimal)order.Commission + Game.ScoreDeliveryOvertimeRate * (long)order.OvertimeDuration, 0);
 
                     // Player the deliver sound.
-                    Game.OrderSoundDeliver.Play();
+                    Game._soundDeliverOrder.Play();
                 }
             }
         }
