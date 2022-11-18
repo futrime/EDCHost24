@@ -477,6 +477,10 @@ public partial class MainWindow : Form
                     {
                         this._game.SetChargingPile();
                     }
+                    else if (packetFromSlave.GetPacketId() == PacketForceToTakeOrDeliverSlave.PacketId)
+                    {
+                        this._game.ForceToTakeOrDeliverOrder(((PacketForceToTakeOrDeliverSlave)packetFromSlave).Action);
+                    }
                 }
 
                 // Send default packet.
