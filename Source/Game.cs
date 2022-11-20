@@ -176,6 +176,8 @@ public class Game
         20000, 60000
     );
 
+    public const decimal OrderForceContactScopeRadius = 16M;
+
     /// <summary>
     /// The order number of each game part.
     /// </summary>
@@ -628,6 +630,73 @@ public class Game
         Game._soundSetChargingPile.Stop();
 
         this._gameState = GameStatusType.Ended;
+    }
+
+    /// <summary>
+    /// Force to take or deliver an order.
+    /// </summary>
+    public void ForceToTakeOrDeliverOrder(ForceToTakeOrDeliverOrderType action)
+    {
+        var vehicle = this._vehicle[(CampType)this._camp];
+
+        if (vehicle?.Position == null)
+        {
+            return;
+        }
+
+        var vehiclePosition = (Dot)vehicle.Position;
+
+
+        // Count the orders in delivery.
+        var deliveringOrderNumber = 0;
+        foreach (var order in this._orderList)
+        {
+            if (order.Status == OrderStatusType.InDelivery)
+            {
+                ++deliveringOrderNumber;
+            }
+        }
+
+        foreach (var order in this._orderList)
+        {
+            // Take orders.
+            if (order.Status == OrderStatusType.Pending && action == ForceToTakeOrDeliverOrderType.Take)
+            {
+                // Check if the capacity is full.
+                if (deliveringOrderNumber >= Game.OrderDeliveryCapacity)
+                {
+                    continue;
+                }
+
+                if ((decimal)Dot.Distance(order.DeparturePosition, vehiclePosition)
+                    <= Game.OrderForceContactScopeRadius)
+                {
+                    order.Take((long)this.GameTime);
+
+                    // Play the take sound.
+                    Game._soundTakeOrder.Play();
+                }
+            }
+            else if (order.Status == OrderStatusType.InDelivery)
+            {
+                if ((decimal)Dot.Distance(order.DestinationPosition, vehiclePosition)
+                    <= Game.OrderForceContactScopeRadius)
+                {
+                    order.Deliver((long)this.GameTime);
+
+                    if (order.OvertimeDuration == null)
+                    {
+                        throw new Exception("The overtime duration of the order is null.");
+                    }
+
+                    this._score[(CampType)this._camp] +=
+                        Math.Max((decimal)order.Commission + Game.ScoreDeliveryOvertimeRate * (byte)order.OvertimeDuration, 0);
+
+                    // Player the deliver sound.
+                    Game._soundDeliverOrder.Play();
+                }
+            }
+        }
     }
 
     /// <summary>
