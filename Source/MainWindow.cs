@@ -248,7 +248,8 @@ public partial class MainWindow : Form
         );
 
         // Setup the timer
-        this.timer.Interval = Math.Min(Math.Max((int)(1000 / this._camera.Fps), 1), 1000);
+        // this.timer.Interval = Math.Min(Math.Max((int)(1000 / this._camera.Fps), 1), 1000);
+        this.timer.Interval = 100;
         this.timer.Start();
 
         // Setup the locators
