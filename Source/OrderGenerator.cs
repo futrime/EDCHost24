@@ -57,8 +57,8 @@ public class OrderGenerator
             foreach (var barrier in barrierList)
             {
                 // If the order is in barriers, generate again.
-                if (barrier.IsIn(order.DeparturePosition) ||
-                    barrier.IsIn(order.DestinationPosition))
+                if (barrier.IsIn(order_0.DeparturePosition) ||
+                    barrier.IsIn(order_0.DestinationPosition))
                 {
                     order_0 = null;
                     break;
