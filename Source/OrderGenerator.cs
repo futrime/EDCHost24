@@ -41,8 +41,35 @@ public class OrderGenerator
             barrierList = new List<Barrier>();
         }
 
-        // Generate orders
-        for (int i = 0; i < count; ++i)
+
+        // Generate first order
+        Order order = null;
+
+        while (order == null)
+        {
+            order = Order.GenerateRandomOrder(
+                area,
+                (0, 100),
+                timeLimitRange,
+                commissionRange
+            );
+
+            foreach (var barrier in barrierList)
+            {
+                // If the order is in barriers, generate again.
+                if (barrier.IsIn(order.DeparturePosition) ||
+                    barrier.IsIn(order.DestinationPosition))
+                {
+                    order = null;
+                    break;
+                }
+            }
+        }
+
+        this._orderList.Add(order);
+
+        // Generate other orders
+        for (int i = 1; i < count; ++i)
         {
             Order order = null;
 
