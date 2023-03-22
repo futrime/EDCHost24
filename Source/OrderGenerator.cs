@@ -43,11 +43,11 @@ public class OrderGenerator
 
 
         // Generate first order
-        Order order = null;
+        Order order_0 = null;
 
-        while (order == null)
+        while (order_0 == null)
         {
-            order = Order.GenerateRandomOrder(
+            order_0 = Order.GenerateRandomOrder(
                 area,
                 (0, 100),
                 timeLimitRange,
@@ -60,13 +60,13 @@ public class OrderGenerator
                 if (barrier.IsIn(order.DeparturePosition) ||
                     barrier.IsIn(order.DestinationPosition))
                 {
-                    order = null;
+                    order_0 = null;
                     break;
                 }
             }
         }
 
-        this._orderList.Add(order);
+        this._orderList.Add(order_0);
 
         // Generate other orders
         for (int i = 1; i < count; ++i)
