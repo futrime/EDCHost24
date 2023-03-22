@@ -116,10 +116,10 @@ public class Barrier
     /// </returns>
     public bool IsIn(Dot position)
     {
-        if ((position.X >= this._topLeftPosition.X + 3)&&
-            (position.Y >= this._topLeftPosition.Y + 3)&&
-            (position.X <= this._bottomRightPosition.X - 3)&&
-            (position.Y <= this._bottomRightPosition.Y - 3)
+        if ((position.X >= this._topLeftPosition.X - 3)&&
+            (position.Y >= this._topLeftPosition.Y - 3)&&
+            (position.X <= this._bottomRightPosition.X + 3)&&
+            (position.Y <= this._bottomRightPosition.Y + 3)
         )
         {
             return true;
