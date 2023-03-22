@@ -8,6 +8,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## [24.2.0]
+
+### Added
+- Default image to show in monitor when camera is not working
+- Restriction to only one settings window
+- Restriction to only one instance of the program
+
+### Changed
+- Bump System.IO.Ports from 6.0.0 to 7.0.0
+- Adapt to communication protocol of Rules v24.2.0
+- Change default size of main window to 1280x720
+
+### Removed
+- Error message when no camera is found
+
+### Fixed
+- Crash when receiving malformed packets
+- Refresh rate calculation issue
+- Not sending own charging pile information in packet 0x01
+- Bugs in order generator
+
+
 ## [24.2.0-beta.1]
 ### Added
 - Default image to show in monitor when camera is not working
