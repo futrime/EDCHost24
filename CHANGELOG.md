@@ -8,6 +8,48 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## [24.2.0]
+
+### Added
+- Default image to show in monitor when camera is not working
+- Restriction to only one settings window
+- Restriction to only one instance of the program
+
+### Changed
+- Bump System.IO.Ports from 6.0.0 to 7.0.0
+- Adapt to communication protocol of Rules v24.2.0
+- Change default size of main window to 1280x720
+
+### Removed
+- Error message when no camera is found
+
+### Fixed
+- Crash when receiving malformed packets
+- Refresh rate calculation issue
+- Not sending own charging pile information in packet 0x01
+- Bugs in order generator
+
+
+## [24.2.0-beta.1]
+### Added
+- Default image to show in monitor when camera is not working
+- Restriction to only one settings window
+- Restriction to only one instance of the program
+
+### Changed
+- Bump System.IO.Ports from 6.0.0 to 7.0.0
+- Adapt to communication protocol of Rules v24.2.0
+- Change default size of main window to 1280x720
+
+### Removed
+- Error message when no camera is found
+
+### Fixed
+- Crash when receiving malformed packets
+- Refresh rate calculation issue
+- Not sending own charging pile information in packet 0x01
+
+
 ## [24.1.1]
 ### Added
 - Sound to play when setting charging piles by @Zhangyr2022
@@ -21,6 +63,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Frame rate displaying by @Futrime
 - Exception handling in packet construction by @Zhangyr2022
+
+### Changed
+- Update titles of error messages by @Futrime 
+- Dramatically improve performance in communication by @Futrime and @Zhangyr2022
+- Adapt to new Communication Protocol by @Zhangyr2022
+- Dramatically reduce memeory usage (~10x) by @Futrime
+- Adapt to EDC Rules v24.1.2 by @Futrime
+- Set default values in UI to "N/A" by @Futrime
+- Bump YamlDotNet from 12.0.1 to 12.0.2 by @Futrime
+- Adapt to EDC Rules v24.1.0 by @Futrime and @Zhangyr2022
 
 ### Fixed
 - Progress bar not being reset to zero when resetting the game by @Futrime 
@@ -36,24 +88,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Charging pile numbers not being limited by @Futrime
 - Improper byte width in protocol parsing by @Zhangyr2022
 
-### Changed
-- Update titles of error messages by @Futrime 
-- Dramatically improve performance in communication by @Futrime and @Zhangyr2022
-- Adapt to new Communication Protocol by @Zhangyr2022
-- Dramatically reduce memeory usage (~10x) by @Futrime
-- Adapt to EDC Rules v24.1.2 by @Futrime
-- Set default values in UI to "N/A" by @Futrime
-- Bump YamlDotNet from 12.0.1 to 12.0.2 by @Futrime
-- Adapt to EDC Rules v24.1.0 by @Futrime and @Zhangyr2022
-
 
 ## [24.1.0-beta.7]
+### Changed
+- Update titles of error messages by @Futrime
+
 ### Fixed
 - Progress bar not being reset to zero when resetting the game by @Futrime
 - Failing to handle packages with packet ID 0x00 by @Zhnagyr2022
-
-### Changed
-- Update titles of error messages by @Futrime
 
 
 ## [24.1.0-beta.6]
@@ -94,14 +136,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## [24.1.0-beta.2]
-### Fixed
-- Charging pile numbers not being limited by @Futrime
-- Improper byte width in protocol parsing by @Zhangyr2022
-
-
 ### Changed
 - Adapt to EDC Rules v24.1.2 by @Futrime
 - Set default values in UI to "N/A" by @Futrime
+
+### Fixed
+- Charging pile numbers not being limited by @Futrime
+- Improper byte width in protocol parsing by @Zhangyr2022
 
 
 ## [24.1.0-beta.1]
