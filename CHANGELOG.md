@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [24.3.0]
+
+### Added
+- Sound effects
+
+### Fixed
+- Forcing to take orders
 
 ## [24.2.0]
 
