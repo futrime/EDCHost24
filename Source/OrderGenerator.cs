@@ -42,34 +42,8 @@ public class OrderGenerator
         }
 
 
-        // Generate first order
-        Order order_0 = null;
-
-        while (order_0 == null)
-        {
-            order_0 = Order.GenerateRandomOrder(
-                area,
-                (0, 100),
-                timeLimitRange,
-                commissionRange
-            );
-
-            foreach (var barrier in barrierList)
-            {
-                // If the order is in barriers, generate again.
-                if (barrier.IsIn(order_0.DeparturePosition) ||
-                    barrier.IsIn(order_0.DestinationPosition))
-                {
-                    order_0 = null;
-                    break;
-                }
-            }
-        }
-
-        this._orderList.Add(order_0);
-
         // Generate other orders
-        for (int i = 1; i < count; ++i)
+        for (int i = 0; i < count; ++i)
         {
             Order order = null;
 
@@ -77,7 +51,7 @@ public class OrderGenerator
             {
                 order = Order.GenerateRandomOrder(
                     area,
-                    generationTimeRange,
+                    i == 0 ? (0,100) : generationTimeRange,
                     timeLimitRange,
                     commissionRange
                 );
@@ -85,8 +59,8 @@ public class OrderGenerator
                 foreach (var barrier in barrierList)
                 {
                     // If the order is in barriers, generate again.
-                    if (barrier.IsIn(order.DeparturePosition) ||
-                        barrier.IsIn(order.DestinationPosition))
+                    if (barrier.IsInforOderGen(order.DeparturePosition) ||
+                        barrier.IsInforOderGen(order.DestinationPosition))
                     {
                         order = null;
                         break;

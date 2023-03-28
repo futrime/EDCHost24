@@ -116,10 +116,26 @@ public class Barrier
     /// </returns>
     public bool IsIn(Dot position)
     {
-        if ((position.X >= this._topLeftPosition.X - 3)&&
-            (position.Y >= this._topLeftPosition.Y - 3)&&
-            (position.X <= this._bottomRightPosition.X + 3)&&
-            (position.Y <= this._bottomRightPosition.Y + 3)
+        if ((position.X >= this._topLeftPosition.X)&&
+            (position.Y >= this._topLeftPosition.Y)&&
+            (position.X <= this._bottomRightPosition.X)&&
+            (position.Y <= this._bottomRightPosition.Y)
+        )
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public bool IsInforOderGen(Dot position)
+    {
+        if ((position.X >= this._topLeftPosition.X + 3)&&
+            (position.Y >= this._topLeftPosition.Y + 3)&&
+            (position.X <= this._bottomRightPosition.X - 3)&&
+            (position.Y <= this._bottomRightPosition.Y - 3)
         )
         {
             return true;
