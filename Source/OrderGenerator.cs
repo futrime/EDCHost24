@@ -75,6 +75,7 @@ public class OrderGenerator
             (order1, order2) =>
                 (order1.GenerationTime.CompareTo(order2.GenerationTime))
         );
+        this._orderList[0].ResetGenerationTime((0, 5000));
     }
 
     /// <summary>
