@@ -65,7 +65,7 @@ public partial class MainWindow : Form
     /// <summary>
     /// FPS = Old FPS * (1 - FpsUpdateDecay) + New FPS * FpsUpdateDecay
     /// </summary>
-    private const decimal FpsUpdateDecay = 0.2M;
+    private const decimal FpsUpdateDecay = 0.01M;
 
     /// <summary>
     /// The size of icons shown on the monitor
@@ -168,7 +168,7 @@ public partial class MainWindow : Form
     private ConfigType _config = MainWindow.DefaultConfig;
     private OpenCvSharp.Size _courtSize;
     private CoordinateConverter _coordinateConverter;
-    private decimal _fps = 0; // Just a magic number.
+    private decimal _fps = 30; // Just a magic number.
     private Game _game = new Game();
     private Dictionary<CampType, Locator> _locatorDict = new Dictionary<CampType, Locator>();
     private Point2f[] _monitorCorners = new Point2f[4];
@@ -248,7 +248,7 @@ public partial class MainWindow : Form
         );
 
         // Setup the timer
-        this.timer.Interval = Math.Min(Math.Max((int)(1000 / this._camera.Fps), 1), 1000);
+        this.timer.Interval = 1;
         this.timer.Start();
 
         // Setup the locators
@@ -277,12 +277,6 @@ public partial class MainWindow : Form
         {
             this.ShowBackgroundImage();
             return;
-        }
-
-        // Update the timer interval.
-        if (this.timer.Interval != Math.Min(Math.Max((int)(1000 / this._camera.Fps), 1), 1000))
-        {
-            this.timer.Interval = Math.Min(Math.Max((int)(1000 / this._camera.Fps), 1), 1000);
         }
 
         this.ProcessCameraFrame();

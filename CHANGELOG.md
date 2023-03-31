@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 None
 
+## 24.4.1
+
+### Changed
+
+- Optimize performance
+
 ## 24.4.0
 
 ### Fixed
