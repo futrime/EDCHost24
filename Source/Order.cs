@@ -115,12 +115,12 @@ public class Order
     )
     {
         var departurePosition = new Dot(
-            Utility.RandomGenerator.Next(area.TopLeft.X, area.BottomRight.X),
-            Utility.RandomGenerator.Next(area.TopLeft.Y, area.BottomRight.Y)
+            Utility.RandomGenerator.Next(area.TopLeft.X + 10, area.BottomRight.X - 10),
+            Utility.RandomGenerator.Next(area.TopLeft.Y + 10, area.BottomRight.Y - 10)
         );
         var destinationPosition = new Dot(
-            Utility.RandomGenerator.Next(area.TopLeft.X, area.BottomRight.X),
-            Utility.RandomGenerator.Next(area.TopLeft.Y, area.BottomRight.Y)
+            Utility.RandomGenerator.Next(area.TopLeft.X + 10, area.BottomRight.X - 10),
+            Utility.RandomGenerator.Next(area.TopLeft.Y + 10, area.BottomRight.Y - 10)
         );
         var generationTime = Utility.RandomGenerator.NextInt64(generationTimeRange.Lower, generationTimeRange.Upper);
         var timeLimit = Utility.RandomGenerator.NextInt64(timeLimitRange.Lower, timeLimitRange.Upper);
@@ -191,6 +191,13 @@ public class Order
         this._status = OrderStatusType.InDelivery;
         this._departureTime = time;
     }
-
+    /// <summary>
+    /// Reset the generation time of the order.
+    /// </summary>
+    /// <param name="time">The current time</param>
+    public void ResetGenerationTime((long Lower, long Upper) generationTimeRange)
+    {
+        this._generationTime = Utility.RandomGenerator.NextInt64(generationTimeRange.Lower, generationTimeRange.Upper);
+    }
     #endregion
 }

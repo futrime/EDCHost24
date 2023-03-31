@@ -38,15 +38,6 @@ public enum DotDistanceType
 }
 
 /// <summary>
-/// The action type of vehicle to take or deliver an order
-/// </summary>
-public enum ForceToTakeOrDeliverOrderType
-{
-    Take,
-    Deliver
-};
-
-/// <summary>
 /// The game stage type
 /// </summary>
 public enum GameStageType
