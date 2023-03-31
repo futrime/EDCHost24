@@ -9,32 +9,32 @@ jobs:
   build_program:
     name: Build the Program
     runs-on: windows-latest
-    
+
     steps:
-    - name: Checkout the repository
-      uses: actions/checkout@v3
-      
-    - name: Replace the version strings
-      run: (Get-Content -path Source/MainWindow.Designer.cs -Raw) -replace 'EDC_HOST_BUILD_REF','${{ github.ref_name }}' | Set-Content -Path Source/MainWindow.Designer.cs
-      
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v2
-      with:
-        dotnet-version: 6.0.x
-        
-    - name: Build the program
-      run: dotnet publish -o Build -c Release -r win-x86 --sc true -p:DebugType=none -p:PublishReadyToRun=true -p:PublishSingleFile=true
-      
-    - name: Copy the essential files
-      run: |
-        cp -r Assets build
-        cp CHANGELOG.md build
-        cp README.md build
-        cp LICENSE build
-        cp SECURITY.md build
-        
-    - name: Upload the build artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: EDC-Host-nightly-${{ github.sha }}
-        path: build
+      - name: Checkout the repository
+        uses: actions/checkout@v3
+
+      - name: Replace the version strings
+        run: (Get-Content -path Source/MainWindow.Designer.cs -Raw) -replace 'EDC_HOST_BUILD_REF','${{ github.ref_name }}' | Set-Content -Path Source/MainWindow.Designer.cs
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: 6.0.x
+
+      - name: Build the program
+        run: dotnet publish -o Build -c Release -r win10-x64
+
+      - name: Copy the essential files
+        run: |
+          cp -r Assets build
+          cp CHANGELOG.md build
+          cp README.md build
+          cp LICENSE build
+          cp SECURITY.md build
+
+      - name: Upload the build artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: EDC-Host-nightly-${{ github.sha }}
+          path: build
