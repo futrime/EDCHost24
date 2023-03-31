@@ -23,7 +23,7 @@ jobs:
           dotnet-version: 6.0.x
 
       - name: Build the program
-        run: dotnet publish -o Build -c Release -r win10-x64
+        run: dotnet publish -o Build -c Release -r win10-x64 --self-contained false
 
       - name: Copy the essential files
         run: |
