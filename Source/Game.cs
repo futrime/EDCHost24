@@ -525,7 +525,7 @@ public class Game
                 this._orderGenerator = new OrderGenerator(
                     count: (int)Game.OrderNumber[this._gameStage],
                     area: Game.CourtArea,
-                    generationTimeRange: (0, (long)Game.GameDuration[this._gameStage]),
+                    generationTimeRange: (0, (long)Game.GameDuration[this._gameStage] - 10000),
                     timeLimitRange: Game.OrderDeliveryDurationRange,
                     commissionRange: Game.ScoreDeliverOrderRange,
                     barrierList: this._barrierList
