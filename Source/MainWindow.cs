@@ -65,7 +65,7 @@ public partial class MainWindow : Form
     /// <summary>
     /// FPS = Old FPS * (1 - FpsUpdateDecay) + New FPS * FpsUpdateDecay
     /// </summary>
-    private const decimal FpsUpdateDecay = 1M;
+    private const decimal FpsUpdateDecay = 0.2M;
 
     /// <summary>
     /// The size of icons shown on the monitor
@@ -248,8 +248,7 @@ public partial class MainWindow : Form
         );
 
         // Setup the timer
-        // this.timer.Interval = Math.Min(Math.Max((int)(1000 / this._camera.Fps), 1), 1000);
-        this.timer.Interval = 100;
+        this.timer.Interval = Math.Min(Math.Max((int)(1000 / this._camera.Fps), 1), 1000);
         this.timer.Start();
 
         // Setup the locators
@@ -477,10 +476,6 @@ public partial class MainWindow : Form
                     else if (packetFromSlave.GetPacketId() == PacketSetChargingPileSlave.PacketId)
                     {
                         this._game.SetChargingPile();
-                    }
-                    else if (packetFromSlave.GetPacketId() == PacketForceToTakeOrDeliverSlave.PacketId)
-                    {
-                        this._game.ForceToTakeOrDeliverOrder(((PacketForceToTakeOrDeliverSlave)packetFromSlave).Action);
                     }
                 }
 
