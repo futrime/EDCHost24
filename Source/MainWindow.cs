@@ -463,8 +463,14 @@ public partial class MainWindow : Form
                                             opponentChargingPiles: opponentChargingPiles
                                         );
                         var bytesToWrite = gameInfoPacket.GetBytes();
-
-                        this._serialPortDict[camp].Write(bytesToWrite, 0, bytesToWrite.Length);
+                        try
+                        {
+                            this._serialPortDict[camp].Write(bytesToWrite, 0, bytesToWrite.Length);
+                        }
+                        catch (Exception)
+                        {
+                            // Empty
+                        }
                         isMessageSent = true;
                     }
                     else if (packetFromSlave.GetPacketId() == PacketSetChargingPileSlave.PacketId)
@@ -538,7 +544,15 @@ public partial class MainWindow : Form
 
                     var bytesToWrite = packet.GetBytes();
 
-                    this._serialPortDict[camp].Write(bytesToWrite, 0, bytesToWrite.Length);
+                    try
+                    {
+                        this._serialPortDict[camp].Write(bytesToWrite, 0, bytesToWrite.Length);
+                    }
+                    catch (Exception)
+                    {
+                        // Empty
+                    }
+
                     isMessageSent = true;
                 }
             }
