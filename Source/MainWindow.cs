@@ -168,7 +168,6 @@ public partial class MainWindow : Form
     private ConfigType _config = MainWindow.DefaultConfig;
     private OpenCvSharp.Size _courtSize;
     private CoordinateConverter _coordinateConverter;
-    private decimal _fps = 30; // Just a magic number.
     private Game _game = new Game();
     private Dictionary<CampType, Locator> _locatorDict = new Dictionary<CampType, Locator>();
     private Point2f[] _monitorCorners = new Point2f[4];
@@ -248,7 +247,7 @@ public partial class MainWindow : Form
         );
 
         // Setup the timer
-        this.timer.Interval = 1;
+        this.timer.Interval = 50;
         this.timer.Start();
 
         // Setup the locators
@@ -721,20 +720,6 @@ public partial class MainWindow : Form
                 );
             }
         }
-
-        // Draw frame rate information.
-        this._fps = this._fps * (1 - MainWindow.FpsUpdateDecay) + (1000M / this._game.LastTickDuration) * MainWindow.FpsUpdateDecay;
-        Cv2.PutText(
-            image,
-            text: $"FPS: {(int)this._fps}",
-            org: new Point2i(5, 30),
-            fontFace: HersheyFonts.HersheySimplex,
-            fontScale: 1,
-            color: new Scalar(255, 0, 255),
-            thickness: 2,
-            bottomLeftOrigin: false,
-            lineType: LineTypes.AntiAlias
-        );
     }
 
     /// <summary>
