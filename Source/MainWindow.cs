@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.IO.Ports;
 using System.Threading;
 using System.Windows.Forms;
@@ -90,7 +91,7 @@ public partial class MainWindow : Form
     /// <summary>
     /// The length of the buffer for serial ports.
     /// </summary>
-    private const int SerialPortBufferLength = 1024;
+    private const int SerialPortBufferLength = 1048576;
 
     #endregion
 
@@ -170,6 +171,7 @@ public partial class MainWindow : Form
     private CoordinateConverter _coordinateConverter;
     private Game _game = new Game();
     private Dictionary<CampType, Locator> _locatorDict = new Dictionary<CampType, Locator>();
+    private Logger _logger = new(Path.Combine(Directory.GetCurrentDirectory(), "Logs", DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".log"));
     private Point2f[] _monitorCorners = new Point2f[4];
     private OpenCvSharp.Size _monitorFrameSize;
     private List<Order> _orderToTransmitList = new List<Order>();
@@ -378,6 +380,11 @@ public partial class MainWindow : Form
         {
             foreach (var camp in MainWindow.AllCampList)
             {
+                if (this._game.Camp != camp)
+                {
+                    continue;
+                }
+
                 if (
                     this._serialPortDict[camp] == null ||
                     !this._serialPortDict[camp].IsOpen
@@ -461,6 +468,7 @@ public partial class MainWindow : Form
                                             ownChargingPiles: ownChargingPiles,
                                             opponentChargingPiles: opponentChargingPiles
                                         );
+                        _logger.Debug($"{DateTime.Now.ToString("HH:mm:ss")} [0x01 {camp}] {Convert.ToHexString(gameInfoPacket.GetBytes())}");
                         var bytesToWrite = gameInfoPacket.GetBytes();
                         try
                         {
@@ -540,6 +548,7 @@ public partial class MainWindow : Form
                         orderInDeliveryList: orderInDeliveryList,
                         latestPendingOrder: latestPendingOrder
                     );
+                    _logger.Debug($"{DateTime.Now.ToString("HH:mm:ss")} [0x05 {camp}] {Convert.ToHexString(packet.GetBytes())}");
 
                     var bytesToWrite = packet.GetBytes();
 
