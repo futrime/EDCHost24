@@ -77,6 +77,15 @@ public partial class SettingsWindow : Form
 
         camera.Open(this._mainWindow.Config.Camera);
 
+        if (!camera.IsOpened()) {
+            MessageBox.Show(
+                "Cannot open the camera!",
+                "Nahida said:",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Error
+            );
+        }
+
         this._mainWindow.CameraFrameSize = new OpenCvSharp.Size(
             camera.FrameWidth,
             camera.FrameHeight
@@ -317,13 +326,17 @@ public partial class SettingsWindow : Form
         int cameraPort = 0;
         while (isLastCameraWorking)
         {
-            var camera = new VideoCapture(cameraPort);
-
-            // Break if the last camera is not working.
-            if (!camera.IsOpened())
-            {
+            if (cameraPort >= 10) {
                 break;
             }
+
+            // var camera = new VideoCapture(cameraPort);
+
+            // // Break if the last camera is not working.
+            // if (!camera.IsOpened())
+            // {
+            //     break;
+            // }
 
             // To ensure the thread safety
             if (this.comboBoxCamera.InvokeRequired)
@@ -355,7 +368,7 @@ public partial class SettingsWindow : Form
                 }
             }
 
-            camera.Release();
+            // camera.Release();
 
             ++cameraPort;
         }
