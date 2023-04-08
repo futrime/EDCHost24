@@ -31,7 +31,7 @@ public class Game
     /// <summary>
     /// The range of the scores obtained when having an order delivered.
     /// </summary>
-    public static readonly (decimal Lower, decimal Upper) ScoreDeliverOrderRange = (10M, 50M);
+    public static readonly (decimal Lower, decimal Upper) ScoreDeliverOrderRange = (30M, 50M);
 
     /// <summary>
     /// The score obtained when a delivery is over time per
@@ -43,7 +43,7 @@ public class Game
     /// The score obtained when a vehicle is hitting a wall
     /// per millisecond.
     /// </summary>
-    public const decimal ScoreHittingWallRate = -0.01M;
+    public const decimal ScoreHittingWallRate = -0.1M;
 
     /// <summary>
     /// The score obtained when the vehicle park overtime per
@@ -107,7 +107,7 @@ public class Game
     /// The range of the areas of the barriers.
     /// </summary>
     public static readonly (int Min, int Max) BarrierAreaRange = (
-        250, 2500
+        1500, 2500
     );
 
     /// <summary>
@@ -173,7 +173,7 @@ public class Game
     /// The range of the delivery durations of orders.
     /// </summary>
     public static readonly (long Min, long Max) OrderDeliveryDurationRange = (
-        20000, 60000
+        20000, 30000
     );
 
     /// <summary>

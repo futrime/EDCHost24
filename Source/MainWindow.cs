@@ -33,7 +33,7 @@ public partial class MainWindow : Form
                 {
                     Locator = new LocatorConfigType
                     {
-                        Hue = (100, 150),
+                        Hue = (115, 125),
                         Saturation = (100, 255),
                         Value = (100, 255),
                         MinArea = 4M
@@ -49,9 +49,9 @@ public partial class MainWindow : Form
                 {
                     Locator = new LocatorConfigType
                     {
-                        Hue = (0, 50),
+                        Hue = (5, 25),
                         Saturation = (120, 255),
-                        Value = (100, 255),
+                        Value = (50, 255),
                         MinArea = 4M
                     },
                     ShowMask = false,
@@ -273,6 +273,7 @@ public partial class MainWindow : Form
     /// </summary>
     private void RefreshAll()
     {
+        try {
         // Show default image if the camera is changing.
         if (this._camera == null)
         {
@@ -368,6 +369,9 @@ public partial class MainWindow : Form
 
         // Force to refresh the window.
         this.Refresh();
+        } catch (Exception e) {
+            _logger.Error($"RefreshAll error: {e.Message}");
+        }
     }
 
     /// <summary>
@@ -421,7 +425,7 @@ public partial class MainWindow : Form
                     }
                     catch (Exception)
                     {
-                        _logger.Error($"Failed to make packet from {this._serialPortDict[camp].PortName}.");
+                        // Do nothing.
                     }
 
                     if (packetFromSlave != null)

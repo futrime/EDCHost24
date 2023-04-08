@@ -39,6 +39,7 @@ public partial class SettingsWindow : Form
     private ConfigType _config;
     private string _configFilePath = SettingsWindow.DefaultConfigFilePath;
     private MainWindow _mainWindow;
+    private int _lastCameraIndex = 0;
 
     #endregion
 
@@ -72,18 +73,25 @@ public partial class SettingsWindow : Form
         // Apply the camera configurations
         var camera = this._mainWindow.Camera;
         this._mainWindow.Camera = null;
-        camera?.Release();
-        camera = new VideoCapture();
 
-        camera.Open(this._mainWindow.Config.Camera);
+        if (this._mainWindow.Config.Camera != this._lastCameraIndex)
+        {
+            // Release the camera (if it is opened) and open the new camera.
+            camera?.Release();
+            camera = new VideoCapture();
 
-        if (!camera.IsOpened()) {
-            MessageBox.Show(
-                "Cannot open the camera!",
-                "Nahida said:",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Error
-            );
+            camera.Open(this._mainWindow.Config.Camera);
+
+            if (!camera.IsOpened()) {
+                MessageBox.Show(
+                    "Cannot open the camera!",
+                    "Nahida said:",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
+            }
+
+            this._lastCameraIndex = this._mainWindow.Config.Camera;
         }
 
         this._mainWindow.CameraFrameSize = new OpenCvSharp.Size(
@@ -320,7 +328,7 @@ public partial class SettingsWindow : Form
 
     private void UpdateAvailableCameras()
     {
-        this._mainWindow.Camera?.Release();
+        // this._mainWindow.Camera?.Release();
 
         bool isLastCameraWorking = true;
         int cameraPort = 0;
