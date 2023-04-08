@@ -122,6 +122,8 @@ public partial class SettingsWindow : Form
                 try
                 {
                     this._mainWindow.SerialPortDict[camp].Open();
+                    this._mainWindow.SerialPortDict[camp].ReadTimeout = 100;
+                    this._mainWindow.SerialPortDict[camp].WriteTimeout = 100;
                 }
                 catch (System.Exception)
                 {
@@ -133,7 +135,6 @@ public partial class SettingsWindow : Form
                     );
                     this._mainWindow.SerialPortDict[camp] = null;
                 }
-                this._mainWindow.SerialPortDict[camp].ReadTimeout = 10;
             }
         }
 
