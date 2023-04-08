@@ -93,6 +93,8 @@ public partial class MainWindow : Form
     /// </summary>
     private const int SerialPortBufferLength = 1048576;
 
+    public int _lastCameraIndex = 0;
+
     #endregion
 
 

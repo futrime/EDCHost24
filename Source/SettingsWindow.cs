@@ -39,7 +39,6 @@ public partial class SettingsWindow : Form
     private ConfigType _config;
     private string _configFilePath = SettingsWindow.DefaultConfigFilePath;
     private MainWindow _mainWindow;
-    private int _lastCameraIndex = 0;
 
     #endregion
 
@@ -74,7 +73,7 @@ public partial class SettingsWindow : Form
         var camera = this._mainWindow.Camera;
         this._mainWindow.Camera = null;
 
-        if (this._mainWindow.Config.Camera != this._lastCameraIndex)
+        if (this._mainWindow.Config.Camera != this._mainWindow._lastCameraIndex)
         {
             // Release the camera (if it is opened) and open the new camera.
             camera?.Release();
@@ -91,7 +90,7 @@ public partial class SettingsWindow : Form
                 );
             }
 
-            this._lastCameraIndex = this._mainWindow.Config.Camera;
+            this._mainWindow._lastCameraIndex = this._mainWindow.Config.Camera;
         }
 
         this._mainWindow.CameraFrameSize = new OpenCvSharp.Size(
