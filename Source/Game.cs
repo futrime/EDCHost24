@@ -215,6 +215,11 @@ public class Game
     );
     private static bool _isSoundDischargingPlaying = false;
 
+    private static readonly SoundPlayer _soundHitWall = new SoundPlayer(
+        @"Assets/Sounds/HitWall.wav"
+    );
+    private static bool _isSoundHitWallPlaying = false;
+
     private static readonly SoundPlayer _soundAutoCharge = new SoundPlayer(
         @"Assets/Sounds/AutoCharge.wav"
     ); 
@@ -405,6 +410,7 @@ public class Game
         Game._soundNotMoving.Load();
         Game._soundSetChargingPile.Load();
         Game._soundTakeOrder.Load();
+        Game._soundHitWall.Load();
 
         // Generate barriers
         this._barrierList = new List<Barrier>();
@@ -813,8 +819,20 @@ public class Game
 
         if (this.IsInWall(vehiclePosition))
         {
+            if (!Game._isSoundHitWallPlaying) {
+                Game._soundHitWall.Play();
+                Game._isSoundHitWallPlaying = true;
+            }
+
             this._score[(CampType)this._camp] +=
                 Game.ScoreHittingWallRate * this.LastTickDuration;
+        }
+        else
+        {
+            if (Game._isSoundHitWallPlaying) {
+                Game._isSoundHitWallPlaying = false;
+                Game._soundHitWall.Stop();
+            }
         }
     }
 

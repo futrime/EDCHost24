@@ -9,6 +9,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 None
 
+## 24.7.0
+
+## Added
+
+- More sound effects
+
+## Changed
+
+- Optimize default recognition parameters
+
+## 24.6.0
+
+## Added
+
+- Error logging
+- More sound effects
+
+## Removed
+
+- Scanning cameras
+
 ## 24.5.0
 
 ## Added

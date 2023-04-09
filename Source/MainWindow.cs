@@ -49,9 +49,9 @@ public partial class MainWindow : Form
                 {
                     Locator = new LocatorConfigType
                     {
-                        Hue = (5, 25),
-                        Saturation = (120, 255),
-                        Value = (50, 255),
+                        Hue = (45, 60),
+                        Saturation = (80, 255),
+                        Value = (80, 255),
                         MinArea = 4M
                     },
                     ShowMask = false,
