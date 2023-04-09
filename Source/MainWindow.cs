@@ -33,7 +33,7 @@ public partial class MainWindow : Form
                 {
                     Locator = new LocatorConfigType
                     {
-                        Hue = (100, 150),
+                        Hue = (115, 125),
                         Saturation = (100, 255),
                         Value = (100, 255),
                         MinArea = 4M
@@ -49,9 +49,9 @@ public partial class MainWindow : Form
                 {
                     Locator = new LocatorConfigType
                     {
-                        Hue = (0, 50),
-                        Saturation = (120, 255),
-                        Value = (100, 255),
+                        Hue = (45, 60),
+                        Saturation = (80, 255),
+                        Value = (80, 255),
                         MinArea = 4M
                     },
                     ShowMask = false,
@@ -92,6 +92,8 @@ public partial class MainWindow : Form
     /// The length of the buffer for serial ports.
     /// </summary>
     private const int SerialPortBufferLength = 1048576;
+
+    public int _lastCameraIndex = 0;
 
     #endregion
 
@@ -273,101 +275,109 @@ public partial class MainWindow : Form
     /// </summary>
     private void RefreshAll()
     {
-        // Show default image if the camera is changing.
-        if (this._camera == null)
+        try
         {
-            this.ShowBackgroundImage();
-            return;
-        }
-
-        this.ProcessCameraFrame();
-
-        // Refresh the game.
-        this._game.Refresh();
-
-        if (this._game.GameState == GameStatusType.Unstarted)
-        {
-            this.buttonFoul.Enabled = false;
-            if (this._calibrationClickCount >= 4)
+            // Show default image if the camera is changing.
+            if (this._camera == null)
             {
-                this.buttonCalibration.Enabled = true;
-            }
-            this.buttonSettings.Enabled = true;
-            this.buttonStart.Enabled = true;
-            this.buttonPause.Enabled = false;
-            this.buttonContinue.Enabled = false;
-            this.buttonEnd.Enabled = false;
-        }
-        else if (this._game.GameState == GameStatusType.Running)
-        {
-            if (this._game.GameTime == null)
-            {
-                throw new Exception("The game time is null.");
+                this.ShowBackgroundImage();
+                return;
             }
 
-            if (this._locatorDict[(CampType)this._game.Camp].TargetPosition != null)
-            {
-                // Update the position of the vehicle of the current camp.
-                this._game.Vehicle[(CampType)this._game.Camp].UpdatePosition(
-                    new Dot((Point2i)this._coordinateConverter.CameraToCourt(
-                        (Point2f)this._locatorDict[(CampType)this._game.Camp].TargetPosition
-                    )),
-                    (long)this._game.GameTime
-                );
-            }
+            this.ProcessCameraFrame();
 
-            this.buttonFoul.Enabled = true;
-            this.buttonCalibration.Enabled = false;
-            this.buttonSettings.Enabled = false;
-            this.buttonStart.Enabled = false;
-            this.buttonPause.Enabled = true;
-            this.buttonContinue.Enabled = false;
-            this.buttonEnd.Enabled = true;
+            // Refresh the game.
+            this._game.Refresh();
 
-            this.labelScoreVehicleA.Text = this._game.Score[CampType.A].ToString("0.000");
-            this.labelScoreVehicleB.Text = this._game.Score[CampType.B].ToString("0.000");
-            this.labelGameTime.Text = Math.Max((decimal)(this._game.RemainingTime) / 1000, (decimal)0).ToString("0.00");
-            this.progressBarRemainingPowerRatio.Value = (int)(this._game.Vehicle[(CampType)this._game.Camp].RemainingPowerRatio * 100);
-        }
-        else if (this._game.GameState == GameStatusType.Paused)
-        {
-            this.buttonFoul.Enabled = true;
-            if (this._calibrationClickCount >= 4)
+            if (this._game.GameState == GameStatusType.Unstarted)
             {
-                this.buttonCalibration.Enabled = true;
-            }
-            this.buttonSettings.Enabled = false;
-            this.buttonStart.Enabled = false;
-            this.buttonPause.Enabled = false;
-            this.buttonContinue.Enabled = true;
-            this.buttonEnd.Enabled = true;
-        }
-        else if (this._game.GameState == GameStatusType.Ended)
-        {
-            this.buttonFoul.Enabled = false;
-            if (this._calibrationClickCount >= 4)
-            {
-                this.buttonCalibration.Enabled = true;
-            }
-            this.buttonSettings.Enabled = false;
-            if (
-                this._game.GameStage == GameStageType.SecondHalf &&
-                this._game.Camp == CampType.B
-            )
-            {
-                this.buttonStart.Enabled = false;
-            }
-            else
-            {
+                this.buttonFoul.Enabled = false;
+                if (this._calibrationClickCount >= 4)
+                {
+                    this.buttonCalibration.Enabled = true;
+                }
+                this.buttonSettings.Enabled = true;
                 this.buttonStart.Enabled = true;
+                this.buttonPause.Enabled = false;
+                this.buttonContinue.Enabled = false;
+                this.buttonEnd.Enabled = false;
             }
-            this.buttonPause.Enabled = false;
-            this.buttonContinue.Enabled = false;
-            this.buttonEnd.Enabled = false;
-        }
+            else if (this._game.GameState == GameStatusType.Running)
+            {
+                if (this._game.GameTime == null)
+                {
+                    throw new Exception("The game time is null.");
+                }
 
-        // Force to refresh the window.
-        this.Refresh();
+                if (this._locatorDict[(CampType)this._game.Camp].TargetPosition != null)
+                {
+                    // Update the position of the vehicle of the current camp.
+                    this._game.Vehicle[(CampType)this._game.Camp].UpdatePosition(
+                        new Dot((Point2i)this._coordinateConverter.CameraToCourt(
+                            (Point2f)this._locatorDict[(CampType)this._game.Camp].TargetPosition
+                        )),
+                        (long)this._game.GameTime
+                    );
+                }
+
+                this.buttonFoul.Enabled = true;
+                this.buttonCalibration.Enabled = false;
+                this.buttonSettings.Enabled = false;
+                this.buttonStart.Enabled = false;
+                this.buttonPause.Enabled = true;
+                this.buttonContinue.Enabled = false;
+                this.buttonEnd.Enabled = true;
+
+                this.labelScoreVehicleA.Text = this._game.Score[CampType.A].ToString("0.000");
+                this.labelScoreVehicleB.Text = this._game.Score[CampType.B].ToString("0.000");
+                this.labelGameTime.Text = Math.Max((decimal)(this._game.RemainingTime) / 1000, (decimal)0).ToString("0.00");
+                this.progressBarRemainingPowerRatio.Value = (int)(this._game.Vehicle[(CampType)this._game.Camp].RemainingPowerRatio * 100);
+            }
+            else if (this._game.GameState == GameStatusType.Paused)
+            {
+                this.buttonFoul.Enabled = true;
+                if (this._calibrationClickCount >= 4)
+                {
+                    this.buttonCalibration.Enabled = true;
+                }
+                this.buttonSettings.Enabled = false;
+                this.buttonStart.Enabled = false;
+                this.buttonPause.Enabled = false;
+                this.buttonContinue.Enabled = true;
+                this.buttonEnd.Enabled = true;
+            }
+            else if (this._game.GameState == GameStatusType.Ended)
+            {
+                this.buttonFoul.Enabled = false;
+                if (this._calibrationClickCount >= 4)
+                {
+                    this.buttonCalibration.Enabled = true;
+                }
+                this.buttonSettings.Enabled = false;
+                if (
+                    this._game.GameStage == GameStageType.SecondHalf &&
+                    this._game.Camp == CampType.B
+                )
+                {
+                    this.buttonStart.Enabled = false;
+                }
+                else
+                {
+                    this.buttonStart.Enabled = true;
+                }
+                this.buttonPause.Enabled = false;
+                this.buttonContinue.Enabled = false;
+                this.buttonEnd.Enabled = false;
+                this.labelGameTime.Text = "0.00";
+            }
+
+            // Force to refresh the window.
+            this.Refresh();
+        }
+        catch (Exception e)
+        {
+            _logger.Error($"RefreshAll error: {e.Message}");
+        }
     }
 
     /// <summary>
@@ -421,7 +431,7 @@ public partial class MainWindow : Form
                     }
                     catch (Exception)
                     {
-                        _logger.Error($"Failed to make packet from {this._serialPortDict[camp].PortName}.");
+                        // Do nothing.
                     }
 
                     if (packetFromSlave != null)
@@ -941,6 +951,9 @@ public partial class MainWindow : Form
     private void buttonFoul_Click(object sender, EventArgs e)
     {
         _game.SetFoul();
+        this.labelScoreVehicleA.Text = this._game.Score[CampType.A].ToString("0.000");
+        this.labelScoreVehicleB.Text = this._game.Score[CampType.B].ToString("0.000");
+        Refresh();
     }
 
     private void buttonSettings_Click(object sender, EventArgs e)

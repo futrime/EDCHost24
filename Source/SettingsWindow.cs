@@ -72,10 +72,26 @@ public partial class SettingsWindow : Form
         // Apply the camera configurations
         var camera = this._mainWindow.Camera;
         this._mainWindow.Camera = null;
-        camera?.Release();
-        camera = new VideoCapture();
 
-        camera.Open(this._mainWindow.Config.Camera);
+        if (this._mainWindow.Config.Camera != this._mainWindow._lastCameraIndex)
+        {
+            // Release the camera (if it is opened) and open the new camera.
+            camera?.Release();
+            camera = new VideoCapture();
+
+            camera.Open(this._mainWindow.Config.Camera);
+
+            if (!camera.IsOpened()) {
+                MessageBox.Show(
+                    "Cannot open the camera!",
+                    "Nahida said:",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
+            }
+
+            this._mainWindow._lastCameraIndex = this._mainWindow.Config.Camera;
+        }
 
         this._mainWindow.CameraFrameSize = new OpenCvSharp.Size(
             camera.FrameWidth,
@@ -311,19 +327,23 @@ public partial class SettingsWindow : Form
 
     private void UpdateAvailableCameras()
     {
-        this._mainWindow.Camera?.Release();
+        // this._mainWindow.Camera?.Release();
 
         bool isLastCameraWorking = true;
         int cameraPort = 0;
         while (isLastCameraWorking)
         {
-            var camera = new VideoCapture(cameraPort);
-
-            // Break if the last camera is not working.
-            if (!camera.IsOpened())
-            {
+            if (cameraPort >= 10) {
                 break;
             }
+
+            // var camera = new VideoCapture(cameraPort);
+
+            // // Break if the last camera is not working.
+            // if (!camera.IsOpened())
+            // {
+            //     break;
+            // }
 
             // To ensure the thread safety
             if (this.comboBoxCamera.InvokeRequired)
@@ -355,7 +375,7 @@ public partial class SettingsWindow : Form
                 }
             }
 
-            camera.Release();
+            // camera.Release();
 
             ++cameraPort;
         }
