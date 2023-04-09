@@ -436,6 +436,9 @@ public partial class MainWindow : Form
 
                     if (packetFromSlave != null)
                     {
+                        byte[] packetIdBytes = {packetFromSlave.GetPacketId()};
+                        _logger.Debug($"Packet 0x{Convert.ToHexString(packetIdBytes)} from {camp}: {Convert.ToHexString(packetFromSlave.GetBytes())}");
+
                         if (packetFromSlave.GetPacketId() == PacketGetGameInformationSlave.PacketId)
                         {
                             // Find own charging pile list
