@@ -942,6 +942,7 @@ public partial class MainWindow : Form
 
     private void buttonReset_Click(object sender, EventArgs e)
     {
+        this._logger = new Logger(Path.Combine(Directory.GetCurrentDirectory(), "Logs", DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".log"));
         this._game = new Game();
 
         this.labelScoreVehicleA.Text = "N/A";

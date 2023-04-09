@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 None
 
+## 24.8.0
+
+### Changed
+
+- Split logging files
+
+### Added
+
+- Logging when receiving messages
+
 ## 24.7.0
 
 ## Added
